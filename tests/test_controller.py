@@ -42,6 +42,11 @@ class ControllerTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.controller.detect_place(7)
 
+    def test_gripper_position_control(self):
+        self.controller.set_gripper_position("right", 600)
+        self.assertEqual(self.controller.gripper_position("right"), 600)
+        self.assertEqual(self.controller.wait_gripper_position("right", 600), 600)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -59,14 +59,23 @@ class MockGripper(Gripper):
     def __init__(self) -> None:
         self.closed = False
         self.stopped = False
+        self._position = 1000
+
+    def move_to(self, position: int) -> None:
+        if self.stopped: raise RuntimeError("gripper is stopped")
+        if position < 0 or position > 1000: raise ValueError("position must be between 0 and 1000")
+        time.sleep(0.1); self._position = position; self.closed = position == 0
+
+    def position(self) -> int:
+        return self._position
 
     def open(self) -> None:
         if self.stopped: raise RuntimeError("gripper is stopped")
-        time.sleep(0.1); self.closed = False
+        self.move_to(1000); self.closed = False
 
     def close(self) -> None:
         if self.stopped: raise RuntimeError("gripper is stopped")
-        time.sleep(0.1); self.closed = True
+        self.move_to(0); self.closed = True
 
     def has_object(self) -> bool:
         return self.closed
@@ -78,7 +87,7 @@ class MockGripper(Gripper):
         self.stopped = False
 
     def state(self) -> DeviceState:
-        return DeviceState(True, not self.stopped, "closed" if self.closed else "open")
+        return DeviceState(True, not self.stopped, "position=%d" % self._position)
 
 
 class MockBase(MobileBase):

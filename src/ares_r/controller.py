@@ -1,5 +1,6 @@
 """Small, explicit task executive for commissioning."""
 
+import time
 from typing import Dict
 from .event_log import EventLog
 from .interfaces import Arm, Gripper, MobileBase, Perception
@@ -40,6 +41,27 @@ class TaskController:
         result = self.perception.probe()
         self.events.write("epic_probe", connected=result.connected, ready=result.ready, detail=result.detail)
         return result
+
+    def gripper_position(self, name: str) -> int:
+        if name not in self.grippers: raise ValueError("gripper must be left or right")
+        value = self.grippers[name].position()
+        self.events.write("gripper_position", gripper=name, position=value)
+        return value
+
+    def set_gripper_position(self, name: str, position: int) -> None:
+        if name not in self.grippers: raise ValueError("gripper must be left or right")
+        self.grippers[name].move_to(position)
+        self.events.write("gripper_move", gripper=name, position=position)
+
+    def wait_gripper_position(self, name: str, target: int, timeout_s: float = 5.0, tolerance: int = 10) -> int:
+        deadline = time.monotonic() + timeout_s
+        actual = self.gripper_position(name)
+        while abs(actual - target) > tolerance and time.monotonic() < deadline:
+            time.sleep(0.2)
+            actual = self.gripper_position(name)
+        if abs(actual - target) > tolerance:
+            raise RuntimeError("%s gripper did not reach target %d; actual=%d" % (name, target, actual))
+        return actual
 
     def detect_pick(self) -> DetectionResult:
         result = self._run(TaskState.DETECTING_PICK, "detect_pick", self.perception.detect_pick)

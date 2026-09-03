@@ -20,7 +20,7 @@ def load_config(path: str):
 def main() -> None:
     parser = argparse.ArgumentParser(description="ARES-R terminal controller")
     parser.add_argument("--config", default="config/system.json")
-    parser.add_argument("--mode", choices=["mock", "camera-only", "hardware"], default=None)
+    parser.add_argument("--mode", choices=["mock", "camera-only", "gripper-only", "hardware"], default=None)
     args = parser.parse_args()
     config = load_config(args.config)
     mode = args.mode or str(config.get("mode", "mock"))

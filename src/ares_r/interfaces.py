@@ -42,6 +42,12 @@ class Arm(ABC):
 
 class Gripper(ABC):
     @abstractmethod
+    def move_to(self, position: int) -> None: ...
+
+    @abstractmethod
+    def position(self) -> int: ...
+
+    @abstractmethod
     def open(self) -> None: ...
 
     @abstractmethod

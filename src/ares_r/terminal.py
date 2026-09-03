@@ -17,6 +17,12 @@ HELP = """Commands:
   epic status                show Epic connection configuration/state
   epic detect pick           Epic detection only; never moves a device
   epic detect place [1-6]    Epic dock detection only; never moves a device
+  gripper status left|right  show configured gripper device
+  gripper read left|right    read current opening position
+  gripper set SIDE VALUE     move to position 0-1000 (asks for YES)
+  gripper half left|right    read and move to half (asks for YES)
+  gripper open left|right    move to 1000 (asks for YES)
+  gripper close left|right   move to 0 (asks for YES)
   arm left|right             select active arm
   detect pick                run pick detection
   pick                       approach, grip and lift
@@ -93,6 +99,29 @@ def run_terminal(controller: TaskController) -> None:
                 dock_id = int(args[3]) if len(args) > 3 else 1
                 print("DETECTION ONLY: no arm, gripper or base command will be issued.")
                 controller.detect_place(dock_id)
+            elif args[:2] == ["gripper", "status"] and len(args) == 3:
+                if args[2] not in controller.grippers: raise ValueError("gripper must be left or right")
+                state = controller.grippers[args[2]].state()
+                print("%s gripper: %s" % (args[2], state.detail))
+            elif args[:2] == ["gripper", "read"] and len(args) == 3:
+                print("%s gripper position: %d" % (args[2], controller.gripper_position(args[2])))
+            elif args[:2] in (["gripper", "set"], ["gripper", "half"], ["gripper", "open"], ["gripper", "close"]):
+                if len(args) < 3: raise ValueError("gripper side is required")
+                side = args[2]
+                current = controller.gripper_position(side)
+                if args[1] == "set":
+                    if len(args) != 4: raise ValueError("usage: gripper set SIDE VALUE")
+                    target = int(args[3])
+                elif args[1] == "half": target = current // 2
+                elif args[1] == "open": target = 1000
+                else: target = 0
+                print("%s gripper: current=%d target=%d" % (side, current, target))
+                if controller.mode != "mock" and input("Type YES to move this gripper: ").strip() != "YES":
+                    print("Cancelled; no command sent.")
+                else:
+                    controller.set_gripper_position(side, target)
+                    actual = controller.wait_gripper_position(side, target)
+                    print("Movement complete: target=%d actual=%d" % (target, actual))
             elif args[0] == "arm" and len(args) == 2: controller.select_arm(args[1])
             elif args[:2] == ["detect", "pick"]: controller.detect_pick()
             elif args[0] == "pick": controller.pick()

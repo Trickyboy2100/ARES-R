@@ -64,6 +64,32 @@ place
 
 `hardware` 模式目前有双重锁定，并且在真实设备 Adapter 完成验收前会拒绝启动。
 
+夹爪单独调试使用 `gripper-only`，此模式不会连接或移动机械臂和底盘：
+
+```bash
+./scripts/run_terminal.sh --mode gripper-only
+```
+
+工控机默认 Python 没有 pyserial，使用已有 `dope3.8` 环境启动：
+
+```bash
+ARES_R_PYTHON=/home/yikun/anaconda3/envs/dope3.8/bin/python \
+  ./scripts/run_terminal.sh --mode gripper-only
+```
+
+夹爪位置范围为 `0–1000`。当前约定 `0` 为闭合方向、`1000` 为打开方向：
+
+```text
+gripper status right
+gripper read right
+gripper set right 500
+gripper half right
+gripper open right
+gripper close right
+```
+
+所有真实夹爪移动都要求再次输入大写 `YES`，并在发送后等待回读值进入目标 ±10 的范围。
+
 进入 `camera-only` 后，以下命令只触发 Epic 检测并显示抓取坐标，不会操作机械臂、夹爪或底盘：
 
 ```text
