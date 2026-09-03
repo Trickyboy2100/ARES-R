@@ -20,6 +20,7 @@ class SerialGripper(Gripper):
         self.device_id = int(config.get("device_id", 1))
         self.min_position = int(config.get("min_position", 0))
         self.max_position = int(config.get("max_position", 1000))
+        self._last_position = None
 
     @staticmethod
     def _checksum(data: bytes) -> int:
@@ -50,7 +51,8 @@ class SerialGripper(Gripper):
 
     def position(self) -> int:
         response = self._exchange(self._frame(0xD9), 8)
-        return (response[-2] << 8) | response[-3]
+        self._last_position = (response[-2] << 8) | response[-3]
+        return self._last_position
 
     def open(self) -> None:
         self.move_to(self.max_position)
@@ -68,5 +70,9 @@ class SerialGripper(Gripper):
         exists = os.path.exists(self.port)
         accessible = exists and os.access(self.port, os.R_OK | os.W_OK)
         detail = "%s; %s" % (self.name, self.port)
+        if self._last_position is None:
+            detail += "; position=not read"
+        else:
+            detail += "; position=%d" % self._last_position
         if exists and not accessible: detail += "; permission denied"
         return DeviceState(exists, accessible and serial is not None, detail)

@@ -104,10 +104,12 @@ def run_terminal(controller: TaskController) -> None:
                 state = controller.grippers[args[2]].state()
                 print("%s gripper: %s" % (args[2], state.detail))
             elif args[:2] == ["gripper", "read"] and len(args) == 3:
+                if controller.mode == "mock": print("SIMULATION ONLY: this does not read the physical gripper.")
                 print("%s gripper position: %d" % (args[2], controller.gripper_position(args[2])))
             elif args[:2] in (["gripper", "set"], ["gripper", "half"], ["gripper", "open"], ["gripper", "close"]):
                 if len(args) < 3: raise ValueError("gripper side is required")
                 side = args[2]
+                if controller.mode == "mock": print("SIMULATION ONLY: this will not move the physical gripper.")
                 current = controller.gripper_position(side)
                 if args[1] == "set":
                     if len(args) != 4: raise ValueError("usage: gripper set SIDE VALUE")

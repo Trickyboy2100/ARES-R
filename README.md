@@ -77,6 +77,14 @@ ARES_R_PYTHON=/home/yikun/anaconda3/envs/dope3.8/bin/python \
   ./scripts/run_terminal.sh --mode gripper-only
 ```
 
+启动脚本现在会在工控机上自动选择该环境，因此通常直接执行下面这一条即可：
+
+```bash
+./scripts/run_terminal.sh --mode gripper-only
+```
+
+不要省略 `--mode gripper-only`。不带模式启动的是 Mock 仿真，显示的 `simulated_position=1000` 不是实物读数，也不会控制实物。
+
 夹爪位置范围为 `0–1000`。当前约定 `0` 为闭合方向、`1000` 为打开方向：
 
 ```text

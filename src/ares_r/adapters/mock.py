@@ -87,7 +87,7 @@ class MockGripper(Gripper):
         self.stopped = False
 
     def state(self) -> DeviceState:
-        return DeviceState(True, not self.stopped, "position=%d" % self._position)
+        return DeviceState(True, not self.stopped, "MOCK only; simulated_position=%d" % self._position)
 
 
 class MockBase(MobileBase):
