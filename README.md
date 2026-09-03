@@ -115,6 +115,8 @@ motion validate examples/trajectory.example.json
 
 视觉与运动联合调试入口见 `docs/COMMISSIONING_PLAYBOOK.md`；点云精度实验见 `docs/EPIC_VISION_VALIDATION.md`；cuRobo 迁移路线见 `docs/CUROBO_ROUTE.md`。
 
+2026-09-04 当日现场工作入口见 `docs/daily/2026-09-04_WORK_GUIDE.md`，结果记录使用 `docs/daily/2026-09-04_RESULT_TEMPLATE.md`。
+
 状态含义：
 
 - `UNCHECKED`：终端刚启动，尚未进行网络检查，不代表故障。
