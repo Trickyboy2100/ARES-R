@@ -1,7 +1,9 @@
 """Dependency-free terminal dashboard and command loop."""
 
 import shlex
+from pathlib import Path
 from .controller import TaskController
+from .worklog import WorkLog
 
 
 HELP = """Commands:
@@ -15,6 +17,7 @@ HELP = """Commands:
   cycle [dock 1-6]           run the complete mock cycle
   stop                       stop base, arms and grippers
   reset                      reset mock devices after stop/error
+  note <text>                append a Git-trackable work note
   help                       show commands
   quit                       exit
 """
@@ -37,6 +40,8 @@ def render(controller: TaskController) -> None:
 
 
 def run_terminal(controller: TaskController) -> None:
+    author = str(controller.config.get("team", {}).get("default_author", "unattributed"))
+    worklog = WorkLog(Path.cwd(), author)
     print(HELP); render(controller)
     while True:
         try:
@@ -59,6 +64,10 @@ def run_terminal(controller: TaskController) -> None:
             elif args[0] == "cycle": controller.cycle(int(args[1]) if len(args) > 1 else 1)
             elif args[0] == "stop": controller.stop_all()
             elif args[0] == "reset": controller.reset_mock()
+            elif args[0] == "note" and len(args) > 1:
+                summary = " ".join(args[1:])
+                path = worklog.add(summary, source="terminal", details="mode=%s, state=%s, active_arm=%s" % (controller.mode, controller.state.value, controller.active_arm))
+                print("Work note saved: %s" % path)
             else: print("Unknown command. Type 'help'.")
         except (ValueError, RuntimeError) as exc:
             print("Command failed: %s" % exc)

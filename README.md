@@ -22,6 +22,7 @@ ARES-R 是 BJUT-BBMG 团队用于双臂移动机器人视觉抓放任务的独�
 - `tests/`：不驱动真机的单元测试和协议解析测试。
 - `docs/`：接口、架构和调试记录。
 - `logs/`：本地运行日志，不提交 Git。
+- `worklog/`：人工工作记录、事后补录和交接模板，随 Git 提交。
 
 ## 原型入口
 
@@ -60,6 +61,21 @@ place
 ```
 
 `hardware` 模式目前有双重锁定，并且在真实设备 Adapter 完成验收前会拒绝启动。
+
+终端调试时可随手留痕：
+
+```text
+note Epic返回了6维抓取位姿，单位待核实
+```
+
+更完整的开发或事后补录使用：
+
+```bash
+./scripts/worklog add "完成内容" --author "姓名" --source manual \
+  --files src/ares_r/example.py --tests "验证方式" --next "下一步"
+```
+
+详细规则见 `worklog/README.md` 和 `CONTRIBUTING.md`。
 
 ## 外部依赖
 
