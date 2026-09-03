@@ -105,6 +105,16 @@ epic status
 epic detect pick
 ```
 
+保存的 Epic 5700 返回报文与规划轨迹可在任意机器离线检查：
+
+```text
+epic parse "220,1,2,..."
+motion inspect examples/trajectory.example.json
+motion validate examples/trajectory.example.json
+```
+
+视觉与运动联合调试入口见 `docs/COMMISSIONING_PLAYBOOK.md`；点云精度实验见 `docs/EPIC_VISION_VALIDATION.md`；cuRobo 迁移路线见 `docs/CUROBO_ROUTE.md`。
+
 状态含义：
 
 - `UNCHECKED`：终端刚启动，尚未进行网络检查，不代表故障。

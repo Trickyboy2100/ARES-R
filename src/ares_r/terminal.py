@@ -4,6 +4,8 @@ import atexit
 import shlex
 from pathlib import Path
 from .controller import TaskController
+from .adapters.epic_protocol import parse_5700_response
+from .motion import load_motion_limits, load_trajectory, validate_trajectory
 from .worklog import WorkLog
 
 try:
@@ -17,6 +19,9 @@ HELP = """Commands:
   epic status                show Epic connection configuration/state
   epic detect pick           Epic detection only; never moves a device
   epic detect place [1-6]    Epic dock detection only; never moves a device
+  epic parse "RESPONSE"       parse a saved 5700 response offline
+  motion inspect FILE        summarize a planner-neutral joint trajectory
+  motion validate FILE       run offline safety gates; never moves a device
   gripper status left|right  show configured gripper device
   gripper read left|right    read current opening position
   gripper set SIDE VALUE     move to position 0-1000 (asks for YES)
@@ -99,6 +104,28 @@ def run_terminal(controller: TaskController) -> None:
                 dock_id = int(args[3]) if len(args) > 3 else 1
                 print("DETECTION ONLY: no arm, gripper or base command will be issued.")
                 controller.detect_place(dock_id)
+            elif args[:2] == ["epic", "parse"] and len(args) == 3:
+                response = parse_5700_response(args[2])
+                print("Epic response: command=%d type=%s poses=%d space=%d object=%d grasp=%d" % (
+                    response.command_code, response.pose_type, response.pose_count,
+                    response.space_id, response.object_id, response.grasp_index))
+                for index, pose in enumerate(response.poses):
+                    print("pose[%d]: %s" % (index, ", ".join("%.9g" % value for value in pose)))
+            elif args[:2] in (["motion", "inspect"], ["motion", "validate"]) and len(args) == 3:
+                trajectory = load_trajectory(Path(args[2]))
+                print("trajectory: planner=%s arm=%s points=%d period=%.4fs collision_checked=%s" % (
+                    trajectory.planner, trajectory.arm, len(trajectory.points),
+                    trajectory.sample_period_s, trajectory.collision_checked))
+                if args[1] == "validate":
+                    limits_path = Path(str(controller.config.get("motion", {}).get(
+                        "limits_file", "config/jaka_minicobo_motion.example.json")))
+                    issues = validate_trajectory(trajectory, load_motion_limits(limits_path))
+                    for issue in issues:
+                        print("%s %-20s %s" % (issue.severity, issue.code, issue.message))
+                    if any(issue.severity == "ERROR" for issue in issues):
+                        print("BLOCKED: trajectory cannot enter the JAKA execution stage.")
+                    else:
+                        print("PASS: offline gates passed; live preflight is still required.")
             elif args[:2] == ["gripper", "status"] and len(args) == 3:
                 if args[2] not in controller.grippers: raise ValueError("gripper must be left or right")
                 state = controller.grippers[args[2]].state()
