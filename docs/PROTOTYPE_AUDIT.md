@@ -13,7 +13,7 @@
 - `jiazhua_control.py`：因时夹爪串口协议封装。
 - `utility_function.py`：SE(3) 平均及 ArUco 跟踪工具。
 
-这些文件作为基线原样保存，后续修复应在 `src/bjut_robot/` 中进行，或通过明确提交修改原型。
+这些文件作为基线原样保存，后续修复应在 `src/ares_r/` 中进行，或通过明确提交修改原型。
 
 ## 已知问题
 

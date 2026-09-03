@@ -1,6 +1,6 @@
-# BJUT Robot Workspace
+# ARES-R
 
-北京工业大学团队用于双臂移动机器人视觉抓放任务的独立工作区。
+ARES-R 是 BJUT-BBMG 团队用于双臂移动机器人视觉抓放任务的独立工作区。
 
 目标流程：
 
@@ -16,7 +16,7 @@
 ## 目录
 
 - `prototype/`：从原项目复制的现场原型及其最小本地依赖，暂时保持原样。
-- `src/bjut_robot/`：后续正式模块代码。
+- `src/ares_r/`：后续正式模块代码。
 - `config/`：机器人、相机、工位、TCP 和运行参数。
 - `scripts/`：启动与现场辅助脚本。
 - `tests/`：不驱动真机的单元测试和协议解析测试。
@@ -49,7 +49,7 @@ python3 prototype/0_test.py
 ```bash
 git remote add origin <repository-url>
 git add .
-git commit -m "Initial BJUT robot workspace"
+git commit -m "Initial ARES-R workspace"
 git push -u origin main
 ```
 
