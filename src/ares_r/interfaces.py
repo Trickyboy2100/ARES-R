@@ -15,6 +15,10 @@ class Perception(ABC):
     @abstractmethod
     def state(self) -> DeviceState: ...
 
+    def probe(self) -> DeviceState:
+        """Check availability without triggering a detection."""
+        return self.state()
+
     def close(self) -> None:
         pass
 

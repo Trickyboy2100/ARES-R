@@ -36,9 +36,15 @@ class TaskController:
         if self.carrying: raise RuntimeError("cannot switch arm while carrying an object")
         self.active_arm = name; self.events.write("arm_selected", arm=name)
 
+    def probe_perception(self):
+        result = self.perception.probe()
+        self.events.write("epic_probe", connected=result.connected, ready=result.ready, detail=result.detail)
+        return result
+
     def detect_pick(self) -> DetectionResult:
         result = self._run(TaskState.DETECTING_PICK, "detect_pick", self.perception.detect_pick)
         if not result.success:
+            self.last_detection = result
             self.last_error = result.error or "pick detection failed"
             self.state = TaskState.ERROR
             raise RuntimeError(self.last_error)
@@ -69,6 +75,7 @@ class TaskController:
             raise ValueError("dock_id must be between 1 and 6")
         result = self._run(TaskState.DETECTING_PLACE, "detect_place", lambda: self.perception.detect_place(dock_id))
         if not result.success:
+            self.last_detection = result
             self.last_error = result.error or "place detection failed"
             self.state = TaskState.ERROR
             raise RuntimeError(self.last_error)

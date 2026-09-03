@@ -3,7 +3,7 @@
 import socket
 import time
 import uuid
-from typing import Dict, List
+from typing import Dict, List, Optional
 from ..interfaces import Perception
 from ..models import DetectionResult, DeviceState, Pose
 
@@ -21,11 +21,20 @@ class EpicClient(Perception):
         self.place_command = str(config["place_command"])
         self.terminator = str(config.get("response_terminator", ""))
         self.sock = None  # type: socket.socket
+        self._last_probe = None  # type: Optional[bool]
+        self._last_error = ""
 
     def _connect(self) -> None:
         self.close()
-        self.sock = socket.create_connection((self.host, self.port), self.timeout)
-        self.sock.settimeout(self.timeout)
+        try:
+            self.sock = socket.create_connection((self.host, self.port), self.timeout)
+            self.sock.settimeout(self.timeout)
+            self._last_probe = True
+            self._last_error = ""
+        except Exception as exc:
+            self._last_probe = False
+            self._last_error = str(exc)
+            raise
 
     def _exchange(self, command: str) -> str:
         self._connect()
@@ -68,10 +77,15 @@ class EpicClient(Perception):
 
     def _detect(self, command: str, kind: str) -> DetectionResult:
         request_id = str(uuid.uuid4())
+        raw = ""
         try:
-            return self._parse_pose(self._exchange(command), kind, request_id)
+            raw = self._exchange(command)
+            return self._parse_pose(raw, kind, request_id)
         except Exception as exc:
-            return DetectionResult(False, request_id, kind, error=str(exc))
+            # A received protocol/error frame proves the endpoint is reachable.
+            self._last_probe = True if raw else False
+            self._last_error = str(exc)
+            return DetectionResult(False, request_id, kind, raw_response=raw, error=str(exc))
 
     def detect_pick(self) -> DetectionResult:
         return self._detect(self.pick_command, "pick")
@@ -80,7 +94,21 @@ class EpicClient(Perception):
         return self._detect(self.place_command, "place:%d" % dock_id)
 
     def state(self) -> DeviceState:
-        return DeviceState(self.sock is not None, True, "%s:%d" % (self.host, self.port))
+        endpoint = "%s:%d" % (self.host, self.port)
+        if self._last_probe is None:
+            return DeviceState(False, False, "not checked; " + endpoint)
+        if self._last_probe:
+            return DeviceState(True, True, "reachable; " + endpoint)
+        return DeviceState(False, False, "unreachable; %s; %s" % (endpoint, self._last_error))
+
+    def probe(self) -> DeviceState:
+        try:
+            self._connect()
+        except Exception:
+            return self.state()
+        finally:
+            self.close()
+        return self.state()
 
     def close(self) -> None:
         if self.sock is not None:

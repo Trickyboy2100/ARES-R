@@ -32,13 +32,18 @@ def render(controller: TaskController) -> None:
     print("ARES-R TERMINAL  mode=%s  task=%s  arm=%s  carrying=%s" % (snapshot.mode, snapshot.task_state.value, snapshot.active_arm, snapshot.carrying_object))
     print("-" * 72)
     for name, state in snapshot.devices.items():
-        flag = "READY" if state.connected and state.ready else "NOT READY"
+        if name == "epic" and state.detail.startswith("not checked"):
+            flag = "UNCHECKED"
+        else:
+            flag = "READY" if state.connected and state.ready else "NOT READY"
         print("%-16s %-10s %s" % (name, flag, state.detail))
     if snapshot.last_detection and snapshot.last_detection.pose:
         det = snapshot.last_detection
         print("last detection: %s  confidence=%s  frame=%s" % (det.kind, det.confidence, det.pose.frame_id))
         print("pose SI: x=%.4f m  y=%.4f m  z=%.4f m  rx=%.4f rad  ry=%.4f rad  rz=%.4f rad" % tuple(det.pose.values()))
         if det.raw_response: print("raw response: " + det.raw_response)
+    elif snapshot.last_detection and snapshot.last_detection.raw_response:
+        print("raw response (parse failed): " + snapshot.last_detection.raw_response)
     if snapshot.last_error: print("ERROR: " + snapshot.last_error)
     print("=" * 72)
 
@@ -54,7 +59,9 @@ def run_terminal(controller: TaskController) -> None:
             if args[0] in ("quit", "exit"): break
             if args[0] == "help": print(HELP)
             elif args[0] == "status": pass
-            elif args[:2] == ["epic", "status"]: pass
+            elif args[:2] == ["epic", "status"]:
+                state = controller.probe_perception()
+                print("Epic status: %s" % state.detail)
             elif args[:3] == ["epic", "detect", "pick"]:
                 print("DETECTION ONLY: no arm, gripper or base command will be issued.")
                 controller.detect_pick()

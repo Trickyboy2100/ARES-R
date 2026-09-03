@@ -69,6 +69,14 @@ epic status
 epic detect pick
 ```
 
+状态含义：
+
+- `UNCHECKED`：终端刚启动，尚未进行网络检查，不代表故障。
+- `READY / reachable`：Epic TCP 服务可连接。
+- `NOT READY / unreachable`：无法连接 Epic TCP 服务。
+
+检测成功时终端显示 SI 单位坐标和 Epic 原始响应。检测失败但收到类似 `000,3020` 的短报文时，Epic 仍然是 `READY`，原始报文会保留供协议和算法图排查。
+
 终端调试时可随手留痕：
 
 ```text

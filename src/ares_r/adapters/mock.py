@@ -22,6 +22,9 @@ class MockPerception(Perception):
     def state(self) -> DeviceState:
         return DeviceState(self._connected, True, "mock camera")
 
+    def probe(self) -> DeviceState:
+        return self.state()
+
 
 class MockArm(Arm):
     def __init__(self, name: str) -> None:
