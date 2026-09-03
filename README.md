@@ -42,6 +42,8 @@ python3 prototype/0_test.py
 ./scripts/run_terminal.sh
 ```
 
+交互终端支持上下箭头浏览最近输入的命令，并在 `logs/.terminal_history` 中保留最近 500 条本机历史；该文件不会提交到 Git。
+
 可在终端中依次执行：
 
 ```text

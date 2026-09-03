@@ -1,9 +1,15 @@
 """Dependency-free terminal dashboard and command loop."""
 
+import atexit
 import shlex
 from pathlib import Path
 from .controller import TaskController
 from .worklog import WorkLog
+
+try:
+    import readline
+except ImportError:  # pragma: no cover - readline is present on the target Linux host
+    readline = None
 
 
 HELP = """Commands:
@@ -24,6 +30,23 @@ HELP = """Commands:
   help                       show commands
   quit                       exit
 """
+
+
+def setup_command_history(repository: Path) -> None:
+    """Enable Up/Down history and persist it between terminal sessions."""
+    if readline is None:
+        return
+    history_path = repository / "logs" / ".terminal_history"
+    history_path.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        readline.read_history_file(str(history_path))
+    except FileNotFoundError:
+        pass
+    readline.set_history_length(500)
+    readline.parse_and_bind("set editing-mode emacs")
+    readline.parse_and_bind('"\\e[A": previous-history')
+    readline.parse_and_bind('"\\e[B": next-history')
+    atexit.register(readline.write_history_file, str(history_path))
 
 
 def render(controller: TaskController) -> None:
@@ -49,6 +72,7 @@ def render(controller: TaskController) -> None:
 
 
 def run_terminal(controller: TaskController) -> None:
+    setup_command_history(Path.cwd())
     author = str(controller.config.get("team", {}).get("default_author", "unattributed"))
     worklog = WorkLog(Path.cwd(), author)
     print(HELP); render(controller)
