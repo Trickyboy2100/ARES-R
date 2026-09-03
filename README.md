@@ -33,6 +33,34 @@ python3 prototype/0_test.py
 
 警告：该脚本会连接并控制真实设备。当前原型尚未完成安全检查，也存在 API 不匹配；在修复并完成 dry-run 之前不要直接运行。
 
+## 安全终端框架
+
+新框架默认使用 Mock 设备，不会连接或驱动真机：
+
+```bash
+./scripts/run_terminal.sh
+```
+
+可在终端中依次执行：
+
+```text
+status
+nav pick
+detect pick
+pick
+nav place
+detect place 1
+place
+```
+
+也可以用 `cycle 1` 完成一次 Mock 流程。`camera-only` 模式只连接 Epic 相机，机械臂、夹爪和底盘仍为 Mock：
+
+```bash
+./scripts/run_terminal.sh --mode camera-only
+```
+
+`hardware` 模式目前有双重锁定，并且在真实设备 Adapter 完成验收前会拒绝启动。
+
 ## 外部依赖
 
 - ROS 1 / `rospy` / `std_msgs`
