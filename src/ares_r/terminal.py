@@ -8,6 +8,9 @@ from .worklog import WorkLog
 
 HELP = """Commands:
   status                     show device and task state
+  epic status                show Epic connection configuration/state
+  epic detect pick           Epic detection only; never moves a device
+  epic detect place [1-6]    Epic dock detection only; never moves a device
   arm left|right             select active arm
   detect pick                run pick detection
   pick                       approach, grip and lift
@@ -34,7 +37,8 @@ def render(controller: TaskController) -> None:
     if snapshot.last_detection and snapshot.last_detection.pose:
         det = snapshot.last_detection
         print("last detection: %s  confidence=%s  frame=%s" % (det.kind, det.confidence, det.pose.frame_id))
-        print("pose: " + " ".join("%.4f" % value for value in det.pose.values()))
+        print("pose SI: x=%.4f m  y=%.4f m  z=%.4f m  rx=%.4f rad  ry=%.4f rad  rz=%.4f rad" % tuple(det.pose.values()))
+        if det.raw_response: print("raw response: " + det.raw_response)
     if snapshot.last_error: print("ERROR: " + snapshot.last_error)
     print("=" * 72)
 
@@ -50,6 +54,14 @@ def run_terminal(controller: TaskController) -> None:
             if args[0] in ("quit", "exit"): break
             if args[0] == "help": print(HELP)
             elif args[0] == "status": pass
+            elif args[:2] == ["epic", "status"]: pass
+            elif args[:3] == ["epic", "detect", "pick"]:
+                print("DETECTION ONLY: no arm, gripper or base command will be issued.")
+                controller.detect_pick()
+            elif args[:3] == ["epic", "detect", "place"]:
+                dock_id = int(args[3]) if len(args) > 3 else 1
+                print("DETECTION ONLY: no arm, gripper or base command will be issued.")
+                controller.detect_place(dock_id)
             elif args[0] == "arm" and len(args) == 2: controller.select_arm(args[1])
             elif args[:2] == ["detect", "pick"]: controller.detect_pick()
             elif args[0] == "pick": controller.pick()

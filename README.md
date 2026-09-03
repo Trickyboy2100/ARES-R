@@ -62,6 +62,13 @@ place
 
 `hardware` 模式目前有双重锁定，并且在真实设备 Adapter 完成验收前会拒绝启动。
 
+进入 `camera-only` 后，以下命令只触发 Epic 检测并显示抓取坐标，不会操作机械臂、夹爪或底盘：
+
+```text
+epic status
+epic detect pick
+```
+
 终端调试时可随手留痕：
 
 ```text
