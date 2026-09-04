@@ -22,11 +22,7 @@ git pull --ff-only origin main
 git log -1 --oneline
 ```
 
-期望基线：
-
-```text
-085aaf3 motion: add vision planning commissioning framework
-```
+记录实际 `git log -1 --oneline`，不要依赖文档中的历史提交号。
 
 分别建立分支：
 
@@ -113,7 +109,7 @@ epic detect pick
 
 Epic 工程完成以下配置检查：
 
-- JAKA MiniCobo 机器人模型与关节零位一致。
+- JAKA Mini2 机器人模型与关节零位一致；型号以铭牌/JAKA APP 为准。
 - 所有臂段均配置碰撞模型。
 - 夹爪模型参与碰撞检测。
 - 场景点云与匹配模型作为动态障碍。
@@ -150,10 +146,11 @@ raw_response
 
 ### B0：代码边界
 
-当天只允许修改：
+当天优先修改：
 
 ```text
 src/ares_r/adapters/jaka_servo.py
+src/ares_r/adapters/jaka_sdk.py
 src/ares_r/motion/
 tests/test_jaka_servo.py
 tests/test_motion.py
@@ -165,13 +162,27 @@ worklog/
 
 ### B1：只读状态基线
 
-通过 JAKA SDK 只读取并保存：
+启动只读入口并保存双臂基线：
+
+```bash
+./scripts/run_terminal.sh --mode jaka-readonly
+```
+
+```text
+jaka status left
+jaka status right
+jaka baseline
+```
+
+内部只调用以下 JAKA SDK 查询：
 
 ```text
 get_sdk_version()
 get_robot_status()
 get_joint_position()
 get_tcp_position()
+get_tool_id()
+get_tool_data(tool_id)
 is_on_limit()
 is_in_collision()
 ```
@@ -192,22 +203,22 @@ collision_recover
 
 ### B2：现场限位配置
 
-复制示例配置：
+确认第二份现场配置存在：
 
 ```bash
-cp config/jaka_minicobo_motion.example.json config/jaka_minicobo_motion.site.json
+test -f config/jaka_mini2_motion.site.json
 ```
 
 在 JAKA 实验分支中，把 `config/system.json` 的 `motion.limits_file` 改为：
 
 ```json
-"limits_file": "config/jaka_minicobo_motion.site.json"
+"limits_file": "config/jaka_mini2_motion.site.json"
 ```
 
 依次核对：
 
 - 关节顺序与 `get_joint_position()` 一致。
-- 上下限与当前 MiniCobo 型号、控制器软限位一致。
+- 上下限与当前 Mini2 型号、控制器软限位一致。
 - 最大速度与最大加速度采用低速调试值。
 - 软限位余量不得为零。
 - 起点允许误差采用保守值。
@@ -233,6 +244,8 @@ cp config/jaka_minicobo_motion.example.json config/jaka_minicobo_motion.site.jso
 ```text
 motion inspect examples/trajectory.example.json
 motion validate examples/trajectory.example.json
+jaka preflight left examples/trajectory.example.json
+jaka preflight right examples/trajectory.example.json
 ```
 
 预期结果必须为 `BLOCKED`，原因至少包括：
@@ -269,7 +282,7 @@ COLLISION
 
 ### B5：首次空载动作条件
 
-当天默认不进入动作阶段。以下条件全部满足后，才允许单臂、空载、短轨迹、低速验证：
+当前授权明确禁止进入动作阶段。下列条件仅作为未来独立审批清单，不构成当日动作许可：
 
 - 现场限位配置已复核并提交审查。
 - 当前关节与轨迹首点误差合格。

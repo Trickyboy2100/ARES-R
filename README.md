@@ -64,6 +64,27 @@ place
 
 `hardware` 模式目前有双重锁定，并且在真实设备 Adapter 完成验收前会拒绝启动。
 
+当前站点配置标记为 JAKA Mini2（左臂 `.100`、右臂 `.101`）；SDK 无可信型号查询，型号仍须由双臂铭牌和 JAKA APP 留证确认。只读 SDK 模式只登录并查询状态，不上电、不使能、不运动：
+
+```bash
+./scripts/run_terminal.sh --mode jaka-readonly
+```
+
+```text
+jaka status left
+jaka status right
+jaka baseline
+jaka preflight left examples/trajectory.example.json
+```
+
+仓库已经包含第二份现场配置：
+
+```text
+config/jaka_mini2_motion.site.json
+```
+
+当前上下限为安全占位值，故意保持 `commissioning_confirmed=false`。必须从机器人铭牌/JAKA APP 核实型号，并从控制器或对应型号官方资料核实关节限位后才能填写。该文件纳入 Git 评审；当前 Terminal 不注册 JAKA 运动执行器。
+
 夹爪单独调试使用 `gripper-only`，此模式不会连接或移动机械臂和底盘：
 
 ```bash
@@ -115,7 +136,7 @@ motion validate examples/trajectory.example.json
 
 视觉与运动联合调试入口见 `docs/COMMISSIONING_PLAYBOOK.md`；点云精度实验见 `docs/EPIC_VISION_VALIDATION.md`；cuRobo 迁移路线见 `docs/CUROBO_ROUTE.md`。
 
-2026-09-04 当日现场工作入口见 `docs/daily/2026-09-04_WORK_GUIDE.md`，结果记录使用 `docs/daily/2026-09-04_RESULT_TEMPLATE.md`。
+2026-09-04 当日现场工作入口见 `docs/daily/2026-09-04_WORK_GUIDE.md`，JAKA 分阶段流程见 `docs/daily/2026-09-04_JAKA_WORKFLOW.md`，V2.1.5 实测契约与 Servo 风险见 `docs/JAKA_SDK_AUDIT_2026-09-04.md`，结果记录使用 `docs/daily/2026-09-04_RESULT_TEMPLATE.md`。
 
 状态含义：
 

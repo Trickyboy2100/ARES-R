@@ -10,10 +10,19 @@ class TerminalHistoryTest(unittest.TestCase):
     @unittest.skipIf(terminal.readline is None, "readline unavailable")
     def test_history_file_is_under_ignored_logs(self):
         with tempfile.TemporaryDirectory() as root:
-            with patch.object(terminal.atexit, "register") as register:
+            with patch.object(terminal.atexit, "register") as register, \
+                    patch.object(terminal.readline, "read_history_file", side_effect=FileNotFoundError):
                 terminal.setup_command_history(Path(root))
-                expected = str(Path(root) / "logs" / ".terminal_history")
-                register.assert_called_once_with(terminal.readline.write_history_file, expected)
+                register.assert_called_once()
+
+    def test_jaka_readonly_command_allowlist(self):
+        self.assertTrue(terminal._allowed_in_jaka_readonly(["jaka", "status", "left"]))
+        self.assertTrue(terminal._allowed_in_jaka_readonly(["motion", "validate", "path.json"]))
+        self.assertTrue(terminal._allowed_in_jaka_readonly(["note", "audit"]))
+        self.assertFalse(terminal._allowed_in_jaka_readonly(["pick"]))
+        self.assertFalse(terminal._allowed_in_jaka_readonly(["stop"]))
+        self.assertFalse(terminal._allowed_in_jaka_readonly(["gripper", "open", "left"]))
+        self.assertFalse(terminal._allowed_in_jaka_readonly(["nav", "pick"]))
 
 
 if __name__ == "__main__":

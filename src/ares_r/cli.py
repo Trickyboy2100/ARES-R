@@ -20,7 +20,7 @@ def load_config(path: str):
 def main() -> None:
     parser = argparse.ArgumentParser(description="ARES-R terminal controller")
     parser.add_argument("--config", default="config/system.json")
-    parser.add_argument("--mode", choices=["mock", "camera-only", "gripper-only", "hardware"], default=None)
+    parser.add_argument("--mode", choices=["mock", "camera-only", "gripper-only", "jaka-readonly", "hardware"], default=None)
     args = parser.parse_args()
     config = load_config(args.config)
     mode = args.mode or str(config.get("mode", "mock"))
@@ -30,7 +30,14 @@ def main() -> None:
     try:
         run_terminal(controller)
     finally:
-        controller.perception.close()
+        devices = [controller.perception] + list(controller.arms.values()) + list(controller.grippers.values()) + [controller.base]
+        for device in devices:
+            close = getattr(device, "close", None)
+            if close:
+                try:
+                    close()
+                except Exception as exc:
+                    print("Cleanup warning: %s" % exc)
 
 
 if __name__ == "__main__":

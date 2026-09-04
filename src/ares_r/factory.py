@@ -24,6 +24,12 @@ def build_controller(config: Dict[str, object], mode: str) -> TaskController:
         arms = {"left": MockArm("left"), "right": MockArm("right")}
         grippers = {name: SerialGripper(name, values) for name, values in config["grippers"].items()}
         base = MockBase()
+    elif mode == "jaka-readonly":
+        from .adapters.jaka_sdk import build_readonly_arms
+        perception = MockPerception()
+        arms = build_readonly_arms(config["jaka"])
+        grippers = {"left": MockGripper(), "right": MockGripper()}
+        base = MockBase()
     else:
         raise RuntimeError("hardware mode is intentionally locked until JAKA, gripper and base adapters pass commissioning")
     return TaskController(mode, perception, arms, grippers, base, config, EventLog(str(config["logging"]["directory"])))

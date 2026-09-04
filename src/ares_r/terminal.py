@@ -1,7 +1,9 @@
 """Dependency-free terminal dashboard and command loop."""
 
 import atexit
+import json
 import shlex
+from datetime import datetime
 from pathlib import Path
 from .controller import TaskController
 from .adapters.epic_protocol import parse_5700_response
@@ -22,6 +24,9 @@ HELP = """Commands:
   epic parse "RESPONSE"       parse a saved 5700 response offline
   motion inspect FILE        summarize a planner-neutral joint trajectory
   motion validate FILE       run offline safety gates; never moves a device
+  jaka status left|right     read live JAKA SDK diagnostics; never moves an arm
+  jaka baseline [FILE]       save both-arm read-only diagnostics as JSON
+  jaka preflight SIDE FILE   combine live read-only state with trajectory gates
   gripper status left|right  show configured gripper device
   gripper read left|right    read current opening position
   gripper set SIDE VALUE     move to position 0-1000 (asks for YES)
@@ -42,6 +47,28 @@ HELP = """Commands:
   quit                       exit
 """
 
+JAKA_READONLY_HELP = """JAKA read-only commands:
+  status                     show read-only device state
+  jaka status left|right     read live SDK diagnostics
+  jaka baseline [FILE]       save both-arm diagnostics as JSON
+  jaka preflight SIDE FILE   combine live state with offline trajectory gates
+  motion inspect FILE        summarize a joint trajectory offline
+  motion validate FILE       validate a joint trajectory offline
+  note <text>                append a Git-trackable work note
+  help                       show these commands
+  quit                       exit
+
+All base, arm and gripper control commands are blocked in this mode.
+"""
+
+
+def _allowed_in_jaka_readonly(args) -> bool:
+    return (
+        args[0] in ("status", "help", "quit", "exit", "note")
+        or args[:2] in (["jaka", "status"], ["jaka", "baseline"], ["jaka", "preflight"])
+        or args[:2] in (["motion", "inspect"], ["motion", "validate"])
+    )
+
 
 def setup_command_history(repository: Path) -> None:
     """Enable Up/Down history and persist it between terminal sessions."""
@@ -53,11 +80,20 @@ def setup_command_history(repository: Path) -> None:
         readline.read_history_file(str(history_path))
     except FileNotFoundError:
         pass
+    except OSError:
+        # History is optional; a stale root-owned file must not block the terminal.
+        return
     readline.set_history_length(500)
     readline.parse_and_bind("set editing-mode emacs")
     readline.parse_and_bind('"\\e[A": previous-history')
     readline.parse_and_bind('"\\e[B": next-history')
-    atexit.register(readline.write_history_file, str(history_path))
+    def save_history() -> None:
+        try:
+            readline.write_history_file(str(history_path))
+        except OSError:
+            pass
+
+    atexit.register(save_history)
 
 
 def render(controller: TaskController) -> None:
@@ -66,7 +102,10 @@ def render(controller: TaskController) -> None:
     print("ARES-R TERMINAL  mode=%s  task=%s  arm=%s  carrying=%s" % (snapshot.mode, snapshot.task_state.value, snapshot.active_arm, snapshot.carrying_object))
     print("-" * 72)
     for name, state in snapshot.devices.items():
-        if name == "epic" and state.detail.startswith("not checked"):
+        if snapshot.mode == "jaka-readonly" and name in ("epic", "base", "gripper_left", "gripper_right"):
+            flag = "DISABLED"
+            state.detail = "not connected in jaka-readonly mode"
+        elif name == "epic" and state.detail.startswith("not checked"):
             flag = "UNCHECKED"
         else:
             flag = "READY" if state.connected and state.ready else "NOT READY"
@@ -86,13 +125,15 @@ def run_terminal(controller: TaskController) -> None:
     setup_command_history(Path.cwd())
     author = str(controller.config.get("team", {}).get("default_author", "unattributed"))
     worklog = WorkLog(Path.cwd(), author)
-    print(HELP); render(controller)
+    print(JAKA_READONLY_HELP if controller.mode == "jaka-readonly" else HELP); render(controller)
     while True:
         try:
             args = shlex.split(input("ares-r> ").strip())
             if not args: continue
+            if controller.mode == "jaka-readonly" and not _allowed_in_jaka_readonly(args):
+                raise RuntimeError("command blocked by jaka-readonly mode; no control API called")
             if args[0] in ("quit", "exit"): break
-            if args[0] == "help": print(HELP)
+            if args[0] == "help": print(JAKA_READONLY_HELP if controller.mode == "jaka-readonly" else HELP)
             elif args[0] == "status": pass
             elif args[:2] == ["epic", "status"]:
                 state = controller.probe_perception()
@@ -118,7 +159,7 @@ def run_terminal(controller: TaskController) -> None:
                     trajectory.sample_period_s, trajectory.collision_checked))
                 if args[1] == "validate":
                     limits_path = Path(str(controller.config.get("motion", {}).get(
-                        "limits_file", "config/jaka_minicobo_motion.example.json")))
+                        "limits_file", "config/jaka_mini2_motion.site.json")))
                     issues = validate_trajectory(trajectory, load_motion_limits(limits_path))
                     for issue in issues:
                         print("%s %-20s %s" % (issue.severity, issue.code, issue.message))
@@ -126,6 +167,43 @@ def run_terminal(controller: TaskController) -> None:
                         print("BLOCKED: trajectory cannot enter the JAKA execution stage.")
                     else:
                         print("PASS: offline gates passed; live preflight is still required.")
+            elif args[:2] == ["jaka", "status"] and len(args) == 3:
+                if controller.mode != "jaka-readonly":
+                    raise RuntimeError("start with --mode jaka-readonly for live JAKA queries")
+                side = args[2]
+                if side not in controller.arms: raise ValueError("arm must be left or right")
+                print(json.dumps(controller.arms[side].diagnostics(), ensure_ascii=False, indent=2))
+            elif args[:2] == ["jaka", "baseline"]:
+                if controller.mode != "jaka-readonly":
+                    raise RuntimeError("start with --mode jaka-readonly for live JAKA queries")
+                if len(args) > 3: raise ValueError("usage: jaka baseline [FILE]")
+                output = Path(args[2]) if len(args) == 3 else Path(
+                    "worklog/baseline_jaka_%s.json" % datetime.now().strftime("%Y%m%d_%H%M%S"))
+                data = {
+                    "schema_version": 1,
+                    "timestamp": datetime.now().astimezone().isoformat(),
+                    "mode": "jaka-readonly",
+                    "arms": {name: controller.arms[name].diagnostics() for name in ("left", "right")},
+                }
+                output.parent.mkdir(parents=True, exist_ok=True)
+                output.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+                print("Read-only JAKA baseline saved: %s" % output)
+            elif args[:2] == ["jaka", "preflight"] and len(args) == 4:
+                if controller.mode != "jaka-readonly":
+                    raise RuntimeError("start with --mode jaka-readonly for live JAKA queries")
+                side = args[2]
+                if side not in controller.arms: raise ValueError("arm must be left or right")
+                from .adapters.jaka_sdk import readonly_trajectory_preflight
+                trajectory = load_trajectory(Path(args[3]))
+                limits_path = Path(str(controller.config["motion"]["limits_file"]))
+                issues = readonly_trajectory_preflight(
+                    controller.arms[side], trajectory, load_motion_limits(limits_path))
+                for issue in issues:
+                    print("%s %-20s %s" % (issue.severity, issue.code, issue.message))
+                if any(issue.severity == "ERROR" for issue in issues):
+                    print("BLOCKED: live read-only preflight rejected the trajectory; no motion API called.")
+                else:
+                    print("PASS: read-only preflight passed; motion remains unavailable in this mode.")
             elif args[:2] == ["gripper", "status"] and len(args) == 3:
                 if args[2] not in controller.grippers: raise ValueError("gripper must be left or right")
                 state = controller.grippers[args[2]].state()
@@ -173,6 +251,9 @@ def run_terminal(controller: TaskController) -> None:
         except (ValueError, RuntimeError) as exc:
             print("Command failed: %s" % exc)
         except KeyboardInterrupt:
-            print("\nInterrupt received: stopping all devices")
-            controller.stop_all()
+            if controller.mode == "jaka-readonly":
+                print("\nInterrupt received: read-only session remains motion-free")
+            else:
+                print("\nInterrupt received: stopping all devices")
+                controller.stop_all()
         render(controller)
