@@ -33,16 +33,69 @@ def _wrap_pi(value: float) -> float:
     return (value + math.pi) % (2.0 * math.pi) - math.pi
 
 
+def _matmul(left, right):
+    return [[sum(left[row][k] * right[k][col] for k in range(4))
+             for col in range(4)] for row in range(4)]
+
+
+def _rx(value):
+    cosine, sine = math.cos(value), math.sin(value)
+    return [[1, 0, 0, 0], [0, cosine, -sine, 0],
+            [0, sine, cosine, 0], [0, 0, 0, 1]]
+
+
+def _rz(value):
+    cosine, sine = math.cos(value), math.sin(value)
+    return [[cosine, -sine, 0, 0], [sine, cosine, 0, 0],
+            [0, 0, 1, 0], [0, 0, 0, 1]]
+
+
+def _translate(x=0.0, z=0.0):
+    return [[1, 0, 0, x], [0, 1, 0, 0], [0, 0, 1, z], [0, 0, 0, 1]]
+
+
+def joint_points_base_m(model: Dict[str, object], joints_rad: Sequence[float]) -> List[List[float]]:
+    """Return base and J1..J6 origins from the documented side-mount MDH chain."""
+    if len(joints_rad) != 6:
+        raise ValueError("six joint positions are required")
+    transform = [[1, 0, 0, 0], [0, 1, 0, 0],
+                 [0, 0, 1, 0], [0, 0, 0, 1]]
+    points = [[0.0, 0.0, 0.0]]
+    rows = zip(model["alpha_deg"], model["a_mm"], model["theta_offset_deg"],
+               model["d_mm"], joints_rad)
+    for alpha, link, offset, distance, joint in rows:
+        for part in (_rx(math.radians(float(alpha))), _translate(x=float(link) / 1000.0),
+                     _rz(float(joint) + math.radians(float(offset))),
+                     _translate(z=float(distance) / 1000.0)):
+            transform = _matmul(transform, part)
+        points.append([float(transform[index][3]) for index in range(3)])
+    return points
+
+
+def _point_base_to_world(base: Dict[str, object], point: Sequence[float]) -> List[float]:
+    bx, by, bz = (float(value) for value in base["base_xyz_m"])
+    yaw = float(base["base_rpy_rad"][2])
+    cosine, sine = math.cos(yaw), math.sin(yaw)
+    x, y, z = (float(value) for value in point)
+    return [bx + cosine * x - sine * y, by + sine * x + cosine * y, bz + z]
+
+
 def world_snapshot(config: Dict[str, object], diagnostics: Dict[str, Dict[str, object]]) -> Dict[str, object]:
     arms = {}
     for side in ("left", "right"):
         base = config["arms"][side]
+        joints = diagnostics[side].get("joint_position_rad")
+        joint_points = []
+        if joints is not None and config.get("display_kinematics"):
+            joint_points = [_point_base_to_world(base, point) for point in
+                            joint_points_base_m(config["display_kinematics"], joints)]
         arms[side] = {
             "base_xyz_m": list(base["base_xyz_m"]),
             "base_rpy_rad": list(base["base_rpy_rad"]),
             "tcp_xyzrpy_m_rad": base_tcp_to_world(base, diagnostics[side]["tcp_position_mm_rad"]),
             "active_tool_id": diagnostics[side]["tool_id"],
             "configured_tool_tcp_mm_rad": diagnostics[side]["tool_data"]["pose_mm_rad"],
+            "joint_points_world_m": joint_points,
         }
     return {"frame": config["frame"], "arms": arms}
 
@@ -54,8 +107,9 @@ def _projection(snapshot: Dict[str, object], axes: Tuple[int, int], title: str,
     points = []
     for side, base_mark, tcp_mark in (("left", "L", "l"), ("right", "R", "r")):
         arm = snapshot["arms"][side]
-        arms.append((arm["base_xyz_m"], arm["tcp_xyzrpy_m_rad"][:3], base_mark, tcp_mark))
-        points.append((arm["base_xyz_m"], base_mark))
+        chain = arm.get("joint_points_world_m") or [arm["base_xyz_m"]]
+        arms.append((chain, arm["tcp_xyzrpy_m_rad"][:3], base_mark, tcp_mark))
+        points.extend((point, str(index)) for index, point in enumerate(chain))
         points.append((arm["tcp_xyzrpy_m_rad"][:3], tcp_mark))
     values_x = [float(point[axes[0]]) for point, _ in points] + [-0.25, 0.25]
     values_y = [float(point[axes[1]]) for point, _ in points] + [0.0, 0.25]
@@ -88,19 +142,24 @@ def _projection(snapshot: Dict[str, object], axes: Tuple[int, int], title: str,
                 error += dx
                 y0 += sy
 
-    for base, tcp, base_mark, tcp_mark in arms:
-        draw_line(base, tcp, ".")
-        bx, by = cell(base)
+    for chain, tcp, base_mark, tcp_mark in arms:
+        for start, end in zip(chain, chain[1:]):
+            draw_line(start, end, "-")
+        draw_line(chain[-1], tcp, ":")
+        bx, by = cell(chain[0])
         tx, ty = cell(tcp)
         grid[by][bx] = base_mark
         grid[ty][tx] = tcp_mark
+        for index, point in enumerate(chain[1:], 1):
+            px, py = cell(point)
+            grid[py][px] = str(index)
     lines = ["%s  (%s horizontal, %s vertical)" % (title, horizontal, vertical)]
     lines.extend("|" + "".join(row) + "|" for row in grid)
     return "\n".join(lines)
 
 
 def render_world(snapshot: Dict[str, object], detailed: bool = False) -> str:
-    lines = ["WORLD body: +X forward, +Y left, +Z up; bases L/R, TCP l/r, . base-to-TCP span"]
+    lines = ["WORLD body: +X forward, +Y left, +Z up; bases L/R, joints 1..6, TCP l/r"]
     for side in ("left", "right"):
         arm = snapshot["arms"][side]
         base, tcp = arm["base_xyz_m"], arm["tcp_xyzrpy_m_rad"]
@@ -108,7 +167,8 @@ def render_world(snapshot: Dict[str, object], detailed: bool = False) -> str:
             side, base[0], base[1], base[2], math.degrees(arm["base_rpy_rad"][2]),
             tcp[0], tcp[1], tcp[2], arm["active_tool_id"]))
     if detailed:
-        lines.append("SCHEMATIC ONLY: dotted spans are not Mini2 joint/link forward kinematics.")
+        lines.append("DISPLAY MODEL: '-' is the side-mount MiniCobo MDH joint chain; ':' connects J6 to live SDK TCP.")
+        lines.append("READ-ONLY VISUALIZATION ONLY: controller-calibrated DH convention remains unverified; never use this chain for motion.")
         for side in ("left", "right"):
             tool = snapshot["arms"][side]["configured_tool_tcp_mm_rad"]
             lines.append("%-5s entered tool TCP=(%+.3f,%+.3f,%+.3f)mm rpy=(%+.6f,%+.6f,%+.6f)rad" % (
