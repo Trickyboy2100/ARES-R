@@ -17,6 +17,9 @@ class TerminalHistoryTest(unittest.TestCase):
 
     def test_jaka_readonly_command_allowlist(self):
         self.assertTrue(terminal._allowed_in_jaka_readonly(["jaka", "status", "left"]))
+        self.assertTrue(terminal._allowed_in_jaka_readonly(["jaka", "joints", "left"]))
+        self.assertTrue(terminal._allowed_in_jaka_readonly(
+            ["jaka", "plan", "left", "deg", "0", "0", "0", "0", "0", "0"]))
         self.assertTrue(terminal._allowed_in_jaka_readonly(["motion", "validate", "path.json"]))
         self.assertTrue(terminal._allowed_in_jaka_readonly(["note", "audit"]))
         self.assertFalse(terminal._allowed_in_jaka_readonly(["pick"]))

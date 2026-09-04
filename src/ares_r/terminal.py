@@ -8,6 +8,8 @@ from pathlib import Path
 from .controller import TaskController
 from .adapters.epic_protocol import parse_5700_response
 from .motion import load_motion_limits, load_trajectory, validate_trajectory
+from .joint_commands import (current_joint_report, joint_target_report,
+                             parse_joint_values, stepped_target)
 from .worklog import WorkLog
 from .world_geometry import load_world_geometry, render_world, world_snapshot
 
@@ -53,6 +55,11 @@ JAKA_READONLY_HELP = """JAKA read-only commands:
   jaka status left|right     read live SDK diagnostics
   jaka baseline [FILE]       save both-arm diagnostics as JSON
   jaka preflight SIDE FILE   combine live state with offline trajectory gates
+  jaka joints SIDE           show J1..J6 in radians and degrees
+  jaka plan SIDE UNIT Q1..Q6 preview an absolute target; UNIT=deg|rad
+  jaka step SIDE JN UNIT D   preview one-joint relative change
+  jaka home SIDE             preview the all-zero joint target
+  jaka dual UNIT L1..L6 R1..R6  preview both absolute targets
   world view                 show body-frame joint-chain top/rear/side views
   motion inspect FILE        summarize a joint trajectory offline
   motion validate FILE       validate a joint trajectory offline
@@ -67,7 +74,9 @@ All base, arm and gripper control commands are blocked in this mode.
 def _allowed_in_jaka_readonly(args) -> bool:
     return (
         args[0] in ("status", "help", "quit", "exit", "note")
-        or args[:2] in (["jaka", "status"], ["jaka", "baseline"], ["jaka", "preflight"])
+        or args[:2] in (["jaka", "status"], ["jaka", "baseline"], ["jaka", "preflight"],
+                        ["jaka", "joints"], ["jaka", "plan"], ["jaka", "step"],
+                        ["jaka", "home"], ["jaka", "dual"])
         or args == ["world", "view"]
         or args[:2] in (["motion", "inspect"], ["motion", "validate"])
     )
@@ -214,6 +223,45 @@ def run_terminal(controller: TaskController) -> None:
                     print("BLOCKED: live read-only preflight rejected the trajectory; no motion API called.")
                 else:
                     print("PASS: read-only preflight passed; motion remains unavailable in this mode.")
+            elif args[:2] == ["jaka", "joints"] and len(args) == 3:
+                if controller.mode != "jaka-readonly": raise RuntimeError("start with --mode jaka-readonly for live JAKA queries")
+                side = args[2]
+                if side not in controller.arms: raise ValueError("arm must be left or right")
+                current = controller.arms[side].diagnostics()["joint_position_rad"]
+                print(current_joint_report(side, current))
+            elif args[:2] == ["jaka", "plan"]:
+                if len(args) != 10: raise ValueError("usage: jaka plan SIDE deg|rad Q1 Q2 Q3 Q4 Q5 Q6")
+                if controller.mode != "jaka-readonly": raise RuntimeError("start with --mode jaka-readonly for live JAKA queries")
+                side, unit = args[2], args[3]
+                if side not in controller.arms: raise ValueError("arm must be left or right")
+                current = controller.arms[side].diagnostics()["joint_position_rad"]
+                target = parse_joint_values(args[4:], unit)
+                limits = load_motion_limits(Path(str(controller.config["motion"]["limits_file"])))
+                print(joint_target_report(side, current, target, limits))
+            elif args[:2] == ["jaka", "step"]:
+                if len(args) != 6: raise ValueError("usage: jaka step SIDE J1..J6 deg|rad DELTA")
+                if controller.mode != "jaka-readonly": raise RuntimeError("start with --mode jaka-readonly for live JAKA queries")
+                side, joint, unit, delta = args[2:6]
+                if side not in controller.arms: raise ValueError("arm must be left or right")
+                current = controller.arms[side].diagnostics()["joint_position_rad"]
+                target = stepped_target(current, joint, delta, unit)
+                limits = load_motion_limits(Path(str(controller.config["motion"]["limits_file"])))
+                print(joint_target_report(side, current, target, limits))
+            elif args[:2] == ["jaka", "home"] and len(args) == 3:
+                if controller.mode != "jaka-readonly": raise RuntimeError("start with --mode jaka-readonly for live JAKA queries")
+                side = args[2]
+                if side not in controller.arms: raise ValueError("arm must be left or right")
+                current = controller.arms[side].diagnostics()["joint_position_rad"]
+                limits = load_motion_limits(Path(str(controller.config["motion"]["limits_file"])))
+                print(joint_target_report(side, current, [0.0] * 6, limits))
+            elif args[:2] == ["jaka", "dual"]:
+                if len(args) != 15: raise ValueError("usage: jaka dual deg|rad L1 L2 L3 L4 L5 L6 R1 R2 R3 R4 R5 R6")
+                if controller.mode != "jaka-readonly": raise RuntimeError("start with --mode jaka-readonly for live JAKA queries")
+                unit = args[2]
+                limits = load_motion_limits(Path(str(controller.config["motion"]["limits_file"])))
+                for side, values in (("left", args[3:9]), ("right", args[9:15])):
+                    current = controller.arms[side].diagnostics()["joint_position_rad"]
+                    print(joint_target_report(side, current, parse_joint_values(values, unit), limits))
             elif args == ["world", "view"]:
                 if controller.mode != "jaka-readonly":
                     raise RuntimeError("start with --mode jaka-readonly for live TCP projection")

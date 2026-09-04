@@ -92,6 +92,8 @@ config/jaka_mini2_motion.site.json
 
 当前没有机械臂运动命令。`jaka-readonly` 会在 SDK 调用前拒绝 `pick`、`stop`、`arm` 等控制请求；实验性 `jaka_servo.py` 也未注册。只有取得新的明确运动授权、现场配置评审通过并完成执行器验收后，才允许设计独立的受控执行模式。
 
+关节目标可以先在 `jaka-readonly` 中用 `jaka joints`、`jaka plan`、`jaka step`、`jaka home` 和 `jaka dual` 预览。Terminal 同时显示当前值、目标值、差值以及度/弧度，并使用现场限位配置判定是否放行。当前限位配置尚未确认，因此目标会显示 `BLOCKED`，且不会调用运动 API。完整语法见 `docs/JAKA_JOINT_TERMINAL.md`。
+
 夹爪单独调试使用 `gripper-only`，此模式不会连接或移动机械臂和底盘：
 
 ```bash
