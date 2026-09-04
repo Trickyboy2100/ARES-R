@@ -7,6 +7,7 @@ and must be checked against the nameplate/JAKA APP.
 
 import ctypes
 import importlib
+import math
 import sys
 from typing import Dict, List, Sequence
 
@@ -66,7 +67,8 @@ def load_jkrc(python_path: str, library_path: str):
 class JakaSdkArm(Arm):
     """Connected read-only SDK arm with no control-capable code path."""
 
-    def __init__(self, name: str, config: Dict[str, object], sdk_config: Dict[str, object]) -> None:
+    def __init__(self, name: str, config: Dict[str, object], sdk_config: Dict[str, object],
+                 motion_enabled: bool = False) -> None:
         self.name = name
         self.ip = str(config["ip"])
         self.model = str(config.get("model", "unverified"))
@@ -74,6 +76,7 @@ class JakaSdkArm(Arm):
         self.robot = jkrc.RC(self.ip)
         _value(self.robot.login(), "%s login" % name)
         self.connected = True
+        self.motion_enabled = motion_enabled
 
     def diagnostics(self) -> Dict[str, object]:
         tool_id = int(_value(self.robot.get_tool_id(), "tool id"))
@@ -121,6 +124,36 @@ class JakaSdkArm(Arm):
     def _motion_locked(self) -> None:
         raise JakaSdkError("%s arm motion is locked in jaka-readonly mode" % self.name)
 
+    def move_joints_absolute(self, target_rad: Sequence[float], speed_rad_s: float) -> None:
+        if not self.motion_enabled:
+            self._motion_locked()
+        if len(target_rad) != 6 or not all(math.isfinite(float(value)) for value in target_rad):
+            raise JakaSdkError("absolute joint target must contain six finite radians")
+        if not math.isfinite(speed_rad_s) or speed_rad_s <= 0.0 or speed_rad_s > 0.10:
+            raise JakaSdkError("joint speed must be >0 and <=0.10 rad/s")
+        status = parse_robot_status(_value(self.robot.get_robot_status(), "robot status"))
+        if not status["powered_on"] or not status["enabled"]:
+            raise JakaSdkError("robot must already be powered and enabled in JAKA App")
+        if status["emergency_stop"] or status["protective_stop"] or status["on_soft_limit"]:
+            raise JakaSdkError("controller reports emergency/protective/limit state")
+        if int(_value(self.robot.is_on_limit(), "limit state")) or int(
+                _value(self.robot.is_in_collision(), "collision state")):
+            raise JakaSdkError("controller reports active limit or collision")
+        try:
+            result = self.robot.joint_move(list(target_rad), 0, True, float(speed_rad_s))
+            if not isinstance(result, (tuple, list)) or not result or int(result[0]) != 0:
+                raise JakaSdkError("joint_move failed: %r" % (result,))
+        except BaseException:
+            self.robot.motion_abort()
+            raise
+
+    def abort_motion(self) -> None:
+        if not self.motion_enabled:
+            self._motion_locked()
+        result = self.robot.motion_abort()
+        if not isinstance(result, (tuple, list)) or not result or int(result[0]) != 0:
+            raise JakaSdkError("motion_abort failed: %r" % (result,))
+
     def move_to_pose(self, pose: Pose) -> None:
         self._motion_locked()
 
@@ -139,11 +172,11 @@ class JakaSdkArm(Arm):
             self.connected = False
 
 
-def build_readonly_arms(config: Dict[str, object]) -> Dict[str, JakaSdkArm]:
+def build_jaka_arms(config: Dict[str, object], motion_enabled: bool = False) -> Dict[str, JakaSdkArm]:
     arms = {}
     try:
         for name in ("left", "right"):
-            arms[name] = JakaSdkArm(name, config["arms"][name], config)
+            arms[name] = JakaSdkArm(name, config["arms"][name], config, motion_enabled)
         return arms
     except Exception:
         for arm in arms.values():
@@ -152,6 +185,10 @@ def build_readonly_arms(config: Dict[str, object]) -> Dict[str, JakaSdkArm]:
             except Exception:
                 pass
         raise
+
+
+def build_readonly_arms(config: Dict[str, object]) -> Dict[str, JakaSdkArm]:
+    return build_jaka_arms(config, motion_enabled=False)
 
 
 def readonly_trajectory_preflight(

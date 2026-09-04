@@ -84,15 +84,15 @@ world view
 config/jaka_mini2_motion.site.json
 ```
 
-当前上下限为安全占位值，故意保持 `commissioning_confirmed=false`。必须从机器人铭牌/JAKA APP 核实型号，并从控制器或对应型号官方资料核实关节限位后才能填写。该文件纳入 Git 评审；当前 Terminal 不注册 JAKA 运动执行器。
+该文件现已写入 JAKA 官方 MiniCobo/Mini2 共用关节范围，并采用更保守的 ARES-R 速度和软限位裕量。控制器内的现场软限位仍然具有最终约束，执行前必须在 JAKA App 中复核。
 
 机身世界坐标定义保存在 `config/robot_world.json`：`+X` 为北/车体前方、`+Y` 为西/车体左侧、`+Z` 向上，因而东为 `-Y`；左右臂基座分别位于 `(0,+0.200,1.200)m` 和 `(0,-0.200,1.200)m`。JAKA 基坐标偏航分别为 `+135°` 和 `+45°`。控制器零位整臂沿基坐标 `-Y`，所以双臂全零时左臂指向西北、右臂指向东北；J1 外壳归中朝向分别为东北和西北。`jaka-readonly` 每次刷新显示基座和实时 TCP 世界坐标；`world view` 显示经过基座、J1—J6、实时 TCP 的俯视/后视/右视折线。`-` 表示侧装 MiniCobo MDH 连杆，`:` 表示模型 J6 到 SDK 实时 TCP；重合关节在 ASCII 图中可能覆盖。
 
 显示模型来自公开的侧装 MiniCobo MDH 参数，只用于只读空间理解。官方 Mini 完全伸直外形尺寸约为 766.8 mm，现场左工具延伸约 113.9 mm，合计约 880.7 mm，与控制器左臂 `q=0` TCP 距离约 881.4 mm 一致。控制器校准 DH 的精确约定仍未由 JAKA SDK 文档公开说明，因此 Terminal 明示禁止把该折线用于运动、规划或碰撞判断；运动模型仍保持锁定。
 
-当前没有机械臂运动命令。`jaka-readonly` 会在 SDK 调用前拒绝 `pick`、`stop`、`arm` 等控制请求；实验性 `jaka_servo.py` 也未注册。只有取得新的明确运动授权、现场配置评审通过并完成执行器验收后，才允许设计独立的受控执行模式。
+`jaka-readonly` 始终拒绝运动 API。独立的 `jaka-motion` 模式只连接双臂，提供受保护的低速 `joint_move`，不连接底盘、相机或夹爪；实验性 `jaka_servo.py` 仍不注册到 Terminal。
 
-关节目标可以先在 `jaka-readonly` 中用 `jaka joints`、`jaka plan`、`jaka step`、`jaka home` 和 `jaka dual` 预览。Terminal 同时显示当前值、目标值、差值以及度/弧度，并使用现场限位配置判定是否放行。当前限位配置尚未确认，因此目标会显示 `BLOCKED`，且不会调用运动 API。完整语法见 `docs/JAKA_JOINT_TERMINAL.md`。
+关节目标可以先在 `jaka-readonly` 中用 `jaka joints`、`jaka plan`、`jaka step`、`jaka home` 和 `jaka dual` 预览。明确切换到 `jaka-motion` 后，`jaka move` 与 `jaka move-step` 使用 JAKA 官方推荐的控制器插补 `joint_move` 执行附近目标；速度固定为 0.05 rad/s，单次变化限制为每关节 3°，并要求逐次精确确认。完整语法见 `docs/JAKA_JOINT_TERMINAL.md`。
 
 夹爪单独调试使用 `gripper-only`，此模式不会连接或移动机械臂和底盘：
 

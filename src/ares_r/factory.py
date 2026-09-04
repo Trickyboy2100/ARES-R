@@ -24,10 +24,10 @@ def build_controller(config: Dict[str, object], mode: str) -> TaskController:
         arms = {"left": MockArm("left"), "right": MockArm("right")}
         grippers = {name: SerialGripper(name, values) for name, values in config["grippers"].items()}
         base = MockBase()
-    elif mode == "jaka-readonly":
-        from .adapters.jaka_sdk import build_readonly_arms
+    elif mode in ("jaka-readonly", "jaka-motion"):
+        from .adapters.jaka_sdk import build_jaka_arms
         perception = MockPerception()
-        arms = build_readonly_arms(config["jaka"])
+        arms = build_jaka_arms(config["jaka"], motion_enabled=(mode == "jaka-motion"))
         grippers = {"left": MockGripper(), "right": MockGripper()}
         base = MockBase()
     else:
