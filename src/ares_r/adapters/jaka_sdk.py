@@ -114,8 +114,9 @@ class JakaSdkArm(Arm):
             limit = bool(status["on_soft_limit"])
             collision = bool(status["protective_stop"])
             safe_query = bool(status["sdk_socket_connected"])
-            detail = "%s; %s; read-only; power=%d enable=%d e-stop=%d limit=%d collision=%d" % (
-                self.name, self.model, status["powered_on"], status["enabled"],
+            access = "guarded motion" if self.motion_enabled else "read-only"
+            detail = "%s; %s; %s; power=%d enable=%d e-stop=%d limit=%d collision=%d" % (
+                self.name, self.model, access, status["powered_on"], status["enabled"],
                 status["emergency_stop"], limit, collision)
             return DeviceState(True, safe_query, detail)
         except Exception as exc:

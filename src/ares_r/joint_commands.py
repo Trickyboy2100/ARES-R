@@ -51,7 +51,8 @@ def target_gate(target_rad: Sequence[float], limits: MotionLimits) -> List[str]:
 
 
 def joint_target_report(side: str, current_rad: Sequence[float],
-                        target_rad: Sequence[float], limits: MotionLimits) -> str:
+                        target_rad: Sequence[float], limits: MotionLimits,
+                        execution_available: bool = False) -> str:
     if side not in ("left", "right"):
         raise ValueError("arm must be left or right")
     if len(current_rad) != 6 or len(target_rad) != 6:
@@ -67,7 +68,9 @@ def joint_target_report(side: str, current_rad: Sequence[float],
         lines.append("BLOCKED:")
         lines.extend("  - " + issue for issue in issues)
     else:
-        lines.append("PREVIEW PASS: target limits pass; execution remains unavailable in read-only mode.")
+        lines.append("PREVIEW PASS: target limits pass; %s" % (
+            "explicit confirmation is still required." if execution_available
+            else "execution remains unavailable in read-only mode."))
     return "\n".join(lines)
 
 

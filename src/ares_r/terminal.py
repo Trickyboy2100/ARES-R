@@ -291,7 +291,8 @@ def run_terminal(controller: TaskController) -> None:
                 issues = target_gate(target, limits)
                 if any(abs(target[index] - current[index]) > math.radians(3.0) for index in range(6)):
                     issues.append("single command exceeds the 3-degree-per-joint commissioning cap")
-                print(joint_target_report(side, current, target, limits))
+                print(joint_target_report(side, current, target, limits,
+                                          execution_available=True))
                 if issues: raise RuntimeError("execution blocked: " + "; ".join(issues))
                 phrase = "MOVE " + side.upper()
                 if input("Type %s to execute at 0.05 rad/s: " % phrase).strip() != phrase:
