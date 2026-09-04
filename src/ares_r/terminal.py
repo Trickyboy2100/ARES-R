@@ -53,7 +53,7 @@ JAKA_READONLY_HELP = """JAKA read-only commands:
   jaka status left|right     read live SDK diagnostics
   jaka baseline [FILE]       save both-arm diagnostics as JSON
   jaka preflight SIDE FILE   combine live state with offline trajectory gates
-  world view                 show body-frame top/rear/side TCP projections
+  world view                 show body-frame joint-chain top/rear/side views
   motion inspect FILE        summarize a joint trajectory offline
   motion validate FILE       validate a joint trajectory offline
   note <text>                append a Git-trackable work note
