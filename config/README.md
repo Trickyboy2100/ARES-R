@@ -18,3 +18,7 @@ python3 scripts/init_site_config.py
 ```
 
 脚本不会覆盖已有文件。只有在双臂铭牌/JAKA APP 核实型号、控制器软限位、关节顺序、TCP、负载和低速参数，并在 Pull Request 中附带证据后，才可把 `commissioning_confirmed` 改为 `true`。安全配置不得包含密码、Token 或其他凭证。`legacy/` 中的 MiniCobo 文件仅供理解旧仿真结构，不能用于 Mini2 真机。
+
+## 机身世界坐标
+
+`robot_world.json` 保存双臂基座相对机身的固定安装关系。坐标轴固定为 `+X` 前、`+Y` 左、`+Z` 上，原点是两基座中心连线中点在地面的投影。该配置用于显示与规划建模，不改变控制器坐标系，也不产生运动命令。

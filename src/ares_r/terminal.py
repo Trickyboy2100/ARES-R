@@ -9,6 +9,7 @@ from .controller import TaskController
 from .adapters.epic_protocol import parse_5700_response
 from .motion import load_motion_limits, load_trajectory, validate_trajectory
 from .worklog import WorkLog
+from .world_geometry import load_world_geometry, render_world, world_snapshot
 
 try:
     import readline
@@ -52,6 +53,7 @@ JAKA_READONLY_HELP = """JAKA read-only commands:
   jaka status left|right     read live SDK diagnostics
   jaka baseline [FILE]       save both-arm diagnostics as JSON
   jaka preflight SIDE FILE   combine live state with offline trajectory gates
+  world view                 show body-frame top/rear/side TCP projections
   motion inspect FILE        summarize a joint trajectory offline
   motion validate FILE       validate a joint trajectory offline
   note <text>                append a Git-trackable work note
@@ -66,6 +68,7 @@ def _allowed_in_jaka_readonly(args) -> bool:
     return (
         args[0] in ("status", "help", "quit", "exit", "note")
         or args[:2] in (["jaka", "status"], ["jaka", "baseline"], ["jaka", "preflight"])
+        or args == ["world", "view"]
         or args[:2] in (["motion", "inspect"], ["motion", "validate"])
     )
 
@@ -118,6 +121,13 @@ def render(controller: TaskController) -> None:
     elif snapshot.last_detection and snapshot.last_detection.raw_response:
         print("raw response (parse failed): " + snapshot.last_detection.raw_response)
     if snapshot.last_error: print("ERROR: " + snapshot.last_error)
+    if snapshot.mode == "jaka-readonly":
+        try:
+            geometry = load_world_geometry(Path(str(controller.config["world_geometry_file"])))
+            diagnostics = {side: controller.arms[side].diagnostics() for side in ("left", "right")}
+            print(render_world(world_snapshot(geometry, diagnostics), detailed=False))
+        except Exception as exc:
+            print("WORLD unavailable: %s" % exc)
     print("=" * 72)
 
 
@@ -204,6 +214,12 @@ def run_terminal(controller: TaskController) -> None:
                     print("BLOCKED: live read-only preflight rejected the trajectory; no motion API called.")
                 else:
                     print("PASS: read-only preflight passed; motion remains unavailable in this mode.")
+            elif args == ["world", "view"]:
+                if controller.mode != "jaka-readonly":
+                    raise RuntimeError("start with --mode jaka-readonly for live TCP projection")
+                geometry = load_world_geometry(Path(str(controller.config["world_geometry_file"])))
+                diagnostics = {side: controller.arms[side].diagnostics() for side in ("left", "right")}
+                print(render_world(world_snapshot(geometry, diagnostics), detailed=True))
             elif args[:2] == ["gripper", "status"] and len(args) == 3:
                 if args[2] not in controller.grippers: raise ValueError("gripper must be left or right")
                 state = controller.grippers[args[2]].state()

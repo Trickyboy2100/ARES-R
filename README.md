@@ -75,6 +75,7 @@ jaka status left
 jaka status right
 jaka baseline
 jaka preflight left examples/trajectory.example.json
+world view
 ```
 
 仓库已经包含第二份现场配置：
@@ -84,6 +85,10 @@ config/jaka_mini2_motion.site.json
 ```
 
 当前上下限为安全占位值，故意保持 `commissioning_confirmed=false`。必须从机器人铭牌/JAKA APP 核实型号，并从控制器或对应型号官方资料核实关节限位后才能填写。该文件纳入 Git 评审；当前 Terminal 不注册 JAKA 运动执行器。
+
+机身世界坐标定义保存在 `config/robot_world.json`：`+X` 为车体前方、`+Y` 为车体左侧、`+Z` 向上；左右臂基座分别位于 `(0,+0.200,0.120)m` 和 `(0,-0.200,0.120)m`，偏航角分别为 `+45°` 和 `-45°`。`jaka-readonly` 每次刷新显示基座和实时 TCP 世界坐标；`world view` 额外显示俯视、后视与右视 ASCII 投影，以及控制器中当前启用的工具 TCP。
+
+当前没有机械臂运动命令。`jaka-readonly` 会在 SDK 调用前拒绝 `pick`、`stop`、`arm` 等控制请求；实验性 `jaka_servo.py` 也未注册。只有取得新的明确运动授权、现场配置评审通过并完成执行器验收后，才允许设计独立的受控执行模式。
 
 夹爪单独调试使用 `gripper-only`，此模式不会连接或移动机械臂和底盘：
 
