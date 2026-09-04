@@ -1,7 +1,7 @@
 import math
 import unittest
 
-from ares_r.world_geometry import base_tcp_to_world, world_snapshot
+from ares_r.world_geometry import base_tcp_to_world, render_world, world_snapshot
 
 
 class WorldGeometryTest(unittest.TestCase):
@@ -23,6 +23,9 @@ class WorldGeometryTest(unittest.TestCase):
         result = world_snapshot(config, diag)
         self.assertEqual(result["arms"]["left"]["configured_tool_tcp_mm_rad"][2], 100)
         self.assertEqual(result["arms"]["right"]["active_tool_id"], 2)
+        view = render_world(result, detailed=True)
+        self.assertIn("SCHEMATIC ONLY", view)
+        self.assertIn(".", view)
 
 
 if __name__ == "__main__":

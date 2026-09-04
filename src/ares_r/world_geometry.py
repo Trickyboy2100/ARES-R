@@ -50,9 +50,11 @@ def world_snapshot(config: Dict[str, object], diagnostics: Dict[str, Dict[str, o
 def _projection(snapshot: Dict[str, object], axes: Tuple[int, int], title: str,
                 horizontal: str, vertical: str) -> str:
     width, height = 31, 11
+    arms = []
     points = []
     for side, base_mark, tcp_mark in (("left", "L", "l"), ("right", "R", "r")):
         arm = snapshot["arms"][side]
+        arms.append((arm["base_xyz_m"], arm["tcp_xyzrpy_m_rad"][:3], base_mark, tcp_mark))
         points.append((arm["base_xyz_m"], base_mark))
         points.append((arm["tcp_xyzrpy_m_rad"][:3], tcp_mark))
     values_x = [float(point[axes[0]]) for point, _ in points] + [-0.25, 0.25]
@@ -67,16 +69,38 @@ def _projection(snapshot: Dict[str, object], axes: Tuple[int, int], title: str,
         cy = height - 1 - int(round((float(point[axes[1]]) - lo_y) / (hi_y - lo_y) * (height - 1)))
         return max(0, min(width - 1, cx)), max(0, min(height - 1, cy))
 
-    for point, mark in points:
-        cx, cy = cell(point)
-        grid[cy][cx] = mark
+    def draw_line(start, end, mark):
+        x0, y0 = cell(start)
+        x1, y1 = cell(end)
+        dx, dy = abs(x1 - x0), -abs(y1 - y0)
+        sx, sy = (1 if x0 < x1 else -1), (1 if y0 < y1 else -1)
+        error = dx + dy
+        while True:
+            if grid[y0][x0] == " ":
+                grid[y0][x0] = mark
+            if x0 == x1 and y0 == y1:
+                break
+            doubled = 2 * error
+            if doubled >= dy:
+                error += dy
+                x0 += sx
+            if doubled <= dx:
+                error += dx
+                y0 += sy
+
+    for base, tcp, base_mark, tcp_mark in arms:
+        draw_line(base, tcp, ".")
+        bx, by = cell(base)
+        tx, ty = cell(tcp)
+        grid[by][bx] = base_mark
+        grid[ty][tx] = tcp_mark
     lines = ["%s  (%s horizontal, %s vertical)" % (title, horizontal, vertical)]
     lines.extend("|" + "".join(row) + "|" for row in grid)
     return "\n".join(lines)
 
 
 def render_world(snapshot: Dict[str, object], detailed: bool = False) -> str:
-    lines = ["WORLD body: +X forward, +Y left, +Z up; bases L/R, TCP l/r"]
+    lines = ["WORLD body: +X forward, +Y left, +Z up; bases L/R, TCP l/r, . base-to-TCP span"]
     for side in ("left", "right"):
         arm = snapshot["arms"][side]
         base, tcp = arm["base_xyz_m"], arm["tcp_xyzrpy_m_rad"]
@@ -84,6 +108,7 @@ def render_world(snapshot: Dict[str, object], detailed: bool = False) -> str:
             side, base[0], base[1], base[2], math.degrees(arm["base_rpy_rad"][2]),
             tcp[0], tcp[1], tcp[2], arm["active_tool_id"]))
     if detailed:
+        lines.append("SCHEMATIC ONLY: dotted spans are not Mini2 joint/link forward kinematics.")
         for side in ("left", "right"):
             tool = snapshot["arms"][side]["configured_tool_tcp_mm_rad"]
             lines.append("%-5s entered tool TCP=(%+.3f,%+.3f,%+.3f)mm rpy=(%+.6f,%+.6f,%+.6f)rad" % (
