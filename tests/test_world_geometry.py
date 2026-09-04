@@ -23,8 +23,10 @@ class WorldGeometryTest(unittest.TestCase):
 
     def test_snapshot_keeps_entered_tool_tcp_separate(self):
         config = {"frame": {"name": "body"}, "arms": {
-            "left": {"base_xyz_m": [0, .2, 1.2], "base_rpy_rad": [0, 0, 3 * math.pi / 4]},
-            "right": {"base_xyz_m": [0, -.2, 1.2], "base_rpy_rad": [0, 0, math.pi / 4]},
+            "left": {"base_xyz_m": [0, .2, 1.2], "base_rpy_rad": [0, 0, 3 * math.pi / 4],
+                     "display_model_to_controller_ry_deg": -90},
+            "right": {"base_xyz_m": [0, -.2, 1.2], "base_rpy_rad": [0, 0, math.pi / 4],
+                      "display_model_to_controller_ry_deg": 90},
         }}
         config["display_kinematics"] = {"alpha_deg": [90, -90, 0, 90, -90, 90],
             "a_mm": [0, 0, 210, 0, 0, 0], "theta_offset_deg": [90, -90, 90, 0, 0, 180],
@@ -37,13 +39,19 @@ class WorldGeometryTest(unittest.TestCase):
         self.assertEqual(result["arms"]["right"]["active_tool_id"], 2)
         view = render_world(result, detailed=True)
         self.assertIn("joints 1..6", view)
-        self.assertIn("READ-ONLY VISUALIZATION ONLY", view)
+        self.assertIn("DISPLAY FK VALIDATED", view)
         self.assertIn("%dx%d cells" % (PROJECTION_WIDTH, PROJECTION_HEIGHT), view)
         projection_rows = [line for line in view.splitlines()
                            if len(line) > 9 and line[8] == "|" and line[-9] == "|"]
         self.assertEqual(len(projection_rows), PROJECTION_HEIGHT * 3)
         self.assertTrue(all(len(line) == PROJECTION_WIDTH + 18 for line in projection_rows))
         self.assertIn("horizontal ticks:", view)
+        left_j6 = result["arms"]["left"]["joint_points_world_m"][-1]
+        right_j6 = result["arms"]["right"]["joint_points_world_m"][-1]
+        self.assertGreater(left_j6[0], 0.0)
+        self.assertGreater(left_j6[1], 0.2)
+        self.assertGreater(right_j6[0], 0.0)
+        self.assertLess(right_j6[1], -0.2)
 
     def test_side_mount_zero_chain_is_full_polyline(self):
         model = {"alpha_deg": [90, -90, 0, 90, -90, 90],
