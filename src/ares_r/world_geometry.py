@@ -6,6 +6,13 @@ from pathlib import Path
 from typing import Dict, List, Sequence, Tuple
 
 
+# High-resolution ASCII canvas. The former 31x11 grid merged nearby joints and
+# made short links almost invisible; 91x27 provides about seven times as many
+# projection cells while still fitting a normal wide terminal.
+PROJECTION_WIDTH = 91
+PROJECTION_HEIGHT = 27
+
+
 def load_world_geometry(path: Path) -> Dict[str, object]:
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -102,7 +109,7 @@ def world_snapshot(config: Dict[str, object], diagnostics: Dict[str, Dict[str, o
 
 def _projection(snapshot: Dict[str, object], axes: Tuple[int, int], title: str,
                 horizontal: str, vertical: str) -> str:
-    width, height = 31, 11
+    width, height = PROJECTION_WIDTH, PROJECTION_HEIGHT
     arms = []
     points = []
     for side, base_mark, tcp_mark in (("left", "L", "l"), ("right", "R", "r")):
@@ -153,7 +160,8 @@ def _projection(snapshot: Dict[str, object], axes: Tuple[int, int], title: str,
         for index, point in enumerate(chain[1:], 1):
             px, py = cell(point)
             grid[py][px] = str(index)
-    lines = ["%s  (%s horizontal, %s vertical)" % (title, horizontal, vertical)]
+    lines = ["%s  (%s horizontal, %s vertical; %dx%d cells)" % (
+        title, horizontal, vertical, width, height)]
     lines.extend("|" + "".join(row) + "|" for row in grid)
     return "\n".join(lines)
 

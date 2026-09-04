@@ -1,7 +1,9 @@
 import math
 import unittest
 
-from ares_r.world_geometry import base_tcp_to_world, joint_points_base_m, render_world, world_snapshot
+from ares_r.world_geometry import (PROJECTION_HEIGHT, PROJECTION_WIDTH,
+                                   base_tcp_to_world, joint_points_base_m,
+                                   render_world, world_snapshot)
 
 
 class WorldGeometryTest(unittest.TestCase):
@@ -29,6 +31,11 @@ class WorldGeometryTest(unittest.TestCase):
         view = render_world(result, detailed=True)
         self.assertIn("joints 1..6", view)
         self.assertIn("READ-ONLY VISUALIZATION ONLY", view)
+        self.assertIn("%dx%d cells" % (PROJECTION_WIDTH, PROJECTION_HEIGHT), view)
+        projection_rows = [line for line in view.splitlines()
+                           if line.startswith("|") and line.endswith("|")]
+        self.assertEqual(len(projection_rows), PROJECTION_HEIGHT * 3)
+        self.assertTrue(all(len(line) == PROJECTION_WIDTH + 2 for line in projection_rows))
 
     def test_side_mount_zero_chain_is_full_polyline(self):
         model = {"alpha_deg": [90, -90, 0, 90, -90, 90],
