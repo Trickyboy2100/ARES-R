@@ -40,9 +40,10 @@ class WorldGeometryTest(unittest.TestCase):
         self.assertIn("READ-ONLY VISUALIZATION ONLY", view)
         self.assertIn("%dx%d cells" % (PROJECTION_WIDTH, PROJECTION_HEIGHT), view)
         projection_rows = [line for line in view.splitlines()
-                           if line.startswith("|") and line.endswith("|")]
+                           if len(line) > 9 and line[8] == "|" and line[-9] == "|"]
         self.assertEqual(len(projection_rows), PROJECTION_HEIGHT * 3)
-        self.assertTrue(all(len(line) == PROJECTION_WIDTH + 2 for line in projection_rows))
+        self.assertTrue(all(len(line) == PROJECTION_WIDTH + 18 for line in projection_rows))
+        self.assertIn("horizontal ticks:", view)
 
     def test_side_mount_zero_chain_is_full_polyline(self):
         model = {"alpha_deg": [90, -90, 0, 90, -90, 90],

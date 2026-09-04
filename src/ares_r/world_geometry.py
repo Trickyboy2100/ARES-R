@@ -99,6 +99,8 @@ def world_snapshot(config: Dict[str, object], diagnostics: Dict[str, Dict[str, o
         arms[side] = {
             "base_xyz_m": list(base["base_xyz_m"]),
             "base_rpy_rad": list(base["base_rpy_rad"]),
+            "mount_yaw_compass_deg": float(base.get(
+                "mount_yaw_compass_deg", -math.degrees(base["base_rpy_rad"][2]))),
             "tcp_xyzrpy_m_rad": base_tcp_to_world(base, diagnostics[side]["tcp_position_mm_rad"]),
             "active_tool_id": diagnostics[side]["tool_id"],
             "configured_tool_tcp_mm_rad": diagnostics[side]["tool_data"]["pose_mm_rad"],
@@ -108,7 +110,7 @@ def world_snapshot(config: Dict[str, object], diagnostics: Dict[str, Dict[str, o
 
 
 def _projection(snapshot: Dict[str, object], axes: Tuple[int, int], title: str,
-                horizontal: str, vertical: str) -> str:
+                horizontal: str, vertical: str, reverse_horizontal: bool = False) -> str:
     width, height = PROJECTION_WIDTH, PROJECTION_HEIGHT
     arms = []
     points = []
@@ -126,7 +128,10 @@ def _projection(snapshot: Dict[str, object], axes: Tuple[int, int], title: str,
     grid = [[" " for _ in range(width)] for _ in range(height)]
 
     def cell(point):
-        cx = int(round((float(point[axes[0]]) - lo_x) / (hi_x - lo_x) * (width - 1)))
+        fraction_x = (float(point[axes[0]]) - lo_x) / (hi_x - lo_x)
+        if reverse_horizontal:
+            fraction_x = 1.0 - fraction_x
+        cx = int(round(fraction_x * (width - 1)))
         cy = height - 1 - int(round((float(point[axes[1]]) - lo_y) / (hi_y - lo_y) * (height - 1)))
         return max(0, min(width - 1, cx)), max(0, min(height - 1, cy))
 
@@ -160,9 +165,22 @@ def _projection(snapshot: Dict[str, object], axes: Tuple[int, int], title: str,
         for index, point in enumerate(chain[1:], 1):
             px, py = cell(point)
             grid[py][px] = str(index)
+    screen_left, screen_right = (hi_x, lo_x) if reverse_horizontal else (lo_x, hi_x)
+    tick_columns = [round(index * (width - 1) / 4) for index in range(5)]
+    ruler = ["-" for _ in range(width)]
+    for column in tick_columns:
+        ruler[column] = "+"
     lines = ["%s  (%s horizontal, %s vertical; %dx%d cells)" % (
         title, horizontal, vertical, width, height)]
-    lines.extend("|" + "".join(row) + "|" for row in grid)
+    lines.append("        +" + "".join(ruler) + "+")
+    for row_index, row in enumerate(grid):
+        value = hi_y - row_index * (hi_y - lo_y) / (height - 1)
+        lines.append("%+7.3f |%s| %+7.3f" % (value, "".join(row), value))
+    lines.append("        +" + "".join(ruler) + "+")
+    horizontal_values = [screen_left + index * (screen_right - screen_left) / 4
+                         for index in range(5)]
+    lines.append("        horizontal ticks: " + "  ".join("%+.3f" % value for value in horizontal_values) + " m")
+    lines.append("        vertical edge values: %s (m)" % vertical)
     return "\n".join(lines)
 
 
@@ -171,8 +189,8 @@ def render_world(snapshot: Dict[str, object], detailed: bool = False) -> str:
     for side in ("left", "right"):
         arm = snapshot["arms"][side]
         base, tcp = arm["base_xyz_m"], arm["tcp_xyzrpy_m_rad"]
-        lines.append("%-5s base=(%+.3f,%+.3f,%+.3f)m yaw=%+.1fdeg  TCP=(%+.3f,%+.3f,%+.3f)m tool=%s" % (
-            side, base[0], base[1], base[2], math.degrees(arm["base_rpy_rad"][2]),
+        lines.append("%-5s base=(%+.3f,%+.3f,%+.3f)m compass-yaw=%+.1fdeg  TCP=(%+.3f,%+.3f,%+.3f)m tool=%s" % (
+            side, base[0], base[1], base[2], arm["mount_yaw_compass_deg"],
             tcp[0], tcp[1], tcp[2], arm["active_tool_id"]))
     if detailed:
         lines.append("DISPLAY MODEL: '-' is the side-mount MiniCobo MDH joint chain; ':' connects J6 to live SDK TCP.")
@@ -182,8 +200,8 @@ def render_world(snapshot: Dict[str, object], detailed: bool = False) -> str:
             lines.append("%-5s entered tool TCP=(%+.3f,%+.3f,%+.3f)mm rpy=(%+.6f,%+.6f,%+.6f)rad" % (
                 side, tool[0], tool[1], tool[2], tool[3], tool[4], tool[5]))
         lines.extend([
-            _projection(snapshot, (1, 0), "TOP", "+Y left", "+X forward"),
-            _projection(snapshot, (1, 2), "REAR", "+Y left", "+Z up"),
+            _projection(snapshot, (1, 0), "TOP", "screen-left +Y west", "screen-up +X north", True),
+            _projection(snapshot, (1, 2), "REAR (view south to north)", "screen-left +Y west", "screen-up +Z", True),
             _projection(snapshot, (0, 2), "RIGHT SIDE", "+X forward", "+Z up"),
         ])
     return "\n".join(lines)
