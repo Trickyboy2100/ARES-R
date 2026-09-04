@@ -14,10 +14,17 @@ class WorldGeometryTest(unittest.TestCase):
         self.assertAlmostEqual(pose[1], 0.2 + math.sqrt(0.5))
         self.assertAlmostEqual(pose[2], 1.2)
 
+    def test_right_zero_extension_projects_northeast(self):
+        base = {"base_xyz_m": [0.0, -0.2, 1.2], "base_rpy_rad": [0.0, 0.0, math.pi / 4]}
+        pose = base_tcp_to_world(base, [0, -1000, 0, 0, 0, 0])
+        self.assertAlmostEqual(pose[0], math.sqrt(0.5))
+        self.assertAlmostEqual(pose[1], -0.2 - math.sqrt(0.5))
+        self.assertAlmostEqual(pose[2], 1.2)
+
     def test_snapshot_keeps_entered_tool_tcp_separate(self):
         config = {"frame": {"name": "body"}, "arms": {
             "left": {"base_xyz_m": [0, .2, 1.2], "base_rpy_rad": [0, 0, 3 * math.pi / 4]},
-            "right": {"base_xyz_m": [0, -.2, 1.2], "base_rpy_rad": [0, 0, -3 * math.pi / 4]},
+            "right": {"base_xyz_m": [0, -.2, 1.2], "base_rpy_rad": [0, 0, math.pi / 4]},
         }}
         config["display_kinematics"] = {"alpha_deg": [90, -90, 0, 90, -90, 90],
             "a_mm": [0, 0, 210, 0, 0, 0], "theta_offset_deg": [90, -90, 90, 0, 0, 180],
