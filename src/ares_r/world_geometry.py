@@ -98,6 +98,8 @@ def _display_model_to_controller(base: Dict[str, object], point: Sequence[float]
 def world_snapshot(config: Dict[str, object], diagnostics: Dict[str, Dict[str, object]]) -> Dict[str, object]:
     arms = {}
     for side in ("left", "right"):
+        if side not in diagnostics:
+            continue
         base = config["arms"][side]
         joints = diagnostics[side].get("joint_position_rad")
         joint_points = []
@@ -124,6 +126,8 @@ def _projection(snapshot: Dict[str, object], axes: Tuple[int, int], title: str,
     arms = []
     points = []
     for side, base_mark, tcp_mark in (("left", "L", "l"), ("right", "R", "r")):
+        if side not in snapshot["arms"]:
+            continue
         arm = snapshot["arms"][side]
         chain = arm.get("joint_points_world_m") or [arm["base_xyz_m"]]
         arms.append((chain, arm["tcp_xyzrpy_m_rad"][:3], base_mark, tcp_mark))
@@ -196,6 +200,9 @@ def _projection(snapshot: Dict[str, object], axes: Tuple[int, int], title: str,
 def render_world(snapshot: Dict[str, object], detailed: bool = False) -> str:
     lines = ["WORLD body: +X forward, +Y left, +Z up; bases L/R, joints 1..6, TCP l/r"]
     for side in ("left", "right"):
+        if side not in snapshot["arms"]:
+            lines.append("%s DISABLED: no connection; posture unknown, not an obstacle model" % side)
+            continue
         arm = snapshot["arms"][side]
         base, tcp = arm["base_xyz_m"], arm["tcp_xyzrpy_m_rad"]
         lines.append("%-5s base=(%+.3f,%+.3f,%+.3f)m compass-yaw=%+.1fdeg  TCP=(%+.3f,%+.3f,%+.3f)m tool=%s" % (
@@ -205,6 +212,8 @@ def render_world(snapshot: Dict[str, object], detailed: bool = False) -> str:
         lines.append("DISPLAY MODEL: '-' is the side-mount MiniCobo MDH joint chain; ':' connects J6 to live SDK TCP.")
         lines.append("DISPLAY FK VALIDATED: 34 controller samples; left max 0.308mm, right max 0.943mm. Not a collision model.")
         for side in ("left", "right"):
+            if side not in snapshot["arms"]:
+                continue
             tool = snapshot["arms"][side]["configured_tool_tcp_mm_rad"]
             lines.append("%-5s entered tool TCP=(%+.3f,%+.3f,%+.3f)mm rpy=(%+.6f,%+.6f,%+.6f)rad" % (
                 side, tool[0], tool[1], tool[2], tool[3], tool[4], tool[5]))

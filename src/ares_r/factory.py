@@ -2,7 +2,7 @@
 
 from typing import Dict
 from .adapters.epic import EpicClient
-from .adapters.mock import MockArm, MockBase, MockGripper, MockPerception, UnavailableBase
+from .adapters.mock import MockArm, MockBase, MockGripper, MockPerception, UnavailableBase, DisabledDevice
 from .adapters.serial_gripper import SerialGripper
 from .controller import TaskController
 from .event_log import EventLog
@@ -31,11 +31,20 @@ def build_controller(config: Dict[str, object], mode: str) -> TaskController:
         grippers = {"left": MockGripper(), "right": MockGripper()}
         base = MockBase()
     elif mode == "hardware-enabled":
-        from .adapters.jaka_sdk import build_jaka_arms
-        perception = EpicClient(config["epic"])
-        arms = build_jaka_arms(config["jaka"], motion_enabled=True)
-        grippers = {name: SerialGripper(name, values) for name, values in config["grippers"].items()}
+        from .adapters.jaka_sdk import build_jaka_arms, JakaSdkArm
+        if config.get("hardware_devices", "all") == "right-arm":
+            perception = DisabledDevice("epic")
+            arms = {"left": DisabledDevice("left arm"),
+                    "right": JakaSdkArm("right", config["jaka"]["arms"]["right"], config["jaka"], True)}
+            grippers = {name: DisabledDevice(name + " gripper") for name in ("left", "right")}
+        else:
+            perception = EpicClient(config["epic"])
+            arms = build_jaka_arms(config["jaka"], motion_enabled=True)
+            grippers = {name: SerialGripper(name, values) for name, values in config["grippers"].items()}
         base = UnavailableBase()
     else:
         raise RuntimeError("hardware mode is intentionally locked until JAKA, gripper and base adapters pass commissioning")
-    return TaskController(mode, perception, arms, grippers, base, config, EventLog(str(config["logging"]["directory"])))
+    controller = TaskController(mode, perception, arms, grippers, base, config, EventLog(str(config["logging"]["directory"])))
+    if mode == "hardware-enabled" and config.get("hardware_devices") == "right-arm":
+        controller.active_arm = "right"
+    return controller

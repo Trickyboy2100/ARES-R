@@ -4,7 +4,7 @@ repo_dir="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$repo_dir"
 export PYTHONPATH="$repo_dir/src${PYTHONPATH:+:$PYTHONPATH}"
 python_bin="${ARES_R_PYTHON:-python3}"
-if [[ " $* " == *" --enable-hardware "* ]] && ! "$python_bin" -c 'import serial' >/dev/null 2>&1; then
+if [[ " $* " == *" --enable-hardware "* && " $* " != *" --devices right-arm "* ]] && ! "$python_bin" -c 'import serial' >/dev/null 2>&1; then
   server_python="/home/yikun/anaconda3/envs/dope3.8/bin/python"
   if [[ -x "$server_python" ]]; then
     python_bin="$server_python"

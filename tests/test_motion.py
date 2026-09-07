@@ -1,4 +1,5 @@
 import json
+from dataclasses import replace
 import tempfile
 import unittest
 from pathlib import Path
@@ -31,12 +32,40 @@ class MotionValidationTest(unittest.TestCase):
         directory = tempfile.TemporaryDirectory()
         path = Path(directory.name) / "trajectory.json"
         path.write_text(json.dumps(data), encoding="utf-8")
-        return directory, load_trajectory(path)
+        try:
+            return directory, load_trajectory(path)
+        except BaseException:
+            directory.cleanup()
+            raise
 
     def test_valid_trajectory(self):
         directory, trajectory = self.write_trajectory()
         self.addCleanup(directory.cleanup)
         self.assertEqual(validate_trajectory(trajectory, self.limits, [0.0, 0.0]), [])
+
+    def test_invalid_periods_are_rejected_without_division(self):
+        directory, trajectory = self.write_trajectory()
+        self.addCleanup(directory.cleanup)
+        for dt in (0.0, -0.008, float("nan"), float("inf")):
+            with self.subTest(dt=dt):
+                codes = {i.code for i in validate_trajectory(replace(trajectory, sample_period_s=dt), self.limits)}
+                self.assertIn("TIMING", codes)
+
+    def test_empty_path_does_not_index_first_point(self):
+        directory, trajectory = self.write_trajectory(points=[])
+        self.addCleanup(directory.cleanup)
+        self.assertIn("POINT_COUNT", {i.code for i in validate_trajectory(trajectory, self.limits, [0.0, 0.0])})
+
+    def test_nonfinite_feedback_and_limits_are_rejected(self):
+        directory, trajectory = self.write_trajectory()
+        self.addCleanup(directory.cleanup)
+        self.assertIn("CURRENT_VALUES", {i.code for i in validate_trajectory(trajectory, self.limits, [float("nan"), 0.0])})
+        invalid = replace(self.limits, max_velocity_rad_s=(float("nan"), 1.0))
+        self.assertIn("LIMIT_VALUES", {i.code for i in validate_trajectory(trajectory, invalid)})
+
+    def test_collision_string_is_not_a_boolean_attestation(self):
+        with self.assertRaisesRegex(ValueError, "JSON boolean"):
+            self.write_trajectory(collision_checked="false")
 
     def test_blocks_unchecked_collision_and_limit(self):
         directory, trajectory = self.write_trajectory(

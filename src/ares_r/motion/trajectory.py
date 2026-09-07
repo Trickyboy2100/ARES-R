@@ -50,6 +50,8 @@ def _finite_tuple(values: Sequence[object], label: str) -> Tuple[float, ...]:
 
 def load_trajectory(path: Path) -> Trajectory:
     data = json.loads(path.read_text(encoding="utf-8"))
+    if type(data["collision_checked"]) is not bool:
+        raise ValueError("collision_checked must be a JSON boolean")
     points = tuple(_finite_tuple(point, "points") for point in data["points"])
     return Trajectory(
         schema_version=int(data["schema_version"]),
@@ -68,6 +70,8 @@ def load_trajectory(path: Path) -> Trajectory:
 
 def load_motion_limits(path: Path) -> MotionLimits:
     data = json.loads(path.read_text(encoding="utf-8"))
+    if type(data["commissioning_confirmed"]) is not bool:
+        raise ValueError("commissioning_confirmed must be a JSON boolean")
     return MotionLimits(
         joint_names=tuple(str(name) for name in data["joint_names"]),
         lower_rad=_finite_tuple(data["lower_rad"], "lower_rad"),
@@ -125,6 +129,24 @@ def validate_trajectory(
     if any(len(point) != dof for point in trajectory.points):
         error("POINT_SHAPE", "every point must match joint_names")
         return issues
+    if not dof or len(set(limits.joint_names)) != dof:
+        error("JOINT_NAMES", "joint names must be nonempty and unique")
+        return issues
+    if (not all(math.isfinite(v) for vector in limit_vectors for v in vector)
+            or not math.isfinite(limits.soft_limit_margin_rad)
+            or not math.isfinite(limits.max_start_error_rad)
+            or limits.soft_limit_margin_rad < 0 or limits.max_start_error_rad < 0
+            or any(v <= 0 for v in limits.max_velocity_rad_s + limits.max_acceleration_rad_s2)
+            or any(lo + limits.soft_limit_margin_rad >= hi - limits.soft_limit_margin_rad
+                   for lo, hi in zip(limits.lower_rad, limits.upper_rad))):
+        error("LIMIT_VALUES", "motion limits must be finite, positive and ordered")
+        return issues
+    if any(not math.isfinite(v) for point in trajectory.points for v in point):
+        error("POINT_VALUES", "trajectory points must be finite")
+        return issues
+    # Invalid timing and empty paths must not reach differentiation/indexing.
+    if trajectory.sample_period_s <= 0 or not math.isfinite(trajectory.sample_period_s) or len(trajectory.points) < 2:
+        return issues
 
     for point_index, point in enumerate(trajectory.points):
         for joint_index, value in enumerate(point):
@@ -148,9 +170,11 @@ def validate_trajectory(
             if abs(acceleration) > limits.max_acceleration_rad_s2[joint_index]:
                 error("ACCELERATION", "segment %d joint %s exceeds acceleration limit" % (segment_index, limits.joint_names[joint_index]))
 
-    if current_joints:
+    if len(current_joints):
         if len(current_joints) != dof:
             error("CURRENT_SHAPE", "current joint vector must match joint_names")
+        elif not all(math.isfinite(float(value)) for value in current_joints):
+            error("CURRENT_VALUES", "current joint vector must be finite")
         elif any(abs(float(current_joints[j]) - trajectory.points[0][j]) > limits.max_start_error_rad for j in range(dof)):
             error("START_MISMATCH", "current joints differ from the first trajectory point")
     return issues

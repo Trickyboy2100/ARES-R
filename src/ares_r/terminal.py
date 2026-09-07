@@ -8,7 +8,9 @@ from datetime import datetime
 from pathlib import Path
 from .controller import TaskController
 from .adapters.epic_protocol import parse_5700_response
+from .adapters.mock import DisabledDevice
 from .motion import load_motion_limits, load_trajectory, validate_trajectory
+from .motion.curobo import planner_status, preview as curobo_preview, run_plan as curobo_plan
 from .joint_commands import (current_joint_report, joint_target_report,
                              parse_joint_values, stepped_target, target_gate)
 from .worklog import WorkLog
@@ -21,6 +23,10 @@ except ImportError:  # pragma: no cover - readline is present on the target Linu
 
 
 HELP = """Commands:
+  curobo status              show isolated GPU planning environment/model paths
+  curobo plan right JN deg D plan <=0.5 degree joint delta; no motion
+  curobo plan-file FILE      plan from saved start_rad/goal_rad JSON; no SDK
+  curobo preview FILE        show trajectory timing, excursion, speed and endpoints
   status                     show device and task state
   epic status                show Epic connection configuration/state
   epic detect pick           Epic detection only; never moves a device
@@ -72,6 +78,8 @@ All base, arm and gripper control commands are blocked in this mode.
 """
 
 JAKA_MOTION_HELP = """Hardware-enabled commands:
+  curobo status / curobo plan right JN deg DELTA / curobo preview FILE
+  curobo plan-file FILE          offline start_rad/goal_rad request; no motion
   epic status / epic detect pick / epic detect place [1-6]
   gripper status|read SIDE / gripper set SIDE VALUE / gripper open|close SIDE
   status / world view / jaka status SIDE / jaka joints SIDE
@@ -94,6 +102,7 @@ def _allowed_in_jaka_readonly(args) -> bool:
                         ["jaka", "home"], ["jaka", "dual"])
         or args == ["world", "view"]
         or args[:2] in (["motion", "inspect"], ["motion", "validate"])
+        or args[:2] in (["curobo", "status"], ["curobo", "plan"], ["curobo", "plan-file"], ["curobo", "preview"])
     )
 
 
@@ -108,6 +117,7 @@ def _allowed_in_hardware(args) -> bool:
                         ["jaka", "move-step"], ["jaka", "abort"])
         or args == ["world", "view"]
         or args[:2] in (["motion", "inspect"], ["motion", "validate"])
+        or args[:2] in (["curobo", "status"], ["curobo", "plan"], ["curobo", "plan-file"], ["curobo", "preview"])
         or args[:2] in (["gripper", "status"], ["gripper", "read"], ["gripper", "set"],
                         ["gripper", "half"], ["gripper", "open"], ["gripper", "close"])
     )
@@ -164,7 +174,8 @@ def render(controller: TaskController) -> None:
     if snapshot.mode in ("jaka-readonly", "jaka-motion", "hardware-enabled"):
         try:
             geometry = load_world_geometry(Path(str(controller.config["world_geometry_file"])))
-            diagnostics = {side: controller.arms[side].diagnostics() for side in ("left", "right")}
+            diagnostics = {side: arm.diagnostics() for side, arm in controller.arms.items()
+                           if not isinstance(arm, DisabledDevice)}
             print(render_world(world_snapshot(geometry, diagnostics), detailed=False))
         except Exception as exc:
             print("WORLD unavailable: %s" % exc)
@@ -188,6 +199,29 @@ def run_terminal(controller: TaskController) -> None:
             if args[0] in ("quit", "exit"): break
             if args[0] == "help": print(help_text)
             elif args[0] == "status": pass
+            elif args == ["curobo", "status"]:
+                print(json.dumps(planner_status(controller.config), indent=2))
+            elif args[:2] == ["curobo", "preview"] and len(args) == 3:
+                print(json.dumps(curobo_preview(args[2]), indent=2))
+            elif args[:2] in (["curobo", "plan"], ["curobo", "plan-file"]):
+                diagnostics = None
+                if args[1] == "plan-file":
+                    if len(args) != 3: raise ValueError("usage: curobo plan-file REQUEST.json")
+                    request = json.loads(Path(args[2]).read_text(encoding="utf-8"))
+                    if request.get("arm", "right") != "right": raise ValueError("demo supports right arm only")
+                    start, goal = request["start_rad"], request["goal_rad"]
+                else:
+                    if len(args) != 6 or args[2] != "right" or args[4] != "deg":
+                        raise ValueError("usage: curobo plan right J1..J6 deg DELTA")
+                    if controller.mode != "hardware-enabled": raise RuntimeError("live start requires --enable-hardware; use plan-file offline")
+                    diagnostics = controller.arms["right"].diagnostics()
+                    start = diagnostics["joint_position_rad"]
+                    goal = stepped_target(start, args[3], args[5], "deg")
+                print("Planning only; GPU worker cannot command hardware. No automatic execution.")
+                output = curobo_plan(controller.config, start, goal, diagnostics)
+                controller.events.write("curobo_plan_saved", path=str(output), arm="right")
+                print("Trajectory saved: %s" % output)
+                print(json.dumps(curobo_preview(output), indent=2))
             elif args[:2] == ["epic", "status"]:
                 state = controller.probe_perception()
                 print("Epic status: %s" % state.detail)
@@ -236,7 +270,8 @@ def run_terminal(controller: TaskController) -> None:
                     "schema_version": 1,
                     "timestamp": datetime.now().astimezone().isoformat(),
                     "mode": controller.mode,
-                    "arms": {name: controller.arms[name].diagnostics() for name in ("left", "right")},
+                    "arms": {name: arm.diagnostics() for name, arm in controller.arms.items()
+                             if not isinstance(arm, DisabledDevice)},
                 }
                 output.parent.mkdir(parents=True, exist_ok=True)
                 output.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -330,7 +365,8 @@ def run_terminal(controller: TaskController) -> None:
                 if controller.mode not in ("jaka-readonly", "jaka-motion", "hardware-enabled"):
                     raise RuntimeError("start with a JAKA mode for live TCP projection")
                 geometry = load_world_geometry(Path(str(controller.config["world_geometry_file"])))
-                diagnostics = {side: controller.arms[side].diagnostics() for side in ("left", "right")}
+                diagnostics = {side: arm.diagnostics() for side, arm in controller.arms.items()
+                               if not isinstance(arm, DisabledDevice)}
                 print(render_world(world_snapshot(geometry, diagnostics), detailed=True))
             elif args[:2] == ["gripper", "status"] and len(args) == 3:
                 if args[2] not in controller.grippers: raise ValueError("gripper must be left or right")
@@ -376,7 +412,7 @@ def run_terminal(controller: TaskController) -> None:
                 path = worklog.add(summary, source="terminal", details="mode=%s, state=%s, active_arm=%s" % (controller.mode, controller.state.value, controller.active_arm))
                 print("Work note saved: %s" % path)
             else: print("Unknown command. Type 'help'.")
-        except (ValueError, RuntimeError) as exc:
+        except (ValueError, RuntimeError, OSError, KeyError) as exc:
             print("Command failed: %s" % exc)
         except KeyboardInterrupt:
             if controller.mode == "jaka-readonly":

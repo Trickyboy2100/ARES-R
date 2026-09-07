@@ -7,6 +7,22 @@ from ..interfaces import Arm, Gripper, MobileBase, Perception
 from ..models import DetectionResult, DeviceState, Pose
 
 
+class DisabledDevice:
+    """An unconnected device; never impersonates a live or simulated device."""
+
+    def __init__(self, name):
+        self.name = name
+
+    def state(self):
+        return DeviceState(False, False, "DISABLED: %s excluded from connection scope" % self.name)
+
+    def close(self):
+        pass
+
+    def __getattr__(self, name):
+        raise RuntimeError("%s is disabled; operation %s is unavailable" % (self.name, name))
+
+
 class MockPerception(Perception):
     def __init__(self) -> None:
         self._connected = True

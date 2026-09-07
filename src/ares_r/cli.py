@@ -22,8 +22,11 @@ def main() -> None:
     parser.add_argument("--config", default="config/system.json")
     parser.add_argument("--enable-hardware", action="store_true",
                         help="connect enabled physical adapters; default is fully offline")
+    parser.add_argument("--devices", choices=("all", "right-arm"), default="all",
+                        help="hardware connection scope; right-arm never opens left/camera/gripper connections")
     args = parser.parse_args()
     config = load_config(args.config)
+    config["hardware_devices"] = args.devices
     mode = "hardware-enabled" if args.enable_hardware else "offline"
     if args.enable_hardware and os.environ.get("ARES_R_HARDWARE_CONFIRM") != "YES":
         raise SystemExit("--enable-hardware requires ARES_R_HARDWARE_CONFIRM=YES")
