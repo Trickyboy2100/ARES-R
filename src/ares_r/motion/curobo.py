@@ -60,7 +60,7 @@ def planner_status(config):
     result = {"backend": "cuRobo V2 plan_cspace", "commit": CUROBO_COMMIT,
             "python": cfg["python"], "python_exists": Path(cfg["python"]).is_file(),
             "robot_yaml": cfg["robot_yaml"], "robot_exists": Path(cfg["robot_yaml"]).is_file(),
-            "planning_ready": False, "execution": "locked: unstable live actual-feedback channel; model/world commissioning also pending"}
+            "planning_ready": False, "execution": "legacy servo locked; supervised native SDK222 demo20 available; general model/world commissioning pending"}
     if result["python_exists"]:
         try:
             probe = subprocess.run([cfg["python"], "-c",
@@ -114,5 +114,5 @@ def preview(path):
     info.update({"planner": trajectory.planner, "arm": trajectory.arm,
                  "sample_period_s": trajectory.sample_period_s,
                  "collision_checked": trajectory.collision_checked,
-        "execution": "general execution BLOCKED; supervised J6 micro test has separate live/clearance gates"})
+        "execution": "general execution BLOCKED; native demo20 uses separate fresh-start, model and on-site clearance gates"})
     return info

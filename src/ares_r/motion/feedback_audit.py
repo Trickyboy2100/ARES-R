@@ -22,8 +22,8 @@ def status_connections():
     result = subprocess.run(["ss", "-tnHp"], capture_output=True, text=True,
                             timeout=5, check=True)
     return [line.strip() for line in result.stdout.splitlines()
-            if len(line.split()) >= 5 and line.split()[4] == RIGHT_PEER
-            and line.split()[0] != "TIME-WAIT"]
+            if len(line.split()) >= 5 and line.split()[4].rsplit(":",1)[0] == "192.168.99.101"
+            and line.split()[0] in ("ESTAB", "SYN-SENT", "SYN-RECV", "CLOSE-WAIT")]
 
 
 def run_audit(log_directory, duration_s=600, *, reader_factory=JakaActualReader,

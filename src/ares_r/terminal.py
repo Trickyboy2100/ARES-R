@@ -23,6 +23,8 @@ except ImportError:  # pragma: no cover - readline is present on the target Linu
 
 
 HELP = """Commands:
+  curobo demo plan20          fresh right TCP ~20 cm virtual-obstacle plan; no motion
+  curobo demo run20 FILE      supervised empty-workspace native execution, confirmation required
   jaka feedback-audit right [SECONDS]  offline-mode-only actual feedback test; default 600 s, no motion
   curobo status              show isolated GPU planning environment/model paths
   curobo plan right JN deg D plan <=0.5 degree joint delta; no motion
@@ -79,6 +81,8 @@ All base, arm and gripper control commands are blocked in this mode.
 """
 
 JAKA_MOTION_HELP = """Hardware-enabled commands:
+  curobo demo plan20             plan right TCP ~20 cm around a virtual obstacle; no motion
+  curobo demo run20 FILE         native supervised demo; confirms RUN RIGHT 20CM
   curobo status / curobo plan right JN deg DELTA / curobo preview FILE
   curobo plan-file FILE          offline start_rad/goal_rad request; no motion
   curobo execute-micro FILE      BLOCKED pending stable actual-feedback channel
@@ -92,7 +96,8 @@ JAKA_MOTION_HELP = """Hardware-enabled commands:
   jaka abort SIDE                 abort current JAKA motion
   help / quit
 
-UNIT is deg or rad. Execution is limited to 0.05 rad/s and <=3 degrees per joint.
+UNIT is deg or rad. Manual jaka moves: <=0.05 rad/s and <=3 degrees per joint.
+Native curobo demo20: separate <=20-degree envelope, <=1 degree/s, explicit confirmation.
 """
 
 
@@ -108,6 +113,13 @@ def _allowed_in_jaka_readonly(args) -> bool:
     )
 
 
+def _demo_path(controller,value):
+    if value!="last": return value
+    path=getattr(controller,"last_demo20_path",None)
+    if not path: raise RuntimeError("no plan in this session; run curobo demo plan20 first")
+    return path
+
+
 def _allowed_in_hardware(args) -> bool:
     """Expose commissioned device commands, not unfinished orchestration."""
     return (
@@ -121,6 +133,7 @@ def _allowed_in_hardware(args) -> bool:
         or args[:2] in (["motion", "inspect"], ["motion", "validate"])
         or args[:2] in (["curobo", "status"], ["curobo", "plan"], ["curobo", "plan-file"], ["curobo", "preview"])
         or args[:2] == ["curobo", "execute-micro"]
+        or args[:3] in (["curobo", "demo", "plan20"], ["curobo", "demo", "run20"])
         or args[:2] in (["gripper", "status"], ["gripper", "read"], ["gripper", "set"],
                         ["gripper", "half"], ["gripper", "open"], ["gripper", "close"])
     )
@@ -213,12 +226,34 @@ def run_terminal(controller: TaskController) -> None:
                 print(output.read_text())
                 print("Feedback audit report: %s" % output)
                 controller.events.write("right_feedback_audit", report=str(output))
+            elif args == ["curobo","demo","plan20"]:
+                from .motion.native_demo import exclusive_right
+                from .motion.obstacle_demo import run_demo
+                from .motion.preview import write_preview
+                with exclusive_right(controller): output=run_demo(controller.config)
+                controller.last_demo20_path=str(output)
+                print("20 cm plan saved (no motion): %s"%output)
+                print("Browser preview: %s"%write_preview(output))
+                controller.events.write("demo20_plan",path=str(output))
+            elif args[:3] == ["curobo","demo","run20"] and len(args)==4:
+                from .motion.native_demo import exclusive_right, execute
+                if controller.mode!="hardware-enabled" or controller.config.get("hardware_devices")!="right-arm":
+                    raise RuntimeError("right-only hardware scope required")
+                target=_demo_path(controller,args[3])
+                print("RIGHT ONLY: empty gripper, clear full swept workspace, on-site observation and physical E-stop. No automatic return.")
+                if input("Type RUN RIGHT 20CM to execute once: ").strip()!="RUN RIGHT 20CM":
+                    print("Cancelled; no motion.")
+                else:
+                    with exclusive_right(controller): output=execute(controller.config,target,"demo20",confirmed=True)
+                    controller.events.write("demo20_completed",log=str(output))
+                    print("Right demo completed; actual feedback and servo exit: %s"%output)
             elif args == ["curobo", "status"]:
                 print(json.dumps(planner_status(controller.config), indent=2))
             elif args[:2] == ["curobo", "preview"] and len(args) == 3:
-                print(json.dumps(curobo_preview(args[2]), indent=2))
+                target=_demo_path(controller,args[2])
+                print(json.dumps(curobo_preview(target), indent=2))
                 from .motion.preview import write_preview
-                print("Offline browser plots: %s" % write_preview(args[2]))
+                print("Offline browser plots: %s" % write_preview(target))
             elif args[:2] == ["curobo", "execute-micro"] and len(args) == 3:
                 from .adapters.jaka_micro_servo import MICRO_BLOCK_REASON
                 raise RuntimeError(MICRO_BLOCK_REASON)

@@ -20,7 +20,8 @@ class FeedbackAuditTest(unittest.TestCase):
     def test_socket_filter_only_right_status_peer(self):
         rows = "ESTAB 0 0 192.168.99.32:111 192.168.99.101:10004 users:pid1\n" \
                "ESTAB 0 0 192.168.99.32:112 192.168.99.100:10004 users:pid2\n" \
-               "TIME-WAIT 0 0 192.168.99.32:113 192.168.99.101:10004\n"
+               "TIME-WAIT 0 0 192.168.99.32:113 192.168.99.101:10004\n" \
+               "FIN-WAIT-2 0 0 192.168.99.32:114 192.168.99.101:10004\n"
         with patch("ares_r.motion.feedback_audit.subprocess.run",return_value=Mock(stdout=rows)):
             self.assertEqual(len(status_connections()),1)
 
@@ -30,6 +31,11 @@ class FeedbackAuditTest(unittest.TestCase):
             path = run_audit(root,5,reader_factory=factory,connection_probe=lambda:["occupied"])
             self.assertEqual(json.loads(path.read_text())["result"],"BLOCKED")
             factory.assert_not_called()
+
+    def test_native_control_port_also_blocks(self):
+        rows="ESTAB 0 0 192.168.99.32:111 192.168.99.101:10001 users:pid1\n"
+        with patch("ares_r.motion.feedback_audit.subprocess.run",return_value=Mock(stdout=rows)):
+            self.assertEqual(len(status_connections()),1)
 
     def test_missing_inspection_blocks_before_reader(self):
         with tempfile.TemporaryDirectory() as root:

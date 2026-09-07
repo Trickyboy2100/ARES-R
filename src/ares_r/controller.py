@@ -15,6 +15,7 @@ class TaskController:
         self.active_arm = "left"
         self.carrying = False
         self.last_detection = None  # type: DetectionResult
+        self.last_demo20_path = None
         self.last_error = ""
         self.events.write("controller_started", mode=mode)
 
