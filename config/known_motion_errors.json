@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "errors": {
+    "RESET_LEGACY_20_DEG_GATE": {
+      "first_seen": "2026-09-07",
+      "symptom": "reset exceeds 20 degree envelope; no motion",
+      "classification": "pre-planner configuration gate, not cuRobo failure",
+      "resolution": "separate reset envelope and native reset mode",
+      "automatic_action": "continue through current-to-fixed-start cuRobo planning"
+    },
+    "TRACKING_ERROR": {
+      "first_seen": "2026-09-07",
+      "symptom": "native execution stopped after following error exceeded 0.2 degree",
+      "classification": "servo execution protection",
+      "automatic_action": "only after abort, servo-off and logout all return zero: read fresh state, replan remaining reset with cuRobo at 2x, retry once",
+      "never_automatic": ["raise threshold", "reuse trajectory", "resume after collision, limit, E-stop, tool change, communication failure or unconfirmed cleanup", "more than one retry"]
+    }
+  }
+}

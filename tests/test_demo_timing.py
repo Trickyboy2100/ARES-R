@@ -16,3 +16,5 @@ class TimingTest(unittest.TestCase):
         self.assertAlmostEqual(math.radians(MAX_JOINT_ACCEL_DEG_S2),.2)
         for count,dt in ((1,.08),(10,0),(10,float("nan"))):
             with self.assertRaises(ValueError):sample_count_at_scale(count,dt)
+        self.assertEqual(sample_count_at_scale(513,.08,2)[0],257)
+        with self.assertRaises(ValueError):sample_count_at_scale(513,.08,1)

@@ -10,13 +10,15 @@ import uuid
 
 from .curobo import CUROBO_COMMIT, settings
 from .demo_envelope import RESET_MAX_EXCURSION_DEG, RESET_MAX_TCP_LENGTH_M
+from .demo_timing import SPEED_SCALE, SUPPORTED_SPEED_SCALES
 
 
-def run_demo(config, intent="demo20"):
+def run_demo(config, intent="demo20", speed_scale=SPEED_SCALE):
     from .native_demo import snapshot
     from .demo_reference import load_reference, check_context, at_reference
     from .scene import load_scene
     if intent not in ("demo20","reset"): raise ValueError("unsupported planning intent")
+    if speed_scale not in SUPPORTED_SPEED_SCALES: raise ValueError("unsupported speed scale")
     reference=load_reference(config)
     live=snapshot()
     if live["queue"] or live["active_queue"] or not live["inpos"]: raise RuntimeError("right not idle")
@@ -41,7 +43,7 @@ def run_demo(config, intent="demo20"):
                    obstacle_dims_m=[0.025, 0.025, 0.025],
                    tool_proxy_radius_m=0.025,
                    tcp_length_range_m=[0.000001, RESET_MAX_TCP_LENGTH_M] if intent=="reset" else [0.18, 0.22],
-                   intent=intent,reference_id=reference["id"],scene_snapshot=load_scene(config))
+                   intent=intent,speed_scale=speed_scale,reference_id=reference["id"],scene_snapshot=load_scene(config))
     if intent=="reset": request["goal_rad"]=reference["snapshot"]["actual_rad"]
     audit=Path(__file__).resolve().parents[3]/"worklog/evidence/2026-09-07-curobo/right_fk_audit.json"
     request["T_controller_model"]=json.loads(audit.read_text())["T_controller_model"]

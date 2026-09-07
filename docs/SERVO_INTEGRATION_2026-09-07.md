@@ -15,7 +15,7 @@ Trajectory JSON + 模型/场景/工具/参考点版本 + 数值/空间门槛
 ```
 
 - `demo_reference.py`：版本化起点；六关节弧度、控制器基坐标 TCP mm/rad、工具号/偏移、世界/模型/限位/FK 标定指纹。
-- `demo_workflow.py`：复位规划 → 复位执行 → 到位核验 → 20 cm 规划 → 执行；失败终止状态机，不自动恢复或回程。
+- `demo_workflow.py`：复位规划 → 复位执行 → 到位核验 → 20 cm 规划 → 执行。已知且清理完整的 `TRACKING_ERROR` 允许一次 3×→2×重新规划；其他失败终止，不自动恢复或回程。
 - `obstacle_demo*.py`：隔离 GPU 规划、时间放慢/80 ms 重采样、重新验证；不导入控制 SDK。
 - `trajectory.py`：沿用已有统一文件契约。上层规划与下层执行通过文件交接，不在 GPU 进程中直接发送 servo。
 - `native_demo.py`：SDK 环境隔离、起点/版本/限位门槛、互斥、启动/回收执行进程。旧 Python SDK 不替换。

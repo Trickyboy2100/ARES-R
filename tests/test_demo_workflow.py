@@ -9,7 +9,8 @@ import unittest
 from unittest.mock import Mock,patch
 
 from ares_r.motion import demo_reference as reference
-from ares_r.motion.native_demo import native_environment,SDK_LIBRARY
+from ares_r.motion.native_demo import (native_environment,SDK_LIBRARY,
+    NativeExecutionError,classify_native_failure)
 from ares_r.motion.scene import load_scene,scene_cuboids
 from ares_r.motion.servo_dashboard import monitor,render
 from ares_r.motion.waypoints import load_waypoints,catmull_rom
@@ -44,6 +45,31 @@ class WorkflowTest(unittest.TestCase):
         with patch("ares_r.motion.demo_workflow.reset",side_effect=RuntimeError("blocked")),patch("ares_r.motion.demo_workflow.run_demo") as plan:
             with self.assertRaises(RuntimeError): cycle({},confirmed=True)
             plan.assert_not_called()
+
+    def test_only_clean_tracking_stop_is_recoverable(self):
+        clean=[dict(event="abort",code=0),dict(event="servo_disabled",code=0),dict(event="logout",code=0)]
+        self.assertEqual(classify_native_failure("FAILED tracking error",clean),("TRACKING_ERROR",True,True))
+        self.assertEqual(classify_native_failure("FAILED tracking error",clean[:-1]),("TRACKING_ERROR",False,False))
+        self.assertEqual(classify_native_failure("FAILED status code",clean),("NATIVE_EXECUTION_FAILED",False,True))
+
+    def test_reset_replans_once_at_two_x_after_clean_tracking_stop(self):
+        events=Mock();failed=NativeExecutionError("tracking",code="TRACKING_ERROR",log="first.log",recoverable=True)
+        plans=["three-x","two-x"]
+        with patch("ares_r.motion.demo_workflow.run_demo",side_effect=plans) as plan,\
+             patch("ares_r.motion.demo_workflow.execute",side_effect=[failed,"done.log"]),\
+             patch("ares_r.motion.demo_workflow.snapshot",return_value=dict(actual_rad=[0]*6,tcp_mm_rad=[0]*6,tool_id=2,user_id=0,tool_mm_rad=[0]*6)),\
+             patch("ares_r.motion.demo_workflow.load_reference",return_value=dict(snapshot=dict(actual_rad=[0]*6,tcp_mm_rad=[0]*6))),\
+             patch("ares_r.motion.demo_workflow.check_context"),patch("sys.stdout",new_callable=io.StringIO):
+            self.assertEqual(reset({},True,events),"two-x")
+        self.assertEqual([call.kwargs["speed_scale"] for call in plan.call_args_list],[3,2])
+        self.assertTrue(any(call.args[0]=="motion_auto_recovery_started" for call in events.write.call_args_list))
+
+    def test_unconfirmed_cleanup_never_retries(self):
+        failed=NativeExecutionError("tracking",code="TRACKING_ERROR",log="first.log",recoverable=False)
+        with patch("ares_r.motion.demo_workflow.run_demo",return_value="three-x") as plan,\
+             patch("ares_r.motion.demo_workflow.execute",side_effect=failed):
+            with self.assertRaises(NativeExecutionError):reset({},True)
+        self.assertEqual(plan.call_count,1)
 
     def test_cycle_orders_reposition_before_demo_planning_and_execution(self):
         order=Mock()

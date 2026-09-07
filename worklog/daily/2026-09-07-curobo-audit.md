@@ -83,3 +83,10 @@ Source: manual
 - 原点仍为双臂基座连线中点的地面投影；X 向前、Y 向左、Z 向上。没有修改已验证坐标配置，也没有重选 demo 起点。
 - 新增两段顺序、世界位姿六分量一致性、104°复位数值门槛、native reset/demo 模式隔离及忙控制器拦截测试。本轮开发不自动启动实机运动。
 - .32 基于新鲜实际姿态完成第一段 GPU 规划，输出 `logs/curobo_obstacle_20260907_161455_cb6687bf/trajectory.json`、HTML 连杆预览及校验后的 native 载荷。808 点、64.56 s、TCP 行程 0.770522 m、最大关节偏移 103.6244°、峰值关节速度 2.39613°/s，全部规划/执行前门槛通过；没有启动 native 执行器。两端 97 项单元测试通过。
+
+## 已知错误与有界自动恢复
+
+- 两次错误写入 `config/known_motion_errors.json`：旧复位 20° gate 为规划前配置错误，已由独立 reset envelope 修复；servo `TRACKING_ERROR` 为 0.2°执行保护。
+- 自动恢复仅适用于日志同时确认 abort、关闭 servo、logout 均返回 0 的跟踪误差。cycle20 读取停止后的新鲜实际状态，重新运行 cuRobo，将复位速度由 3×降到 2×，最多一次。保留原误差门槛，不续用旧轨迹。
+- 碰撞、限位、急停、工具/用户坐标变化、通信/SDK错误、清理不完整以及第二次跟踪错误均禁止自动恢复；第一段未核验到固定起点时第二段不启动。
+- session JSONL 新增 `known_motion_error`、`motion_auto_recovery_started`，包含阶段、尝试次数、速度倍率和原始日志路径。自动恢复行为在 cycle20 初次确认覆盖范围内，并在 dashboard/终端明确显示。

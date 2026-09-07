@@ -19,7 +19,7 @@ class Demo20Test(unittest.TestCase):
     def setUp(self):
         self.trajectory=Trajectory(1,"curobo-v2-virtual-obstacle-demo","right",ARM_NAMES,.08,
             tuple(tuple([i*.0001]+[0.0]*5) for i in range(201)),False,"model","virtual","tool","none")
-        self.raw={"demo":dict(tcp_path_m=[[i*.001,0,0] for i in range(201)],
+        self.raw={"speed_scale":3.0,"demo":dict(tcp_path_m=[[i*.001,0,0] for i in range(201)],
             world_link_points_m=[[[0,-.2,1.2] for _ in range(8)] for _ in range(201)],
             simulation_collision_checked=True,min_model_clearance_m=.01,baseline_min_clearance_m=-.01)}
 

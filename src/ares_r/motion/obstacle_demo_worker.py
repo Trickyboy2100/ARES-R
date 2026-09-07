@@ -12,7 +12,8 @@ from .curobo import ARM_NAMES, finite_joints, slow_sample_period, summarize
 from .scene import scene_cuboids
 from .demo_envelope import RESET_MAX_EXCURSION_DEG, RESET_MAX_DURATION_S
 from .demo_timing import (SPEED_SCALE, SAMPLE_PERIOD_S, MAX_JOINT_SPEED_DEG_S,
-                         MAX_JOINT_ACCEL_DEG_S2, MAX_TCP_SPEED_M_S, sample_count_at_scale)
+                         MAX_JOINT_ACCEL_DEG_S2, MAX_TCP_SPEED_M_S,
+                         SUPPORTED_SPEED_SCALES, sample_count_at_scale)
 
 
 def main():
@@ -26,6 +27,8 @@ def main():
     request = json.loads(Path(sys.argv[1]).read_text())
     if request.get("planning_only") is not True or request["arm"] != "right":
         raise RuntimeError("virtual right-arm request required")
+    speed_scale=float(request.get("speed_scale",SPEED_SCALE))
+    if speed_scale not in SUPPORTED_SPEED_SCALES: raise RuntimeError("unsupported speed scale")
     source = Path(curobo.__file__).resolve().parent.parent
     manifest = json.loads((source / "ARES_R_SOURCE_MANIFEST.json").read_text())
     if manifest["commit"] != request["expected_commit"]:
@@ -156,19 +159,19 @@ def main():
         # This is NOT a fallback planner; revalidate the resampled path below.
         desired_dt=slow_sample_period(points.tolist(),max_velocity=.8,max_acceleration=1.5)
         times=np.arange(len(points))*desired_dt
-        sample_count,legacy_duration=sample_count_at_scale(len(points),desired_dt)
+        sample_count,legacy_duration=sample_count_at_scale(len(points),desired_dt,speed_scale)
         native_times=np.linspace(0,times[-1],sample_count)
         points=np.stack([np.interp(native_times,times,points[:,j]) for j in range(6)],axis=1)
         dt=SAMPLE_PERIOD_S
         summary = summarize(points.tolist(),dt)
-        if max(summary["max_excursion_deg"])>(RESET_MAX_EXCURSION_DEG if reset else 20) or max(summary["peak_velocity_deg_s"])>MAX_JOINT_SPEED_DEG_S or max(summary["peak_acceleration_deg_s2"])>MAX_JOINT_ACCEL_DEG_S2 or summary["duration_s"]>(RESET_MAX_DURATION_S if reset else 115):
+        if max(summary["max_excursion_deg"])>(RESET_MAX_EXCURSION_DEG if reset else 20) or max(summary["peak_velocity_deg_s"])>speed_scale or max(summary["peak_acceleration_deg_s2"])>MAX_JOINT_ACCEL_DEG_S2 or summary["duration_s"]>(RESET_MAX_DURATION_S if reset else 115):
             attempts[-1].update(rejected="native motion envelope",summary=summary)
             continue
         dense=np.concatenate([a+(b-a)*np.arange(4)[:,None]/4 for a,b in zip(points,points[1:])] + [points[-1:]])
         gap=clearance(dense)
         if gap<.005: continue
         tcp=np.asarray([fk(q)[0] for q in points])
-        if np.linalg.norm(np.diff(tcp,axis=0),axis=1).max()/dt>MAX_TCP_SPEED_M_S:
+        if np.linalg.norm(np.diff(tcp,axis=0),axis=1).max()/dt>.02*speed_scale:
             attempts[-1]["rejected"]="TCP speed envelope"
             continue
         links=np.asarray([fk(q)[1] for q in points])
@@ -191,7 +194,7 @@ def main():
             attached_object_revision="none",source_commit=manifest["commit"],
             intent=request.get("intent","demo20"),reference_id=request["reference_id"],scene_digest=request["scene_snapshot"]["digest"],
             simulation_only=bool(request.get("simulation_only",False)),
-            speed_scale=SPEED_SCALE,legacy_duration_s=legacy_duration,
+            speed_scale=speed_scale,legacy_duration_s=legacy_duration,
             summary=summary,planning_time_s=time.monotonic()-started,
             backend_version=str(curobo.__version__),gpu=torch.cuda.get_device_name(0),
             demo=dict(tcp_path_m=tcp.tolist(),link_points_m=links.tolist(),world_link_points_m=world_links.tolist(),world_obstacle_corners_m=[] if reset else world_obstacle.tolist(),

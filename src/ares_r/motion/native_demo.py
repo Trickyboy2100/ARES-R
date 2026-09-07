@@ -10,11 +10,26 @@ from contextlib import contextmanager
 from .curobo import CUROBO_COMMIT, run_plan, summarize
 from .feedback_audit import status_connections
 from .trajectory import load_trajectory, load_motion_limits, validate_trajectory
-from .demo_timing import SPEED_SCALE, MAX_JOINT_SPEED_DEG_S, MAX_JOINT_ACCEL_DEG_S2, MAX_TCP_SPEED_M_S
+from .demo_timing import (SPEED_SCALE, SUPPORTED_SPEED_SCALES,
+    MAX_JOINT_ACCEL_DEG_S2)
 from .demo_envelope import RESET_MAX_EXCURSION_DEG, RESET_MAX_TCP_LENGTH_M, RESET_MAX_DURATION_S
 
 BINARY="/home/yikun/ares-r-curobo-assets/jaka_right_demo"
 SDK_LIBRARY="/home/yikun/JAKA/lib"
+
+
+class NativeExecutionError(RuntimeError):
+    def __init__(self,message,code="NATIVE_EXECUTION_FAILED",log=None,recoverable=False):
+        super().__init__(message);self.code=code;self.log=Path(log) if log else None;self.recoverable=recoverable
+
+
+def classify_native_failure(text,events):
+    cleanup=(any(e.get("event")=="abort" and e.get("code")==0 for e in events) and
+             any(e.get("event")=="servo_disabled" and e.get("code")==0 for e in events) and
+             any(e.get("event")=="logout" and e.get("code")==0 for e in events))
+    tracking="FAILED tracking error" in text
+    return ("TRACKING_ERROR" if tracking else "NATIVE_EXECUTION_FAILED",
+            bool(tracking and cleanup),cleanup)
 
 
 def native_environment():
@@ -70,8 +85,8 @@ def prepare_native_file(config,path,mode):
         if diagnostics.get("joint_position_source")!="sdk222_actual": raise RuntimeError("fresh SDK222 actual start required")
         live=diagnostics["native_snapshot"]
     elif mode in ("demo20", "reset"):
-        if raw.get("speed_scale")!=SPEED_SCALE:
-            raise RuntimeError("demo speed profile changed to 3x; replan with cycle20 or plan20")
+        if raw.get("speed_scale") not in SUPPORTED_SPEED_SCALES:
+            raise RuntimeError("unsupported demo speed profile; replan")
         if trajectory.planner!="curobo-v2-virtual-obstacle-demo" or raw.get("execution_scope")!="supervised_right_empty_workspace" or raw.get("simulation_only"):
             raise RuntimeError("not a supervised 20 cm plan")
         live=req["live_snapshot"]
@@ -107,7 +122,8 @@ def validate_demo20(raw,trajectory,reset=False):
     if len(tcp)!=len(trajectory.points) or len(world)!=len(tcp): raise RuntimeError("geometry/trajectory count mismatch")
     if any(len(p)!=3 or not all(math.isfinite(v) for v in p) for p in tcp): raise RuntimeError("invalid TCP geometry")
     lengths=[math.sqrt(sum((a[j]-b[j])**2 for j in range(3))) for a,b in zip(tcp,tcp[1:])]
-    if not (.000001 if reset else .18)<=sum(lengths)<=(RESET_MAX_TCP_LENGTH_M if reset else .22) or max(lengths)/trajectory.sample_period_s>MAX_TCP_SPEED_M_S: raise RuntimeError("TCP length/speed envelope")
+    speed_scale=float(raw["speed_scale"])
+    if not (.000001 if reset else .18)<=sum(lengths)<=(RESET_MAX_TCP_LENGTH_M if reset else .22) or max(lengths)/trajectory.sample_period_s>.02*speed_scale: raise RuntimeError("TCP length/speed envelope")
     if demo.get("simulation_collision_checked") is not True or not math.isfinite(demo["min_model_clearance_m"]) or demo["min_model_clearance_m"]<.005:
         raise RuntimeError("virtual model clearance not validated")
     if not reset and demo["baseline_min_clearance_m"]>=0: raise RuntimeError("baseline does not intersect virtual obstacle")
@@ -117,7 +133,7 @@ def validate_demo20(raw,trajectory,reset=False):
             if len(p)!=3 or not all(math.isfinite(v) for v in p) or p[1]>-.07 or p[2]<.8:
                 raise RuntimeError("right workspace separation gate")
     summary=summarize(trajectory.points,trajectory.sample_period_s)
-    if max(summary["max_excursion_deg"])>(RESET_MAX_EXCURSION_DEG if reset else 20) or max(summary["peak_velocity_deg_s"])>MAX_JOINT_SPEED_DEG_S or max(summary["peak_acceleration_deg_s2"])>MAX_JOINT_ACCEL_DEG_S2 or summary["duration_s"]>(RESET_MAX_DURATION_S if reset else 115):
+    if max(summary["max_excursion_deg"])>(RESET_MAX_EXCURSION_DEG if reset else 20) or max(summary["peak_velocity_deg_s"])>speed_scale or max(summary["peak_acceleration_deg_s2"])>MAX_JOINT_ACCEL_DEG_S2 or summary["duration_s"]>(RESET_MAX_DURATION_S if reset else 115):
         raise RuntimeError("joint envelope")
 
 
@@ -138,8 +154,12 @@ def execute(config,path,mode,confirmed=False):
                                env=native_environment(),stdout=stream,stderr=subprocess.STDOUT)
         code=monitor(child,log,json.loads(Path(path).read_text()),phase=mode,world_base=world_base,
                      timeout=RESET_MAX_DURATION_S+30 if mode=="reset" else 150)
-    if code: raise RuntimeError("native execution failed; inspect %s"%log)
     events=[json.loads(l) for l in log.read_text().splitlines() if l.startswith("{")]
+    text=log.read_text()
+    if code:
+        failure_code,recoverable,cleanup=classify_native_failure(text,events)
+        raise NativeExecutionError("native execution failed [%s], cleanup=%s; inspect %s"%(
+            failure_code,cleanup,log),code=failure_code,log=log,recoverable=recoverable)
     if not any(e.get("event")=="target_reached" for e in events): raise RuntimeError("no target-reached evidence")
     if not any(e.get("event")=="servo_disabled" and e.get("code")==0 for e in events): raise RuntimeError("servo exit unconfirmed")
     return log

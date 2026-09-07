@@ -25,6 +25,8 @@ RUN RIGHT CYCLE20
 
 `cycle20` 每次先核验固定起点；不在起点时重新用 cuRobo 规划复位，执行并核验到位后再规划/执行约 20 cm 演示。复位和演示分别显示实时 dashboard，完成后自动返回命令提示符。失败立即终止，不追加回程或重试。
 
+已知的 servo 跟踪误差是唯一自动恢复例外：仅当原生执行日志同时确认 `abort=0`、`servo_disabled=0`、`logout=0`，cycle20 才从停止后的新鲜实际姿态重新规划复位，将速度从 3×降到 2×并重试一次。0.2°跟踪保护不放宽。第二次失败、清理不完整或任何其他错误立即停止，不自动继续第二段。策略和历史症状记录于 `config/known_motion_errors.json`，每次触发写入 session JSONL。
+
 第一段是“当前姿态 → 固定起点”，不要求当前姿态等于 demo 终点；第二段才是 20 cm 绕障。两段使用不同执行模式及独立检查，不直接连线发送、不盲目反放轨迹。两段间再次读取实际关节/TCP核验起点后，才规划第二段。
 
 首次部署没有参考点时：`curobo demo start save` 仅记录当前右臂实际关节/TCP，不运动。已有记录不覆盖；确需重选时执行 `curobo demo start replace` 并输入 `REPLACE RIGHT START`，旧版本留档。参考点持久化于 `config/right_demo_start.site.json`，不随每次规划改变，也不上传为其他设备的通用起点。
