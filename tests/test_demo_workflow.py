@@ -71,6 +71,16 @@ class WorkflowTest(unittest.TestCase):
             with self.assertRaises(NativeExecutionError):reset({},True)
         self.assertEqual(plan.call_count,1)
 
+    def test_recovery_planning_gate_is_recorded_and_stops(self):
+        events=Mock();failed=NativeExecutionError("tracking",code="TRACKING_ERROR",log="first.log",recoverable=True)
+        with patch("ares_r.motion.demo_workflow.run_demo",side_effect=["three-x",RuntimeError("right workspace separation")]),\
+             patch("ares_r.motion.demo_workflow.execute",side_effect=failed),patch("sys.stdout",new_callable=io.StringIO):
+            with self.assertRaisesRegex(RuntimeError,"AUTO RECOVERY BLOCKED"):
+                reset({},True,events)
+        names=[call.args[0] for call in events.write.call_args_list]
+        self.assertIn("motion_auto_recovery_started",names)
+        self.assertIn("motion_auto_recovery_blocked",names)
+
     def test_cycle_orders_reposition_before_demo_planning_and_execution(self):
         order=Mock()
         with patch("ares_r.motion.demo_workflow.reset") as home,patch("ares_r.motion.demo_workflow.run_demo",return_value="plan") as plan,patch("ares_r.motion.demo_workflow.execute",return_value="log") as execute:

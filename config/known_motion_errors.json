@@ -14,6 +14,13 @@
       "classification": "servo execution protection",
       "automatic_action": "only after abort, servo-off and logout all return zero: read fresh state, replan remaining reset with cuRobo at 2x, retry once",
       "never_automatic": ["raise threshold", "reuse trajectory", "resume after collision, limit, E-stop, tool change, communication failure or unconfirmed cleanup", "more than one retry"]
+    },
+    "AUTO_RECOVERY_WORKSPACE_BLOCKED": {
+      "first_seen": "2026-09-07",
+      "symptom": "2x recovery replan rejected by right workspace separation",
+      "classification": "fresh start/path enters unmodeled shared-arm region",
+      "automatic_action": "record motion_auto_recovery_blocked and remain stopped",
+      "resolution_required": "park/read the left arm and commission a dual-arm collision scene; do not silently relax Y separation"
     }
   }
 }

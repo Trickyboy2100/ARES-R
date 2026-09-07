@@ -9,8 +9,16 @@ def reset(config,confirmed=False,events=None):
     if not confirmed: raise RuntimeError("reset requires explicit supervised confirmation")
     print("RESET: planning from fresh actual joints to saved start (no direct joint jump).",flush=True)
     path=None
+    recovering=False
     for attempt,speed in enumerate((SPEED_SCALE,RECOVERY_SPEED_SCALE),1):
-        path=run_demo(config,intent="reset",speed_scale=speed)
+        try:
+            path=run_demo(config,intent="reset",speed_scale=speed)
+        except RuntimeError as exc:
+            if recovering:
+                if events: events.write("motion_auto_recovery_blocked",stage="reset",
+                    attempt=attempt,speed_scale=speed,error=str(exc))
+                raise RuntimeError("AUTO RECOVERY BLOCKED after safe stop: %s"%exc) from exc
+            raise
         if path is None: break
         if events: events.write("demo_reset_plan",path=str(path),attempt=attempt,speed_scale=speed)
         try:
@@ -24,6 +32,7 @@ def reset(config,confirmed=False,events=None):
             print("AUTO RECOVERY 1/1: tracking guard stopped safely; fresh state + cuRobo replan at 2x.",flush=True)
             if events: events.write("motion_auto_recovery_started",error_code=exc.code,
                 stage="reset",from_speed_scale=speed,to_speed_scale=RECOVERY_SPEED_SCALE,max_retries=1)
+            recovering=True
     live=snapshot();reference=load_reference(config)
     check_context(config,reference,live)
     if not at_reference(reference,live): raise RuntimeError("fixed start not reached; outbound demo blocked")
