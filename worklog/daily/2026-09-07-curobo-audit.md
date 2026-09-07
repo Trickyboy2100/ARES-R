@@ -52,3 +52,17 @@ Source: manual
 - 新增连杆/TCP/虚拟障碍的三视图及 3D 投影回放、会话内 last 轨迹别名、模拟 SDK 故障测试和 20 cm 数值/空间门槛测试。
 - 操作和限制：`docs/CUROBO_REAL_DEMO20.md`；实机证据：`worklog/evidence/2026-09-07-demo20/`。
 - 82 项离线测试通过，包含原生 C++ 模拟 SDK 的故障停止/清理、占用检测、20 cm 空间/数值门槛和 last 别名；预览 JavaScript 语法检查通过。
+
+## 固定起点、SDK 加载修复与 servo 分层接入
+
+- 在旧 `LD_LIBRARY_PATH=/home/yikun/JAKA` 下，使用无效模式参数、未连接控制器即复现 `is_in_servomoveEPi` 符号缺失。2.2.2 库存在该符号；修复采用 native 子进程专用库路径、即时绑定和固定 RPATH，不改共用账户环境或旧 Python SDK。
+- 共享服务器同步前确认 src/scripts/config 无现场修改、新增模块无同名文件；原内容备份 `/home/yikun/ares-r-curobo-assets/sdk-fix-backup.3gSn7v/code.tgz`，SHA256 `dc65e3f1e1fc7cb4a2c572f1dec2fc35d93bea3ab45d858fe5c528ce5dc6754b`。`tmp/`、`b1_baseline.py.save`、`b5_move_safe.py` 保持原样。
+- 修复后在旧库环境成功只读读取右臂，保存本轮固定起点：控制器基坐标 TCP 约 `[323.909,-656.932,367.043] mm`，工具 2、用户坐标 0。持久化参考号 `9d5d0714342346e6b91db0fbe93ec27e`，同时保存六关节实际弧度及模型/限位/坐标标定指纹；现场文件不加入 Git。
+- 起点记录必须显式 save/replace，不随 plan20 自动漂移。`cycle20` 编排 cuRobo 复位 → 核验到位 → 新鲜 20 cm 规划 → native servo；失败停止，不自动回程。单独 reset 与原 plan20/run20 保留。
+- 实时 dashboard 只读执行 JSONL，显示实际关节/TCP、目标、进度和跟踪误差；空格/q/Esc/Ctrl+C 只通知执行进程，避免并发 SDK 操作。非交互输出降级为节流日志。
+- 只读审计 tmp 四个脚本，提取单位安全的 waypoint 导入与 centripetal Catmull-Rom 离线几何，加入正式模块/Terminal。未经认证的样条不是 cuRobo 替代规划器，禁止直接执行，不裁剪越界关节或伪造碰撞认证。
+- 预留版本化静态场景输入，当前只接入 URDF-base 轴对齐盒；变更场景后阻断旧轨迹。Epic 实时点云尚未接入，未知字段/坐标/源明确拒绝。
+- GPU 完成固定起点约 20 cm 绕障规划；从规划终点构造明确标记的合成状态，仅 GPU 验证回到起点的复位路径，513 点、40.96 s、峰值关节速度 0.7882°/s。合成输出 `simulation_only=true`、起点时间戳 0，禁止执行。
+- 90 项离线测试通过。本轮未新增机械臂运动；固定起点复位与 dashboard 的完整实机循环尚待现场验收，不将上一版单次实机演示结果当作新版验收。
+- 说明：`docs/CUROBO_REAL_DEMO20.md`、`docs/SERVO_INTEGRATION_2026-09-07.md`。
+- 新 Terminal 在旧库环境下完成 `start show`、`plan20` 复测并正常退出，规划输出 `logs/curobo_obstacle_20260907_154635_1eb10b95/trajectory.json`：194.088 mm、513 点、40.96 s、峰值 0.794890°/s、模型最小间隙 9.838 mm。执行前载荷/参考点/场景门槛通过，但未启动执行器。一次复测被本轮残留只读终端占用阻断，已仅回收该测试 PID 246016；现场 PID 243787 和左臂未处理。

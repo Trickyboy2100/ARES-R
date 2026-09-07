@@ -9,6 +9,7 @@ import time
 import xml.etree.ElementTree as ET
 
 from .curobo import ARM_NAMES, finite_joints, slow_sample_period, summarize
+from .scene import scene_cuboids
 
 
 def main():
@@ -83,11 +84,18 @@ def main():
     predicted=correction @ np.r_[fk(start)[0],1]
     if np.linalg.norm(predicted[:3]-np.asarray(request["live_snapshot"]["tcp_mm_rad"][:3])/1000)>.003:
         raise RuntimeError("live TCP and planning FK differ by more than 3 mm")
-    for delta_deg in [math.degrees(length/radius) for length in (.16,.14,.18)]:
-        goal = start.copy(); goal[0] += math.radians(delta_deg)
+    reset=request.get("intent")=="reset"
+    goals=[np.asarray(finite_joints(request["goal_rad"]))] if reset else [start+np.array([length/radius,0,0,0,0,0]) for length in (.16,.14,.18)]
+    for goal in goals:
+        delta_deg=math.degrees(goal[0]-start[0])
         midpoint = fk((start+goal)/2)[0]
         dims = np.asarray(request["obstacle_dims_m"])
-        scene = {"cuboid": {"virtual_block": dict(dims=dims.tolist(), pose=midpoint.tolist()+[1,0,0,0])}}
+        scene = {"cuboid": scene_cuboids(request["scene_snapshot"])}
+        # A reset uses an empty/manual scene, not a newly invented obstacle
+        # between nearby endpoints. The remote sentinel keeps the collision
+        # backend initialized; it is not a claimed physical obstacle.
+        if reset: midpoint=np.array([10.,10.,10.])
+        scene["cuboid"]["virtual_block"]=dict(dims=dims.tolist(),pose=midpoint.tolist()+[1,0,0,0])
         cfg = MotionPlannerCfg.create(robot=robot, scene_model=scene,
             interpolation_dt=0.008, interpolation_buffer_size=5000,
             num_trajopt_seeds=8, num_ik_seeds=8, use_cuda_graph=False,
@@ -107,13 +115,14 @@ def main():
                 geometry = planner.compute_kinematics(state(rows[begin:begin+128])).robot_spheres
                 s = geometry.detach().cpu().numpy().reshape(-1,4)
                 s = s[s[:,3] > 0]
-                d = np.abs(s[:,:3]-midpoint)-dims/2
-                signed = np.linalg.norm(np.maximum(d,0),axis=1)+np.minimum(np.max(d,axis=1),0)-s[:,3]
-                lowest = min(lowest, float(signed.min()))
+                for box in scene["cuboid"].values():
+                    d = np.abs(s[:,:3]-np.asarray(box["pose"][:3]))-np.asarray(box["dims"])/2
+                    signed = np.linalg.norm(np.maximum(d,0),axis=1)+np.minimum(np.max(d,axis=1),0)-s[:,3]
+                    lowest = min(lowest, float(signed.min()))
             return lowest
         baseline = np.linspace(start,goal,101)
         baseline_clearance = clearance(baseline)
-        if min(clearance([start]),clearance([goal])) <= 0 or baseline_clearance >= 0:
+        if min(clearance([start]),clearance([goal])) <= 0 or (not reset and baseline_clearance >= 0):
             attempts.append(dict(delta_deg=delta_deg, reason="invalid demonstration endpoints/baseline"))
             continue
         result = planner.plan_cspace(state(goal),state(start),max_attempts=5)
@@ -153,7 +162,7 @@ def main():
             continue
         dense=np.concatenate([a+(b-a)*np.arange(4)[:,None]/4 for a,b in zip(points,points[1:])] + [points[-1:]])
         gap=clearance(dense)
-        if gap<.002: continue
+        if gap<.005: continue
         tcp=np.asarray([fk(q)[0] for q in points])
         links=np.asarray([fk(q)[1] for q in points])
         world_links=(np.concatenate([links,np.ones((*links.shape[:2],1))],axis=2) @ body.T)[:,:,:3]
@@ -170,8 +179,10 @@ def main():
             joint_names=ARM_NAMES,sample_period_s=dt,points=points.tolist(),
             collision_checked=False,execution_scope="supervised_right_empty_workspace",
             robot_model_revision=hashlib.sha256(robot_path.read_bytes()+urdf_path.read_bytes()).hexdigest(),
-            world_revision="VIRTUAL_BLOCK_ONLY",tool_revision="ARCHIVED_TOOL2_PLUS_VIRTUAL_TUBE",
+            world_revision=request["scene_snapshot"]["digest"],tool_revision="LIVE_TOOL_PLUS_VIRTUAL_TUBE",
             attached_object_revision="none",source_commit=manifest["commit"],
+            intent=request.get("intent","demo20"),reference_id=request["reference_id"],scene_digest=request["scene_snapshot"]["digest"],
+            simulation_only=bool(request.get("simulation_only",False)),
             summary=summary,planning_time_s=time.monotonic()-started,
             backend_version=str(curobo.__version__),gpu=torch.cuda.get_device_name(0),
             demo=dict(tcp_path_m=tcp.tolist(),link_points_m=links.tolist(),world_link_points_m=world_links.tolist(),world_obstacle_corners_m=world_obstacle.tolist(),
@@ -185,7 +196,7 @@ def main():
         Path(sys.argv[2]).write_text(json.dumps(data,indent=2),encoding="utf-8")
         print(json.dumps(data["demo"]["attempts"]),flush=True)
         return
-    raise RuntimeError("no cuRobo path passed 45..55 cm and virtual clearance gates: %r" % attempts)
+    raise RuntimeError("no cuRobo path passed requested length and clearance gates: %r" % attempts)
 
 
 if __name__ == "__main__":

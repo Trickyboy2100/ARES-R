@@ -1,6 +1,6 @@
 # cuRobo 右臂实机 20 cm Demo
 
-状态：2026-09-07 已通过 Terminal 完成一次实机演示。仅限右臂、空载、全扫掠空间已确认净空、现场观察及物理急停可用。无自动回程，不连接左臂、底盘、相机或夹爪。
+状态：2026-09-07 旧版已通过 Terminal 完成一次实机演示；新版增加固定起点、cuRobo 复位、实时 dashboard 和 SDK 加载隔离。新版验证范围单列于文末，不沿用旧版实机结果作为新流程验收。仅限右臂、空载、全扫掠空间已确认净空、现场观察及物理急停可用。结束/停止后无自动回程，不连接左臂、底盘、相机或夹爪。
 
 ## 操作指令
 
@@ -11,9 +11,23 @@ cd /home/yikun/ARES-R
 ARES_R_HARDWARE_CONFIRM=YES ./scripts/run_terminal.sh --enable-hardware --devices right-arm
 ```
 
-在 ARES-R Terminal 内输入：
+更新后退出旧 Terminal，再按以上命令启动。查看固定起点并执行完整循环：
 
 ```text
+curobo demo start show
+curobo demo cycle20
+RUN RIGHT CYCLE20
+```
+
+`cycle20` 每次先核验固定起点；不在起点时重新用 cuRobo 规划复位，执行并核验到位后再规划/执行约 20 cm 演示。复位和演示分别显示实时 dashboard，完成后自动返回命令提示符。失败立即终止，不追加回程或重试。
+
+首次部署没有参考点时：`curobo demo start save` 仅记录当前右臂实际关节/TCP，不运动。已有记录不覆盖；确需重选时执行 `curobo demo start replace` 并输入 `REPLACE RIGHT START`，旧版本留档。参考点持久化于 `config/right_demo_start.site.json`，不随每次规划改变，也不上传为其他设备的通用起点。
+
+分步调试：
+
+```text
+curobo demo reset
+RESET RIGHT START
 curobo demo plan20
 curobo preview last
 curobo demo run20 last
@@ -25,11 +39,12 @@ curobo demo run20 last
 RUN RIGHT 20CM
 ```
 
-- `plan20`：从右臂当前实际关节与 TCP 重新规划，不运动；输出轨迹路径和 HTML 预览。
+- `reset`：当前实际关节到保存起点的 cuRobo 规划；已经到位则不发送 servo。单段每关节不超过 20°、规划 TCP 行程不超过 250 mm，超过范围拒绝复位。
+- `plan20`：仅在固定起点附近从新鲜实际关节/TCP 规划，不运动；输出轨迹路径和 HTML 预览。不在起点时要求先 reset 或使用 cycle20。
 - `preview last`：查看统计与浏览器预览路径；HTML 提供连杆/TCP/虚拟障碍的三视图、3D 投影、关节曲线及播放滑块，不连接机器人。
 - `run20 last`：再次检查当前起点、工具、限位、队列和执行条件，确认后执行一次。`last` 仅指当前 Terminal 会话内最近生成的 Demo；也可传入明确的 `trajectory.json` 路径。
-- 轨迹起点快照超过 5 分钟、关节起点偏差超过 0.02°、其他客户端占用、工具变更或模型/数值检查失败时拒绝执行。执行过的轨迹不得直接重复使用；需要再次 `plan20`。
-- Ctrl+C 请求独立执行进程停止，随后检查停止/退出伺服日志；软件停止不是硬实时或物理急停的替代品。
+- 轨迹起点快照超过 5 分钟、关节起点偏差超过 0.02°、其他客户端占用、参考点/场景/工具/模型版本变更或数值检查失败时拒绝执行。已执行的轨迹不得直接重复使用；重新运行 cycle20 或 reset → plan20 → run20。
+- dashboard 显示采样进度、时间、实际/目标关节角（度）、实际 TCP（控制器基坐标，mm）、跟踪误差。空格、q、Esc 或 Ctrl+C 请求独立执行进程停止并退出；随后检查停止/退出伺服日志。软件停止不是硬实时或物理急停的替代品。
 - 原 `curobo execute-micro` 旧 Python 执行路径仍锁定。新路径使用独立 SDK V2.2.2 C++ 进程，不能混用原始 10004 读取通道。
 
 不使能实机模式仍使用 `./scripts/run_terminal.sh`，可预览保存的轨迹，不能执行本 Demo。启动模式仍只有不使能实机／使能实机两种。
@@ -73,3 +88,11 @@ RUN RIGHT 20CM
 - 每次运行：`logs/curobo_obstacle_*/request.json`、`trajectory.json`、`trajectory.preview.html`、`native_execution_*.log`。
 - 本次归档：`worklog/evidence/2026-09-07-demo20/`；历史快照禁止作为当前运动起点。
 - 专项反馈排查：[反馈审计记录](RIGHT_FEEDBACK_AUDIT_2026-09-07.md)。
+- 分层接口、tmp 迁移审计和避障输入：[servo 正式接入说明](SERVO_INTEGRATION_2026-09-07.md)。
+
+## 新版验证范围
+
+- 旧 `LD_LIBRARY_PATH` 下复现符号缺失；修复后同环境只读读取实际关节/TCP 成功。
+- 固定参考点保存、GPU 20 cm 绕障规划；复位采用显式 `simulation_only` 的合成终点做 GPU 验证，禁止把该验证产物用于实机。
+- dashboard 完成/按键停止、SDK 故障退出、参考点和场景门槛通过离线测试。
+- 本轮不追加机械臂运动；新版固定起点复位和 dashboard 的完整实机验收仍需现场执行 `cycle20`。此前 194.319 mm 结果属于上一版独立单次演示。

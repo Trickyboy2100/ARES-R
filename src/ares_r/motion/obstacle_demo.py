@@ -10,10 +10,20 @@ import uuid
 from .curobo import CUROBO_COMMIT, settings
 
 
-def run_demo(config):
+def run_demo(config, intent="demo20"):
     from .native_demo import snapshot
+    from .demo_reference import load_reference, check_context, at_reference
+    from .scene import load_scene
+    if intent not in ("demo20","reset"): raise ValueError("unsupported planning intent")
+    reference=load_reference(config)
     live=snapshot()
     if live["queue"] or live["active_queue"] or not live["inpos"]: raise RuntimeError("right not idle")
+    check_context(config,reference,live)
+    if intent=="demo20" and not at_reference(reference,live):
+        raise RuntimeError("right is away from fixed start; run curobo demo reset, or curobo demo cycle20")
+    if intent=="reset" and at_reference(reference,live): return None
+    if intent=="reset" and max(abs(a-b) for a,b in zip(live["actual_rad"],reference["snapshot"]["actual_rad"]))>0.34906585:
+        raise RuntimeError("reset exceeds 20 degree envelope; no motion")
     cfg = settings(config)
     if not Path(cfg["python"]).is_file() or not Path(cfg["robot_yaml"]).is_file():
         raise RuntimeError("GPU environment/model unavailable; run on .32, or preview saved evidence")
@@ -27,7 +37,9 @@ def run_demo(config):
                    tool_source="SDK222 live tool snapshot",
                    obstacle_dims_m=[0.025, 0.025, 0.025],
                    tool_proxy_radius_m=0.025,
-                   tcp_length_range_m=[0.18, 0.22])
+                   tcp_length_range_m=[0.000001, 0.25] if intent=="reset" else [0.18, 0.22],
+                   intent=intent,reference_id=reference["id"],scene_snapshot=load_scene(config))
+    if intent=="reset": request["goal_rad"]=reference["snapshot"]["actual_rad"]
     audit=Path(__file__).resolve().parents[3]/"worklog/evidence/2026-09-07-curobo/right_fk_audit.json"
     request["T_controller_model"]=json.loads(audit.read_text())["T_controller_model"]
     world=json.loads(Path(config["world_geometry_file"]).read_text())["arms"]["right"]

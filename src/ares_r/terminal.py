@@ -23,7 +23,13 @@ except ImportError:  # pragma: no cover - readline is present on the target Linu
 
 
 HELP = """Commands:
-  curobo demo plan20          fresh right TCP ~20 cm virtual-obstacle plan; no motion
+  curobo demo start show|save|replace  persistent current right start (no motion)
+  curobo demo reset           cuRobo reset to saved start + live dashboard
+  curobo demo cycle20         reset -> plan20 -> servo demo + live dashboard
+  curobo scene load FILE      static URDF-base cuboids (future perception boundary)
+  servo waypoints FILE       inspect/import tmp waypoints offline, explicit units
+  servo spline FILE OUT      export offline spline geometry; never executable
+  curobo demo plan20          ~20 cm virtual-obstacle plan at saved start; no motion
   curobo demo run20 FILE      supervised empty-workspace native execution, confirmation required
   jaka feedback-audit right [SECONDS]  offline-mode-only actual feedback test; default 600 s, no motion
   curobo status              show isolated GPU planning environment/model paths
@@ -81,6 +87,11 @@ All base, arm and gripper control commands are blocked in this mode.
 """
 
 JAKA_MOTION_HELP = """Hardware-enabled commands:
+  curobo demo start show|save|replace  inspect/save fixed start; no motion
+  curobo demo reset              planned return to saved start; confirms RESET RIGHT START
+  curobo demo cycle20            reset -> plan20 -> execute; confirms RUN RIGHT CYCLE20
+  curobo scene load FILE         static scene input; Epic pointcloud not yet enabled
+  servo waypoints FILE / servo spline FILE OUT  offline waypoint inspection/geometry
   curobo demo plan20             plan right TCP ~20 cm around a virtual obstacle; no motion
   curobo demo run20 FILE         native supervised demo; confirms RUN RIGHT 20CM
   curobo status / curobo plan right JN deg DELTA / curobo preview FILE
@@ -133,7 +144,10 @@ def _allowed_in_hardware(args) -> bool:
         or args[:2] in (["motion", "inspect"], ["motion", "validate"])
         or args[:2] in (["curobo", "status"], ["curobo", "plan"], ["curobo", "plan-file"], ["curobo", "preview"])
         or args[:2] == ["curobo", "execute-micro"]
-        or args[:3] in (["curobo", "demo", "plan20"], ["curobo", "demo", "run20"])
+        or args[:3] in (["curobo", "demo", "plan20"], ["curobo", "demo", "run20"],
+                        ["curobo","demo","start"], ["curobo","demo","reset"], ["curobo","demo","cycle20"])
+        or args[:3]==["curobo","scene","load"]
+        or args[:2] in (["servo","waypoints"],["servo","spline"])
         or args[:2] in (["gripper", "status"], ["gripper", "read"], ["gripper", "set"],
                         ["gripper", "half"], ["gripper", "open"], ["gripper", "close"])
     )
@@ -226,6 +240,47 @@ def run_terminal(controller: TaskController) -> None:
                 print(output.read_text())
                 print("Feedback audit report: %s" % output)
                 controller.events.write("right_feedback_audit", report=str(output))
+            elif args[:2]==["servo","waypoints"] and len(args)==3:
+                from .motion.waypoints import load_waypoints
+                print(json.dumps(load_waypoints(args[2]),indent=2))
+            elif args[:2]==["servo","spline"] and len(args)==4:
+                from .motion.waypoints import export_geometry
+                from .motion.trajectory import load_motion_limits
+                path=export_geometry(args[2],args[3],load_motion_limits(Path(controller.config["motion"]["limits_file"])))
+                controller.events.write("offline_waypoint_geometry",source=args[2],output=str(path))
+                print("Offline geometry only; not executable: %s"%path)
+            elif args[:3]==["curobo","scene","load"] and len(args)==4:
+                from .motion.scene import load_scene
+                candidate=dict(controller.config,motion=dict(controller.config["motion"],scene_file=str(Path(args[3]).resolve())))
+                scene=load_scene(candidate)
+                controller.config["motion"]["scene_file"]=candidate["motion"]["scene_file"]
+                controller.events.write("planning_scene_loaded",scene=scene)
+                print(json.dumps(scene,indent=2))
+            elif args[:3]==["curobo","demo","start"] and len(args)==4:
+                from .motion.demo_reference import load_reference,save_reference
+                from .motion.native_demo import exclusive_right
+                if args[3]=="show": print(json.dumps(load_reference(controller.config),indent=2))
+                elif args[3] in ("save","replace"):
+                    if args[3]=="replace" and input("Type REPLACE RIGHT START (no motion): ").strip()!="REPLACE RIGHT START":
+                        print("Cancelled.");continue
+                    with exclusive_right(controller): path=save_reference(controller.config,replace=args[3]=="replace")
+                    controller.events.write("demo_start_saved",path=str(path),reference=load_reference(controller.config))
+                    print("Fixed start saved; no motion: %s"%path)
+                else: raise ValueError("usage: curobo demo start show|save|replace")
+            elif args in (["curobo","demo","reset"],["curobo","demo","cycle20"]):
+                from .motion.native_demo import exclusive_right
+                from .motion.demo_workflow import reset,cycle
+                action=args[2];phrase="RESET RIGHT START" if action=="reset" else "RUN RIGHT CYCLE20"
+                print("RIGHT ONLY: empty load, clear full swept workspace, on-site physical E-stop. Includes planned reset BEFORE demo; no return after stop/completion.")
+                if input("Type %s: "%phrase).strip()!=phrase: print("Cancelled; no motion.")
+                else:
+                    controller.events.write("demo_workflow_requested",action=action)
+                    with exclusive_right(controller):
+                        if action=="reset": reset(controller.config,True,controller.events)
+                        else:
+                            output,log=cycle(controller.config,True,controller.events)
+                            controller.last_demo20_path=str(output)
+                            print("Completed; feedback log: %s"%log)
             elif args == ["curobo","demo","plan20"]:
                 from .motion.native_demo import exclusive_right
                 from .motion.obstacle_demo import run_demo
@@ -475,6 +530,8 @@ def run_terminal(controller: TaskController) -> None:
             else: print("Unknown command. Type 'help'.")
         except (ValueError, RuntimeError, OSError, KeyError) as exc:
             print("Command failed: %s" % exc)
+            if args and args[0] in ("curobo","servo"):
+                controller.events.write("motion_command_failed",command=args,error=str(exc))
         except KeyboardInterrupt:
             if controller.mode == "jaka-readonly":
                 print("\nInterrupt received: read-only session remains motion-free")

@@ -1,6 +1,7 @@
 """Supervised, right-only native SDK demo orchestration; no old SDK connection."""
 import json
 import math
+import os
 from pathlib import Path
 import subprocess
 import time
@@ -11,6 +12,17 @@ from .feedback_audit import status_connections
 from .trajectory import load_trajectory, load_motion_limits, validate_trajectory
 
 BINARY="/home/yikun/ares-r-curobo-assets/jaka_right_demo"
+SDK_LIBRARY="/home/yikun/JAKA/lib"
+
+
+def native_environment():
+    """Never inherit the legacy Python SDK's loader configuration."""
+    env=dict(os.environ)
+    env["LD_LIBRARY_PATH"]=SDK_LIBRARY
+    env["LD_BIND_NOW"]="1"  # Resolve every ABI symbol BEFORE login or servo enable.
+    env.pop("LD_PRELOAD",None)
+    env.pop("LD_AUDIT",None)
+    return env
 
 
 @contextmanager
@@ -31,7 +43,7 @@ def exclusive_right(controller):
 
 def snapshot():
     if status_connections(): raise RuntimeError("right status port occupied; close other Terminal first")
-    result=subprocess.run([BINARY,"snapshot"],capture_output=True,text=True,timeout=15)
+    result=subprocess.run([BINARY,"snapshot"],env=native_environment(),capture_output=True,text=True,timeout=15)
     if result.returncode: raise RuntimeError("right snapshot failed: "+result.stdout+result.stderr)
     return next(json.loads(line) for line in result.stdout.splitlines()
                 if line.startswith("{") and json.loads(line).get("event")=="snapshot")
@@ -55,11 +67,21 @@ def prepare_native_file(config,path,mode):
         diagnostics=req.get("diagnostics",{})
         if diagnostics.get("joint_position_source")!="sdk222_actual": raise RuntimeError("fresh SDK222 actual start required")
         live=diagnostics["native_snapshot"]
-    elif mode=="demo20":
+    elif mode in ("demo20", "reset"):
         if trajectory.planner!="curobo-v2-virtual-obstacle-demo" or raw.get("execution_scope")!="supervised_right_empty_workspace" or raw.get("simulation_only"):
             raise RuntimeError("not a supervised 20 cm plan")
         live=req["live_snapshot"]
-        validate_demo20(raw,trajectory)
+        if raw.get("intent", "demo20") != mode: raise RuntimeError("trajectory intent mismatch")
+        from .demo_reference import load_reference, check_context, at_reference
+        reference=load_reference(config)
+        if raw.get("reference_id") != reference["id"]: raise RuntimeError("fixed start changed; replan")
+        check_context(config,reference,live)
+        from .scene import load_scene
+        if raw.get("scene_digest")!=load_scene(config)["digest"]: raise RuntimeError("scene changed; replan")
+        endpoint=trajectory.points[0] if mode=="demo20" else trajectory.points[-1]
+        if not at_reference(reference,dict(live,actual_rad=endpoint),check_tcp=False):
+            raise RuntimeError("plan does not use the fixed reference joints")
+        validate_demo20(raw,trajectory,reset=(mode=="reset"))
     else: raise RuntimeError("unsupported demo mode")
     limits=load_motion_limits(Path(config["motion"]["limits_file"]))
     issues=validate_trajectory(trajectory,limits,live["actual_rad"])
@@ -76,15 +98,15 @@ def prepare_native_file(config,path,mode):
     return output
 
 
-def validate_demo20(raw,trajectory):
+def validate_demo20(raw,trajectory,reset=False):
     demo=raw["demo"];tcp=demo["tcp_path_m"];world=demo["world_link_points_m"]
     if len(tcp)!=len(trajectory.points) or len(world)!=len(tcp): raise RuntimeError("geometry/trajectory count mismatch")
     if any(len(p)!=3 or not all(math.isfinite(v) for v in p) for p in tcp): raise RuntimeError("invalid TCP geometry")
     lengths=[math.sqrt(sum((a[j]-b[j])**2 for j in range(3))) for a,b in zip(tcp,tcp[1:])]
-    if not .18<=sum(lengths)<=.22 or max(lengths)/trajectory.sample_period_s>.02: raise RuntimeError("TCP length/speed envelope")
+    if not (.000001 if reset else .18)<=sum(lengths)<=(.25 if reset else .22) or max(lengths)/trajectory.sample_period_s>.02: raise RuntimeError("TCP length/speed envelope")
     if demo.get("simulation_collision_checked") is not True or not math.isfinite(demo["min_model_clearance_m"]) or demo["min_model_clearance_m"]<.005:
         raise RuntimeError("virtual model clearance not validated")
-    if demo["baseline_min_clearance_m"]>=0: raise RuntimeError("baseline does not intersect virtual obstacle")
+    if not reset and demo["baseline_min_clearance_m"]>=0: raise RuntimeError("baseline does not intersect virtual obstacle")
     for links in world:
         if len(links)!=8: raise RuntimeError("missing link geometry")
         for p in links:
@@ -100,15 +122,11 @@ def execute(config,path,mode,confirmed=False):
     if status_connections(): raise RuntimeError("right status port occupied")
     native=prepare_native_file(config,path,mode)
     log=Path(path).parent/("native_execution_%d.log"%time.time_ns())
+    from .servo_dashboard import monitor
     with log.open("x") as stream:
-        child=subprocess.Popen([BINARY,mode,str(native),"CONFIRMED_RIGHT_CLEAR"],stdout=stream,stderr=subprocess.STDOUT)
-        try: code=child.wait(timeout=150)
-        except (KeyboardInterrupt,subprocess.TimeoutExpired):
-            child.terminate()
-            try: child.wait(timeout=10)
-            except subprocess.TimeoutExpired:
-                raise RuntimeError("native stop unconfirmed; use physical E-stop; log: %s"%log)
-            raise RuntimeError("execution interrupted; inspect abort/servo exit in %s"%log)
+        child=subprocess.Popen([BINARY,"demo20" if mode=="reset" else mode,str(native),"CONFIRMED_RIGHT_CLEAR"],
+                               env=native_environment(),stdout=stream,stderr=subprocess.STDOUT)
+        code=monitor(child,log,json.loads(Path(path).read_text()),phase=mode)
     if code: raise RuntimeError("native execution failed; inspect %s"%log)
     events=[json.loads(l) for l in log.read_text().splitlines() if l.startswith("{")]
     if not any(e.get("event")=="target_reached" for e in events): raise RuntimeError("no target-reached evidence")

@@ -115,7 +115,7 @@ int main(int argc,char**argv){
                 JointValue target{};for(int j=0;j<6;++j)target.jVal[j]=path.q[i][j];
                 check(robot.servo_j(&target,ABS,10),"servo_j");
                 if(Clock::now()-before>std::chrono::milliseconds(40))throw std::runtime_error("cycle budget");
-                std::cout<<"{\"event\":\"sample\",\"index\":"<<i<<",\"actual_rad\":";array_json(actual.q);
+                std::cout<<"{\"event\":\"sample\",\"index\":"<<i<<",\"tracking_error_deg\":"<<distance(actual.q,previous)*180/3.14159265358979323846<<",\"actual_rad\":";array_json(actual.q);
                 std::cout<<",\"target_rad\":";array_json(path.q[i]);std::cout<<",\"tcp_mm_rad\":";array_json(actual.tcp);std::cout<<"}"<<std::endl;
                 if(!std::cout)throw std::runtime_error("log write failed");
                 previous=path.q[i];deadline+=std::chrono::milliseconds(80);
