@@ -82,3 +82,4 @@ Source: manual
 - dashboard 复用 world view 的 base_tcp_to_world，显示车体坐标 XYZ(m) + RPY(deg)，并明确右手 ZYX 约定。新增只读 `curobo demo tcp` 输出 m/rad、m/deg 两种六维位姿；每次执行归档固定 frame/base 参数，不增加机器人连接。
 - 原点仍为双臂基座连线中点的地面投影；X 向前、Y 向左、Z 向上。没有修改已验证坐标配置，也没有重选 demo 起点。
 - 新增两段顺序、世界位姿六分量一致性、104°复位数值门槛、native reset/demo 模式隔离及忙控制器拦截测试。本轮开发不自动启动实机运动。
+- .32 基于新鲜实际姿态完成第一段 GPU 规划，输出 `logs/curobo_obstacle_20260907_161455_cb6687bf/trajectory.json`、HTML 连杆预览及校验后的 native 载荷。808 点、64.56 s、TCP 行程 0.770522 m、最大关节偏移 103.6244°、峰值关节速度 2.39613°/s，全部规划/执行前门槛通过；没有启动 native 执行器。两端 97 项单元测试通过。
