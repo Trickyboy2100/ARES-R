@@ -23,6 +23,7 @@ except ImportError:  # pragma: no cover - readline is present on the target Linu
 
 
 HELP = """Commands:
+  jaka feedback-audit right [SECONDS]  offline-mode-only actual feedback test; default 600 s, no motion
   curobo status              show isolated GPU planning environment/model paths
   curobo plan right JN deg D plan <=0.5 degree joint delta; no motion
   curobo plan-file FILE      plan from saved start_rad/goal_rad JSON; no SDK
@@ -203,6 +204,15 @@ def run_terminal(controller: TaskController) -> None:
             if args[0] in ("quit", "exit"): break
             if args[0] == "help": print(help_text)
             elif args[0] == "status": pass
+            elif args[:3] == ["jaka", "feedback-audit", "right"] and len(args) in (3, 4):
+                if controller.mode != "offline":
+                    raise RuntimeError("feedback audit requires offline Terminal to avoid its SDK status connection")
+                from .motion.feedback_audit import run_audit
+                print("READ-ONLY NETWORK AUDIT: right 10004 only; no SDK login, no motion; existing connections block the test.")
+                output = run_audit(controller.config["logging"]["directory"], float(args[3]) if len(args) == 4 else 600)
+                print(output.read_text())
+                print("Feedback audit report: %s" % output)
+                controller.events.write("right_feedback_audit", report=str(output))
             elif args == ["curobo", "status"]:
                 print(json.dumps(planner_status(controller.config), indent=2))
             elif args[:2] == ["curobo", "preview"] and len(args) == 3:
