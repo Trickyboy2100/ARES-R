@@ -4,10 +4,17 @@ import json
 import math
 from pathlib import Path
 import time
+from contextlib import ExitStack
 
 from .jaka_sdk import _value, parse_robot_status
+from .jaka_actual import JakaActualReader
 from ..motion.curobo import ARM_NAMES, CUROBO_COMMIT, summarize
 from ..motion import load_trajectory, load_motion_limits, validate_trajectory
+
+MICRO_BLOCK_REASON = (
+    "live cuRobo execution suspended: SDK/10004 actual-feedback connection "
+    "closed during the 2026-09-07 test; stable feedback must be commissioned first"
+)
 
 
 def healthy(robot):
@@ -33,6 +40,8 @@ def check_micro(trajectory, request, raw, limits, diagnostics):
         raise RuntimeError("planning snapshot expired; replan")
     if diagnostics["tool_data"] != request["diagnostics"]["tool_data"]:
         raise RuntimeError("active tool changed since planning")
+    if diagnostics["is_on_limit"] or diagnostics["is_in_collision"]:
+        raise RuntimeError("controller limit/collision query blocks execution")
     current = diagnostics["joint_position_rad"]
     if len(current) != 6 or not all(math.isfinite(v) for v in current):
         raise RuntimeError("invalid live joint feedback")
@@ -56,23 +65,34 @@ def check_micro(trajectory, request, raw, limits, diagnostics):
     return summary
 
 
-def execute_micro(arm, path, limits_path, confirmed=False, clock=time.monotonic, sleeper=time.sleep):
+def execute_micro(arm, path, limits_path, confirmed=False, clock=time.monotonic, sleeper=time.sleep,
+                  telemetry_factory=JakaActualReader):
     if not confirmed:
         raise RuntimeError("explicit supervised micro-demo confirmation required")
     if arm.name != "right" or arm.ip != "192.168.99.101" or not arm.motion_enabled:
         raise RuntimeError("executor is restricted to enabled right controller .101")
+    if telemetry_factory is JakaActualReader:
+        # A real test lost feedback after sample 16. Keep offline dependency-
+        # injected tests available, but do not expose another live retry.
+        raise RuntimeError(MICRO_BLOCK_REASON)
     import fcntl
     path = Path(path)
     trajectory = load_trajectory(path)
     request = json.loads((path.parent / "request.json").read_text())
     raw = json.loads(path.read_text())
-    with open("/tmp/ares-r-right-servo.lock", "a") as lock:
+    with open("/tmp/ares-r-right-servo.lock", "a") as lock, ExitStack() as stack:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         robot = arm.robot
+        # Finish legacy SDK status queries before the dedicated 10004 reader
+        # owns feedback. Mixing the two readers can invalidate SDK data RPCs.
         diagnostics = arm.diagnostics()
-        summary = check_micro(trajectory, request, raw, load_motion_limits(Path(limits_path)), diagnostics)
         if not healthy(robot)["in_position"]:
             raise RuntimeError("right arm must be stationary before servo enable")
+        reader = stack.enter_context(telemetry_factory(arm.ip))
+        reader.read()  # Warm the telemetry connection before enabling servo.
+        first_actual = reader.read()
+        diagnostics["joint_position_rad"] = first_actual["joint_actual_position_rad"]
+        summary = check_micro(trajectory, request, raw, load_motion_limits(Path(limits_path)), diagnostics)
         step = round(trajectory.sample_period_s / 0.008)
         log_path = path.parent / ("execution_%d.jsonl" % time.time_ns())
         enabled = False
@@ -80,6 +100,11 @@ def execute_micro(arm, path, limits_path, confirmed=False, clock=time.monotonic,
             def record(event, **values):
                 log.write(json.dumps(dict(event=event, monotonic=clock(), **values)) + "\n")
                 log.flush()
+            def cleanup_record(event, **values):
+                try:
+                    record(event, **values)
+                except OSError:
+                    pass  # A full disk must never prevent abort or servo disable.
             try:
                 record("supervised_micro_begin", summary=summary, api="servo_j_extend", absolute_mode=0)
                 _value(robot.servo_move_enable(True), "servo enable")
@@ -91,8 +116,10 @@ def execute_micro(arm, path, limits_path, confirmed=False, clock=time.monotonic,
                     if wait > 0: sleeper(wait)
                     if clock() - deadline > trajectory.sample_period_s * 0.5:
                         raise RuntimeError("send loop late; no catch-up burst permitted")
-                    healthy(robot)
-                    actual = list(_value(robot.get_joint_position(), "joint feedback"))
+                    feedback = reader.read()
+                    if feedback["tool_id"] != diagnostics["tool_data"]["tool_id"]:
+                        raise RuntimeError("tool ID changed during servo")
+                    actual = feedback["joint_actual_position_rad"]
                     if len(actual) != 6 or not all(math.isfinite(v) for v in actual):
                         raise RuntimeError("invalid feedback")
                     if max(abs(a-b) for a,b in zip(actual, previous)) > math.radians(0.1):
@@ -100,24 +127,28 @@ def execute_micro(arm, path, limits_path, confirmed=False, clock=time.monotonic,
                     if clock() - deadline > trajectory.sample_period_s * 0.5:
                         raise RuntimeError("status query exceeded send budget")
                     _value(robot.servo_j_extend(list(point), 0, step), "servo_j_extend absolute")
-                    record("sample", index=index, target_rad=point, actual_rad=actual, deadline=deadline)
+                    record("sample", index=index, target_rad=point, actual_rad=actual, deadline=deadline,
+                           controller_reported_rad=feedback["joint_position_rad"],
+                           feedback_roundtrip_s=feedback.get("roundtrip_s"))
                     previous = point
                     deadline += trajectory.sample_period_s
                 sleeper(max(0, deadline-clock()))
-                healthy(robot)
-                actual = list(_value(robot.get_joint_position(), "final feedback"))
+                actual = reader.read()["joint_actual_position_rad"]
                 if len(actual) != 6 or not all(math.isfinite(v) for v in actual) or max(
                         abs(a-b) for a,b in zip(actual, trajectory.points[-1])) > math.radians(0.05):
                     raise RuntimeError("final feedback outside 0.05 degree tolerance")
                 record("target_reached", actual_rad=actual)
-            except BaseException:
-                try:
-                    _value(robot.motion_abort(), "right motion abort")
-                finally:
-                    record("aborted")
+            except BaseException as error:
+                cleanup_record("execution_failed", error=repr(error))
+                if enabled:
+                    try:
+                        _value(robot.motion_abort(), "right motion abort")
+                        cleanup_record("abort_accepted")
+                    except BaseException as cleanup_error:
+                        cleanup_record("abort_failed", error=str(cleanup_error))
                 raise
             finally:
                 if enabled:
                     _value(robot.servo_move_enable(False), "servo disable")
-                    record("servo_disabled")
+                    cleanup_record("servo_disabled")
         return log_path

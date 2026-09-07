@@ -54,7 +54,7 @@ def main():
     for label, actual in (("start_rad", points[0]), ("goal_rad", points[-1])):
         if max(abs(a - b) for a, b in zip(actual, request[label])) > 1e-4:
             raise RuntimeError("planner endpoint mismatch: %s; no appended correction allowed" % label)
-    dt = slow_sample_period(points)
+    dt = max(0.08, slow_sample_period(points))
     summary = summarize(points, dt)
     if max(summary["max_excursion_deg"]) > 0.5 + 1e-3 or summary["duration_s"] > 60:
         raise RuntimeError("planned path leaves micro-demo envelope or exceeds 60 seconds")

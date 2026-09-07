@@ -21,7 +21,8 @@ class FakeArm:
         self.interrupt = interrupt
 
     def diagnostics(self):
-        return {"joint_position_rad": self.q, "tool_data": {"tool_id": 2}}
+        return {"joint_position_rad": self.q, "tool_data": {"tool_id": 2},
+                "is_on_limit": 0, "is_in_collision": 0}
 
     def get_robot_status(self):
         status = [0]*25
@@ -69,18 +70,41 @@ class MicroTest(unittest.TestCase):
         with self.assertRaises(RuntimeError): execute_micro(arm, "missing", "missing")
         self.assertEqual(arm.calls, [])
 
+    def test_live_execution_suspended_before_any_control_call(self):
+        arm = FakeArm()
+        with self.assertRaisesRegex(RuntimeError, "execution suspended"):
+            execute_micro(arm, "missing", "missing", confirmed=True)
+        self.assertEqual(arm.calls, [])
+
     def test_success_and_interrupt_cleanup(self):
-        for interrupt in (False, True):
+        for interrupt in (False, True, "telemetry_closed"):
             with self.subTest(interrupt=interrupt), tempfile.TemporaryDirectory() as directory:
                 root = Path(directory)
                 (root/"trajectory.json").write_text(json.dumps(self.raw))
                 (root/"request.json").write_text(json.dumps(self.request))
                 (root/"limits.json").write_text(json.dumps(asdict(self.limits)))
-                arm = FakeArm(interrupt)
+                arm = FakeArm(interrupt is True)
                 tick = [0.0]
                 def sleep(dt): tick[0] += dt
-                def run(): return execute_micro(arm, root/"trajectory.json", root/"limits.json", True, lambda:tick[0], sleep)
-                if interrupt:
+                class Telemetry:
+                    reads = 0
+                    def __enter__(self): return self
+                    def __exit__(self, *args): pass
+                    def read(self):
+                        self.reads += 1
+                        if interrupt == "telemetry_closed" and self.reads == 4:
+                            raise RuntimeError("actual telemetry connection closed")
+                        return {"joint_actual_position_rad": arm.q,
+                                "joint_position_rad": arm.q, "tool_id": 2}
+                def run(): return execute_micro(arm, root/"trajectory.json", root/"limits.json", True,
+                                                lambda:tick[0], sleep, lambda ip:Telemetry())
+                if interrupt == "telemetry_closed":
+                    with self.assertRaisesRegex(RuntimeError, "connection closed"): run()
+                    self.assertIn(("abort",), arm.calls)
+                    events = [json.loads(line)["event"] for line in next(root.glob("execution_*.jsonl")).read_text().splitlines()]
+                    self.assertIn("execution_failed", events)
+                    self.assertNotIn("target_reached", events)
+                elif interrupt:
                     with self.assertRaises(KeyboardInterrupt): run()
                     self.assertIn(("abort",), arm.calls)
                 else:

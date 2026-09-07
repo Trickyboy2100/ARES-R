@@ -80,6 +80,7 @@ All base, arm and gripper control commands are blocked in this mode.
 JAKA_MOTION_HELP = """Hardware-enabled commands:
   curobo status / curobo plan right JN deg DELTA / curobo preview FILE
   curobo plan-file FILE          offline start_rad/goal_rad request; no motion
+  curobo execute-micro FILE      BLOCKED pending stable actual-feedback channel
   epic status / epic detect pick / epic detect place [1-6]
   gripper status|read SIDE / gripper set SIDE VALUE / gripper open|close SIDE
   status / world view / jaka status SIDE / jaka joints SIDE
@@ -118,6 +119,7 @@ def _allowed_in_hardware(args) -> bool:
         or args == ["world", "view"]
         or args[:2] in (["motion", "inspect"], ["motion", "validate"])
         or args[:2] in (["curobo", "status"], ["curobo", "plan"], ["curobo", "plan-file"], ["curobo", "preview"])
+        or args[:2] == ["curobo", "execute-micro"]
         or args[:2] in (["gripper", "status"], ["gripper", "read"], ["gripper", "set"],
                         ["gripper", "half"], ["gripper", "open"], ["gripper", "close"])
     )
@@ -155,7 +157,9 @@ def render(controller: TaskController) -> None:
     print("ARES-R TERMINAL  mode=%s  task=%s  arm=%s  carrying=%s" % (snapshot.mode, snapshot.task_state.value, snapshot.active_arm, snapshot.carrying_object))
     print("-" * 72)
     for name, state in snapshot.devices.items():
-        if snapshot.mode in ("jaka-readonly", "jaka-motion") and name in ("epic", "base", "gripper_left", "gripper_right"):
+        if state.detail.startswith("DISABLED:"):
+            flag = "DISABLED"
+        elif snapshot.mode in ("jaka-readonly", "jaka-motion") and name in ("epic", "base", "gripper_left", "gripper_right"):
             flag = "DISABLED"
             state.detail = "not connected in %s mode" % snapshot.mode
         elif name == "epic" and state.detail.startswith("not checked"):
@@ -203,6 +207,11 @@ def run_terminal(controller: TaskController) -> None:
                 print(json.dumps(planner_status(controller.config), indent=2))
             elif args[:2] == ["curobo", "preview"] and len(args) == 3:
                 print(json.dumps(curobo_preview(args[2]), indent=2))
+                from .motion.preview import write_preview
+                print("Offline browser plots: %s" % write_preview(args[2]))
+            elif args[:2] == ["curobo", "execute-micro"] and len(args) == 3:
+                from .adapters.jaka_micro_servo import MICRO_BLOCK_REASON
+                raise RuntimeError(MICRO_BLOCK_REASON)
             elif args[:2] in (["curobo", "plan"], ["curobo", "plan-file"]):
                 diagnostics = None
                 if args[1] == "plan-file":
@@ -215,6 +224,13 @@ def run_terminal(controller: TaskController) -> None:
                         raise ValueError("usage: curobo plan right J1..J6 deg DELTA")
                     if controller.mode != "hardware-enabled": raise RuntimeError("live start requires --enable-hardware; use plan-file offline")
                     diagnostics = controller.arms["right"].diagnostics()
+                    from .adapters.jaka_actual import JakaActualReader
+                    with JakaActualReader(controller.arms["right"].ip) as reader:
+                        reader.read()
+                        actual = reader.read()
+                    diagnostics["sdk_reported_joint_position_rad"] = diagnostics["joint_position_rad"]
+                    diagnostics["joint_position_rad"] = actual["joint_actual_position_rad"]
+                    diagnostics["joint_position_source"] = "10004 joint_actual_position"
                     start = diagnostics["joint_position_rad"]
                     goal = stepped_target(start, args[3], args[5], "deg")
                 print("Planning only; GPU worker cannot command hardware. No automatic execution.")
@@ -418,7 +434,7 @@ def run_terminal(controller: TaskController) -> None:
             if controller.mode == "jaka-readonly":
                 print("\nInterrupt received: read-only session remains motion-free")
             elif controller.mode in ("jaka-motion", "hardware-enabled"):
-                print("\nInterrupt received: active joint_move was aborted by its adapter")
+                print("\nInterrupt received; no automatic retry or return. Verify controller state; use physical E-stop if needed.")
             else:
                 print("\nInterrupt received: stopping all devices")
                 controller.stop_all()

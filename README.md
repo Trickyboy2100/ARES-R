@@ -17,7 +17,7 @@ ARES-R 是 BJUT-BBMG 团队用于双臂移动机器人视觉抓放任务的独�
 
 ## 目录
 
-cuRobo 点到点轨迹接入与右臂独立测试：[Demo 指南](docs/CUROBO_DEMO.md)（开发中，规划与执行分离）。
+cuRobo 点到点轨迹接入与右臂独立测试：[Demo 指南](docs/CUROBO_DEMO.md)（GPU 规划与 HTML 预览已验证；实机反馈断连，cuRobo 执行暂时锁定）。
 
 - `prototype/`：从原项目复制的现场原型及其最小本地依赖，暂时保持原样。
 - `src/ares_r/`：后续正式模块代码。

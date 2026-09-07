@@ -57,10 +57,24 @@ def settings(config):
 
 def planner_status(config):
     cfg = settings(config)
-    return {"backend": "cuRobo V2 plan_cspace", "commit": CUROBO_COMMIT,
+    result = {"backend": "cuRobo V2 plan_cspace", "commit": CUROBO_COMMIT,
             "python": cfg["python"], "python_exists": Path(cfg["python"]).is_file(),
             "robot_yaml": cfg["robot_yaml"], "robot_exists": Path(cfg["robot_yaml"]).is_file(),
-            "execution": "locked: model/world commissioning pending"}
+            "planning_ready": False, "execution": "locked: unstable live actual-feedback channel; model/world commissioning also pending"}
+    if result["python_exists"]:
+        try:
+            probe = subprocess.run([cfg["python"], "-c",
+                "import json,torch,curobo; from curobo.motion_planner import MotionPlanner; "
+                "print(json.dumps(dict(torch=torch.__version__,curobo=str(curobo.__version__),cuda=torch.cuda.is_available())))"],
+                capture_output=True, text=True, timeout=20)
+            if probe.returncode:
+                result["dependency_error"] = probe.stderr[-1500:]
+            else:
+                result["environment"] = json.loads(probe.stdout.splitlines()[-1])
+                result["planning_ready"] = bool(result["robot_exists"] and result["environment"]["cuda"])
+        except (OSError, subprocess.TimeoutExpired, ValueError, IndexError) as exc:
+            result["dependency_error"] = str(exc)
+    return result
 
 
 def run_plan(config, start, goal, diagnostics=None):
@@ -100,5 +114,5 @@ def preview(path):
     info.update({"planner": trajectory.planner, "arm": trajectory.arm,
                  "sample_period_s": trajectory.sample_period_s,
                  "collision_checked": trajectory.collision_checked,
-                 "execution": "BLOCKED until commissioned robot/tool/world and live execution gates pass"})
+        "execution": "general execution BLOCKED; supervised J6 micro test has separate live/clearance gates"})
     return info

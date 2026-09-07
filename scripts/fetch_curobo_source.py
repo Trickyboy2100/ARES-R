@@ -29,7 +29,8 @@ def read(url):
 
 def wanted(path):
     return (path in ("pyproject.toml", "setup.py", "README.md", "LICENSE", "LICENSE_ASSETS")
-            or path.startswith("curobo/_src/") or path.startswith("curobo/content/config/")
+            or path.startswith("curobo/_src/") or path.startswith("curobo/content/configs/")
+            or (path.startswith("curobo/content/") and path.endswith(".py"))
             or (path.startswith("curobo/") and path.count("/") == 1))
 
 

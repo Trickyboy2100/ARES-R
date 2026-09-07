@@ -2,6 +2,7 @@ import json
 import math
 from pathlib import Path
 import tempfile
+import sys
 import unittest
 from unittest.mock import patch
 
@@ -9,6 +10,8 @@ from ares_r.motion.curobo import finite_joints, run_plan, slow_sample_period, su
 from ares_r.factory import build_controller
 from ares_r.adapters.mock import DisabledDevice
 from ares_r.terminal import _allowed_in_hardware
+from ares_r.motion.preview import write_preview
+from ares_r.world_geometry import load_world_geometry, world_snapshot, render_world
 
 
 class CuroboTest(unittest.TestCase):
@@ -32,9 +35,46 @@ class CuroboTest(unittest.TestCase):
                 run_plan({}, [0] * 6, [0.1] + [0] * 5)
             process.assert_not_called()
 
-    def test_no_execution_command_exposed(self):
+    def test_worker_failure_has_no_fallback(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            model = root / "robot.yml"; model.write_text("preview model")
+            config = {"logging": {"directory": str(root / "logs")},
+                      "curobo": {"python": sys.executable, "robot_yaml": str(model)}}
+            with patch("ares_r.motion.curobo.subprocess.run") as process:
+                process.return_value.returncode = 1
+                with self.assertRaisesRegex(RuntimeError, "no fallback/no motion"):
+                    run_plan(config, [0]*6, [0]*5+[.001])
+                self.assertEqual(len(list((root/"logs").glob("*/request.json"))), 1)
+                self.assertEqual(list((root/"logs").glob("*/trajectory.json")), [])
+
+    def test_only_supervised_micro_execution_exposed(self):
         self.assertTrue(_allowed_in_hardware(["curobo", "plan", "right", "J6", "deg", "0.5"]))
         self.assertFalse(_allowed_in_hardware(["curobo", "execute", "file.json"]))
+        self.assertTrue(_allowed_in_hardware(["curobo", "execute-micro", "file.json"]))
+
+    def test_single_arm_world_does_not_invent_left_pose(self):
+        config = load_world_geometry(Path(__file__).resolve().parents[1] / "config/robot_world.json")
+        diag = {"joint_position_rad": [0.0]*6, "tcp_position_mm_rad": [0.0]*6,
+                "tool_id": 2, "tool_data": {"pose_mm_rad": [0.0]*6}}
+        snapshot = world_snapshot(config, {"right": diag})
+        self.assertNotIn("left", snapshot["arms"])
+        text = render_world(snapshot, detailed=True)
+        self.assertIn("left DISABLED", text)
+        self.assertIn("RIGHT SIDE", text)
+
+    def test_preview_is_offline_html(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "trajectory.json"
+            path.write_text(json.dumps({"schema_version": 1, "planner": "test", "arm": "right",
+                "joint_names": ["joint%d" % i for i in range(1,7)], "sample_period_s": .04,
+                "points": [[0.0]*6, [0.0]*5+[.00001]], "collision_checked": False,
+                "robot_model_revision": "r", "world_revision": "w", "tool_revision": "t",
+                "attached_object_revision": "none"}))
+            html = write_preview(path).read_text()
+            self.assertIn("<canvas", html)
+            self.assertNotIn("fetch(", html)
+            self.assertNotIn("__DATA__", html)
 
     def test_right_only_factory_never_constructs_other_adapters(self):
         with tempfile.TemporaryDirectory() as directory:

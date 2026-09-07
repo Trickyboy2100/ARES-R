@@ -1,6 +1,6 @@
 # cuRobo 点到点轨迹 Demo
 
-状态：开发中。当前实现规划与预览；实机执行入口尚未开放。规划失败不使用其他插值代替 cuRobo。
+状态：开发中。GPU 点到点规划、Terminal 接入和浏览器曲线预览已通过测试；完整实机执行未通过。右臂微动测试遇到实际关节反馈断连，执行入口已锁定。规划失败不使用其他插值代替 cuRobo。
 
 ## 启动与设备隔离
 
@@ -21,13 +21,15 @@ ARES_R_HARDWARE_CONFIRM=YES ./scripts/run_terminal.sh --enable-hardware --device
 ```text
 curobo status
 jaka joints right
-curobo plan right J6 deg 0.5
+curobo plan right J6 deg 0.2
 curobo preview logs/curobo_时间_编号/trajectory.json
 motion inspect logs/curobo_时间_编号/trajectory.json
 motion validate logs/curobo_时间_编号/trajectory.json
 ```
 
 `plan` 只读取右臂起点，随后启动独立 GPU 子进程。子进程没有 SDK、控制器连接或运动 API。`plan_cspace` 优化关节空间点到点轨迹，不对 TCP 施加直线运动约束；没有障碍的短距离轨迹可能接近直线，不会为了弯曲而人为添加绕行点。
+
+`preview` 输出统计并生成相邻的 `trajectory.preview.html`，包含六关节角度表、偏移/速度/加速度曲线和时间滑块。浏览器打开 HTML 即可离线回放，不会连接机器人。`curobo execute-micro FILE` 当前直接报阻断原因，不进入确认、不发送运动。
 
 `motion validate` 目前应报告 COLLISION 阻断：模型/现场世界尚未完成碰撞认证，导出文件明确保持 `collision_checked=false`。不得手动改成 true 以绕过检查。
 
@@ -51,7 +53,9 @@ motion validate logs/curobo_时间_编号/trajectory.json
 
 ## 隔离环境
 
-工控机规划 Python：`/home/yikun/ares-r-curobo-venv/bin/python`，机器人预览配置：`/home/yikun/ares-r-curobo-assets/robot/robot.yml`。
+工控机规划 Python：`/home/yikun/ares-r-curobo-venv/bin/python`，机器人预览配置：`/home/yikun/ares-r-curobo-assets/robot/robot.yml`。当前采用 Python 3.10.4 venv，通过 `--system-site-packages` 只读继承现有 dope 环境的 torch 2.5.1+cu124；新增依赖仅安装在新 venv。该环境不是完全独立的可移植环境，迁移时需重新建立并核验依赖。
+
+实际通过 GPU 规划的组合：RTX 3060 Laptop GPU、驱动 560.35.03、warp-lang 1.13.0、numpy 1.26.4、cuRobo `0.0+ares.8e734f3`。官方源码共 444 个文件通过 Git blob SHA 检查；规划工作进程再次校验清单。早期 Python 3.11 安装尝试未用于最终规划。
 
 `config/system.json` 可通过 `curobo.python`、`curobo.robot_yaml`、`curobo.timeout_s` 覆盖上述默认值。
 
@@ -62,8 +66,26 @@ motion validate logs/curobo_时间_编号/trajectory.json
 
 现场验证：原 ARES URDF 经固定基座变换校正后，14 组右臂 SDK FK 对比最大位置误差约 1.3153 mm、姿态误差约 0.0001704°。该结果不是完整碰撞模型验证；原夹爪碰撞球为空、现场世界模型为空，后续需要补全。
 
-## 后续执行门槛
+## 2026-09-07 实机结果与阻断
 
-安装完成并实际通过 GPU 规划测试后，再实现专用右臂 servo 执行器及故障注入测试。必须检查：现场新鲜起点和工具一致性、全轨迹幅度、控制器状态、发送时序、跟踪误差、停止和退出 servo 行为。已确认现场区域隔离与急停条件，但不得由此将任意轨迹视为安全。
+- 首次 J6 +0.5° 试验在第 14 个目标发送前触发跟踪误差保护，停止和退出伺服返回成功。SDK `get_joint_position()` 在该次测试中未提供有效实际跟踪反馈，不能据此认定机械臂没有移动。
+- 审计发现 `.101:10004` 的压缩状态报文含 `joint_actual_position`（度）与 `joint_position` 两个不同字段。新增只读解码器，实际值统一转换成 rad；SDK 版本/接口名称不能替代反馈语义核验。
+- 重新规划 J6 +0.2°：41 点、周期 80 ms、时长 3.2 s、规划峰值速度约 0.107832°/s、加速度约 0.160083°/s²。使用现场 `servo_j_extend(q, 0, 10)`，绝对模式、每步 10×8 ms。
+- 第二段实际测试发送索引 0..16 后反馈连接关闭；`abort_accepted`、`servo_disabled` 均有日志，未记录 `target_reached`。停止后 J6 实际约 97.81635°，相对该段起点约 +0.06591°，并未完成 +0.2°。两次运动没有自动回程。
+- 仅读取状态的连续测试也复现连接关闭。SDK 反馈连接竞争、其他客户端连接、服务端协议/会话限制仍需区分，不能把推测写成根因。
+- 最后只读 SDK 检查：到位、已上电/使能，错误码 0，无急停、保护停、限位或碰撞标志。该检查不替代现场观察。
+- 测试未连接左臂，也未操作底盘、相机或夹爪。右臂模型名来源仍是现场配置 `JAKA Mini2`，不是可信型号查询。
+
+证据目录：[`worklog/evidence/2026-09-07-curobo`](../worklog/evidence/2026-09-07-curobo/)。规划结果与失败执行日志分开保存，规划曲线不代表实际完整执行。
+
+## 下一阶段工作顺序
+
+1. 保持运动关闭，先核验实际反馈会话：固定频率连续读取至少 10 分钟，记录连接关闭时刻、读取次数和延迟；分别比较无 SDK 会话、SDK 登录会话及现场其他客户端状态。不得停止共享进程或改动左臂测试环境。
+2. 查证当前控制器版本支持的官方实际关节反馈接口和多客户端约束，优先使用受支持的单一 SDK 通道。必要时准备独立版本验证环境，不覆盖现有 SDK；版本升级需要独立变更安排。
+3. 增加断连、超时、跟踪误差、工具变化、控制命令失败和日志写入失败的故障注入测试。不得靠运行中自动重连继续发送、放宽保护阈值或去掉反馈恢复执行。
+4. 稳定反馈与异常停止通过后再修改源码解除专用执行锁，重新进行现场净空确认和新鲜起点规划，仅右 J6 小幅低速一次测试；验证完整到位、实际速度和平滑性，不自动回程。
+5. 完成夹爪/TCP/料盘碰撞体、现场障碍和左臂占用区域建模后，才扩展至多关节、较大距离和感知目标。当前 `link6` 模型目标是法兰，不等于工具 2 的标定 TCP。
+
+执行器代码保留用于离线注入测试：新鲜起点、工具一致性、全轨迹幅度、状态、发送时序、跟踪误差及停止/退出伺服。当前终端和默认实际反馈执行路径均禁止实机重试，没有环境变量绕过入口。
 
 参考：[cuRobo plan_cspace 源码](https://github.com/NVlabs/curobo/blob/8e734f3ced1df898990bcd92de40abce475907db/curobo/_src/motion/motion_planner.py)、[JAKA servo 接口](https://www.jaka.com/docs/en/guide/1.7.2/SDK/python.html)。
