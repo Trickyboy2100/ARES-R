@@ -10,6 +10,7 @@ from contextlib import contextmanager
 from .curobo import CUROBO_COMMIT, run_plan, summarize
 from .feedback_audit import status_connections
 from .trajectory import load_trajectory, load_motion_limits, validate_trajectory
+from .demo_timing import SPEED_SCALE, MAX_JOINT_SPEED_DEG_S, MAX_JOINT_ACCEL_DEG_S2, MAX_TCP_SPEED_M_S
 
 BINARY="/home/yikun/ares-r-curobo-assets/jaka_right_demo"
 SDK_LIBRARY="/home/yikun/JAKA/lib"
@@ -68,6 +69,8 @@ def prepare_native_file(config,path,mode):
         if diagnostics.get("joint_position_source")!="sdk222_actual": raise RuntimeError("fresh SDK222 actual start required")
         live=diagnostics["native_snapshot"]
     elif mode in ("demo20", "reset"):
+        if raw.get("speed_scale")!=SPEED_SCALE:
+            raise RuntimeError("demo speed profile changed to 3x; replan with cycle20 or plan20")
         if trajectory.planner!="curobo-v2-virtual-obstacle-demo" or raw.get("execution_scope")!="supervised_right_empty_workspace" or raw.get("simulation_only"):
             raise RuntimeError("not a supervised 20 cm plan")
         live=req["live_snapshot"]
@@ -103,7 +106,7 @@ def validate_demo20(raw,trajectory,reset=False):
     if len(tcp)!=len(trajectory.points) or len(world)!=len(tcp): raise RuntimeError("geometry/trajectory count mismatch")
     if any(len(p)!=3 or not all(math.isfinite(v) for v in p) for p in tcp): raise RuntimeError("invalid TCP geometry")
     lengths=[math.sqrt(sum((a[j]-b[j])**2 for j in range(3))) for a,b in zip(tcp,tcp[1:])]
-    if not (.000001 if reset else .18)<=sum(lengths)<=(.25 if reset else .22) or max(lengths)/trajectory.sample_period_s>.02: raise RuntimeError("TCP length/speed envelope")
+    if not (.000001 if reset else .18)<=sum(lengths)<=(.25 if reset else .22) or max(lengths)/trajectory.sample_period_s>MAX_TCP_SPEED_M_S: raise RuntimeError("TCP length/speed envelope")
     if demo.get("simulation_collision_checked") is not True or not math.isfinite(demo["min_model_clearance_m"]) or demo["min_model_clearance_m"]<.005:
         raise RuntimeError("virtual model clearance not validated")
     if not reset and demo["baseline_min_clearance_m"]>=0: raise RuntimeError("baseline does not intersect virtual obstacle")
@@ -113,7 +116,7 @@ def validate_demo20(raw,trajectory,reset=False):
             if len(p)!=3 or not all(math.isfinite(v) for v in p) or p[1]>-.07 or p[2]<.8:
                 raise RuntimeError("right workspace separation gate")
     summary=summarize(trajectory.points,trajectory.sample_period_s)
-    if max(summary["max_excursion_deg"])>20 or max(summary["peak_velocity_deg_s"])>1 or max(summary["peak_acceleration_deg_s2"])>2 or summary["duration_s"]>115:
+    if max(summary["max_excursion_deg"])>20 or max(summary["peak_velocity_deg_s"])>MAX_JOINT_SPEED_DEG_S or max(summary["peak_acceleration_deg_s2"])>MAX_JOINT_ACCEL_DEG_S2 or summary["duration_s"]>115:
         raise RuntimeError("joint envelope")
 
 

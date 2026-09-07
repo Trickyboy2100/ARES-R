@@ -60,12 +60,12 @@ static Path load(const char* file,bool micro){
             const double cap=micro?(j==5?.5001:.005):20;
             if(std::abs(p.q[i][j]-p.q[0][j])>rad(cap))throw std::runtime_error("excursion cap");
             double v=i?(p.q[i][j]-p.q[i-1][j])/p.dt:0;
-            if(std::abs(v)>rad(micro?.5:1.0)||std::abs(v-previous_v[j])/p.dt>rad(micro?1:2))
+            if(std::abs(v)>rad(micro?.5:3.0)||std::abs(v-previous_v[j])/p.dt>(micro?rad(1):.2))
                 throw std::runtime_error("velocity/acceleration cap");
             previous_v[j]=v;
         }
     }
-    for(double v:previous_v)if(std::abs(v)/p.dt>rad(micro?1:2))throw std::runtime_error("end acceleration");
+    for(double v:previous_v)if(std::abs(v)/p.dt>(micro?rad(1):.2))throw std::runtime_error("end acceleration");
     if(f>>extra)throw std::runtime_error("trailing data");
     if(n*p.dt>120)throw std::runtime_error("duration cap");
     return p;

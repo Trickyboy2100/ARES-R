@@ -108,7 +108,7 @@ JAKA_MOTION_HELP = """Hardware-enabled commands:
   help / quit
 
 UNIT is deg or rad. Manual jaka moves: <=0.05 rad/s and <=3 degrees per joint.
-Native curobo demo20: separate <=20-degree envelope, <=1 degree/s, explicit confirmation.
+Native curobo demo20/reset: 3x timing, <=20 degrees, <=3 degrees/s; site acceleration cap retained.
 """
 
 

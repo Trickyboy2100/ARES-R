@@ -49,6 +49,8 @@ def render(event, total, elapsed, phase):
 
 
 def monitor(child, log, trajectory, phase, timeout=150):
+    phase="%s | %.1fx | planned %.2fs"%(phase,trajectory.get("speed_scale",1),
+        (len(trajectory["points"])-1)*trajectory.get("sample_period_s",.08))
     start=time.monotonic();event={};last_draw=0;pending="";interactive=sys.stdout.isatty()
     interrupted=False
     try:
