@@ -8,7 +8,7 @@
 
 ```bash
 cd /home/yikun/ARES-R
-./scripts/run_terminal.sh --mode jaka-readonly
+./scripts/run_terminal.sh
 ```
 
 ## 指令示例
@@ -64,7 +64,7 @@ jaka dual deg 0 -20 35 0 45 0  0 -20 35 0 -45 0
 启动受控运动模式：
 
 ```bash
-ARES_R_HARDWARE_CONFIRM=YES ./scripts/run_terminal.sh --mode jaka-motion
+ARES_R_HARDWARE_CONFIRM=YES ./scripts/run_terminal.sh --enable-hardware
 ```
 
 低速移动单个关节，例如左臂 J2 增加 1°：

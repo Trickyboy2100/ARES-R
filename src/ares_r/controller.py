@@ -130,7 +130,7 @@ class TaskController:
         self.state = TaskState.STOPPED; self.events.write("stop_all")
 
     def reset_mock(self) -> None:
-        if self.mode != "mock": raise RuntimeError("hardware reset must be performed by its device adapters")
+        if self.mode not in ("mock", "offline"): raise RuntimeError("hardware reset must be performed by its device adapters")
         for device in list(self.arms.values()) + list(self.grippers.values()) + [self.base]:
             reset = getattr(device, "reset", None)
             if reset: reset()

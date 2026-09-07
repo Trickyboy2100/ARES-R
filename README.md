@@ -58,19 +58,19 @@ detect place 1
 place
 ```
 
-也可以用 `cycle 1` 完成一次 Mock 流程。`camera-only` 模式只连接 Epic 相机，机械臂、夹爪和底盘仍为 Mock：
+也可以用 `cycle 1` 完成一次 Mock 流程。对外只保留两种启动方式：不带参数时完全离线，不连接任何实机；显式使能硬件时连接 Epic、左右 JAKA 和左右夹爪：
 
 ```bash
-./scripts/run_terminal.sh --mode camera-only
+# 不使能实机
+./scripts/run_terminal.sh
+
+# 使能实机
+ARES_R_HARDWARE_CONFIRM=YES ./scripts/run_terminal.sh --enable-hardware
 ```
 
-`hardware` 模式目前有双重锁定，并且在真实设备 Adapter 完成验收前会拒绝启动。
+实机模式不会自动给机械臂上电或使能；机械臂动作和夹爪动作仍要求逐条确认。底盘硬件适配器尚未完成，会明确显示为不可用，且导航命令会被拒绝。
 
-当前站点配置标记为 JAKA Mini2（左臂 `.100`、右臂 `.101`）；SDK 无可信型号查询，型号仍须由双臂铭牌和 JAKA APP 留证确认。只读 SDK 模式只登录并查询状态，不上电、不使能、不运动：
-
-```bash
-./scripts/run_terminal.sh --mode jaka-readonly
-```
+当前站点配置标记为 JAKA Mini2（左臂 `.100`、右臂 `.101`）；SDK 无可信型号查询，型号仍须由双臂铭牌和 JAKA APP 留证确认。实机模式下可使用以下状态、预检和世界视图命令：
 
 ```text
 jaka status left
@@ -92,30 +92,7 @@ config/jaka_mini2_motion.site.json
 
 显示模型来自公开的侧装 MiniCobo MDH 参数，并加入左右镜像的模型到控制器固定旋转。模型已用两台控制器合计 34 组 `kine_forward()` 样本验证：左臂 RMS/最大误差为 0.102/0.308 mm，右臂为 0.242/0.943 mm。该验证足以支持关节折线显示，但折线没有连杆、夹具、负载和环境包络，禁止把它单独用于碰撞判断。验证方法见 `docs/JAKA_DH_VALIDATION_2026-09-04.md`。
 
-`jaka-readonly` 始终拒绝运动 API。独立的 `jaka-motion` 模式只连接双臂，提供受保护的低速 `joint_move`，不连接底盘、相机或夹爪；实验性 `jaka_servo.py` 仍不注册到 Terminal。
-
-关节目标可以先在 `jaka-readonly` 中用 `jaka joints`、`jaka plan`、`jaka step`、`jaka home` 和 `jaka dual` 预览。明确切换到 `jaka-motion` 后，`jaka move` 与 `jaka move-step` 使用 JAKA 官方推荐的控制器插补 `joint_move` 执行附近目标；速度固定为 0.05 rad/s，单次变化限制为每关节 3°，并要求逐次精确确认。完整语法见 `docs/JAKA_JOINT_TERMINAL.md`。
-
-夹爪单独调试使用 `gripper-only`，此模式不会连接或移动机械臂和底盘：
-
-```bash
-./scripts/run_terminal.sh --mode gripper-only
-```
-
-工控机默认 Python 没有 pyserial，使用已有 `dope3.8` 环境启动：
-
-```bash
-ARES_R_PYTHON=/home/yikun/anaconda3/envs/dope3.8/bin/python \
-  ./scripts/run_terminal.sh --mode gripper-only
-```
-
-启动脚本现在会在工控机上自动选择该环境，因此通常直接执行下面这一条即可：
-
-```bash
-./scripts/run_terminal.sh --mode gripper-only
-```
-
-不要省略 `--mode gripper-only`。不带模式启动的是 Mock 仿真，显示的 `simulated_position=1000` 不是实物读数，也不会控制实物。
+关节目标使用 `jaka joints`、`jaka plan`、`jaka step`、`jaka home` 和 `jaka dual` 预览；`jaka move` 与 `jaka move-step` 使用控制器插补 `joint_move` 执行附近目标。速度固定为 0.05 rad/s，单次变化限制为每关节 3°，并要求逐次精确确认。完整语法见 `docs/JAKA_JOINT_TERMINAL.md`。
 
 夹爪位置范围为 `0–1000`。当前约定 `0` 为闭合方向、`1000` 为打开方向：
 
@@ -130,7 +107,7 @@ gripper close right
 
 所有真实夹爪移动都要求再次输入大写 `YES`，并在发送后等待回读值进入目标 ±10 的范围。
 
-进入 `camera-only` 后，以下命令只触发 Epic 检测并显示抓取坐标，不会操作机械臂、夹爪或底盘：
+使能实机后，以下命令只触发 Epic 检测并显示抓取坐标，不会自动操作机械臂、夹爪或底盘：
 
 ```text
 epic status

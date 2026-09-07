@@ -110,3 +110,19 @@ class MockBase(MobileBase):
 
     def state(self) -> DeviceState:
         return DeviceState(True, not self.stopped, self._station or "unknown station")
+
+
+class UnavailableBase(MobileBase):
+    """Explicit placeholder that cannot be mistaken for physical base control."""
+
+    def navigate(self, station: str) -> None:
+        raise RuntimeError("physical base adapter is not implemented")
+
+    def stop(self) -> None:
+        return
+
+    def station(self) -> Optional[str]:
+        return None
+
+    def state(self) -> DeviceState:
+        return DeviceState(False, False, "physical base adapter not implemented")

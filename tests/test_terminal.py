@@ -27,6 +27,13 @@ class TerminalHistoryTest(unittest.TestCase):
         self.assertFalse(terminal._allowed_in_jaka_readonly(["gripper", "open", "left"]))
         self.assertFalse(terminal._allowed_in_jaka_readonly(["nav", "pick"]))
 
+    def test_hardware_allowlist_blocks_unfinished_orchestration(self):
+        self.assertTrue(terminal._allowed_in_hardware(["jaka", "move-step", "left", "J2", "deg", "1"]))
+        self.assertTrue(terminal._allowed_in_hardware(["gripper", "open", "right"]))
+        self.assertTrue(terminal._allowed_in_hardware(["epic", "detect", "pick"]))
+        self.assertFalse(terminal._allowed_in_hardware(["cycle", "1"]))
+        self.assertFalse(terminal._allowed_in_hardware(["nav", "pick"]))
+
 
 if __name__ == "__main__":
     unittest.main()

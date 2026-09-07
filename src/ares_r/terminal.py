@@ -71,7 +71,9 @@ JAKA_READONLY_HELP = """JAKA read-only commands:
 All base, arm and gripper control commands are blocked in this mode.
 """
 
-JAKA_MOTION_HELP = """JAKA guarded-motion commands:
+JAKA_MOTION_HELP = """Hardware-enabled commands:
+  epic status / epic detect pick / epic detect place [1-6]
+  gripper status|read SIDE / gripper set SIDE VALUE / gripper open|close SIDE
   status / world view / jaka status SIDE / jaka joints SIDE
   jaka plan SIDE UNIT Q1..Q6      preview an absolute target
   jaka step SIDE JN UNIT DELTA    preview a relative one-joint target
@@ -92,6 +94,22 @@ def _allowed_in_jaka_readonly(args) -> bool:
                         ["jaka", "home"], ["jaka", "dual"])
         or args == ["world", "view"]
         or args[:2] in (["motion", "inspect"], ["motion", "validate"])
+    )
+
+
+def _allowed_in_hardware(args) -> bool:
+    """Expose commissioned device commands, not unfinished orchestration."""
+    return (
+        args[0] in ("status", "help", "quit", "exit", "note")
+        or args[:2] in (["epic", "status"], ["epic", "detect"], ["epic", "parse"])
+        or args[:2] in (["jaka", "status"], ["jaka", "baseline"], ["jaka", "preflight"],
+                        ["jaka", "joints"], ["jaka", "plan"], ["jaka", "step"],
+                        ["jaka", "home"], ["jaka", "dual"], ["jaka", "move"],
+                        ["jaka", "move-step"], ["jaka", "abort"])
+        or args == ["world", "view"]
+        or args[:2] in (["motion", "inspect"], ["motion", "validate"])
+        or args[:2] in (["gripper", "status"], ["gripper", "read"], ["gripper", "set"],
+                        ["gripper", "half"], ["gripper", "open"], ["gripper", "close"])
     )
 
 
@@ -143,7 +161,7 @@ def render(controller: TaskController) -> None:
     elif snapshot.last_detection and snapshot.last_detection.raw_response:
         print("raw response (parse failed): " + snapshot.last_detection.raw_response)
     if snapshot.last_error: print("ERROR: " + snapshot.last_error)
-    if snapshot.mode in ("jaka-readonly", "jaka-motion"):
+    if snapshot.mode in ("jaka-readonly", "jaka-motion", "hardware-enabled"):
         try:
             geometry = load_world_geometry(Path(str(controller.config["world_geometry_file"])))
             diagnostics = {side: controller.arms[side].diagnostics() for side in ("left", "right")}
@@ -157,7 +175,7 @@ def run_terminal(controller: TaskController) -> None:
     setup_command_history(Path.cwd())
     author = str(controller.config.get("team", {}).get("default_author", "unattributed"))
     worklog = WorkLog(Path.cwd(), author)
-    help_text = JAKA_READONLY_HELP if controller.mode == "jaka-readonly" else (JAKA_MOTION_HELP if controller.mode == "jaka-motion" else HELP)
+    help_text = JAKA_READONLY_HELP if controller.mode == "jaka-readonly" else (JAKA_MOTION_HELP if controller.mode in ("jaka-motion", "hardware-enabled") else HELP)
     print(help_text); render(controller)
     while True:
         try:
@@ -165,6 +183,8 @@ def run_terminal(controller: TaskController) -> None:
             if not args: continue
             if controller.mode == "jaka-readonly" and not _allowed_in_jaka_readonly(args):
                 raise RuntimeError("command blocked by jaka-readonly mode; no control API called")
+            if controller.mode == "hardware-enabled" and not _allowed_in_hardware(args):
+                raise RuntimeError("command blocked: combined task/base execution is not commissioned")
             if args[0] in ("quit", "exit"): break
             if args[0] == "help": print(help_text)
             elif args[0] == "status": pass
@@ -201,13 +221,13 @@ def run_terminal(controller: TaskController) -> None:
                     else:
                         print("PASS: offline gates passed; live preflight is still required.")
             elif args[:2] == ["jaka", "status"] and len(args) == 3:
-                if controller.mode not in ("jaka-readonly", "jaka-motion"):
+                if controller.mode not in ("jaka-readonly", "jaka-motion", "hardware-enabled"):
                     raise RuntimeError("start with a JAKA mode for live queries")
                 side = args[2]
                 if side not in controller.arms: raise ValueError("arm must be left or right")
                 print(json.dumps(controller.arms[side].diagnostics(), ensure_ascii=False, indent=2))
             elif args[:2] == ["jaka", "baseline"]:
-                if controller.mode not in ("jaka-readonly", "jaka-motion"):
+                if controller.mode not in ("jaka-readonly", "jaka-motion", "hardware-enabled"):
                     raise RuntimeError("start with a JAKA mode for live queries")
                 if len(args) > 3: raise ValueError("usage: jaka baseline [FILE]")
                 output = Path(args[2]) if len(args) == 3 else Path(
@@ -215,14 +235,14 @@ def run_terminal(controller: TaskController) -> None:
                 data = {
                     "schema_version": 1,
                     "timestamp": datetime.now().astimezone().isoformat(),
-                    "mode": "jaka-readonly",
+                    "mode": controller.mode,
                     "arms": {name: controller.arms[name].diagnostics() for name in ("left", "right")},
                 }
                 output.parent.mkdir(parents=True, exist_ok=True)
                 output.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
                 print("Read-only JAKA baseline saved: %s" % output)
             elif args[:2] == ["jaka", "preflight"] and len(args) == 4:
-                if controller.mode not in ("jaka-readonly", "jaka-motion"):
+                if controller.mode not in ("jaka-readonly", "jaka-motion", "hardware-enabled"):
                     raise RuntimeError("start with a JAKA mode for live queries")
                 side = args[2]
                 if side not in controller.arms: raise ValueError("arm must be left or right")
@@ -238,14 +258,14 @@ def run_terminal(controller: TaskController) -> None:
                 else:
                     print("PASS: read-only preflight passed; motion remains unavailable in this mode.")
             elif args[:2] == ["jaka", "joints"] and len(args) == 3:
-                if controller.mode not in ("jaka-readonly", "jaka-motion"): raise RuntimeError("start with a JAKA mode for live queries")
+                if controller.mode not in ("jaka-readonly", "jaka-motion", "hardware-enabled"): raise RuntimeError("start with a hardware-enabled terminal for live queries")
                 side = args[2]
                 if side not in controller.arms: raise ValueError("arm must be left or right")
                 current = controller.arms[side].diagnostics()["joint_position_rad"]
                 print(current_joint_report(side, current))
             elif args[:2] == ["jaka", "plan"]:
                 if len(args) != 10: raise ValueError("usage: jaka plan SIDE deg|rad Q1 Q2 Q3 Q4 Q5 Q6")
-                if controller.mode not in ("jaka-readonly", "jaka-motion"): raise RuntimeError("start with a JAKA mode for live queries")
+                if controller.mode not in ("jaka-readonly", "jaka-motion", "hardware-enabled"): raise RuntimeError("start with a hardware-enabled terminal for live queries")
                 side, unit = args[2], args[3]
                 if side not in controller.arms: raise ValueError("arm must be left or right")
                 current = controller.arms[side].diagnostics()["joint_position_rad"]
@@ -254,7 +274,7 @@ def run_terminal(controller: TaskController) -> None:
                 print(joint_target_report(side, current, target, limits))
             elif args[:2] == ["jaka", "step"]:
                 if len(args) != 6: raise ValueError("usage: jaka step SIDE J1..J6 deg|rad DELTA")
-                if controller.mode not in ("jaka-readonly", "jaka-motion"): raise RuntimeError("start with a JAKA mode for live queries")
+                if controller.mode not in ("jaka-readonly", "jaka-motion", "hardware-enabled"): raise RuntimeError("start with a hardware-enabled terminal for live queries")
                 side, joint, unit, delta = args[2:6]
                 if side not in controller.arms: raise ValueError("arm must be left or right")
                 current = controller.arms[side].diagnostics()["joint_position_rad"]
@@ -262,7 +282,7 @@ def run_terminal(controller: TaskController) -> None:
                 limits = load_motion_limits(Path(str(controller.config["motion"]["limits_file"])))
                 print(joint_target_report(side, current, target, limits))
             elif args[:2] == ["jaka", "home"] and len(args) == 3:
-                if controller.mode not in ("jaka-readonly", "jaka-motion"): raise RuntimeError("start with a JAKA mode for live queries")
+                if controller.mode not in ("jaka-readonly", "jaka-motion", "hardware-enabled"): raise RuntimeError("start with a hardware-enabled terminal for live queries")
                 side = args[2]
                 if side not in controller.arms: raise ValueError("arm must be left or right")
                 current = controller.arms[side].diagnostics()["joint_position_rad"]
@@ -270,14 +290,14 @@ def run_terminal(controller: TaskController) -> None:
                 print(joint_target_report(side, current, [0.0] * 6, limits))
             elif args[:2] == ["jaka", "dual"]:
                 if len(args) != 15: raise ValueError("usage: jaka dual deg|rad L1 L2 L3 L4 L5 L6 R1 R2 R3 R4 R5 R6")
-                if controller.mode not in ("jaka-readonly", "jaka-motion"): raise RuntimeError("start with a JAKA mode for live queries")
+                if controller.mode not in ("jaka-readonly", "jaka-motion", "hardware-enabled"): raise RuntimeError("start with a hardware-enabled terminal for live queries")
                 unit = args[2]
                 limits = load_motion_limits(Path(str(controller.config["motion"]["limits_file"])))
                 for side, values in (("left", args[3:9]), ("right", args[9:15])):
                     current = controller.arms[side].diagnostics()["joint_position_rad"]
                     print(joint_target_report(side, current, parse_joint_values(values, unit), limits))
             elif args[:2] in (["jaka", "move"], ["jaka", "move-step"]):
-                if controller.mode != "jaka-motion": raise RuntimeError("start with --mode jaka-motion to execute")
+                if controller.mode not in ("jaka-motion", "hardware-enabled"): raise RuntimeError("start with --enable-hardware to execute")
                 side = args[2] if len(args) > 2 else ""
                 if side not in controller.arms: raise ValueError("arm must be left or right")
                 current = controller.arms[side].diagnostics()["joint_position_rad"]
@@ -301,13 +321,13 @@ def run_terminal(controller: TaskController) -> None:
                     controller.arms[side].move_joints_absolute(target, 0.05)
                     print("Movement completed; inspect status and world view before another command.")
             elif args[:2] == ["jaka", "abort"] and len(args) == 3:
-                if controller.mode != "jaka-motion": raise RuntimeError("start with --mode jaka-motion to abort")
+                if controller.mode not in ("jaka-motion", "hardware-enabled"): raise RuntimeError("start with --enable-hardware to abort")
                 side = args[2]
                 if side not in controller.arms: raise ValueError("arm must be left or right")
                 controller.arms[side].abort_motion()
                 print("Abort sent to %s arm." % side)
             elif args == ["world", "view"]:
-                if controller.mode not in ("jaka-readonly", "jaka-motion"):
+                if controller.mode not in ("jaka-readonly", "jaka-motion", "hardware-enabled"):
                     raise RuntimeError("start with a JAKA mode for live TCP projection")
                 geometry = load_world_geometry(Path(str(controller.config["world_geometry_file"])))
                 diagnostics = {side: controller.arms[side].diagnostics() for side in ("left", "right")}
@@ -317,12 +337,12 @@ def run_terminal(controller: TaskController) -> None:
                 state = controller.grippers[args[2]].state()
                 print("%s gripper: %s" % (args[2], state.detail))
             elif args[:2] == ["gripper", "read"] and len(args) == 3:
-                if controller.mode == "mock": print("SIMULATION ONLY: this does not read the physical gripper.")
+                if controller.mode in ("mock", "offline"): print("SIMULATION ONLY: this does not read the physical gripper.")
                 print("%s gripper position: %d" % (args[2], controller.gripper_position(args[2])))
             elif args[:2] in (["gripper", "set"], ["gripper", "half"], ["gripper", "open"], ["gripper", "close"]):
                 if len(args) < 3: raise ValueError("gripper side is required")
                 side = args[2]
-                if controller.mode == "mock": print("SIMULATION ONLY: this will not move the physical gripper.")
+                if controller.mode in ("mock", "offline"): print("SIMULATION ONLY: this will not move the physical gripper.")
                 current = controller.gripper_position(side)
                 if args[1] == "set":
                     if len(args) != 4: raise ValueError("usage: gripper set SIDE VALUE")
@@ -331,7 +351,7 @@ def run_terminal(controller: TaskController) -> None:
                 elif args[1] == "open": target = 1000
                 else: target = 0
                 print("%s gripper: current=%d target=%d" % (side, current, target))
-                if controller.mode != "mock" and input("Type YES to move this gripper: ").strip() != "YES":
+                if controller.mode not in ("mock", "offline") and input("Type YES to move this gripper: ").strip() != "YES":
                     print("Cancelled; no command sent.")
                 else:
                     controller.set_gripper_position(side, target)
@@ -361,7 +381,7 @@ def run_terminal(controller: TaskController) -> None:
         except KeyboardInterrupt:
             if controller.mode == "jaka-readonly":
                 print("\nInterrupt received: read-only session remains motion-free")
-            elif controller.mode == "jaka-motion":
+            elif controller.mode in ("jaka-motion", "hardware-enabled"):
                 print("\nInterrupt received: active joint_move was aborted by its adapter")
             else:
                 print("\nInterrupt received: stopping all devices")

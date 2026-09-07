@@ -28,7 +28,7 @@
 ## 操作
 
 ```text
-./scripts/run_terminal.sh --mode jaka-readonly
+ARES_R_HARDWARE_CONFIRM=YES ./scripts/run_terminal.sh --enable-hardware
 world view
 ```
 
