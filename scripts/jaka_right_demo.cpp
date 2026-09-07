@@ -43,7 +43,7 @@ static State read(JAKAZuRobot& robot,bool tool_data=false){
     return s;
 }
 struct Path{std::vector<Q> q;double dt,captured;int tool_id;Q tool,lo,hi;};
-static Path load(const char* file,bool micro){
+static Path load(const char* file,bool micro,bool reset){
     std::ifstream f(file);std::string magic,extra;int n=0;Path p{};
     f>>magic>>n>>p.dt>>p.captured>>p.tool_id;
     if(!f||magic!="ARES_R_RIGHT_V1"||n<2||n>10000||!std::isfinite(p.dt)||std::abs(p.dt-.08)>1e-9)
@@ -57,7 +57,7 @@ static Path load(const char* file,bool micro){
         for(double& v:p.q[i])if(!(f>>v)||!std::isfinite(v))throw std::runtime_error("invalid target");
         for(int j=0;j<6;++j){
             if(p.q[i][j]<p.lo[j]||p.q[i][j]>p.hi[j])throw std::runtime_error("joint limit");
-            const double cap=micro?(j==5?.5001:.005):20;
+            const double cap=micro?(j==5?.5001:.005):(reset?120:20);
             if(std::abs(p.q[i][j]-p.q[0][j])>rad(cap))throw std::runtime_error("excursion cap");
             double v=i?(p.q[i][j]-p.q[i-1][j])/p.dt:0;
             if(std::abs(v)>rad(micro?.5:3.0)||std::abs(v-previous_v[j])/p.dt>(micro?rad(1):.2))
@@ -67,7 +67,7 @@ static Path load(const char* file,bool micro){
     }
     for(double v:previous_v)if(std::abs(v)/p.dt>(micro?rad(1):.2))throw std::runtime_error("end acceleration");
     if(f>>extra)throw std::runtime_error("trailing data");
-    if(n*p.dt>120)throw std::runtime_error("duration cap");
+    if((n-1)*p.dt>(reset?240:115))throw std::runtime_error("duration cap");
     return p;
 }
 int main(int argc,char**argv){
@@ -77,8 +77,9 @@ int main(int argc,char**argv){
     const bool snapshot=argc==2&&std::string(argv[1])=="snapshot";
     const bool micro=argc==4&&std::string(argv[1])=="micro";
     const bool demo=argc==4&&std::string(argv[1])=="demo20";
-    if(!snapshot&&(!(micro||demo)||std::string(argv[3])!="CONFIRMED_RIGHT_CLEAR")){std::cerr<<"invalid explicit mode/confirmation\n";return 2;}
-    Path path;try{if(!snapshot)path=load(argv[2],micro);}catch(const std::exception&e){std::cerr<<e.what()<<std::endl;return 2;}
+    const bool reset=argc==4&&std::string(argv[1])=="reset";
+    if(!snapshot&&(!(micro||demo||reset)||std::string(argv[3])!="CONFIRMED_RIGHT_CLEAR")){std::cerr<<"invalid explicit mode/confirmation\n";return 2;}
+    Path path;try{if(!snapshot)path=load(argv[2],micro,reset);}catch(const std::exception&e){std::cerr<<e.what()<<std::endl;return 2;}
     int lock=open("/tmp/ares-r-right-servo.lock",O_CREAT|O_RDWR,0600);
     if(lock<0||flock(lock,LOCK_EX|LOCK_NB)){std::cerr<<"right lock occupied\n";if(lock>=0)close(lock);return 2;}
     JAKAZuRobot robot;bool logged=false,servo=false;int result=1;
@@ -111,7 +112,7 @@ int main(int argc,char**argv){
                 if(distance(actual.tool,start.tool)>1e-6)throw std::runtime_error("tool offset changed");
                 if(distance(actual.q,previous)>rad(micro?.1:.2))throw std::runtime_error("tracking error");
                 double tcp_displacement=0;for(int j=0;j<3;++j)tcp_displacement+=std::pow(actual.tcp[j]-start.tcp[j],2);
-                if(std::sqrt(tcp_displacement)>(micro?5:250))throw std::runtime_error("actual TCP displacement cap");
+                if(std::sqrt(tcp_displacement)>(micro?5:(reset?1500:250)))throw std::runtime_error("actual TCP displacement cap");
                 JointValue target{};for(int j=0;j<6;++j)target.jVal[j]=path.q[i][j];
                 check(robot.servo_j(&target,ABS,10),"servo_j");
                 if(Clock::now()-before>std::chrono::milliseconds(40))throw std::runtime_error("cycle budget");

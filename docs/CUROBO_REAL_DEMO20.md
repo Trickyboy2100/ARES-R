@@ -25,6 +25,8 @@ RUN RIGHT CYCLE20
 
 `cycle20` 每次先核验固定起点；不在起点时重新用 cuRobo 规划复位，执行并核验到位后再规划/执行约 20 cm 演示。复位和演示分别显示实时 dashboard，完成后自动返回命令提示符。失败立即终止，不追加回程或重试。
 
+第一段是“当前姿态 → 固定起点”，不要求当前姿态等于 demo 终点；第二段才是 20 cm 绕障。两段使用不同执行模式及独立检查，不直接连线发送、不盲目反放轨迹。两段间再次读取实际关节/TCP核验起点后，才规划第二段。
+
 首次部署没有参考点时：`curobo demo start save` 仅记录当前右臂实际关节/TCP，不运动。已有记录不覆盖；确需重选时执行 `curobo demo start replace` 并输入 `REPLACE RIGHT START`，旧版本留档。参考点持久化于 `config/right_demo_start.site.json`，不随每次规划改变，也不上传为其他设备的通用起点。
 
 分步调试：
@@ -43,15 +45,24 @@ curobo demo run20 last
 RUN RIGHT 20CM
 ```
 
-- `reset`：当前实际关节到保存起点的 cuRobo 规划；已经到位则不发送 servo。单段每关节不超过 20°、规划 TCP 行程不超过 250 mm，超过范围拒绝复位。
+- `reset`：当前实际关节到保存起点的独立 cuRobo 规划；已经到位则不发送 servo。复位专用范围：每关节相对起点不超过 120°、规划 TCP 行程不超过 1.5 m、时长不超过 240 s。现场关节限位、3°/s 速度、0.2 rad/s² 加速度、右侧工作区和碰撞检查继续适用；这不是任意姿态均可无条件回程。
+- `curobo demo plan-reset`：只规划第一段，不运动；`curobo preview reset-last` 打开该复位路径的离线统计/连杆预览。执行仍用 cycle20 或 reset，并重新读取当前状态规划。
 - `plan20`：仅在固定起点附近从新鲜实际关节/TCP 规划，不运动；输出轨迹路径和 HTML 预览。不在起点时要求先 reset 或使用 cycle20。
 - `preview last`：查看统计与浏览器预览路径；HTML 提供连杆/TCP/虚拟障碍的三视图、3D 投影、关节曲线及播放滑块，不连接机器人。
 - `run20 last`：再次检查当前起点、工具、限位、队列和执行条件，确认后执行一次。`last` 仅指当前 Terminal 会话内最近生成的 Demo；也可传入明确的 `trajectory.json` 路径。
 - 轨迹起点快照超过 5 分钟、关节起点偏差超过 0.02°、其他客户端占用、参考点/场景/工具/模型版本变更或数值检查失败时拒绝执行。已执行的轨迹不得直接重复使用；重新运行 cycle20 或 reset → plan20 → run20。
-- dashboard 显示采样进度、时间、实际/目标关节角（度）、实际 TCP（控制器基坐标，mm）、跟踪误差。空格、q、Esc 或 Ctrl+C 请求独立执行进程停止并退出；随后检查停止/退出伺服日志。软件停止不是硬实时或物理急停的替代品。
+- dashboard 显示采样进度、时间、实际/目标关节角（度）、实际 TCP 基坐标（mm）及车体世界坐标的六维位姿：XYZ（m）、roll/pitch/yaw（deg），另有跟踪误差。空格、q、Esc 或 Ctrl+C 请求独立执行进程停止并退出；随后检查停止/退出伺服日志。软件停止不是硬实时或物理急停的替代品。
 - 原 `curobo execute-micro` 旧 Python 执行路径仍锁定。新路径使用独立 SDK V2.2.2 C++ 进程，不能混用原始 10004 读取通道。
 
 不使能实机模式仍使用 `./scripts/run_terminal.sh`，可预览保存的轨迹，不能执行本 Demo。启动模式仍只有不使能实机／使能实机两种。
+
+## dashboard 世界坐标
+
+沿用 `config/robot_world.json` 和 world view 的 `base_tcp_to_world`，无第二套坐标标定。原点为双臂基座中心连线中点正下方的地面位置；X 向北/车前、Y 向西/车左、Z 向上。右臂基座位置 `[0,-0.2,1.2] m`。
+
+显示的 RPY 为右手制欧拉角，`R = Rz(yaw) Ry(pitch) Rx(roll)`，不是“北为零、顺时针为正”的罗盘角，也不是旋转向量。位置来自控制器实际 TCP 反馈后做刚体变换，不重复添加工具偏移或 URDF 校正。每次执行在 `native_execution_*.frame.json` 保存采用的 frame/base 参数。
+
+无需运动即可查看同一转换结果：`curobo demo tcp`，同时输出 `[x,y,z,roll,pitch,yaw]` 的 m/rad 与 m/deg 两种明确单位表示。
 
 ## 本次实机结果
 

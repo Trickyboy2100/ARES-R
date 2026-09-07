@@ -70,3 +70,17 @@ class NativeDemoTest(unittest.TestCase):
             result,calls=self.run_case(mode="demo20",rows=[[v*scale for v in q] for q in rows])
             self.assertNotEqual(result.returncode,0)
             self.assertEqual(calls,[])  # reject before login, not after streaming
+
+    def test_reposition_has_separate_bounds_but_still_refuses_busy_controller(self):
+        import math
+        rows=[]
+        for i in range(261):
+            t=i/260;s=10*t**3-15*t**4+6*t**5
+            rows.append([math.radians(30)*s]+[0.]*5)
+        result,calls=self.run_case(mode="demo20",rows=rows)
+        self.assertIn("excursion cap",result.stderr);self.assertEqual(calls,[])
+        result,calls=self.run_case(mode="reset",rows=rows,flags={"FAKE_BUSY":"1"})
+        self.assertIn("not idle",result.stderr)
+        self.assertIn("192.168.99.101",calls);self.assertNotIn("servo_on",calls)
+        result,calls=self.run_case(mode="reset",rows=[[0.]*6,[math.radians(121)]+[0.]*5])
+        self.assertIn("excursion cap",result.stderr);self.assertEqual(calls,[])

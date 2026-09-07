@@ -60,7 +60,7 @@ function line(a,b,color,width=2){a=point(a);b=point(b);ctx.strokeStyle=color;ctx
 ctx.fillStyle='#e0edf4';ctx.font='13px monospace';ctx.fillText(title,ox+15,oy+20);
 for(let i=0;i<5;i++){let x=minX+(maxX-minX)*i/4,y=minY+(maxY-minY)*i/4;ctx.fillText(x.toFixed(2),ox+70+(x-minX)*scale,oy+299);ctx.fillText(y.toFixed(2),ox+12,oy+275-(y-minY)*scale)}
 for(let i=1;i<frames.length;i++)line(frames[i-1][7],frames[i][7],'#8fe59b',2);
-for(let i=0;i<8;i++)for(let b of [1,2,4])if((i^b)>i)line(box[i],box[i^b],'#ff7d86',3);
+if(box.length===8)for(let i=0;i<8;i++)for(let b of [1,2,4])if((i^b)>i)line(box[i],box[i^b],'#ff7d86',3);
 const joints=frames[k];for(let i=1;i<joints.length;i++)line(joints[i-1],joints[i],'#67dcff',4);
 joints.forEach((p,i)=>{const a=point(p);ctx.fillStyle=i===7?'#ffc967':'#fff';ctx.beginPath();ctx.arc(...a,i===7?6:4,0,Math.PI*2);ctx.fill();ctx.fillText(i===7?'TCP':String(i),a[0]+6,a[1]-5)});
 });ctx.fillStyle='#ffd16d';ctx.fillText('Virtual obstacle / planned TCP path only; body coordinates in meters',15,635)}

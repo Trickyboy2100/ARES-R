@@ -10,6 +10,7 @@ import select
 import sys
 import time
 from contextlib import contextmanager
+from ..world_geometry import base_tcp_to_world
 
 
 @contextmanager
@@ -34,7 +35,7 @@ def stop_key():
     return False
 
 
-def render(event, total, elapsed, phase):
+def render(event, total, elapsed, phase, world_base=None):
     index=event.get("index",-1)+1
     q=event.get("actual_rad",[]);target=event.get("target_rad",[])
     tcp=event.get("tcp_mm_rad",[])
@@ -45,10 +46,18 @@ def render(event, total, elapsed, phase):
            "Actual TCP (controller BASE, mm): "+" ".join("%9.2f"%v for v in tcp[:3]),
            "Previous-target following error: %.4f deg"%event.get("tracking_error_deg",0),
            "SPACE / q / Esc / Ctrl+C: STOP + exit | physical E-stop remains required"]
+    if world_base is not None:
+        if len(tcp)==6:
+            world=base_tcp_to_world(world_base,tcp)
+            lines[-1:-1]=[
+                "TCP BODY XYZ [m]:       "+" ".join("%+10.5f"%v for v in world[:3]),
+                "TCP BODY RPY [deg, RH]: "+" ".join("%+10.3f"%math.degrees(v) for v in world[3:]),
+                "BODY: origin=ground below arm-base midpoint | +X forward +Y left +Z up | R=Rz(yaw)Ry(pitch)Rx(roll)"]
+        else: lines.insert(-1,"TCP BODY XYZ/RPY: waiting for actual controller feedback")
     return "\n".join(lines)
 
 
-def monitor(child, log, trajectory, phase, timeout=150):
+def monitor(child, log, trajectory, phase, timeout=150, world_base=None):
     phase="%s | %.1fx | planned %.2fs"%(phase,trajectory.get("speed_scale",1),
         (len(trajectory["points"])-1)*trajectory.get("sample_period_s",.08))
     start=time.monotonic();event={};last_draw=0;pending="";interactive=sys.stdout.isatty()
@@ -66,9 +75,9 @@ def monitor(child, log, trajectory, phase, timeout=150):
                             event.update(parsed)
                 now=time.monotonic()
                 if now-last_draw> (.1 if interactive else 2):
-                    output=render(event,len(trajectory["points"]),now-start,phase)
+                    output=render(event,len(trajectory["points"]),now-start,phase,world_base)
                     if interactive: print("\033[H\033[J"+output,flush=True)
-                    else: print(output.splitlines()[0]+" | "+output.splitlines()[1],flush=True)
+                    else: print(output,flush=True)
                     last_draw=now
                 if child.poll() is not None: break
                 if stop_key() or now-start>timeout: raise KeyboardInterrupt
@@ -83,5 +92,5 @@ def monitor(child, log, trajectory, phase, timeout=150):
         raise RuntimeError("execution stopped; no automatic return; inspect cleanup: %s"%log)
     finally:
         if not interrupted and interactive:
-            print(render(event,len(trajectory["points"]),time.monotonic()-start,phase),flush=True)
+            print(render(event,len(trajectory["points"]),time.monotonic()-start,phase,world_base),flush=True)
     return child.returncode

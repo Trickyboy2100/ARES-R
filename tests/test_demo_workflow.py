@@ -45,6 +45,26 @@ class WorkflowTest(unittest.TestCase):
             with self.assertRaises(RuntimeError): cycle({},confirmed=True)
             plan.assert_not_called()
 
+    def test_cycle_orders_reposition_before_demo_planning_and_execution(self):
+        order=Mock()
+        with patch("ares_r.motion.demo_workflow.reset") as home,patch("ares_r.motion.demo_workflow.run_demo",return_value="plan") as plan,patch("ares_r.motion.demo_workflow.execute",return_value="log") as execute:
+            order.attach_mock(home,"reset");order.attach_mock(plan,"plan");order.attach_mock(execute,"execute")
+            with patch("sys.stdout",new_callable=io.StringIO):self.assertEqual(cycle({},True),("plan","log"))
+            self.assertEqual([call[0] for call in order.mock_calls],["reset","plan","execute"])
+
+    def test_dashboard_reuses_world_view_origin_and_all_six_pose_values(self):
+        from ares_r.world_geometry import base_tcp_to_world
+        base=dict(base_xyz_m=[0,-.2,1.2],base_rpy_rad=[0,0,math.pi/4])
+        event=dict(event="sample",tcp_mm_rad=[0,-1000,0,.1,.2,math.pi])
+        pose=base_tcp_to_world(base,event["tcp_mm_rad"])
+        text=render(event,10,1,"reset",base)
+        for value in pose[:3]:self.assertIn("%+10.5f"%value,text)
+        for value in pose[3:]:self.assertIn("%+10.3f"%math.degrees(value),text)
+        self.assertAlmostEqual(pose[2],1.2)
+        self.assertAlmostEqual(math.degrees(pose[5]),-135)
+        self.assertIn("+X forward +Y left +Z up",text)
+        self.assertIn("waiting for actual",render({},10,0,"reset",base))
+
     def test_manual_stop_terminates_and_waits_for_owner(self):
         with tempfile.TemporaryDirectory() as tmp:
             path=Path(tmp)/"log";path.write_text('{"event":"sample","index":0}\n')

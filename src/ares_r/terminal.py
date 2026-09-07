@@ -25,6 +25,8 @@ except ImportError:  # pragma: no cover - readline is present on the target Linu
 HELP = """Commands:
   curobo demo start show|save|replace  persistent current right start (no motion)
   curobo demo reset           cuRobo reset to saved start + live dashboard
+  curobo demo plan-reset      plan current -> fixed start without motion
+  curobo demo tcp             read actual TCP in body/world XYZ+RPY
   curobo demo cycle20         reset -> plan20 -> servo demo + live dashboard
   curobo scene load FILE      static URDF-base cuboids (future perception boundary)
   servo waypoints FILE       inspect/import tmp waypoints offline, explicit units
@@ -89,6 +91,8 @@ All base, arm and gripper control commands are blocked in this mode.
 JAKA_MOTION_HELP = """Hardware-enabled commands:
   curobo demo start show|save|replace  inspect/save fixed start; no motion
   curobo demo reset              planned return to saved start; confirms RESET RIGHT START
+  curobo demo plan-reset         plan current -> fixed start only; preview reset-last
+  curobo demo tcp                actual body/world TCP six-dimensional pose; no motion
   curobo demo cycle20            reset -> plan20 -> execute; confirms RUN RIGHT CYCLE20
   curobo scene load FILE         static scene input; Epic pointcloud not yet enabled
   servo waypoints FILE / servo spline FILE OUT  offline waypoint inspection/geometry
@@ -108,7 +112,7 @@ JAKA_MOTION_HELP = """Hardware-enabled commands:
   help / quit
 
 UNIT is deg or rad. Manual jaka moves: <=0.05 rad/s and <=3 degrees per joint.
-Native curobo demo20/reset: 3x timing, <=20 degrees, <=3 degrees/s; site acceleration cap retained.
+Native curobo: 3x timing, <=3 degrees/s; demo <=20 deg, reposition <=120 deg, site acceleration cap retained.
 """
 
 
@@ -125,6 +129,10 @@ def _allowed_in_jaka_readonly(args) -> bool:
 
 
 def _demo_path(controller,value):
+    if value=="reset-last":
+        path=getattr(controller,"last_reset_path",None)
+        if not path: raise RuntimeError("no reset plan in this session; run curobo demo plan-reset first")
+        return path
     if value!="last": return value
     path=getattr(controller,"last_demo20_path",None)
     if not path: raise RuntimeError("no plan in this session; run curobo demo plan20 first")
@@ -146,6 +154,7 @@ def _allowed_in_hardware(args) -> bool:
         or args[:2] == ["curobo", "execute-micro"]
         or args[:3] in (["curobo", "demo", "plan20"], ["curobo", "demo", "run20"],
                         ["curobo","demo","start"], ["curobo","demo","reset"], ["curobo","demo","cycle20"])
+        or args[:3] in (["curobo","demo","plan-reset"],["curobo","demo","tcp"])
         or args[:3]==["curobo","scene","load"]
         or args[:2] in (["servo","waypoints"],["servo","spline"])
         or args[:2] in (["gripper", "status"], ["gripper", "read"], ["gripper", "set"],
@@ -267,6 +276,28 @@ def run_terminal(controller: TaskController) -> None:
                     controller.events.write("demo_start_saved",path=str(path),reference=load_reference(controller.config))
                     print("Fixed start saved; no motion: %s"%path)
                 else: raise ValueError("usage: curobo demo start show|save|replace")
+            elif args==["curobo","demo","tcp"]:
+                from .motion.native_demo import exclusive_right,snapshot
+                from .world_geometry import base_tcp_to_world
+                world=load_world_geometry(Path(controller.config["world_geometry_file"]))
+                with exclusive_right(controller): live=snapshot()
+                pose=base_tcp_to_world(world["arms"]["right"],live["tcp_mm_rad"])
+                report=dict(frame=world["frame"],tcp_xyzrpy_m_rad=pose,
+                    tcp_xyz_m_rpy_deg=pose[:3]+[math.degrees(v) for v in pose[3:]],
+                    orientation_convention="Rz(yaw) Ry(pitch) Rx(roll), right-handed; not compass heading",
+                    captured_at_unix=live["captured_at_unix"])
+                print(json.dumps(report,indent=2));controller.events.write("right_tcp_world",report=report)
+            elif args==["curobo","demo","plan-reset"]:
+                from .motion.native_demo import exclusive_right
+                from .motion.obstacle_demo import run_demo
+                from .motion.preview import write_preview
+                with exclusive_right(controller): output=run_demo(controller.config,intent="reset")
+                controller.last_reset_path=str(output) if output else None
+                if output:
+                    print("Reposition plan saved (NO MOTION): %s"%output)
+                    print("Browser preview: %s"%write_preview(output))
+                    controller.events.write("demo_reset_plan_only",path=str(output))
+                else: print("Already at fixed start; no reposition needed.")
             elif args in (["curobo","demo","reset"],["curobo","demo","cycle20"]):
                 from .motion.native_demo import exclusive_right
                 from .motion.demo_workflow import reset,cycle

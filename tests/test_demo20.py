@@ -1,4 +1,6 @@
 import copy
+import math
+from dataclasses import replace
 import unittest
 from unittest.mock import patch
 
@@ -43,3 +45,16 @@ class Demo20Test(unittest.TestCase):
         self.assertTrue(terminal._allowed_in_hardware(["curobo","demo","plan20"]))
         self.assertTrue(terminal._allowed_in_hardware(["curobo","demo","run20","file"]))
         self.assertFalse(terminal._allowed_in_jaka_readonly(["curobo","demo","run20","file"]))
+
+    def test_large_reposition_is_not_a_twenty_cm_demo(self):
+        n=1201
+        points=[]
+        for i in range(n):
+            t=i/(n-1);s=10*t**3-15*t**4+6*t**5
+            points.append((math.radians(104)*s,0.,0.,0.,0.,0.))
+        trajectory=replace(self.trajectory,points=tuple(points))
+        raw=copy.deepcopy(self.raw)
+        raw["demo"].update(tcp_path_m=[[i*.7/(n-1),0,0] for i in range(n)],
+            world_link_points_m=[[[0,-.2,1.2] for _ in range(8)] for _ in range(n)])
+        validate_demo20(raw,trajectory,reset=True)
+        with self.assertRaises(RuntimeError):validate_demo20(raw,trajectory)

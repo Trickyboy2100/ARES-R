@@ -10,6 +10,7 @@ import xml.etree.ElementTree as ET
 
 from .curobo import ARM_NAMES, finite_joints, slow_sample_period, summarize
 from .scene import scene_cuboids
+from .demo_envelope import RESET_MAX_EXCURSION_DEG, RESET_MAX_DURATION_S
 from .demo_timing import (SPEED_SCALE, SAMPLE_PERIOD_S, MAX_JOINT_SPEED_DEG_S,
                          MAX_JOINT_ACCEL_DEG_S2, MAX_TCP_SPEED_M_S, sample_count_at_scale)
 
@@ -79,14 +80,14 @@ def main():
     attempts = []
     probe=start.copy();probe[0]+=.01
     radius=float(np.linalg.norm(fk(probe)[0]-fk(start)[0]))/.01
-    if radius<.1: raise RuntimeError("unsuitable starting lever arm")
+    reset=request.get("intent")=="reset"
+    if not reset and radius<.1: raise RuntimeError("unsuitable starting lever arm")
     correction=np.asarray(request["T_controller_model"])
     yaw=float(request["body_right_yaw_rad"])
     body=transform(request["body_right_xyz_m"],[0,0,yaw]) @ correction
     predicted=correction @ np.r_[fk(start)[0],1]
     if np.linalg.norm(predicted[:3]-np.asarray(request["live_snapshot"]["tcp_mm_rad"][:3])/1000)>.003:
         raise RuntimeError("live TCP and planning FK differ by more than 3 mm")
-    reset=request.get("intent")=="reset"
     goals=[np.asarray(finite_joints(request["goal_rad"]))] if reset else [start+np.array([length/radius,0,0,0,0,0]) for length in (.16,.14,.18)]
     for goal in goals:
         delta_deg=math.degrees(goal[0]-start[0])
@@ -160,8 +161,8 @@ def main():
         points=np.stack([np.interp(native_times,times,points[:,j]) for j in range(6)],axis=1)
         dt=SAMPLE_PERIOD_S
         summary = summarize(points.tolist(),dt)
-        if max(summary["max_excursion_deg"])>20 or max(summary["peak_velocity_deg_s"])>MAX_JOINT_SPEED_DEG_S or max(summary["peak_acceleration_deg_s2"])>MAX_JOINT_ACCEL_DEG_S2 or summary["duration_s"]>115:
-            attempts[-1]["rejected"]="native motion envelope"
+        if max(summary["max_excursion_deg"])>(RESET_MAX_EXCURSION_DEG if reset else 20) or max(summary["peak_velocity_deg_s"])>MAX_JOINT_SPEED_DEG_S or max(summary["peak_acceleration_deg_s2"])>MAX_JOINT_ACCEL_DEG_S2 or summary["duration_s"]>(RESET_MAX_DURATION_S if reset else 115):
+            attempts[-1].update(rejected="native motion envelope",summary=summary)
             continue
         dense=np.concatenate([a+(b-a)*np.arange(4)[:,None]/4 for a,b in zip(points,points[1:])] + [points[-1:]])
         gap=clearance(dense)
@@ -176,8 +177,9 @@ def main():
         world_obstacle=(np.c_[obstacle_corners,np.ones(8)] @ body.T)[:,:3]
         # Keep all modeled joint/TCP points on the right side and well above
         # the AGV, with a radius allowance. Left pose is not queried.
-        if world_links[:,:,1].max()>-.07 or world_links[:,:,2].min()<.8:
-            attempts[-1]["rejected"]="right workspace separation"
+        workspace_bad=bool(world_links[:,:,1].max()>-.07 or world_links[:,:,2].min()<.8)
+        if workspace_bad:
+            attempts[-1].update(rejected="right workspace separation",max_world_y_m=float(world_links[:,:,1].max()),min_world_z_m=float(world_links[:,:,2].min()))
             continue
         length=float(np.linalg.norm(np.diff(tcp,axis=0),axis=1).sum())
         if not lo<=length<=hi: continue
@@ -192,7 +194,7 @@ def main():
             speed_scale=SPEED_SCALE,legacy_duration_s=legacy_duration,
             summary=summary,planning_time_s=time.monotonic()-started,
             backend_version=str(curobo.__version__),gpu=torch.cuda.get_device_name(0),
-            demo=dict(tcp_path_m=tcp.tolist(),link_points_m=links.tolist(),world_link_points_m=world_links.tolist(),world_obstacle_corners_m=world_obstacle.tolist(),
+            demo=dict(tcp_path_m=tcp.tolist(),link_points_m=links.tolist(),world_link_points_m=world_links.tolist(),world_obstacle_corners_m=[] if reset else world_obstacle.tolist(),
                 baseline_tcp_m=[fk(q)[0].tolist() for q in baseline],
                 obstacle=scene["cuboid"]["virtual_block"],frame="URDF base_link (not body/world)",
                 tcp_length_m=length,tcp_chord_m=float(np.linalg.norm(tcp[-1]-tcp[0])),

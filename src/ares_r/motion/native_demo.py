@@ -11,6 +11,7 @@ from .curobo import CUROBO_COMMIT, run_plan, summarize
 from .feedback_audit import status_connections
 from .trajectory import load_trajectory, load_motion_limits, validate_trajectory
 from .demo_timing import SPEED_SCALE, MAX_JOINT_SPEED_DEG_S, MAX_JOINT_ACCEL_DEG_S2, MAX_TCP_SPEED_M_S
+from .demo_envelope import RESET_MAX_EXCURSION_DEG, RESET_MAX_TCP_LENGTH_M, RESET_MAX_DURATION_S
 
 BINARY="/home/yikun/ares-r-curobo-assets/jaka_right_demo"
 SDK_LIBRARY="/home/yikun/JAKA/lib"
@@ -106,7 +107,7 @@ def validate_demo20(raw,trajectory,reset=False):
     if len(tcp)!=len(trajectory.points) or len(world)!=len(tcp): raise RuntimeError("geometry/trajectory count mismatch")
     if any(len(p)!=3 or not all(math.isfinite(v) for v in p) for p in tcp): raise RuntimeError("invalid TCP geometry")
     lengths=[math.sqrt(sum((a[j]-b[j])**2 for j in range(3))) for a,b in zip(tcp,tcp[1:])]
-    if not (.000001 if reset else .18)<=sum(lengths)<=(.25 if reset else .22) or max(lengths)/trajectory.sample_period_s>MAX_TCP_SPEED_M_S: raise RuntimeError("TCP length/speed envelope")
+    if not (.000001 if reset else .18)<=sum(lengths)<=(RESET_MAX_TCP_LENGTH_M if reset else .22) or max(lengths)/trajectory.sample_period_s>MAX_TCP_SPEED_M_S: raise RuntimeError("TCP length/speed envelope")
     if demo.get("simulation_collision_checked") is not True or not math.isfinite(demo["min_model_clearance_m"]) or demo["min_model_clearance_m"]<.005:
         raise RuntimeError("virtual model clearance not validated")
     if not reset and demo["baseline_min_clearance_m"]>=0: raise RuntimeError("baseline does not intersect virtual obstacle")
@@ -116,7 +117,7 @@ def validate_demo20(raw,trajectory,reset=False):
             if len(p)!=3 or not all(math.isfinite(v) for v in p) or p[1]>-.07 or p[2]<.8:
                 raise RuntimeError("right workspace separation gate")
     summary=summarize(trajectory.points,trajectory.sample_period_s)
-    if max(summary["max_excursion_deg"])>20 or max(summary["peak_velocity_deg_s"])>MAX_JOINT_SPEED_DEG_S or max(summary["peak_acceleration_deg_s2"])>MAX_JOINT_ACCEL_DEG_S2 or summary["duration_s"]>115:
+    if max(summary["max_excursion_deg"])>(RESET_MAX_EXCURSION_DEG if reset else 20) or max(summary["peak_velocity_deg_s"])>MAX_JOINT_SPEED_DEG_S or max(summary["peak_acceleration_deg_s2"])>MAX_JOINT_ACCEL_DEG_S2 or summary["duration_s"]>(RESET_MAX_DURATION_S if reset else 115):
         raise RuntimeError("joint envelope")
 
 
@@ -124,12 +125,19 @@ def execute(config,path,mode,confirmed=False):
     if not confirmed: raise RuntimeError("explicit on-site supervised confirmation required")
     if status_connections(): raise RuntimeError("right status port occupied")
     native=prepare_native_file(config,path,mode)
+    from ..world_geometry import load_world_geometry,base_tcp_to_world
+    world=load_world_geometry(Path(config["world_geometry_file"]))
+    world_base=world["arms"]["right"]
+    base_tcp_to_world(world_base,[0.0]*6)  # validate before starting the sender
     log=Path(path).parent/("native_execution_%d.log"%time.time_ns())
+    log.with_suffix(".frame.json").write_text(json.dumps(dict(frame=world["frame"],right_base=world_base,
+        position_unit="m",angle_unit="rad",display_angle_unit="deg",rotation="Rz(yaw) Ry(pitch) Rx(roll)"),indent=2))
     from .servo_dashboard import monitor
     with log.open("x") as stream:
-        child=subprocess.Popen([BINARY,"demo20" if mode=="reset" else mode,str(native),"CONFIRMED_RIGHT_CLEAR"],
+        child=subprocess.Popen([BINARY,mode,str(native),"CONFIRMED_RIGHT_CLEAR"],
                                env=native_environment(),stdout=stream,stderr=subprocess.STDOUT)
-        code=monitor(child,log,json.loads(Path(path).read_text()),phase=mode)
+        code=monitor(child,log,json.loads(Path(path).read_text()),phase=mode,world_base=world_base,
+                     timeout=RESET_MAX_DURATION_S+30 if mode=="reset" else 150)
     if code: raise RuntimeError("native execution failed; inspect %s"%log)
     events=[json.loads(l) for l in log.read_text().splitlines() if l.startswith("{")]
     if not any(e.get("event")=="target_reached" for e in events): raise RuntimeError("no target-reached evidence")

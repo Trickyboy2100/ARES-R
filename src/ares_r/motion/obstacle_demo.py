@@ -1,6 +1,7 @@
 """Isolated virtual right-arm demo. No SDK, live-state read or execution path."""
 
 import json
+import math
 import os
 from pathlib import Path
 import subprocess
@@ -8,6 +9,7 @@ import time
 import uuid
 
 from .curobo import CUROBO_COMMIT, settings
+from .demo_envelope import RESET_MAX_EXCURSION_DEG, RESET_MAX_TCP_LENGTH_M
 
 
 def run_demo(config, intent="demo20"):
@@ -22,8 +24,9 @@ def run_demo(config, intent="demo20"):
     if intent=="demo20" and not at_reference(reference,live):
         raise RuntimeError("right is away from fixed start; run curobo demo reset, or curobo demo cycle20")
     if intent=="reset" and at_reference(reference,live): return None
-    if intent=="reset" and max(abs(a-b) for a,b in zip(live["actual_rad"],reference["snapshot"]["actual_rad"]))>0.34906585:
-        raise RuntimeError("reset exceeds 20 degree envelope; no motion")
+    if intent=="reset" and max(abs(math.degrees(a-b)) for a,b in zip(live["actual_rad"],reference["snapshot"]["actual_rad"]))>RESET_MAX_EXCURSION_DEG:
+        differences=[abs(math.degrees(a-b)) for a,b in zip(live["actual_rad"],reference["snapshot"]["actual_rad"])]
+        raise RuntimeError("reset requires %.2f deg, above separate %.0f deg reset bound; no motion"%(max(differences),RESET_MAX_EXCURSION_DEG))
     cfg = settings(config)
     if not Path(cfg["python"]).is_file() or not Path(cfg["robot_yaml"]).is_file():
         raise RuntimeError("GPU environment/model unavailable; run on .32, or preview saved evidence")
@@ -37,7 +40,7 @@ def run_demo(config, intent="demo20"):
                    tool_source="SDK222 live tool snapshot",
                    obstacle_dims_m=[0.025, 0.025, 0.025],
                    tool_proxy_radius_m=0.025,
-                   tcp_length_range_m=[0.000001, 0.25] if intent=="reset" else [0.18, 0.22],
+                   tcp_length_range_m=[0.000001, RESET_MAX_TCP_LENGTH_M] if intent=="reset" else [0.18, 0.22],
                    intent=intent,reference_id=reference["id"],scene_snapshot=load_scene(config))
     if intent=="reset": request["goal_rad"]=reference["snapshot"]["actual_rad"]
     audit=Path(__file__).resolve().parents[3]/"worklog/evidence/2026-09-07-curobo/right_fk_audit.json"
