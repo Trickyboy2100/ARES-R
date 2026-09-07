@@ -3,6 +3,8 @@
 - 开发状态：已完成
 - 坐标系状态：已通过 `world view` 三视图现场验证，定义正确
 
+统一坐标系示意图：[`docs/assets/ares_r_coordinate_frames.svg`](../assets/ares_r_coordinate_frames.svg)。图中包含机器人世界原点、左右机械臂基坐标、左右 TCP 坐标、XYZ 正轴、正旋转方向和俯视方位校验。
+
 ## 已完成
 
 - 三视图不再用基座到 TCP 的单条点线代替机械臂。

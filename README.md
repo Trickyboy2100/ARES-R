@@ -1,5 +1,7 @@
 # ARES-R
 
+![ARES-R 统一坐标系定义](docs/assets/ares_r_coordinate_frames.svg)
+
 ARES-R 是 BJUT-BBMG 团队用于双臂移动机器人视觉抓放任务的独立工作区。
 
 目标流程：
