@@ -9,6 +9,7 @@ import ctypes
 import importlib
 import math
 import sys
+import time
 from typing import Dict, List, Sequence
 
 from ..interfaces import Arm
@@ -78,12 +79,27 @@ class JakaSdkArm(Arm):
         self.connected = True
         self.motion_enabled = motion_enabled
 
+    def _query(self, method_name: str, label: str, attempts: int = 4) -> object:
+        """Retry bounded transient SDK transport/decoder failures."""
+        last = None
+        for attempt in range(attempts):
+            try:
+                return _value(getattr(self.robot, method_name)(), label)
+            except Exception as exc:
+                last = exc
+                if attempt + 1 < attempts:
+                    time.sleep(0.15)
+        raise JakaSdkError("%s unavailable after %d attempts: %s" % (label, attempts, last))
+
+    def joint_position(self) -> List[float]:
+        return list(self._query("get_joint_position", "%s joint position" % self.name))
+
     def diagnostics(self) -> Dict[str, object]:
         tool_id = int(_value(self.robot.get_tool_id(), "tool id"))
         tool_payload = _payload(self.robot.get_tool_data(tool_id), "tool data")
         if len(tool_payload) != 2:
             raise JakaSdkError("tool data payload must contain tool id and pose: %r" % (tool_payload,))
-        status = parse_robot_status(_value(self.robot.get_robot_status(), "robot status"))
+        status = parse_robot_status(self._query("get_robot_status", "robot status"))
         return {
             "arm": self.name,
             "configured_model": self.model,
@@ -91,8 +107,8 @@ class JakaSdkArm(Arm):
             "ip": self.ip,
             "sdk_version": _value(self.robot.get_sdk_version(), "SDK version"),
             "robot_status": status,
-            "joint_position_rad": _value(self.robot.get_joint_position(), "joint position"),
-            "tcp_position_mm_rad": _value(self.robot.get_tcp_position(), "TCP position"),
+            "joint_position_rad": self.joint_position(),
+            "tcp_position_mm_rad": self._query("get_tcp_position", "TCP position"),
             "tool_id": tool_id,
             "tool_data": {"tool_id": int(tool_payload[0]), "pose_mm_rad": list(tool_payload[1])},
             "is_on_limit": int(_value(self.robot.is_on_limit(), "limit state")),
@@ -110,7 +126,7 @@ class JakaSdkArm(Arm):
 
     def state(self) -> DeviceState:
         try:
-            status = parse_robot_status(_value(self.robot.get_robot_status(), "robot status"))
+            status = parse_robot_status(self._query("get_robot_status", "robot status"))
             limit = bool(status["on_soft_limit"])
             collision = bool(status["protective_stop"])
             safe_query = bool(status["sdk_socket_connected"])
@@ -125,14 +141,16 @@ class JakaSdkArm(Arm):
     def _motion_locked(self) -> None:
         raise JakaSdkError("%s arm motion is locked in jaka-readonly mode" % self.name)
 
-    def move_joints_absolute(self, target_rad: Sequence[float], speed_rad_s: float) -> None:
+    def move_joints_absolute(self, target_rad: Sequence[float], speed_rad_s: float,
+                             progress=None, timeout_s: float = None) -> Dict[str, object]:
+        """Start a non-blocking MoveJ and supervise it without freezing ART."""
         if not self.motion_enabled:
             self._motion_locked()
         if len(target_rad) != 6 or not all(math.isfinite(float(value)) for value in target_rad):
             raise JakaSdkError("absolute joint target must contain six finite radians")
         if not math.isfinite(speed_rad_s) or speed_rad_s <= 0.0 or speed_rad_s > 0.10:
             raise JakaSdkError("joint speed must be >0 and <=0.10 rad/s")
-        status = parse_robot_status(_value(self.robot.get_robot_status(), "robot status"))
+        status = parse_robot_status(self._query("get_robot_status", "robot status"))
         if not status["powered_on"] or not status["enabled"]:
             raise JakaSdkError("robot must already be powered and enabled in JAKA App")
         if status["emergency_stop"] or status["protective_stop"] or status["on_soft_limit"]:
@@ -140,10 +158,39 @@ class JakaSdkArm(Arm):
         if int(_value(self.robot.is_on_limit(), "limit state")) or int(
                 _value(self.robot.is_in_collision(), "collision state")):
             raise JakaSdkError("controller reports active limit or collision")
+        start = self.joint_position()
+        rapid = float(status["rapid_rate"])
+        rapid_ratio = rapid / 100.0 if rapid > 1.0 else rapid
+        expected_s = max(abs(float(a) - float(b)) for a, b in zip(start, target_rad)) / (
+            float(speed_rad_s) * max(rapid_ratio, 0.02))
+        deadline_s = float(timeout_s) if timeout_s is not None else max(15.0, expected_s * 2.0 + 5.0)
+        started = time.monotonic()
         try:
-            result = self.robot.joint_move(list(target_rad), 0, True, float(speed_rad_s))
+            # Official SDK contract: False returns after enqueueing. ART owns the
+            # wait, feedback, timeout and abort policy instead of freezing in C.
+            result = self.robot.joint_move(list(target_rad), 0, False, float(speed_rad_s))
             if not isinstance(result, (tuple, list)) or not result or int(result[0]) != 0:
                 raise JakaSdkError("joint_move failed: %r" % (result,))
+            while True:
+                actual = self.joint_position()
+                error = max(abs(float(a) - float(b)) for a, b in zip(actual, target_rad))
+                stopped = bool(self._query("is_in_pos", "%s in-position" % self.name))
+                elapsed = time.monotonic() - started
+                report = {"elapsed_s": elapsed, "timeout_s": deadline_s,
+                          "expected_s": expected_s, "rapid_rate": rapid,
+                          "actual_rad": actual, "target_rad": list(target_rad),
+                          "max_error_rad": error, "stopped": stopped}
+                if progress is not None:
+                    progress(report)
+                if int(_value(self.robot.is_on_limit(), "limit state")) or int(
+                        _value(self.robot.is_in_collision(), "collision state")):
+                    raise JakaSdkError("limit/collision became active during movement")
+                if stopped and error <= math.radians(0.05):
+                    report["completed"] = True
+                    return report
+                if elapsed >= deadline_s:
+                    raise JakaSdkError("supervised MoveJ timed out after %.1f s" % elapsed)
+                time.sleep(0.1)
         except BaseException:
             self.robot.motion_abort()
             raise

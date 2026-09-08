@@ -452,14 +452,14 @@ def run_terminal(controller: TaskController) -> None:
                 if controller.mode not in ("jaka-readonly", "jaka-motion", "hardware-enabled"): raise RuntimeError("start with a hardware-enabled terminal for live queries")
                 side = args[2]
                 if side not in controller.arms: raise ValueError("arm must be left or right")
-                current = controller.arms[side].diagnostics()["joint_position_rad"]
+                current = controller.arms[side].joint_position()
                 print(current_joint_report(side, current))
             elif args[:2] == ["jaka", "plan"]:
                 if len(args) != 10: raise ValueError("usage: jaka plan SIDE deg|rad Q1 Q2 Q3 Q4 Q5 Q6")
                 if controller.mode not in ("jaka-readonly", "jaka-motion", "hardware-enabled"): raise RuntimeError("start with a hardware-enabled terminal for live queries")
                 side, unit = args[2], args[3]
                 if side not in controller.arms: raise ValueError("arm must be left or right")
-                current = controller.arms[side].diagnostics()["joint_position_rad"]
+                current = controller.arms[side].joint_position()
                 target = parse_joint_values(args[4:], unit)
                 limits = load_motion_limits(Path(str(controller.config["motion"]["limits_file"])))
                 print(joint_target_report(side, current, target, limits))
@@ -468,7 +468,7 @@ def run_terminal(controller: TaskController) -> None:
                 if controller.mode not in ("jaka-readonly", "jaka-motion", "hardware-enabled"): raise RuntimeError("start with a hardware-enabled terminal for live queries")
                 side, joint, unit, delta = args[2:6]
                 if side not in controller.arms: raise ValueError("arm must be left or right")
-                current = controller.arms[side].diagnostics()["joint_position_rad"]
+                current = controller.arms[side].joint_position()
                 target = stepped_target(current, joint, delta, unit)
                 limits = load_motion_limits(Path(str(controller.config["motion"]["limits_file"])))
                 print(joint_target_report(side, current, target, limits))
@@ -476,7 +476,7 @@ def run_terminal(controller: TaskController) -> None:
                 if controller.mode not in ("jaka-readonly", "jaka-motion", "hardware-enabled"): raise RuntimeError("start with a hardware-enabled terminal for live queries")
                 side = args[2]
                 if side not in controller.arms: raise ValueError("arm must be left or right")
-                current = controller.arms[side].diagnostics()["joint_position_rad"]
+                current = controller.arms[side].joint_position()
                 limits = load_motion_limits(Path(str(controller.config["motion"]["limits_file"])))
                 print(joint_target_report(side, current, [0.0] * 6, limits))
             elif args[:2] == ["jaka", "dual"]:
@@ -485,13 +485,13 @@ def run_terminal(controller: TaskController) -> None:
                 unit = args[2]
                 limits = load_motion_limits(Path(str(controller.config["motion"]["limits_file"])))
                 for side, values in (("left", args[3:9]), ("right", args[9:15])):
-                    current = controller.arms[side].diagnostics()["joint_position_rad"]
+                    current = controller.arms[side].joint_position()
                     print(joint_target_report(side, current, parse_joint_values(values, unit), limits))
             elif args[:2] in (["jaka", "move"], ["jaka", "move-step"]):
                 if controller.mode not in ("jaka-motion", "hardware-enabled"): raise RuntimeError("start with --enable-hardware to execute")
                 side = args[2] if len(args) > 2 else ""
                 if side not in controller.arms: raise ValueError("arm must be left or right")
-                current = controller.arms[side].diagnostics()["joint_position_rad"]
+                current = controller.arms[side].joint_position()
                 if args[1] == "move":
                     if len(args) != 10: raise ValueError("usage: jaka move SIDE deg|rad Q1 Q2 Q3 Q4 Q5 Q6")
                     target = parse_joint_values(args[4:], args[3])
@@ -509,8 +509,24 @@ def run_terminal(controller: TaskController) -> None:
                 if input("Type %s to execute at 0.05 rad/s: " % phrase).strip() != phrase:
                     print("Cancelled; no motion command sent.")
                 else:
-                    controller.arms[side].move_joints_absolute(target, 0.05)
-                    print("Movement completed; inspect status and world view before another command.")
+                    controller.events.write("jaka_direct_started", side=side,
+                                            start_rad=current, target_rad=target,
+                                            speed_rad_s=0.05, sdk_blocking=False)
+                    def direct_progress(report):
+                        print("\rDIRECT %-5s %6.1f/%-6.1fs error=%6.3fdeg rapid=%s" % (
+                            side, report["elapsed_s"], report["timeout_s"],
+                            math.degrees(report["max_error_rad"]), report["rapid_rate"]),
+                            end="", flush=True)
+                    try:
+                        result = controller.arms[side].move_joints_absolute(
+                            target, 0.05, progress=direct_progress)
+                    except BaseException as exc:
+                        controller.events.write("jaka_direct_failed", side=side,
+                                                target_rad=target, error=str(exc))
+                        raise
+                    controller.events.write("jaka_direct_completed", side=side,
+                                            target_rad=target, report=result)
+                    print("\nMovement completed in %.1f s; inspect status and world view before another command." % result["elapsed_s"])
             elif args[:2] == ["jaka", "abort"] and len(args) == 3:
                 if controller.mode not in ("jaka-motion", "hardware-enabled"): raise RuntimeError("start with --enable-hardware to abort")
                 side = args[2]

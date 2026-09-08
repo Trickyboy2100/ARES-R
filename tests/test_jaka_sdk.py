@@ -12,7 +12,7 @@ from ares_r.motion import MotionLimits, Trajectory
 
 
 class FakeRC:
-    def __init__(self, ip): self.ip, self.logged_out, self.control_calls = ip, False, []
+    def __init__(self, ip): self.ip, self.logged_out, self.control_calls, self.joints = ip, False, [], [0.0] * 6
     def login(self): return (0,)
     def logout(self): self.logged_out = True; return (0,)
     def get_sdk_version(self): return (0, "V2.1.5stable_linux")
@@ -25,7 +25,7 @@ class FakeRC:
         status[22] = 1
         status[23] = 0
         return (0, status)
-    def get_joint_position(self): return (0, [0.0] * 6)
+    def get_joint_position(self): return (0, self.joints)
     def get_tcp_position(self): return (0, [0.0] * 6)
     def get_tool_id(self): return (0, 2)
     def get_tool_data(self, tool_id): return (0, tool_id, [1.0] * 6)
@@ -33,7 +33,8 @@ class FakeRC:
     def is_in_collision(self): return (0, 0)
     def get_collision_level(self): return (0, 5)
     def servo_j(self, *args): self.control_calls.append(("servo_j", args)); return (0,)
-    def joint_move(self, *args): self.control_calls.append(("joint_move", args)); return (0,)
+    def joint_move(self, *args): self.control_calls.append(("joint_move", args)); self.joints=list(args[0]); return (0,)
+    def is_in_pos(self): return (0, 1)
     def motion_abort(self): self.control_calls.append(("motion_abort",)); return (0,)
 
 
@@ -68,16 +69,32 @@ class JakaSdkArmTest(unittest.TestCase):
         with self.assertRaisesRegex(JakaSdkError, "locked"):
             arm.move_to_pose(Pose("base", 0, 0, 0, 0, 0, 0))
 
-    def test_motion_mode_uses_blocking_absolute_joint_move(self):
+    def test_motion_mode_uses_supervised_nonblocking_joint_move(self):
         arm = self.build_motion()
         arm.move_joints_absolute([0.01] * 6, 0.05)
-        self.assertIn(("joint_move", ([0.01] * 6, 0, True, 0.05)), arm.robot.control_calls)
+        self.assertIn(("joint_move", ([0.01] * 6, 0, False, 0.05)), arm.robot.control_calls)
 
     def test_motion_mode_rejects_excess_speed_without_control_call(self):
         arm = self.build_motion()
         with self.assertRaisesRegex(JakaSdkError, "<=0.10"):
             arm.move_joints_absolute([0.01] * 6, 0.11)
         self.assertEqual(arm.robot.control_calls, [])
+
+    def test_supervision_aborts_when_feedback_is_lost(self):
+        class LostFeedbackRC(FakeRC):
+            def joint_move(self, *args):
+                self.control_calls.append(("joint_move", args)); self.moving = True; return (0,)
+            def get_joint_position(self):
+                return (-3,) if getattr(self, "moving", False) else (0, self.joints)
+        class LostModule: RC = LostFeedbackRC
+        with patch("ares_r.adapters.jaka_sdk.load_jkrc", return_value=LostModule), \
+                patch("ares_r.adapters.jaka_sdk.time.sleep"):
+            arm = JakaSdkArm("right", {"ip": "192.0.2.2", "model": "JAKA Mini2"},
+                             {"sdk_python_path": "/sdk", "sdk_library_path": "/sdk/lib.so"},
+                             motion_enabled=True)
+            with self.assertRaisesRegex(JakaSdkError, "unavailable after"):
+                arm.move_joints_absolute([0.01] * 6, 0.05)
+        self.assertIn(("motion_abort",), arm.robot.control_calls)
 
     def test_close_logs_out(self):
         arm = self.build(); robot = arm.robot
