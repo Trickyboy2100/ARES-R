@@ -8,6 +8,9 @@ import subprocess
 import time
 import uuid
 
+from .curobo_params import planning_profile
+from ..timing import run_logged_process, timestamp
+
 CUROBO_COMMIT = "8e734f3ced1df898990bcd92de40abce475907db"
 MODEL_NAMES = tuple("joint%d" % i for i in range(1, 7))
 ARM_NAMES = MODEL_NAMES  # Existing ARES-R trajectory/limits contract; UI aliases are J1..J6.
@@ -90,20 +93,23 @@ def run_plan(config, start, goal, diagnostics=None):
     directory.mkdir(parents=True, exist_ok=False)
     request = {"start_rad": start, "goal_rad": goal, "robot_yaml": str(Path(cfg["robot_yaml"]).resolve()),
                "arm": "right", "captured_at_unix": time.time(), "diagnostics": diagnostics,
-               "expected_commit": CUROBO_COMMIT}
+               "expected_commit": CUROBO_COMMIT, "run_id": directory.name,
+               "request_timestamp": timestamp(), "planning_parameters": planning_profile(config)}
     request_path, output = directory / "request.json", directory / "trajectory.json"
     request_path.write_text(json.dumps(request, indent=2), encoding="utf-8")
     env = dict(os.environ)
     env["PYTHONPATH"] = str(Path(__file__).resolve().parents[2])
-    with (directory / "planner.log").open("w") as log:
-        try:
-            process = subprocess.run([cfg["python"], "-m", "ares_r.motion.curobo_worker",
-                                      str(request_path), str(output)], env=env, stdout=log,
-                                     stderr=subprocess.STDOUT, timeout=float(cfg["timeout_s"]))
-        except subprocess.TimeoutExpired as exc:
-            raise RuntimeError("planning timed out; no motion sent; log: %s" % (directory / "planner.log")) from exc
-    if process.returncode or not output.is_file():
+    try:
+        returncode, orchestration_s = run_logged_process(
+            [cfg["python"], "-m", "ares_r.motion.curobo_worker", str(request_path), str(output)],
+            env, directory / "planner.log", float(cfg["timeout_s"]), "cuRobo")
+    except subprocess.TimeoutExpired as exc:
+        raise RuntimeError("planning timed out; no motion sent; log: %s" % (directory / "planner.log")) from exc
+    if returncode or not output.is_file():
         raise RuntimeError("planning failed; no fallback/no motion; log: %s" % (directory / "planner.log"))
+    result = json.loads(output.read_text(encoding="utf-8"))
+    result["orchestration_wall_s"] = orchestration_s
+    output.write_text(json.dumps(result, indent=2), encoding="utf-8")
     return output
 
 

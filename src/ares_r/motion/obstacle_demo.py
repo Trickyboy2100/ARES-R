@@ -11,6 +11,8 @@ import uuid
 from .curobo import CUROBO_COMMIT, settings
 from .demo_envelope import RESET_MAX_EXCURSION_DEG, RESET_MAX_TCP_LENGTH_M
 from .demo_timing import SPEED_SCALE, SUPPORTED_SPEED_SCALES
+from .curobo_params import planning_profile
+from ..timing import run_logged_process, timestamp
 
 
 def run_demo(config, intent="demo20", speed_scale=SPEED_SCALE):
@@ -35,6 +37,7 @@ def run_demo(config, intent="demo20", speed_scale=SPEED_SCALE):
     directory = Path(config["logging"]["directory"]) / (
         "curobo_obstacle_" + time.strftime("%Y%m%d_%H%M%S_") + uuid.uuid4().hex[:8])
     directory.mkdir(parents=True, exist_ok=False)
+    run_id=directory.name
     request = dict(robot_yaml=str(Path(cfg["robot_yaml"]).resolve()),
                    expected_commit=CUROBO_COMMIT, arm="right", planning_only=True,
                    start_rad=live["actual_rad"],live_snapshot=live,
@@ -43,7 +46,8 @@ def run_demo(config, intent="demo20", speed_scale=SPEED_SCALE):
                    obstacle_dims_m=[0.025, 0.025, 0.025],
                    tool_proxy_radius_m=0.025,
                    tcp_length_range_m=[0.000001, RESET_MAX_TCP_LENGTH_M] if intent=="reset" else [0.18, 0.22],
-                   intent=intent,speed_scale=speed_scale,reference_id=reference["id"],scene_snapshot=load_scene(config))
+                   intent=intent,speed_scale=speed_scale,reference_id=reference["id"],scene_snapshot=load_scene(config),
+                   run_id=run_id,request_timestamp=timestamp(),planning_parameters=planning_profile(config))
     if intent=="reset": request["goal_rad"]=reference["snapshot"]["actual_rad"]
     audit=Path(__file__).resolve().parents[3]/"worklog/evidence/2026-09-07-curobo/right_fk_audit.json"
     request["T_controller_model"]=json.loads(audit.read_text())["T_controller_model"]
@@ -52,13 +56,13 @@ def run_demo(config, intent="demo20", speed_scale=SPEED_SCALE):
     req, output = directory / "request.json", directory / "trajectory.json"
     req.write_text(json.dumps(request, indent=2), encoding="utf-8")
     env = dict(os.environ, PYTHONPATH=str(Path(__file__).resolve().parents[2]))
-    with (directory / "planner.log").open("w") as log:
-        try:
-            process = subprocess.run([cfg["python"], "-m", "ares_r.motion.obstacle_demo_worker",
-                                      str(req), str(output)], env=env, stdout=log,
-                                     stderr=subprocess.STDOUT, timeout=max(240, float(cfg["timeout_s"])))
-        except subprocess.TimeoutExpired as exc:
-            raise RuntimeError("virtual demo timed out; no motion; inspect %s" % directory) from exc
-    if process.returncode or not output.is_file():
+    try:
+        returncode,orchestration_s=run_logged_process([cfg["python"],"-m","ares_r.motion.obstacle_demo_worker",
+            str(req),str(output)],env,directory/"planner.log",max(240,float(cfg["timeout_s"])),"cuRobo")
+    except subprocess.TimeoutExpired as exc:
+        raise RuntimeError("virtual demo timed out; no motion; inspect %s" % directory) from exc
+    if returncode or not output.is_file():
         raise RuntimeError("virtual demo failed; no fallback/no motion; inspect %s" % directory)
+    metrics=json.loads(output.read_text());metrics["orchestration_wall_s"]=orchestration_s
+    output.write_text(json.dumps(metrics,indent=2),encoding="utf-8")
     return output

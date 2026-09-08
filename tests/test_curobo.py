@@ -41,8 +41,7 @@ class CuroboTest(unittest.TestCase):
             model = root / "robot.yml"; model.write_text("preview model")
             config = {"logging": {"directory": str(root / "logs")},
                       "curobo": {"python": sys.executable, "robot_yaml": str(model)}}
-            with patch("ares_r.motion.curobo.subprocess.run") as process:
-                process.return_value.returncode = 1
+            with patch("ares_r.motion.curobo.run_logged_process", return_value=(1, .25)) as process:
                 with self.assertRaisesRegex(RuntimeError, "no fallback/no motion"):
                     run_plan(config, [0]*6, [0]*5+[.001])
                 self.assertEqual(len(list((root/"logs").glob("*/request.json"))), 1)

@@ -44,7 +44,7 @@ motion validate logs/curobo_时间_编号/trajectory.json
 ## 数据与限制
 
 - `logs/curobo_*/request.json`：起终点、只读现场快照和请求时间。
-- `planner.log`：依赖错误、CUDA 编译和规划过程。
+- `planner.log`：依赖错误、CUDA 编译、规划过程及完整 `ARES_R_TIMING` 分阶段时间戳；Terminal 同步显示阶段耗时。
 - `trajectory.json`：六关节角度、周期、持续时间、各关节峰值速度/加速度及最大偏移。
 - 关节名显式映射：cuRobo `joint1..joint6` → 控制器 `J1..J6`，单位 rad；不使用隐式“前六列”。
 - 请求目标限于每关节 0.5°。规划中间点也检查，超范围拒绝；目标误差超过 0.0001 rad 拒绝，不追加修正段。
@@ -58,6 +58,7 @@ motion validate logs/curobo_时间_编号/trajectory.json
 实际通过 GPU 规划的组合：RTX 3060 Laptop GPU、驱动 560.35.03、warp-lang 1.13.0、numpy 1.26.4、cuRobo `0.0+ares.8e734f3`。官方源码共 444 个文件通过 Git blob SHA 检查；规划工作进程再次校验清单。早期 Python 3.11 安装尝试未用于最终规划。
 
 `config/system.json` 可通过 `curobo.python`、`curobo.robot_yaml`、`curobo.timeout_s` 覆盖上述默认值。
+规划耗时参数、锁定源码接口和固定请求基准见 [2026-09-08 规划耗时审计](CUROBO_PLANNING_TIME_AUDIT_2026-09-08.md)。
 
 - cuRobo 固定提交：`8e734f3ced1df898990bcd92de40abce475907db`。
 - `scripts/fetch_curobo_source.py DIR` 下载官方代码/配置并校验 Git blob SHA，不下载无关大型机器人资产。

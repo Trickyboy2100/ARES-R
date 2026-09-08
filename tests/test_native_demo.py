@@ -36,6 +36,8 @@ class NativeDemoTest(unittest.TestCase):
         result,calls=self.run_case()
         self.assertEqual(result.returncode,0,result.stderr)
         self.assertIn('"event":"target_reached"',result.stdout)
+        self.assertIn('"wall_unix_ns":',result.stdout)
+        self.assertIn('"steady_elapsed_ms":',result.stdout)
         self.assertEqual(calls[-2:],["servo_off","logout"])
         self.assertNotIn("192.168.99.100",calls)
 

@@ -17,7 +17,9 @@
 #include <sys/file.h>
 #include <unistd.h>
 using Clock=std::chrono::steady_clock;
+using WallClock=std::chrono::system_clock;
 using Q=std::array<double,6>;
+static const auto process_started=Clock::now();
 static volatile std::sig_atomic_t interrupted=0;
 static void stop_signal(int){interrupted=1;}
 static void check(int rc,const char* op){if(rc)throw std::runtime_error(std::string(op)+" code="+std::to_string(rc));}
@@ -25,6 +27,14 @@ static double rad(double deg){return deg*3.14159265358979323846/180;}
 static Q pose(CartesianPose p){return {{p.tran.x,p.tran.y,p.tran.z,p.rpy.rx,p.rpy.ry,p.rpy.rz}};}
 static void array_json(const Q& q){std::cout<<"[";for(int i=0;i<6;++i)std::cout<<(i?",":"")<<q[i];std::cout<<"]";}
 static double distance(const Q&a,const Q&b){double d=0;for(int j=0;j<6;++j)d=std::max(d,std::abs(a[j]-b[j]));return d;}
+static void stamp(){
+    auto wall=std::chrono::duration_cast<std::chrono::nanoseconds>(WallClock::now().time_since_epoch()).count();
+    auto elapsed=std::chrono::duration<double,std::milli>(Clock::now()-process_started).count();
+    std::cout<<",\"wall_unix_ns\":"<<wall<<",\"steady_elapsed_ms\":"<<elapsed;
+}
+static void json_string(const std::string&s){
+    std::cout<<"\"";for(char c:s){if(c=='\"'||c=='\\')std::cout<<'\\';if(c=='\n')std::cout<<"\\n";else std::cout<<c;}std::cout<<"\"";
+}
 struct State{Q q,tcp,tool;int tool_id,user_id;MotionStatus motion;};
 static State read(JAKAZuRobot& robot,bool tool_data=false){
     RobotStatus_simple status{};State s{};JointValue q{};CartesianPose tcp{};BOOL drag=false;
@@ -87,7 +97,7 @@ int main(int argc,char**argv){
         check(robot.login_in("192.168.99.101",false),"login");logged=true;
         read(robot,true); // Warm-up only, before arming.
         State start=read(robot,true);
-        std::cout<<"{\"event\":\"snapshot\",\"captured_at_unix\":"<<std::time(nullptr)<<",\"actual_rad\":";
+        std::cout<<"{\"event\":\"snapshot\"";stamp();std::cout<<",\"captured_at_unix\":"<<std::time(nullptr)<<",\"actual_rad\":";
         array_json(start.q);std::cout<<",\"tcp_mm_rad\":";array_json(start.tcp);
         std::cout<<",\"tool_mm_rad\":";array_json(start.tool);
         std::cout<<",\"tool_id\":"<<start.tool_id<<",\"user_id\":"<<start.user_id
@@ -116,7 +126,7 @@ int main(int argc,char**argv){
                 JointValue target{};for(int j=0;j<6;++j)target.jVal[j]=path.q[i][j];
                 check(robot.servo_j(&target,ABS,10),"servo_j");
                 if(Clock::now()-before>std::chrono::milliseconds(40))throw std::runtime_error("cycle budget");
-                std::cout<<"{\"event\":\"sample\",\"index\":"<<i<<",\"tracking_error_deg\":"<<distance(actual.q,previous)*180/3.14159265358979323846<<",\"actual_rad\":";array_json(actual.q);
+                std::cout<<"{\"event\":\"sample\"";stamp();std::cout<<",\"planned_time_s\":"<<i*path.dt<<",\"deadline_lag_ms\":"<<lag*1000<<",\"read_send_ms\":"<<std::chrono::duration<double,std::milli>(Clock::now()-before).count()<<",\"index\":"<<i<<",\"tracking_error_deg\":"<<distance(actual.q,previous)*180/3.14159265358979323846<<",\"actual_rad\":";array_json(actual.q);
                 std::cout<<",\"target_rad\":";array_json(path.q[i]);std::cout<<",\"tcp_mm_rad\":";array_json(actual.tcp);std::cout<<"}"<<std::endl;
                 if(!std::cout)throw std::runtime_error("log write failed");
                 previous=path.q[i];deadline+=std::chrono::milliseconds(80);
@@ -126,15 +136,16 @@ int main(int argc,char**argv){
             auto before=Clock::now();State final=read(robot);
             if(Clock::now()-before>std::chrono::milliseconds(40)||distance(final.q,path.q.back())>rad(.05))
                 throw std::runtime_error("final feedback mismatch");
-            std::cout<<"{\"event\":\"target_reached\",\"actual_rad\":";array_json(final.q);
+            std::cout<<"{\"event\":\"target_reached\"";stamp();std::cout<<",\"actual_rad\":";array_json(final.q);
             std::cout<<",\"tcp_mm_rad\":";array_json(final.tcp);std::cout<<"}"<<std::endl;
         }
         result=0;
     }catch(const std::exception&e){
+        std::cout<<"{\"event\":\"failed\"";stamp();std::cout<<",\"reason\":";json_string(e.what());std::cout<<"}"<<std::endl;
         std::cerr<<"FAILED "<<e.what()<<std::endl;
-        if(servo)std::cout<<"{\"event\":\"abort\",\"code\":"<<robot.motion_abort()<<"}"<<std::endl;
+        if(servo){int rc=robot.motion_abort();std::cout<<"{\"event\":\"abort\"";stamp();std::cout<<",\"code\":"<<rc<<"}"<<std::endl;}
     }
-    if(servo){int rc=robot.servo_move_enable(false);std::cout<<"{\"event\":\"servo_disabled\",\"code\":"<<rc<<"}"<<std::endl;if(rc)result=1;}
-    if(logged){int rc=robot.login_out();std::cout<<"{\"event\":\"logout\",\"code\":"<<rc<<"}"<<std::endl;if(rc)result=1;}
+    if(servo){int rc=robot.servo_move_enable(false);std::cout<<"{\"event\":\"servo_disabled\"";stamp();std::cout<<",\"code\":"<<rc<<"}"<<std::endl;if(rc)result=1;}
+    if(logged){int rc=robot.login_out();std::cout<<"{\"event\":\"logout\"";stamp();std::cout<<",\"code\":"<<rc<<"}"<<std::endl;if(rc)result=1;}
     close(lock);return result;
 }

@@ -9,6 +9,7 @@ import os
 import select
 import sys
 import time
+from datetime import datetime
 from contextlib import contextmanager
 from ..world_geometry import base_tcp_to_world
 
@@ -39,12 +40,18 @@ def render(event, total, elapsed, phase, world_base=None):
     index=event.get("index",-1)+1
     q=event.get("actual_rad",[]);target=event.get("target_rad",[])
     tcp=event.get("tcp_mm_rad",[])
+    now=datetime.now().astimezone().isoformat(timespec="milliseconds")
+    feedback_ns=event.get("wall_unix_ns")
+    feedback=(datetime.fromtimestamp(feedback_ns/1e9).astimezone().isoformat(timespec="milliseconds")
+              if feedback_ns else "waiting")
     lines=["ARES-R | RIGHT servo | %s | %s"%(phase,event.get("event","waiting for feedback")),
+           "Wall now %s | feedback %s | native %.1f ms"%(now,feedback,event.get("steady_elapsed_ms",0)),
            "Progress %d/%d (%5.1f%%) | elapsed %.1fs"%(index,total,100*index/max(1,total),elapsed),
            "Actual J1..J6 deg: "+" ".join("%8.3f"%math.degrees(v) for v in q),
            "Target J1..J6 deg: "+" ".join("%8.3f"%math.degrees(v) for v in target),
            "Actual TCP (controller BASE, mm): "+" ".join("%9.2f"%v for v in tcp[:3]),
            "Previous-target following error: %.4f deg"%event.get("tracking_error_deg",0),
+           "Deadline lag %.3f ms | SDK read+send %.3f ms"%(event.get("deadline_lag_ms",0),event.get("read_send_ms",0)),
            "SPACE / q / Esc / Ctrl+C: STOP + exit | physical E-stop remains required"]
     if world_base is not None:
         if len(tcp)==6:
