@@ -84,5 +84,5 @@ class NativeDemoTest(unittest.TestCase):
         result,calls=self.run_case(mode="reset",rows=rows,flags={"FAKE_BUSY":"1"})
         self.assertIn("not idle",result.stderr)
         self.assertIn("192.168.99.101",calls);self.assertNotIn("servo_on",calls)
-        result,calls=self.run_case(mode="reset",rows=[[0.]*6,[math.radians(121)]+[0.]*5])
+        result,calls=self.run_case(mode="reset",rows=[[0.]*6,[math.radians(151)]+[0.]*5])
         self.assertIn("excursion cap",result.stderr);self.assertEqual(calls,[])
