@@ -23,13 +23,18 @@ def main() -> None:
     parser.add_argument("--enable-hardware", action="store_true",
                         help="connect enabled physical adapters; default is fully offline")
     parser.add_argument("--devices", choices=("all", "right-arm"), default="all",
-                        help="hardware connection scope; right-arm never opens left/camera/gripper connections")
+                        help="hardware scope; default all connects and enables both arms; right-arm is explicit isolation")
     args = parser.parse_args()
     config = load_config(args.config)
     config["hardware_devices"] = args.devices
     mode = "hardware-enabled" if args.enable_hardware else "offline"
     if args.enable_hardware and os.environ.get("ARES_R_HARDWARE_CONFIRM") != "YES":
         raise SystemExit("--enable-hardware requires ARES_R_HARDWARE_CONFIRM=YES")
+    if args.enable_hardware:
+        if args.devices == "all":
+            print("HARDWARE SCOPE all (default): LEFT and RIGHT arms connected with guarded motion enabled.")
+        else:
+            print("HARDWARE SCOPE right-arm (explicit isolation): LEFT arm is intentionally DISABLED.")
     controller = build_controller(config, mode)
     try:
         run_terminal(controller)
