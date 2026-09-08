@@ -142,6 +142,18 @@ motion validate examples/trajectory.example.json
 
 检测成功时终端显示 SI 单位坐标和 Epic 原始响应。检测失败但收到类似 `000,3020` 的短报文时，Epic 仍然是 `READY`，原始报文会保留供协议和算法图排查。
 
+Epic 原始点云及方案二（ATOM AABB → cuRobo）的终端入口：
+
+```text
+epic pointcloud capture
+epic pointcloud inspect logs/epic_captures/<capture-id>/pointcloud.ply
+epic obstacles inspect config/epic_atom_obstacles.example.json
+epic obstacles convert config/epic_atom_obstacles.example.json right logs/right-atom-scene.json
+curobo scene load logs/right-atom-scene.json
+```
+
+`capture` 需要以默认的全实机模式启动，但只触发相机；其余命令可离线运行。示例标定版本是占位符，`convert` 会阻断它，不能作为现场规划输入。完整数据契约、安全门槛和可行性结论见 `docs/EPIC_ATOM_CUROBO_ROUTES.md`。
+
 终端调试时可随手留痕：
 
 ```text

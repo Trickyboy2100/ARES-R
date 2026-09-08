@@ -130,6 +130,14 @@ class WorkflowTest(unittest.TestCase):
         data["cuboids"]["box"]["dims"][0]=float("nan")
         with self.assertRaises(ValueError):scene_cuboids(data)
 
+    def test_scene_accepts_provenanced_atom_cuboids(self):
+        data=dict(schema_version=1,frame="urdf_base_link",source="epic_atom",revision="cal:time",
+            capture_time="time",calibration_revision="cal",arm="right",
+            cuboids={"box":dict(dims=[.1,.2,.3],pose=[0,0,0,1,0,0,0])})
+        self.assertIn("box",scene_cuboids(data))
+        del data["calibration_revision"]
+        with self.assertRaises(ValueError):scene_cuboids(data)
+
     def test_tmp_waypoint_units_and_spline_endpoints(self):
         with tempfile.TemporaryDirectory() as tmp:
             path=Path(tmp)/"w.json"

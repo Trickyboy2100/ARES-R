@@ -42,6 +42,10 @@ HELP = """Commands:
   curobo preview FILE        show trajectory timing, excursion, speed and endpoints
   status                     show device and task state
   epic status                show Epic connection configuration/state
+  epic pointcloud capture    trigger one SDK capture; no robot motion
+  epic pointcloud inspect FILE  audit PLY units, quality and planning gates
+  epic obstacles inspect FILE   validate ATOM BODY-frame AABB JSON
+  epic obstacles convert FILE right OUT  make a frozen cuRobo scene
   epic detect pick           Epic detection only; never moves a device
   epic detect place [1-6]    Epic dock detection only; never moves a device
   epic parse "RESPONSE"       parse a saved 5700 response offline
@@ -84,6 +88,8 @@ JAKA_READONLY_HELP = """JAKA read-only commands:
   pose list / pose show NAME [left|right]  inspect BODY-frame named poses
   motion inspect FILE        summarize a joint trajectory offline
   motion validate FILE       validate a joint trajectory offline
+  epic pointcloud inspect FILE / epic obstacles inspect FILE
+  epic obstacles convert FILE left|right OUT  offline scheme-2 bridge
   note <text>                append a Git-trackable work note
   help                       show these commands
   quit                       exit
@@ -97,7 +103,7 @@ JAKA_MOTION_HELP = """Hardware-enabled commands:
   curobo demo plan-reset         plan current -> fixed start only; preview reset-last
   curobo demo tcp                actual body/world TCP six-dimensional pose; no motion
   curobo demo cycle20            reset -> plan20 -> execute; confirms RUN RIGHT CYCLE20
-  curobo scene load FILE         static scene input; Epic pointcloud not yet enabled
+  curobo scene load FILE         load static/manual or converted ATOM cuboids
   servo waypoints FILE / servo spline FILE OUT  offline waypoint inspection/geometry
   curobo demo plan20             plan right TCP ~20 cm around a virtual obstacle; no motion
   curobo demo run20 FILE         native supervised demo; confirms RUN RIGHT 20CM
@@ -105,6 +111,8 @@ JAKA_MOTION_HELP = """Hardware-enabled commands:
   curobo plan-file FILE          offline start_rad/goal_rad request; no motion
   curobo execute-micro FILE      BLOCKED pending stable actual-feedback channel
   epic status / epic detect pick / epic detect place [1-6]
+  epic pointcloud capture|inspect FILE  capture/audit only; never moves a robot
+  epic obstacles inspect FILE / epic obstacles convert FILE left|right OUT
   gripper status|read SIDE / gripper set SIDE VALUE / gripper open|close SIDE
   status / world view / jaka status SIDE / jaka joints SIDE
   pose list / pose show NAME [left|right]  inspect BODY-frame named poses
@@ -131,6 +139,7 @@ def _allowed_in_jaka_readonly(args) -> bool:
         or args == ["world", "view"]
         or args[:2] in (["pose", "list"], ["pose", "show"])
         or args[:2] in (["motion", "inspect"], ["motion", "validate"])
+        or args[:2] in (["epic", "pointcloud"], ["epic", "obstacles"])
         or args[:2] in (["curobo", "status"], ["curobo", "plan"], ["curobo", "plan-file"], ["curobo", "preview"])
     )
 
@@ -165,7 +174,8 @@ def _allowed_in_hardware(args) -> bool:
     """Expose commissioned device commands, not unfinished orchestration."""
     return (
         args[0] in ("status", "help", "quit", "exit", "note")
-        or args[:2] in (["epic", "status"], ["epic", "detect"], ["epic", "parse"])
+        or args[:2] in (["epic", "status"], ["epic", "detect"], ["epic", "parse"],
+                        ["epic", "pointcloud"], ["epic", "obstacles"])
         or args[:2] in (["jaka", "status"], ["jaka", "baseline"], ["jaka", "preflight"],
                         ["jaka", "joints"], ["jaka", "plan"], ["jaka", "step"],
                         ["jaka", "home"], ["jaka", "dual"], ["jaka", "move"],
@@ -423,6 +433,30 @@ def run_terminal(controller: TaskController) -> None:
             elif args[:2] == ["epic", "status"]:
                 state = controller.probe_perception()
                 print("Epic status: %s" % state.detail)
+            elif args == ["epic", "pointcloud", "capture"]:
+                if controller.mode!="hardware-enabled" or controller.config.get("hardware_devices")!="all":
+                    raise RuntimeError("capture requires --enable-hardware with the all-device scope")
+                from .epic_pointcloud import capture
+                print("EPIC CAPTURE ONLY: camera trigger and file output; no arm, gripper, or base command.")
+                manifest=capture(controller.config)
+                controller.events.write("epic_pointcloud_captured",manifest=str(manifest))
+                print("Capture manifest: %s"%manifest)
+                print(manifest.read_text(encoding="utf-8"))
+            elif args[:3] == ["epic", "pointcloud", "inspect"] and len(args)==4:
+                from .epic_pointcloud import inspect_ply,planning_assessment
+                stats=inspect_ply(args[3]);report=dict(stats=stats,
+                    planning=planning_assessment(stats,controller.config))
+                print(json.dumps(report,ensure_ascii=False,indent=2))
+            elif args[:3] == ["epic", "obstacles", "inspect"] and len(args)==4:
+                from .atom_obstacles import load_atom_obstacles
+                print(json.dumps(load_atom_obstacles(args[3]),ensure_ascii=False,indent=2))
+            elif args[:3] == ["epic", "obstacles", "convert"] and len(args)==6:
+                from .atom_obstacles import convert_file
+                revisions=controller.config.get("atom_obstacles",{}).get("commissioned_calibration_revisions",[])
+                scene=convert_file(args[3],args[5],controller.config["world_geometry_file"],args[4],revisions)
+                controller.events.write("epic_atom_scene_converted",source=args[3],output=args[5],arm=args[4])
+                print("Frozen cuRobo scene written (NO MOTION): %s"%args[5])
+                print(json.dumps(scene,ensure_ascii=False,indent=2))
             elif args[:3] == ["epic", "detect", "pick"]:
                 print("DETECTION ONLY: no arm, gripper or base command will be issued.")
                 controller.detect_pick()
