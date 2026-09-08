@@ -5,6 +5,16 @@ from typing import Dict, List, Sequence
 
 from .motion import MotionLimits
 
+JOINT_DELTA_EPSILON_RAD = 1e-9
+
+
+def exceeds_joint_delta_cap(current_rad: Sequence[float], target_rad: Sequence[float],
+                            cap_deg: float = 3.0) -> bool:
+    """Compare a command cap without rejecting an exact degree conversion."""
+    cap = math.radians(float(cap_deg)) + JOINT_DELTA_EPSILON_RAD
+    return any(abs(float(target) - float(current)) > cap
+               for current, target in zip(current_rad, target_rad))
+
 
 def parse_joint_values(values: Sequence[str], unit: str) -> List[float]:
     if unit not in ("deg", "rad"):

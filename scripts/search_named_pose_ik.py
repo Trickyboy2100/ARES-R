@@ -13,12 +13,14 @@ def main():
     cfg=json.loads(Path("config/system.json").read_text())
     world=load_world_geometry(Path(cfg["world_geometry_file"]))
     lim=json.loads(Path(cfg["motion"]["limits_file"]).read_text())
-    front=[-math.pi/2,0,-math.pi/2]
+    # Tool 1/2 were calibrated with mirrored physical gripper mounting.  Their
+    # canonical forward-facing BODY orientations therefore differ by pi yaw.
+    front={"left":[-math.pi/2,0,math.pi],"right":[-math.pi/2,0,0]}
     targets={
-      "ready":{"left":[.38,.16,1.20]+front,"right":[.38,-.16,1.20]+front},
-      "forward":{"left":[.60,.20,1.20]+front,"right":[.60,-.20,1.20]+front},
-      "up":{"left":[.08,.20,1.65]+front,"right":[.08,-.20,1.65]+front},
-      "side":{"left":[.02,.65,1.20,-math.pi/2,0,0],"right":[.02,-.65,1.20,-math.pi/2,0,math.pi]},
+      "ready":{"left":[.38,.16,1.20]+front["left"],"right":[.38,-.16,1.20]+front["right"]},
+      "forward":{"left":[.60,.20,1.20]+front["left"],"right":[.60,-.20,1.20]+front["right"]},
+      "up":{"left":[.08,.20,1.65]+front["left"],"right":[.08,-.20,1.65]+front["right"]},
+      "side":{"left":[.02,.65,1.20,-math.pi/2,0,-math.pi/2],"right":[.02,-.65,1.20,-math.pi/2,0,math.pi/2]},
     }
     rng=random.Random(20260908)
     arms=build_readonly_arms(cfg["jaka"]); out={"motion_api_called":False,"poses":{}}
@@ -45,8 +47,18 @@ def main():
               unique[key]={"joint_rad":q,"body_tcp_m_rad":body,"position_error_mm":err,
                 "minimum_soft_limit_margin_rad":min(min(v-(lo+.15),(hi-.15)-v) for v,lo,hi in zip(q,lim["lower_rad"],lim["upper_rad"])),
                 "distance_from_current_rad":math.sqrt(sum((a-b)**2 for a,b in zip(q,current[side])))}
-          choices=sorted(unique.values(),key=lambda x:(-x["minimum_soft_limit_margin_rad"],x["distance_from_current_rad"]))
-          out["poses"][name][side]={"target_body_m_rad":target,"valid_solution_count":len(choices),"best":choices[:4]}
+          choices=sorted(unique.values(),key=lambda x:(x["distance_from_current_rad"],-x["minimum_soft_limit_margin_rad"]))
+          for choice in choices[:4]:
+            choice["max_joint_delta_rad"] = max(abs(a-b) for a,b in zip(choice["joint_rad"],current[side]))
+            ys=[]
+            for index in range(101):
+              t=index/100.0
+              q=[a+(b-a)*t for a,b in zip(current[side],choice["joint_rad"])]
+              tcp=list(_value(arms[side].robot.kine_forward(q),side+" sampled FK"))
+              ys.append(base_tcp_to_world(world["arms"][side],tcp)[1])
+            choice["sampled_movej_body_y_range_m"]=[min(ys),max(ys)]
+            choice["sampled_center_zone_clear"] = all(y>.07 for y in ys) if side=="left" else all(y<-.07 for y in ys)
+          out["poses"][name][side]={"target_body_m_rad":target,"valid_solution_count":len(choices),"closest":choices[:4]}
       print(json.dumps(out,indent=2))
     finally:
       for arm in arms.values(): arm.close()

@@ -12,7 +12,8 @@ from .adapters.mock import DisabledDevice
 from .motion import load_motion_limits, load_trajectory, validate_trajectory
 from .motion.curobo import planner_status, preview as curobo_preview, run_plan as curobo_plan
 from .joint_commands import (current_joint_report, joint_target_report,
-                             parse_joint_values, stepped_target, target_gate)
+                             parse_joint_values, stepped_target, target_gate,
+                             exceeds_joint_delta_cap)
 from .worklog import WorkLog
 from .world_geometry import load_world_geometry, render_world, world_snapshot
 from .named_poses import load_named_poses, pose_report
@@ -107,6 +108,8 @@ JAKA_MOTION_HELP = """Hardware-enabled commands:
   gripper status|read SIDE / gripper set SIDE VALUE / gripper open|close SIDE
   status / world view / jaka status SIDE / jaka joints SIDE
   pose list / pose show NAME [left|right]  inspect BODY-frame named poses
+  pose go ready left direct       commissioned segmented MoveJ route
+  pose go ready right curobo      cuRobo plan -> supervised ServoJ route
   jaka plan SIDE UNIT Q1..Q6      preview an absolute target
   jaka step SIDE JN UNIT DELTA    preview a relative one-joint target
   jaka move SIDE UNIT Q1..Q6      execute a nearby absolute target (asks MOVE SIDE)
@@ -153,7 +156,7 @@ def _allowed_in_hardware(args) -> bool:
                         ["jaka", "home"], ["jaka", "dual"], ["jaka", "move"],
                         ["jaka", "move-step"], ["jaka", "abort"])
         or args == ["world", "view"]
-        or args[:2] in (["pose", "list"], ["pose", "show"])
+        or args[:2] in (["pose", "list"], ["pose", "show"], ["pose", "go"])
         or args[:2] in (["motion", "inspect"], ["motion", "validate"])
         or args[:2] in (["curobo", "status"], ["curobo", "plan"], ["curobo", "plan-file"], ["curobo", "preview"])
         or args[:2] == ["curobo", "execute-micro"]
@@ -250,6 +253,30 @@ def run_terminal(controller: TaskController) -> None:
             elif args[:2] == ["pose", "show"] and len(args) in (3, 4):
                 print(pose_report(load_named_poses(controller.config["named_poses_file"]),
                                   args[2], args[3] if len(args) == 4 else None))
+            elif args[:2] == ["pose", "go"] and len(args) == 5:
+                name,side,route=args[2:]
+                library=load_named_poses(controller.config["named_poses_file"]);pose=library["poses"].get(name)
+                if not pose or pose.get("commissioning")!="commissioned": raise RuntimeError("named pose is not commissioned")
+                expected=pose.get("commissioned_routes",{}).get(side)
+                if side=="right" and route=="curobo" and expected=="curobo_plan_cspace_to_supervised_servoj":
+                    from .motion.demo_timing import RECOVERY_SPEED_SCALE
+                    from .motion.obstacle_demo import run_named_right
+                    from .motion.native_demo import exclusive_right,execute
+                    if input("Type MOVE RIGHT READY: ").strip()!="MOVE RIGHT READY": print("Cancelled; no motion.");continue
+                    with exclusive_right(controller):
+                        output=run_named_right(controller.config,name,RECOVERY_SPEED_SCALE)
+                        if output: log=execute(controller.config,output,"reset",confirmed=True);print("Right ready completed: %s"%log)
+                        else: print("Right is already at ready.")
+                elif side=="left" and route=="direct" and expected=="segmented_direct_movej":
+                    goal=pose["arms"]["left"].get("ik_joint_rad");arm=controller.arms["left"]
+                    start=arm.joint_position();limits=load_motion_limits(Path(str(controller.config["motion"]["limits_file"])))
+                    issues=target_gate(goal,limits)
+                    if issues: raise RuntimeError("execution blocked: "+"; ".join(issues))
+                    count=max(1,int(math.ceil(max(abs(a-b) for a,b in zip(start,goal))/math.radians(3))))
+                    if input("Type MOVE LEFT READY (%d segments): "%count).strip()!="MOVE LEFT READY": print("Cancelled; no motion.");continue
+                    for i in range(1,count+1): arm.move_joints_absolute([a+(b-a)*i/count for a,b in zip(start,goal)],.05)
+                    print("Left ready completed in %d supervised segments."%count)
+                else: raise RuntimeError("route not commissioned; use: pose go ready left direct | pose go ready right curobo")
             elif args[:3] == ["jaka", "feedback-audit", "right"] and len(args) in (3, 4):
                 if controller.mode != "offline":
                     raise RuntimeError("feedback audit requires offline Terminal to avoid its SDK status connection")
@@ -500,7 +527,7 @@ def run_terminal(controller: TaskController) -> None:
                     target = stepped_target(current, args[3], args[5], args[4])
                 limits = load_motion_limits(Path(str(controller.config["motion"]["limits_file"])))
                 issues = target_gate(target, limits)
-                if any(abs(target[index] - current[index]) > math.radians(3.0) for index in range(6)):
+                if exceeds_joint_delta_cap(current, target):
                     issues.append("single command exceeds the 3-degree-per-joint commissioning cap")
                 print(joint_target_report(side, current, target, limits,
                                           execution_available=True))

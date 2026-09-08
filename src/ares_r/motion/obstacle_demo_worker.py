@@ -101,6 +101,25 @@ def main():
     correction=np.asarray(request["T_controller_model"])
     yaw=float(request["body_right_yaw_rad"])
     body=transform(request["body_right_xyz_m"],[0,0,yaw]) @ correction
+
+    def matrix_quaternion_wxyz(r):
+        # Stable branch form; cuRobo cuboids use [w,x,y,z].
+        w=math.sqrt(max(0,1+r[0,0]+r[1,1]+r[2,2]))/2
+        x=math.copysign(math.sqrt(max(0,1+r[0,0]-r[1,1]-r[2,2]))/2,r[2,1]-r[1,2])
+        yq=math.copysign(math.sqrt(max(0,1-r[0,0]+r[1,1]-r[2,2]))/2,r[0,2]-r[2,0])
+        z=math.copysign(math.sqrt(max(0,1-r[0,0]-r[1,1]+r[2,2]))/2,r[1,0]-r[0,1])
+        return [w,x,yq,z]
+
+    # Model the forbidden BODY half-space as a large cuboid. Its near face is
+    # exactly Y=-70 mm; the far faces sit outside the robot workspace.
+    model_from_body=np.linalg.inv(body)
+    # The planner collides link spheres, while the independent hard gate below
+    # checks link-center Y<=-70 mm. Offset the face to -20 mm so typical 50 mm
+    # model spheres drive their centers to the hard boundary without making the
+    # current, already-clear endpoint invalid.
+    center_body=np.array([0.,2.49,2.5,1.])
+    center_model=(model_from_body@center_body)[:3]
+    central_wall=dict(dims=[5.,5.02,5.],pose=center_model.tolist()+matrix_quaternion_wxyz(model_from_body[:3,:3]))
     predicted=correction @ np.r_[fk(start)[0],1]
     if np.linalg.norm(predicted[:3]-np.asarray(request["live_snapshot"]["tcp_mm_rad"][:3])/1000)>.003:
         raise RuntimeError("live TCP and planning FK differ by more than 3 mm")
@@ -112,6 +131,8 @@ def main():
         midpoint = fk((start+goal)/2)[0]
         dims = np.asarray(request["obstacle_dims_m"])
         scene = {"cuboid": scene_cuboids(request["scene_snapshot"])}
+        if request.get("plan_central_wall",False):
+            scene["cuboid"]["body_central_forbidden_halfspace"]=central_wall
         # A reset uses an empty/manual scene, not a newly invented obstacle
         # between nearby endpoints. The remote sentinel keeps the collision
         # backend initialized; it is not a claimed physical obstacle.
@@ -148,9 +169,10 @@ def main():
                     lowest = min(lowest, float(signed.min()))
             return lowest
         baseline_started=time.monotonic_ns();baseline = np.linspace(start,goal,101)
-        baseline_clearance = clearance(baseline)
-        if min(clearance([start]),clearance([goal])) <= 0 or (not reset and baseline_clearance >= 0):
-            attempts.append(dict(delta_deg=delta_deg, reason="invalid demonstration endpoints/baseline"))
+        baseline_clearance = clearance(baseline);start_clearance=clearance([start]);goal_clearance=clearance([goal])
+        if min(start_clearance,goal_clearance) <= 0 or (not reset and baseline_clearance >= 0):
+            attempts.append(dict(delta_deg=delta_deg, reason="invalid demonstration endpoints/baseline",
+                start_clearance_m=start_clearance,goal_clearance_m=goal_clearance,baseline_clearance_m=baseline_clearance))
             phase("baseline_collision_validation","rejected",baseline_started,candidate_index=candidate_index)
             continue
         phase("baseline_collision_validation","completed",baseline_started,candidate_index=candidate_index)
@@ -214,7 +236,10 @@ def main():
         # the AGV, with a radius allowance. Left pose is not queried.
         workspace_bad=bool(world_links[:,:,1].max()>-.07 or world_links[:,:,2].min()<.8)
         if workspace_bad:
-            attempts[-1].update(rejected="right workspace separation",max_world_y_m=float(world_links[:,:,1].max()),min_world_z_m=float(world_links[:,:,2].min()))
+            per_sample=world_links[:,:,1].max(axis=1);worst=int(np.argmax(per_sample))
+            attempts[-1].update(rejected="right workspace separation",max_world_y_m=float(per_sample[worst]),
+                worst_sample=worst,sample_count=len(points),start_max_world_y_m=float(per_sample[0]),
+                end_max_world_y_m=float(per_sample[-1]),min_world_z_m=float(world_links[:,:,2].min()))
             continue
         length=float(np.linalg.norm(np.diff(tcp,axis=0),axis=1).sum())
         if not lo<=length<=hi: continue
@@ -226,6 +251,7 @@ def main():
             world_revision=request["scene_snapshot"]["digest"],tool_revision="LIVE_TOOL_PLUS_VIRTUAL_TUBE",
             attached_object_revision="none",source_commit=manifest["commit"],
             intent=request.get("intent","demo20"),reference_id=request["reference_id"],scene_digest=request["scene_snapshot"]["digest"],
+            target_kind=request.get("target_kind"),target_name=request.get("target_name"),
             simulation_only=bool(request.get("simulation_only",False)),
             speed_scale=speed_scale,legacy_duration_s=legacy_duration,
             summary=summary,planning_time_s=time.monotonic()-started,

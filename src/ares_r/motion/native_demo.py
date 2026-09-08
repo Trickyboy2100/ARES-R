@@ -44,11 +44,12 @@ def native_environment():
 
 @contextmanager
 def exclusive_right(controller):
-    if controller.mode!="hardware-enabled" or controller.config.get("hardware_devices")!="right-arm":
-        raise RuntimeError("native demo requires --enable-hardware --devices right-arm")
+    if controller.mode!="hardware-enabled":
+        raise RuntimeError("native demo requires --enable-hardware")
     from ..adapters.mock import DisabledDevice
     from ..adapters.jaka_sdk import JakaSdkArm
     arm=controller.arms["right"]
+    if not isinstance(arm,JakaSdkArm): raise RuntimeError("right arm is not connected")
     close=getattr(arm,"close",None)
     if close: close()
     controller.arms["right"]=DisabledDevice("right released for native SDK; restart Terminal after failure")
@@ -98,7 +99,13 @@ def prepare_native_file(config,path,mode):
         from .scene import load_scene
         if raw.get("scene_digest")!=load_scene(config)["digest"]: raise RuntimeError("scene changed; replan")
         endpoint=trajectory.points[0] if mode=="demo20" else trajectory.points[-1]
-        if not at_reference(reference,dict(live,actual_rad=endpoint),check_tcp=False):
+        if mode=="reset" and raw.get("target_kind")=="named_pose":
+            from ..named_poses import load_named_poses
+            name=raw.get("target_name");pose=load_named_poses(config["named_poses_file"])["poses"].get(name,{})
+            goal=pose.get("arms",{}).get("right",{}).get("ik_joint_rad")
+            if not goal or max(abs(a-b) for a,b in zip(goal,endpoint))>1e-4:
+                raise RuntimeError("named-pose target changed; replan")
+        elif not at_reference(reference,dict(live,actual_rad=endpoint),check_tcp=False):
             raise RuntimeError("plan does not use the fixed reference joints")
         validate_demo20(raw,trajectory,reset=(mode=="reset"))
     else: raise RuntimeError("unsupported demo mode")

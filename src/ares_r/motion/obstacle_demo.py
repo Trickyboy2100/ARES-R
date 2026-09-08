@@ -66,3 +66,44 @@ def run_demo(config, intent="demo20", speed_scale=SPEED_SCALE):
     metrics=json.loads(output.read_text());metrics["orchestration_wall_s"]=orchestration_s
     output.write_text(json.dumps(metrics,indent=2),encoding="utf-8")
     return output
+
+
+def run_named_right(config, name, speed_scale=SPEED_SCALE):
+    """Plan a supervised right-arm reposition to a reviewed named-pose IK."""
+    from .native_demo import snapshot
+    from .demo_reference import load_reference, check_context
+    from .scene import load_scene
+    from ..named_poses import load_named_poses
+    if speed_scale not in SUPPORTED_SPEED_SCALES: raise ValueError("unsupported speed scale")
+    pose=load_named_poses(config["named_poses_file"])["poses"].get(name)
+    if not pose: raise ValueError("unknown pose: "+name)
+    target=pose["arms"]["right"]
+    goal=target.get("ik_joint_rad")
+    if not goal or len(goal)!=6: raise RuntimeError("named pose has no reviewed right-arm IK")
+    live=snapshot()
+    if live["queue"] or live["active_queue"] or not live["inpos"]: raise RuntimeError("right not idle")
+    reference=load_reference(config);check_context(config,reference,live)
+    if max(abs(a-b) for a,b in zip(live["actual_rad"],goal))<=math.radians(.02): return None
+    if max(abs(math.degrees(a-b)) for a,b in zip(live["actual_rad"],goal))>RESET_MAX_EXCURSION_DEG:
+        raise RuntimeError("named reposition exceeds %.0f degree envelope"%RESET_MAX_EXCURSION_DEG)
+    cfg=settings(config)
+    directory=Path(config["logging"]["directory"])/("curobo_named_%s_"%name+time.strftime("%Y%m%d_%H%M%S_")+uuid.uuid4().hex[:8])
+    directory.mkdir(parents=True,exist_ok=False);run_id=directory.name
+    request=dict(robot_yaml=str(Path(cfg["robot_yaml"]).resolve()),expected_commit=CUROBO_COMMIT,
+        arm="right",planning_only=True,start_rad=live["actual_rad"],goal_rad=goal,live_snapshot=live,
+        tool_translation_m=[v/1000 for v in live["tool_mm_rad"][:3]],tool_source="SDK222 live tool snapshot",
+        obstacle_dims_m=[.025,.025,.025],tool_proxy_radius_m=.025,tcp_length_range_m=[.000001,RESET_MAX_TCP_LENGTH_M],
+        intent="reset",target_kind="named_pose",target_name=name,speed_scale=speed_scale,
+        reference_id=reference["id"],scene_snapshot=load_scene(config),run_id=run_id,
+        request_timestamp=timestamp(),planning_parameters=planning_profile(config))
+    audit=Path(__file__).resolve().parents[3]/"worklog/evidence/2026-09-07-curobo/right_fk_audit.json"
+    request["T_controller_model"]=json.loads(audit.read_text())["T_controller_model"]
+    world=json.loads(Path(config["world_geometry_file"]).read_text())["arms"]["right"]
+    request.update(body_right_yaw_rad=world["base_rpy_rad"][2],body_right_xyz_m=world["base_xyz_m"])
+    req,output=directory/"request.json",directory/"trajectory.json";req.write_text(json.dumps(request,indent=2))
+    env=dict(os.environ,PYTHONPATH=str(Path(__file__).resolve().parents[2]))
+    try: returncode,wall=run_logged_process([cfg["python"],"-m","ares_r.motion.obstacle_demo_worker",str(req),str(output)],env,directory/"planner.log",max(240,float(cfg["timeout_s"])),"cuRobo")
+    except subprocess.TimeoutExpired as exc: raise RuntimeError("named-pose planning timed out; no motion; inspect %s"%directory) from exc
+    if returncode or not output.is_file(): raise RuntimeError("named-pose planning failed; no motion; inspect %s"%directory)
+    metrics=json.loads(output.read_text());metrics["orchestration_wall_s"]=wall;output.write_text(json.dumps(metrics,indent=2))
+    return output

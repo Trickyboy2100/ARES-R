@@ -1,6 +1,7 @@
 import unittest
 
-from ares_r.joint_commands import parse_joint_values, stepped_target, target_gate
+from ares_r.joint_commands import (exceeds_joint_delta_cap, parse_joint_values,
+                                   stepped_target, target_gate)
 from ares_r.motion import MotionLimits
 
 
@@ -18,6 +19,12 @@ class JointCommandsTest(unittest.TestCase):
         values = stepped_target([0.0] * 6, "J3", "10", "deg")
         self.assertEqual(values[:2], [0.0, 0.0])
         self.assertAlmostEqual(values[2], 0.17453292519943295)
+
+    def test_exact_three_degree_cap_survives_float_round_trip(self):
+        current = [0.272743] + [0.0] * 5
+        target = stepped_target(current, "J1", "3", "deg")
+        self.assertFalse(exceeds_joint_delta_cap(current, target))
+        self.assertTrue(exceeds_joint_delta_cap(current, stepped_target(current, "J1", "3.001", "deg")))
 
     def test_uncommissioned_limits_block_target(self):
         limits = MotionLimits(self.limits.joint_names, self.limits.lower_rad,
