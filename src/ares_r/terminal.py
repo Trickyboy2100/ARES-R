@@ -108,8 +108,8 @@ JAKA_MOTION_HELP = """Hardware-enabled commands:
   gripper status|read SIDE / gripper set SIDE VALUE / gripper open|close SIDE
   status / world view / jaka status SIDE / jaka joints SIDE
   pose list / pose show NAME [left|right]  inspect BODY-frame named poses
-  pose go NAME left|right direct  commissioned supervised MoveJ route
-  pose go NAME right curobo       cuRobo plan -> supervised ServoJ route
+  pose go NAME SIDE direct [Ndeg/s]  supervised MoveJ; default 2.86deg/s, range 1..5
+  pose go ready right curobo [2x|3x] cuRobo -> ServoJ; stable default 2x
   jaka plan SIDE UNIT Q1..Q6      preview an absolute target
   jaka step SIDE JN UNIT DELTA    preview a relative one-joint target
   jaka move SIDE UNIT Q1..Q6      execute a nearby absolute target (asks MOVE SIDE)
@@ -144,6 +144,21 @@ def _demo_path(controller,value):
     path=getattr(controller,"last_demo20_path",None)
     if not path: raise RuntimeError("no plan in this session; run curobo demo plan20 first")
     return path
+
+
+def _pose_speed(route,value=None):
+    """Parse explicit, unit-bearing named-pose speed arguments."""
+    if route=="curobo":
+        token=value or "2x"
+        if token not in ("2x","3x"): raise ValueError("cuRobo speed must be 2x or 3x")
+        return float(token[:-1])
+    if route=="direct":
+        token=value or "2.86deg/s"
+        if not token.endswith("deg/s"): raise ValueError("direct speed needs deg/s, for example 4deg/s")
+        degrees=float(token[:-5])
+        if not 1.0<=degrees<=5.0: raise ValueError("direct speed must be 1..5 deg/s")
+        return math.radians(degrees)
+    raise ValueError("route must be direct or curobo")
 
 
 def _allowed_in_hardware(args) -> bool:
@@ -253,18 +268,18 @@ def run_terminal(controller: TaskController) -> None:
             elif args[:2] == ["pose", "show"] and len(args) in (3, 4):
                 print(pose_report(load_named_poses(controller.config["named_poses_file"]),
                                   args[2], args[3] if len(args) == 4 else None))
-            elif args[:2] == ["pose", "go"] and len(args) == 5:
-                name,side,route=args[2:]
+            elif args[:2] == ["pose", "go"] and len(args) in (5,6):
+                name,side,route=args[2:5];speed=_pose_speed(route,args[5] if len(args)==6 else None)
                 library=load_named_poses(controller.config["named_poses_file"]);pose=library["poses"].get(name)
                 if not pose or pose.get("commissioning")!="commissioned": raise RuntimeError("named pose is not commissioned")
                 expected=pose.get("commissioned_routes",{}).get(side)
                 if side=="right" and route=="curobo" and expected and "curobo_plan_cspace_to_supervised_servoj" in expected:
-                    from .motion.demo_timing import RECOVERY_SPEED_SCALE
                     from .motion.obstacle_demo import run_named_right
                     from .motion.native_demo import exclusive_right,execute
-                    if input("Type MOVE RIGHT READY: ").strip()!="MOVE RIGHT READY": print("Cancelled; no motion.");continue
+                    phrase="MOVE RIGHT %s %GX"%(name.upper(),speed)
+                    if input("Type %s: "%phrase).strip()!=phrase: print("Cancelled; no motion.");continue
                     with exclusive_right(controller):
-                        output=run_named_right(controller.config,name,RECOVERY_SPEED_SCALE)
+                        output=run_named_right(controller.config,name,speed)
                         if output: log=execute(controller.config,output,"reset",confirmed=True);print("Right ready completed: %s"%log)
                         else: print("Right is already at ready.")
                 elif side in ("left","right") and route=="direct" and expected and "direct_movej" in expected:
@@ -274,7 +289,7 @@ def run_terminal(controller: TaskController) -> None:
                     if issues: raise RuntimeError("execution blocked: "+"; ".join(issues))
                     phrase="MOVE %s %s"%(side.upper(),name.upper())
                     if input("Type %s: "%phrase).strip()!=phrase: print("Cancelled; no motion.");continue
-                    result=arm.move_joints_absolute(goal,.05)
+                    result=arm.move_joints_absolute(goal,speed)
                     print("%s %s completed in %.1f s."%(side.capitalize(),name,result["elapsed_s"]))
                 else: raise RuntimeError("route not commissioned for this arm/pose")
             elif args[:3] == ["jaka", "feedback-audit", "right"] and len(args) in (3, 4):

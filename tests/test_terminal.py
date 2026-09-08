@@ -7,6 +7,13 @@ from ares_r import terminal
 
 
 class TerminalHistoryTest(unittest.TestCase):
+    def test_named_pose_speed_has_explicit_units_and_bounds(self):
+        self.assertAlmostEqual(terminal._pose_speed("curobo"),2.0)
+        self.assertEqual(terminal._pose_speed("curobo","3x"),3.0)
+        self.assertAlmostEqual(terminal._pose_speed("direct","5deg/s"),5*3.141592653589793/180)
+        for route,value in (("curobo","4x"),("direct","6deg/s"),("direct","3")):
+            with self.assertRaises(ValueError): terminal._pose_speed(route,value)
+
     @unittest.skipIf(terminal.readline is None, "readline unavailable")
     def test_history_file_is_under_ignored_logs(self):
         with tempfile.TemporaryDirectory() as root:
