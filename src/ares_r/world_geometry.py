@@ -12,6 +12,10 @@ from typing import Dict, List, Sequence, Tuple
 PROJECTION_WIDTH = 91
 PROJECTION_HEIGHT = 27
 
+# Hard safety geometry in BODY coordinates. The robot's sagittal symmetry
+# plane is Y=0; touching either face of this 14 cm TCP exclusion slab is unsafe.
+CENTRAL_TCP_FORBIDDEN_HALF_WIDTH_M = 0.07
+
 
 def load_world_geometry(path: Path) -> Dict[str, object]:
     return json.loads(path.read_text(encoding="utf-8"))
@@ -34,6 +38,18 @@ def base_tcp_to_world(base: Dict[str, object], tcp_mm_rad: Sequence[float]) -> L
     world_z = bz + z
     roll, pitch, yaw = (float(value) for value in tcp_mm_rad[3:6])
     return [world_x, world_y, world_z, roll, pitch, _wrap_pi(yaw_b + yaw)]
+
+
+def central_tcp_exclusion(side: str, world_y_m: float) -> Dict[str, object]:
+    """Return signed clearance from the fixed central BODY-frame TCP slab."""
+    if side not in ("left", "right"):
+        raise ValueError("side must be left or right")
+    y = float(world_y_m)
+    clearance = y - CENTRAL_TCP_FORBIDDEN_HALF_WIDTH_M if side == "left" else (
+        -CENTRAL_TCP_FORBIDDEN_HALF_WIDTH_M - y)
+    return {"safe": clearance > 0.0, "clearance_m": clearance,
+            "forbidden_y_m": [-CENTRAL_TCP_FORBIDDEN_HALF_WIDTH_M,
+                              CENTRAL_TCP_FORBIDDEN_HALF_WIDTH_M]}
 
 
 def _wrap_pi(value: float) -> float:
@@ -107,12 +123,14 @@ def world_snapshot(config: Dict[str, object], diagnostics: Dict[str, Dict[str, o
             joint_points = [_point_base_to_world(
                 base, _display_model_to_controller(base, point)) for point in
                 joint_points_base_m(config["display_kinematics"], joints)]
+        tcp = base_tcp_to_world(base, diagnostics[side]["tcp_position_mm_rad"])
         arms[side] = {
             "base_xyz_m": list(base["base_xyz_m"]),
             "base_rpy_rad": list(base["base_rpy_rad"]),
             "mount_yaw_compass_deg": float(base.get(
                 "mount_yaw_compass_deg", -math.degrees(base["base_rpy_rad"][2]))),
-            "tcp_xyzrpy_m_rad": base_tcp_to_world(base, diagnostics[side]["tcp_position_mm_rad"]),
+            "tcp_xyzrpy_m_rad": tcp,
+            "central_tcp_exclusion": central_tcp_exclusion(side, tcp[1]),
             "active_tool_id": diagnostics[side]["tool_id"],
             "configured_tool_tcp_mm_rad": diagnostics[side]["tool_data"]["pose_mm_rad"],
             "joint_points_world_m": joint_points,
@@ -155,7 +173,7 @@ def _projection(snapshot: Dict[str, object], axes: Tuple[int, int], title: str,
         sx, sy = (1 if x0 < x1 else -1), (1 if y0 < y1 else -1)
         error = dx + dy
         while True:
-            if grid[y0][x0] == " ":
+            if grid[y0][x0] in (" ", ".", "!", "|"):
                 grid[y0][x0] = mark
             if x0 == x1 and y0 == y1:
                 break
@@ -166,6 +184,22 @@ def _projection(snapshot: Dict[str, object], axes: Tuple[int, int], title: str,
             if doubled <= dx:
                 error += dx
                 y0 += sy
+
+    if axes[0] == 1:  # TOP and REAR: show the full-height Y exclusion slab.
+        def column_for_y(value):
+            marker = [0.0, 0.0, 0.0]
+            marker[axes[0]] = value
+            marker[axes[1]] = lo_y
+            return cell(marker)[0]
+        negative = column_for_y(-CENTRAL_TCP_FORBIDDEN_HALF_WIDTH_M)
+        positive = column_for_y(CENTRAL_TCP_FORBIDDEN_HALF_WIDTH_M)
+        center = column_for_y(0.0)
+        for row in grid:
+            for column in range(min(negative, positive), max(negative, positive) + 1):
+                row[column] = "."
+            row[negative] = "!"
+            row[positive] = "!"
+            row[center] = "|"
 
     for chain, tcp, base_mark, tcp_mark in arms:
         for start, end in zip(chain, chain[1:]):
@@ -198,18 +232,23 @@ def _projection(snapshot: Dict[str, object], axes: Tuple[int, int], title: str,
 
 
 def render_world(snapshot: Dict[str, object], detailed: bool = False) -> str:
-    lines = ["WORLD body: +X forward, +Y left, +Z up; bases L/R, joints 1..6, TCP l/r"]
+    lines = ["WORLD body: +X forward, +Y left, +Z up; bases L/R, joints 1..6, TCP l/r",
+             "HARD TCP EXCLUSION: BODY -0.070 <= Y <= +0.070 m (14 cm; boundary contact forbidden)"]
     for side in ("left", "right"):
         if side not in snapshot["arms"]:
             lines.append("%s DISABLED: no connection; posture unknown, not an obstacle model" % side)
             continue
         arm = snapshot["arms"][side]
         base, tcp = arm["base_xyz_m"], arm["tcp_xyzrpy_m_rad"]
-        lines.append("%-5s base=(%+.3f,%+.3f,%+.3f)m compass-yaw=%+.1fdeg  TCP=(%+.3f,%+.3f,%+.3f)m tool=%s" % (
+        exclusion = arm["central_tcp_exclusion"]
+        state = "CLEAR %+6.1fmm" % (1000.0 * exclusion["clearance_m"]) if exclusion["safe"] else (
+            "IN FORBIDDEN ZONE %+6.1fmm" % (1000.0 * exclusion["clearance_m"]))
+        lines.append("%-5s base=(%+.3f,%+.3f,%+.3f)m compass-yaw=%+.1fdeg  TCP=(%+.3f,%+.3f,%+.3f)m tool=%s  center=%s" % (
             side, base[0], base[1], base[2], arm["mount_yaw_compass_deg"],
-            tcp[0], tcp[1], tcp[2], arm["active_tool_id"]))
+            tcp[0], tcp[1], tcp[2], arm["active_tool_id"], state))
     if detailed:
         lines.append("DISPLAY MODEL: '-' is the side-mount MiniCobo MDH joint chain; ':' connects J6 to live SDK TCP.")
+        lines.append("TOP/REAR CENTER SLAB: ! boundaries at Y=+/-0.070m, | symmetry plane Y=0, . forbidden interior.")
         lines.append("DISPLAY FK VALIDATED: 34 controller samples; left max 0.308mm, right max 0.943mm. Not a collision model.")
         for side in ("left", "right"):
             if side not in snapshot["arms"]:

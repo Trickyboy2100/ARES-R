@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "authoritative_frame": "body",
+  "frame_axes": "+X forward/north, +Y left/west, +Z up",
+  "units": {"translation": "m", "rotation": "rad", "joint": "rad"},
+  "execution_routes": {
+    "direct": "BODY target -> arm BASE -> active TCP IK -> guarded JAKA joint_move",
+    "curobo": "BODY target -> arm planning frame -> cuRobo trajectory -> supervised JAKA servo_j"
+  },
+  "poses": {
+    "zero": {
+      "description": "All six joints at controller zero; arms extend northwest/northeast.",
+      "commissioning": "endpoint_verified_readonly_path_not_verified",
+      "arms": {
+        "left": {"joint_rad": [0,0,0,0,0,0], "expected_body_tcp_m_rad": [0.631428602,0.814907759,1.217041,1.455923222,-0.032709492,2.420544341]},
+        "right": {"joint_rad": [0,0,0,0,0,0], "expected_body_tcp_m_rad": [0.675478174,-0.877653235,1.212926,-1.166231127,1.480549491,-1.854739504]}
+      }
+    },
+    "ready": {
+      "description": "Normalized hand-posed posture: symmetric BODY positions and forward-facing physical grippers.",
+      "commissioning": "design_target_uncommissioned",
+      "arms": {"left": {"body_tcp_target_m_rad": [0.38,0.16,1.20,-1.570796327,0,-1.570796327]}, "right": {"body_tcp_target_m_rad": [0.38,-0.16,1.20,-1.570796327,0,-1.570796327]}}
+    },
+    "forward": {
+      "description": "Both arms extend toward BODY +X with mirrored Y positions.",
+      "commissioning": "design_target_uncommissioned",
+      "arms": {"left": {"body_tcp_target_m_rad": [0.60,0.20,1.20,-1.570796327,0,-1.570796327]}, "right": {"body_tcp_target_m_rad": [0.60,-0.20,1.20,-1.570796327,0,-1.570796327]}}
+    },
+    "up": {
+      "description": "Both arms toward BODY +Z; grippers forward and finger-closing direction vertical.",
+      "commissioning": "design_target_uncommissioned",
+      "arms": {"left": {"body_tcp_target_m_rad": [0.08,0.20,1.65,-1.570796327,0,-1.570796327]}, "right": {"body_tcp_target_m_rad": [0.08,-0.20,1.65,-1.570796327,0,-1.570796327]}}
+    },
+    "side": {
+      "description": "Left arm toward BODY +Y and right arm toward BODY -Y.",
+      "commissioning": "design_target_uncommissioned",
+      "arms": {"left": {"body_tcp_target_m_rad": [0.02,0.65,1.20,-1.570796327,0,0]}, "right": {"body_tcp_target_m_rad": [0.02,-0.65,1.20,-1.570796327,0,3.141592654]}}
+    }
+  }
+}

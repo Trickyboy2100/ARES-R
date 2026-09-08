@@ -31,6 +31,7 @@ class TerminalHistoryTest(unittest.TestCase):
         self.assertTrue(terminal._allowed_in_hardware(["jaka", "move-step", "left", "J2", "deg", "1"]))
         self.assertTrue(terminal._allowed_in_hardware(["gripper", "open", "right"]))
         self.assertTrue(terminal._allowed_in_hardware(["epic", "detect", "pick"]))
+        self.assertTrue(terminal._allowed_in_hardware(["pose", "show", "ready", "right"]))
         self.assertFalse(terminal._allowed_in_hardware(["cycle", "1"]))
         self.assertFalse(terminal._allowed_in_hardware(["nav", "pick"]))
 

@@ -76,6 +76,8 @@ ARES_R_HARDWARE_CONFIRM=YES ./scripts/run_terminal.sh --enable-hardware
 
 实机模式不会自动给机械臂上电或使能；机械臂动作和夹爪动作仍要求逐条确认。底盘硬件适配器尚未完成，会明确显示为不可用，且导航命令会被拒绝。
 
+常用姿态采用 BODY 空间定义，可用 `pose list` 与 `pose show NAME [left|right]` 查看；未完成现场验收的姿态会明确拒绝执行。坐标链和两种底层路线见 [常用姿态库](docs/NAMED_POSES.md)。
+
 当前站点配置标记为 JAKA Mini2（左臂 `.100`、右臂 `.101`）；SDK 无可信型号查询，型号仍须由双臂铭牌和 JAKA APP 留证确认。实机模式下可使用以下状态、预检和世界视图命令：
 
 ```text

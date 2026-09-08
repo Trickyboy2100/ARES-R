@@ -2,11 +2,18 @@ import math
 import unittest
 
 from ares_r.world_geometry import (PROJECTION_HEIGHT, PROJECTION_WIDTH,
-                                   base_tcp_to_world, joint_points_base_m,
+                                   base_tcp_to_world, central_tcp_exclusion, joint_points_base_m,
                                    render_world, world_snapshot)
 
 
 class WorldGeometryTest(unittest.TestCase):
+    def test_fixed_center_tcp_exclusion_is_side_specific_and_touch_is_unsafe(self):
+        self.assertTrue(central_tcp_exclusion("left", .071)["safe"])
+        self.assertTrue(central_tcp_exclusion("right", -.071)["safe"])
+        self.assertFalse(central_tcp_exclusion("left", .07)["safe"])
+        self.assertFalse(central_tcp_exclusion("right", -.07)["safe"])
+        self.assertFalse(central_tcp_exclusion("right", 0.0)["safe"])
+
     def test_left_zero_extension_projects_left_forward(self):
         base = {"base_xyz_m": [0.0, 0.2, 1.2], "base_rpy_rad": [0.0, 0.0, 3 * math.pi / 4]}
         pose = base_tcp_to_world(base, [0, -1000, 0, 0, 0, 0])
@@ -40,6 +47,8 @@ class WorldGeometryTest(unittest.TestCase):
         view = render_world(result, detailed=True)
         self.assertIn("joints 1..6", view)
         self.assertIn("DISPLAY FK VALIDATED", view)
+        self.assertIn("HARD TCP EXCLUSION", view)
+        self.assertIn("TOP/REAR CENTER SLAB", view)
         self.assertIn("%dx%d cells" % (PROJECTION_WIDTH, PROJECTION_HEIGHT), view)
         projection_rows = [line for line in view.splitlines()
                            if len(line) > 9 and line[8] == "|" and line[-9] == "|"]

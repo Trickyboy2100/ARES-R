@@ -15,6 +15,7 @@ from .joint_commands import (current_joint_report, joint_target_report,
                              parse_joint_values, stepped_target, target_gate)
 from .worklog import WorkLog
 from .world_geometry import load_world_geometry, render_world, world_snapshot
+from .named_poses import load_named_poses, pose_report
 
 try:
     import readline
@@ -79,6 +80,7 @@ JAKA_READONLY_HELP = """JAKA read-only commands:
   jaka home SIDE             preview the all-zero joint target
   jaka dual UNIT L1..L6 R1..R6  preview both absolute targets
   world view                 show body-frame joint-chain top/rear/side views
+  pose list / pose show NAME [left|right]  inspect BODY-frame named poses
   motion inspect FILE        summarize a joint trajectory offline
   motion validate FILE       validate a joint trajectory offline
   note <text>                append a Git-trackable work note
@@ -104,6 +106,7 @@ JAKA_MOTION_HELP = """Hardware-enabled commands:
   epic status / epic detect pick / epic detect place [1-6]
   gripper status|read SIDE / gripper set SIDE VALUE / gripper open|close SIDE
   status / world view / jaka status SIDE / jaka joints SIDE
+  pose list / pose show NAME [left|right]  inspect BODY-frame named poses
   jaka plan SIDE UNIT Q1..Q6      preview an absolute target
   jaka step SIDE JN UNIT DELTA    preview a relative one-joint target
   jaka move SIDE UNIT Q1..Q6      execute a nearby absolute target (asks MOVE SIDE)
@@ -123,6 +126,7 @@ def _allowed_in_jaka_readonly(args) -> bool:
                         ["jaka", "joints"], ["jaka", "plan"], ["jaka", "step"],
                         ["jaka", "home"], ["jaka", "dual"])
         or args == ["world", "view"]
+        or args[:2] in (["pose", "list"], ["pose", "show"])
         or args[:2] in (["motion", "inspect"], ["motion", "validate"])
         or args[:2] in (["curobo", "status"], ["curobo", "plan"], ["curobo", "plan-file"], ["curobo", "preview"])
     )
@@ -149,6 +153,7 @@ def _allowed_in_hardware(args) -> bool:
                         ["jaka", "home"], ["jaka", "dual"], ["jaka", "move"],
                         ["jaka", "move-step"], ["jaka", "abort"])
         or args == ["world", "view"]
+        or args[:2] in (["pose", "list"], ["pose", "show"])
         or args[:2] in (["motion", "inspect"], ["motion", "validate"])
         or args[:2] in (["curobo", "status"], ["curobo", "plan"], ["curobo", "plan-file"], ["curobo", "preview"])
         or args[:2] == ["curobo", "execute-micro"]
@@ -240,6 +245,11 @@ def run_terminal(controller: TaskController) -> None:
             if args[0] in ("quit", "exit"): break
             if args[0] == "help": print(help_text)
             elif args[0] == "status": pass
+            elif args == ["pose", "list"]:
+                print(pose_report(load_named_poses(controller.config["named_poses_file"])))
+            elif args[:2] == ["pose", "show"] and len(args) in (3, 4):
+                print(pose_report(load_named_poses(controller.config["named_poses_file"]),
+                                  args[2], args[3] if len(args) == 4 else None))
             elif args[:3] == ["jaka", "feedback-audit", "right"] and len(args) in (3, 4):
                 if controller.mode != "offline":
                     raise RuntimeError("feedback audit requires offline Terminal to avoid its SDK status connection")
@@ -254,7 +264,6 @@ def run_terminal(controller: TaskController) -> None:
                 print(json.dumps(load_waypoints(args[2]),indent=2))
             elif args[:2]==["servo","spline"] and len(args)==4:
                 from .motion.waypoints import export_geometry
-                from .motion.trajectory import load_motion_limits
                 path=export_geometry(args[2],args[3],load_motion_limits(Path(controller.config["motion"]["limits_file"])))
                 controller.events.write("offline_waypoint_geometry",source=args[2],output=str(path))
                 print("Offline geometry only; not executable: %s"%path)
