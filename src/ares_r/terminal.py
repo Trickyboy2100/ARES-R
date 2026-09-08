@@ -108,8 +108,8 @@ JAKA_MOTION_HELP = """Hardware-enabled commands:
   gripper status|read SIDE / gripper set SIDE VALUE / gripper open|close SIDE
   status / world view / jaka status SIDE / jaka joints SIDE
   pose list / pose show NAME [left|right]  inspect BODY-frame named poses
-  pose go ready left direct       commissioned segmented MoveJ route
-  pose go ready right curobo      cuRobo plan -> supervised ServoJ route
+  pose go NAME left|right direct  commissioned supervised MoveJ route
+  pose go NAME right curobo       cuRobo plan -> supervised ServoJ route
   jaka plan SIDE UNIT Q1..Q6      preview an absolute target
   jaka step SIDE JN UNIT DELTA    preview a relative one-joint target
   jaka move SIDE UNIT Q1..Q6      execute a nearby absolute target (asks MOVE SIDE)
@@ -258,7 +258,7 @@ def run_terminal(controller: TaskController) -> None:
                 library=load_named_poses(controller.config["named_poses_file"]);pose=library["poses"].get(name)
                 if not pose or pose.get("commissioning")!="commissioned": raise RuntimeError("named pose is not commissioned")
                 expected=pose.get("commissioned_routes",{}).get(side)
-                if side=="right" and route=="curobo" and expected=="curobo_plan_cspace_to_supervised_servoj":
+                if side=="right" and route=="curobo" and expected and "curobo_plan_cspace_to_supervised_servoj" in expected:
                     from .motion.demo_timing import RECOVERY_SPEED_SCALE
                     from .motion.obstacle_demo import run_named_right
                     from .motion.native_demo import exclusive_right,execute
@@ -267,16 +267,16 @@ def run_terminal(controller: TaskController) -> None:
                         output=run_named_right(controller.config,name,RECOVERY_SPEED_SCALE)
                         if output: log=execute(controller.config,output,"reset",confirmed=True);print("Right ready completed: %s"%log)
                         else: print("Right is already at ready.")
-                elif side=="left" and route=="direct" and expected=="segmented_direct_movej":
-                    goal=pose["arms"]["left"].get("ik_joint_rad");arm=controller.arms["left"]
+                elif side in ("left","right") and route=="direct" and expected and "direct_movej" in expected:
+                    target=pose["arms"][side];goal=target.get("ik_joint_rad",target.get("joint_rad"));arm=controller.arms[side]
                     start=arm.joint_position();limits=load_motion_limits(Path(str(controller.config["motion"]["limits_file"])))
                     issues=target_gate(goal,limits)
                     if issues: raise RuntimeError("execution blocked: "+"; ".join(issues))
-                    count=max(1,int(math.ceil(max(abs(a-b) for a,b in zip(start,goal))/math.radians(3))))
-                    if input("Type MOVE LEFT READY (%d segments): "%count).strip()!="MOVE LEFT READY": print("Cancelled; no motion.");continue
-                    for i in range(1,count+1): arm.move_joints_absolute([a+(b-a)*i/count for a,b in zip(start,goal)],.05)
-                    print("Left ready completed in %d supervised segments."%count)
-                else: raise RuntimeError("route not commissioned; use: pose go ready left direct | pose go ready right curobo")
+                    phrase="MOVE %s %s"%(side.upper(),name.upper())
+                    if input("Type %s: "%phrase).strip()!=phrase: print("Cancelled; no motion.");continue
+                    result=arm.move_joints_absolute(goal,.05)
+                    print("%s %s completed in %.1f s."%(side.capitalize(),name,result["elapsed_s"]))
+                else: raise RuntimeError("route not commissioned for this arm/pose")
             elif args[:3] == ["jaka", "feedback-audit", "right"] and len(args) in (3, 4):
                 if controller.mode != "offline":
                     raise RuntimeError("feedback audit requires offline Terminal to avoid its SDK status connection")

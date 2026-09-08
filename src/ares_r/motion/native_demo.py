@@ -102,7 +102,8 @@ def prepare_native_file(config,path,mode):
         if mode=="reset" and raw.get("target_kind")=="named_pose":
             from ..named_poses import load_named_poses
             name=raw.get("target_name");pose=load_named_poses(config["named_poses_file"])["poses"].get(name,{})
-            goal=pose.get("arms",{}).get("right",{}).get("ik_joint_rad")
+            target=pose.get("arms",{}).get("right",{})
+            goal=target.get("ik_joint_rad",target.get("joint_rad"))
             if not goal or max(abs(a-b) for a,b in zip(goal,endpoint))>1e-4:
                 raise RuntimeError("named-pose target changed; replan")
         elif not at_reference(reference,dict(live,actual_rad=endpoint),check_tcp=False):

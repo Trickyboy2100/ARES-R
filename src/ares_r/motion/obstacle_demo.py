@@ -78,7 +78,7 @@ def run_named_right(config, name, speed_scale=SPEED_SCALE):
     pose=load_named_poses(config["named_poses_file"])["poses"].get(name)
     if not pose: raise ValueError("unknown pose: "+name)
     target=pose["arms"]["right"]
-    goal=target.get("ik_joint_rad")
+    goal=target.get("ik_joint_rad",target.get("joint_rad"))
     if not goal or len(goal)!=6: raise RuntimeError("named pose has no reviewed right-arm IK")
     live=snapshot()
     if live["queue"] or live["active_queue"] or not live["inpos"]: raise RuntimeError("right not idle")
