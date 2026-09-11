@@ -74,7 +74,7 @@ ARES_R_HARDWARE_CONFIRM=YES ./scripts/run_terminal.sh --enable-hardware
 
 普通实机启动默认连接并允许读取、操作左右双臂。`--devices right-arm` 仅用于明确要求隔离左臂的右臂专项任务；带着该参数启动的既有 Terminal 必须退出并按上面的默认命令重启，`world view` 才会重新取得左臂实时状态。
 
-实机模式不会自动给机械臂上电或使能；机械臂动作和夹爪动作仍要求逐条确认。底盘硬件适配器尚未完成，会明确显示为不可用，且导航命令会被拒绝。
+实机模式不会自动给机械臂上电或使能；机械臂、夹爪和底盘运动仍要求逐条确认。底盘 HTTP 适配器已接入，只读状态接口已验证，运动接口仍待现场 commissioning；命令和安全边界见 [AMR API](docs/AMR_API.md)。
 
 常用姿态采用 BODY 空间定义，可用 `pose list` 与 `pose show NAME [left|right]` 查看；未完成现场验收的姿态会明确拒绝执行。坐标链和两种底层路线见 [常用姿态库](docs/NAMED_POSES.md)。
 

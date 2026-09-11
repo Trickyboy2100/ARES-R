@@ -49,6 +49,10 @@ HELP = """Commands:
   epic detect pick           Epic detection only; never moves a device
   epic detect place [1-6]    Epic dock detection only; never moves a device
   epic parse "RESPONSE"       parse a saved 5700 response offline
+  amr status|battery|map|position-types  read AMR HTTP state
+  amr move-position ID NAME [RETRIES]    guarded named-position move
+  amr move-relative X Y YAW_DEG [LINEAR_MPS ANGULAR_RADPS TIMEOUT_S]
+  amr run-task TASK_ID / amr stop        guarded task start / immediate AMR stop
   motion inspect FILE        summarize a planner-neutral joint trajectory
   motion validate FILE       run offline safety gates; never moves a device
   jaka status left|right     read live JAKA SDK diagnostics; never moves an arm
@@ -113,6 +117,9 @@ JAKA_MOTION_HELP = """Hardware-enabled commands:
   epic status / epic detect pick / epic detect place [1-6]
   epic pointcloud capture|inspect FILE  capture/audit only; never moves a robot
   epic obstacles inspect FILE / epic obstacles convert FILE left|right OUT
+  amr status|battery|map|position-types  read the physical AMR
+  amr move-position ID NAME [RETRIES] / amr move-relative X Y YAW_DEG [...]
+  amr run-task TASK_ID / amr stop
   gripper status|read SIDE / gripper set SIDE VALUE / gripper open|close SIDE
   status / world view / jaka status SIDE / jaka joints SIDE
   pose list / pose show NAME [left|right]  inspect BODY-frame named poses
@@ -174,6 +181,7 @@ def _allowed_in_hardware(args) -> bool:
     """Expose commissioned device commands, not unfinished orchestration."""
     return (
         args[0] in ("status", "help", "quit", "exit", "note")
+        or args[0] == "amr"
         or args[:2] in (["epic", "status"], ["epic", "detect"], ["epic", "parse"],
                         ["epic", "pointcloud"], ["epic", "obstacles"])
         or args[:2] in (["jaka", "status"], ["jaka", "baseline"], ["jaka", "preflight"],
@@ -192,6 +200,7 @@ def _allowed_in_hardware(args) -> bool:
         or args[:2] in (["servo","waypoints"],["servo","spline"])
         or args[:2] in (["gripper", "status"], ["gripper", "read"], ["gripper", "set"],
                         ["gripper", "half"], ["gripper", "open"], ["gripper", "close"])
+        or args in (["nav", "pick"], ["nav", "place"])
     )
 
 
@@ -471,6 +480,40 @@ def run_terminal(controller: TaskController) -> None:
                     response.space_id, response.object_id, response.grasp_index))
                 for index, pose in enumerate(response.poses):
                     print("pose[%d]: %s" % (index, ", ".join("%.9g" % value for value in pose)))
+            elif args and args[0] == "amr":
+                if controller.mode!="hardware-enabled" or controller.config.get("hardware_devices")!="all":
+                    raise RuntimeError("AMR commands require --enable-hardware with the all-device scope")
+                base=controller.base
+                if args==["amr","status"]:
+                    battery=base.battery();current_map=base.current_map()
+                    print(json.dumps({"state":base.state().__dict__,"battery":battery,
+                        "map":current_map},ensure_ascii=False,indent=2))
+                elif args==["amr","battery"]: print(json.dumps(base.battery(),ensure_ascii=False,indent=2))
+                elif args==["amr","map"]: print(json.dumps(base.current_map(),ensure_ascii=False,indent=2))
+                elif args==["amr","position-types"]: print(json.dumps(base.position_types(),ensure_ascii=False,indent=2))
+                elif args[:2]==["amr","move-position"] and len(args) in (4,5):
+                    retries=int(args[4]) if len(args)==5 else 1
+                    phrase="MOVE AMR POSITION %s %s"%(args[2],args[3])
+                    if input("Type %s: "%phrase).strip()!=phrase: print("Cancelled; no AMR command sent.");continue
+                    result=base.move_position(args[2],args[3],retries)
+                    controller.events.write("amr_move_position_sent",position_id=args[2],position_name=args[3],retries=retries,response=result)
+                    print(json.dumps(result,ensure_ascii=False,indent=2))
+                elif args[:2]==["amr","move-relative"] and len(args) in (5,8):
+                    x,y,yaw_deg=map(float,args[2:5]);optional=list(map(float,args[5:8])) if len(args)==8 else [None,None,None]
+                    phrase="MOVE AMR RELATIVE %s %s %s"%(args[2],args[3],args[4])
+                    if input("Type %s: "%phrase).strip()!=phrase: print("Cancelled; no AMR command sent.");continue
+                    result=base.move_relative(x,y,math.radians(yaw_deg),*optional)
+                    controller.events.write("amr_move_relative_sent",x_m=x,y_m=y,yaw_deg=yaw_deg,response=result)
+                    print(json.dumps(result,ensure_ascii=False,indent=2))
+                elif args[:2]==["amr","run-task"] and len(args)==3:
+                    phrase="RUN AMR TASK %s"%args[2]
+                    if input("Type %s: "%phrase).strip()!=phrase: print("Cancelled; no AMR command sent.");continue
+                    result=base.run_task(args[2]);controller.events.write("amr_task_sent",task_id=args[2],response=result)
+                    print(json.dumps(result,ensure_ascii=False,indent=2))
+                elif args==["amr","stop"]:
+                    result=base.stop();controller.events.write("amr_stop_sent",response=result)
+                    print("AMR stop sent: %s"%json.dumps(result,ensure_ascii=False))
+                else: raise ValueError("usage: amr status|battery|map|position-types|move-position|move-relative|run-task|stop")
             elif args[:2] in (["motion", "inspect"], ["motion", "validate"]) and len(args) == 3:
                 trajectory = load_trajectory(Path(args[2]))
                 print("trajectory: planner=%s arm=%s points=%d period=%.4fs collision_checked=%s" % (
@@ -648,6 +691,9 @@ def run_terminal(controller: TaskController) -> None:
                 if args[1] not in ("pick", "place"):
                     raise ValueError("navigation target must be pick or place")
                 key = "pick_station" if args[1] == "pick" else "place_station"
+                if controller.mode=="hardware-enabled":
+                    phrase="MOVE AMR %s"%args[1].upper()
+                    if input("Type %s: "%phrase).strip()!=phrase: print("Cancelled; no AMR command sent.");continue
                 controller.navigate(str(controller.config["base"][key]))
             elif args[:2] == ["detect", "place"]:
                 controller.detect_place(int(args[2]) if len(args) > 2 else 1)

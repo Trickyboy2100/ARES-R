@@ -40,8 +40,10 @@ class TerminalHistoryTest(unittest.TestCase):
         self.assertTrue(terminal._allowed_in_hardware(["epic", "detect", "pick"]))
         self.assertTrue(terminal._allowed_in_hardware(["pose", "show", "ready", "right"]))
         self.assertTrue(terminal._allowed_in_hardware(["pose", "go", "ready", "right", "curobo"]))
+        self.assertTrue(terminal._allowed_in_hardware(["amr", "status"]))
+        self.assertTrue(terminal._allowed_in_hardware(["amr", "move-relative", "0.1", "0", "0"]))
+        self.assertTrue(terminal._allowed_in_hardware(["nav", "pick"]))
         self.assertFalse(terminal._allowed_in_hardware(["cycle", "1"]))
-        self.assertFalse(terminal._allowed_in_hardware(["nav", "pick"]))
 
 
 if __name__ == "__main__":

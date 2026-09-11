@@ -2,8 +2,9 @@
 
 from typing import Dict
 from .adapters.epic import EpicClient
-from .adapters.mock import MockArm, MockBase, MockGripper, MockPerception, UnavailableBase, DisabledDevice
+from .adapters.mock import MockArm, MockBase, MockGripper, MockPerception, DisabledDevice
 from .adapters.serial_gripper import SerialGripper
+from .adapters.amr_http import AmrHttpBase
 from .controller import TaskController
 from .event_log import EventLog
 
@@ -41,7 +42,7 @@ def build_controller(config: Dict[str, object], mode: str) -> TaskController:
             perception = EpicClient(config["epic"])
             arms = build_jaka_arms(config["jaka"], motion_enabled=True)
             grippers = {name: SerialGripper(name, values) for name, values in config["grippers"].items()}
-        base = UnavailableBase()
+        base = DisabledDevice("AMR") if config.get("hardware_devices", "all") == "right-arm" else AmrHttpBase(config["base"])
     else:
         raise RuntimeError("hardware mode is intentionally locked until JAKA, gripper and base adapters pass commissioning")
     controller = TaskController(mode, perception, arms, grippers, base, config, EventLog(str(config["logging"]["directory"])))
