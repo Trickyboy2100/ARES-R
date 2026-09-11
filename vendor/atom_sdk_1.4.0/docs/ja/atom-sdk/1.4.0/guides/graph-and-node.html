@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>グラフとノードの操作 :: Atom SDK 開発者ガイド</title>
+    <link rel="prev" href="how-to-choose-service.html">
+    <link rel="next" href="error-handling.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          オンライン製品ドキュメント
+                  </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="ドキュメントを検索"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              このマニュアルのみ
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            マニュアルを切り替え
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK 開発者ガイド</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          ダウンロードセンター
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          公式サイト
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            日本語
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK 開発者ガイド</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">ようこそ</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">クイックスタート</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">クイックスタート</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">サンプルサンプル</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">入門利用</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK 入門利用</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">ユーザーガイド</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="how-to-choose-service.html">適切な Service を選択します</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="graph-and-node.html">グラフとノードの操作</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="error-handling.html">エラー処理とトラブルシューティング</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="faq.html">よくある質問</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">基本的な概念</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/what-is-atom-sdk.html">Atom SDK とは</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-node-subgraph.html">グラフ、ノード、サブグラフ</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-vs-runtime.html">Graph と Runtime の違い</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/timestamp.html">Timestampとは何ですか</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/runtime-frame.html">ランタイム入力フレーム (RuntimeFrame / RuntimePassiveBinoFrame)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/point-cloud-protocol.html">点群タイプの入出力用のバイナリ プロトコル</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/param-binding.html">パラメータのタイプとバインディング名</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API リファレンス</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API リファレンスの概要</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python の概要とインストール</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/params.html">Python パラメータ オブジェクト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/public_api.html">Python パブリック ユーティリティ API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ バージョン — ユーザーガイド</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ パラメータ オブジェクト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">Atom SDK — C# バージョン</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/params.html">C# パラメータオブジェクト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK 開発者ガイド</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK 開発者ガイド</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK 開発者ガイド</a></li>
+    <li>ユーザーガイド</li>
+    <li><a href="graph-and-node.html">グラフとノードの操作</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="このページの内容"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">グラフとノードの操作</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>このページでは、SDKを使ってメイングラフ、メイングラフノード、サブグラフノードを操作する方法を紹介します。</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>どの Service を使用すればよいかわからない場合は、まず <a href="how-to-choose-service.html" class="xref page">適切な Service を選択します</a> を見てみましょう。</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_画像の作成と編集"><a class="anchor" href="#_画像の作成と編集"></a>画像の作成と編集</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_完全なプロセス"><a class="anchor" href="#_完全なプロセス"></a>完全なプロセス</h3>
+<div class="listingblock">
+<div class="content">
+<pre>create_graph()          ← 図の作成
+    ↓
+open_graph()            ← 編集モードで開く（取得 timestamp）
+    ↓
+create_node()           ← ノードの作成
+    ↓
+get_node_info_in_graph()  ← パラメータ定義を表示する
+    ↓
+set_node_param_data()   ← パラメータを設定する（オプション：ファイルをアップロードする）
+    ↓
+initial_node()          ← ノードの初期化（ロード init_params）
+    ↓
+connect_nodes()         ← ノードを接続する（ノードが複数ある場合）
+    ↓
+run_graph() / activate_node()  ← 走る</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_主映像操作"><a class="anchor" href="#_主映像操作"></a>主映像操作</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>メイン グラフは最上位のグラフ構造であり、<code>GraphService</code> を通じて管理されます。</p>
+</div>
+<div class="sect2">
+<h3 id="_ダイアグラムを作成して開く"><a class="anchor" href="#_ダイアグラムを作成して開く"></a>ダイアグラムを作成して開く</h3>
+<div class="sect3">
+<h4 id="_python"><a class="anchor" href="#_python"></a>Python</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import AtomClient, CreateGraphParams
+
+client = AtomClient(base_url="http://127.0.0.1:10026")
+
+created = client.graph.create_graph(CreateGraphParams("my_graph", description="図例"))
+print("グラフ作成リクエストのステータス：", created["status"])
+result = client.graph.open_graph("my_graph")
+print("初めて開きます：", result["firstOpen"])</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_c"><a class="anchor" href="#_c"></a>C++</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+using namespace atom::sdk;
+
+AtomClient client("http://127.0.0.1:10026");
+
+auto created = client.graph().create_graph({"my_graph", "図例"});
+std::cout &lt;&lt; "グラフ作成リクエストのステータス：" &lt;&lt; created.at("status").get&lt;std::int64_t&gt;() &lt;&lt; "\n";
+auto result = client.graph().open_graph("my_graph");
+// result["firstOpen"] のために true 初めて開くことを示します</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_c_2"><a class="anchor" href="#_c_2"></a>C#</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using AtomSdk;
+
+var client = new AtomClient("http://127.0.0.1:10026");
+
+var created = await client.Graph.CreateGraphInfoAsync(
+    new CreateGraphParams("my_graph", "図例"));
+Console.WriteLine($"グラフ作成リクエストのステータス：{created.Status}");
+var result = await client.Graph.OpenGraphInfoAsync("my_graph");
+Console.WriteLine($"初めて開きます：{result.FirstOpen}");</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_グラフを実行してクリーンアップする"><a class="anchor" href="#_グラフを実行してクリーンアップする"></a>グラフを実行してクリーンアップする</h3>
+<div class="sect3">
+<h4 id="_python_2"><a class="anchor" href="#_python_2"></a>Python</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">result = client.graph.run_graph("my_graph")
+print("リクエストステータス：", result["status"])
+print("完了：", result["finish"], "時間がかかる：", result["total_time"], "ms")
+
+client.graph.release_graph("my_graph")</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_c_3"><a class="anchor" href="#_c_3"></a>C++</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto result = client.graph().run_graph("my_graph");
+std::cout &lt;&lt; "リクエストステータス：" &lt;&lt; result.at("status").get&lt;std::int64_t&gt;() &lt;&lt; "\n";
+std::cout &lt;&lt; "完了：" &lt;&lt; result["finish"]
+          &lt;&lt; " 時間がかかる：" &lt;&lt; result["total_time"] &lt;&lt; "ms\n";
+
+client.graph().release_graph("my_graph");</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_c_4"><a class="anchor" href="#_c_4"></a>C#</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var result = await client.Graph.RunGraphResultAsync("my_graph");
+Console.WriteLine($"リクエストステータス：{result.Status}");
+Console.WriteLine($"完了：{result.Finish}，時間がかかる：{result.TotalTime}ms");
+
+await client.Graph.ReleaseGraphAsync("my_graph");</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_グラフバインディングを表示する"><a class="anchor" href="#_グラフバインディングを表示する"></a>グラフバインディングを表示する</h3>
+<div class="paragraph">
+<p>グラフを実行すると、どの入出力バインディングがグラフによって公開されているかを確認できます。</p>
+</div>
+<div class="sect3">
+<h4 id="_python_3"><a class="anchor" href="#_python_3"></a>Python</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">bindings = client.graph.get_graph_bindings("my_graph")
+for b in bindings.get("outputs", []):
+    print("出力バインディング：", b["bindingName"])</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_c_5"><a class="anchor" href="#_c_5"></a>C++</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto bindings = client.graph().get_graph_bindings("my_graph");
+for (const auto&amp; b : bindings["outputs"]) {
+    std::cout &lt;&lt; "出力バインディング：" &lt;&lt; b["bindingName"] &lt;&lt; "\n";
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_c_6"><a class="anchor" href="#_c_6"></a>C#</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var bindings = await client.Graph.GetGraphBindingsInfoAsync("my_graph");
+foreach (var b in bindings.Outputs)
+    Console.WriteLine($"出力バインディング：{b.BindingName}");</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_メイングラフノードの操作"><a class="anchor" href="#_メイングラフノードの操作"></a>メイングラフノードの操作</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>NodeService</code> を通じてメイン グラフ内のノードを操作します。</p>
+</div>
+<div class="sect2">
+<h3 id="_ノードを作成してパラメータを設定する"><a class="anchor" href="#_ノードを作成してパラメータを設定する"></a>ノードを作成してパラメータを設定する</h3>
+<div class="paragraph">
+<p><strong>手順</strong>: まずノードを作成して <code>nodeId</code> を取得し、次にパラメーターの定義を確認して、実際のパラメーター名に従って値を設定します。</p>
+</div>
+<div class="sect3">
+<h4 id="_python_4"><a class="anchor" href="#_python_4"></a>Python</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import CreateNodeParams, NodeParamUpdate, NodeRef
+
+# ノードの作成
+result = client.node.create_node(CreateNodeParams("my_graph", "FilterNode"))
+print("ノード作成リクエストのステータス：", result["status"])
+node_id = result["nodeId"]
+
+# パラメータ定義を確認してください（まずは確認することをお勧めします，もう一度書いてください）
+info = client.node.get_node_info_in_graph(NodeRef("my_graph", node_id))
+print("利用可能なパラメータ：", [p["name"] for p in info["nodeInfo"].get("runParams", [])])
+
+# 動作パラメータを設定する
+client.node.set_node_param_data(
+    NodeParamUpdate("my_graph", node_id, "threshold", "run_params", 0.7)
+)
+
+# モデルファイルをアップロードする（init_params）
+from pathlib import Path
+client.node.set_node_param_data(
+    NodeParamUpdate("my_graph", node_id, "model", "init_params",
+                    Path("/path/to/model.bin"))
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_c_7"><a class="anchor" href="#_c_7"></a>C++</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">// ノードの作成
+auto result = client.node().create_node({"my_graph", "FilterNode"});
+std::cout &lt;&lt; "ノード作成リクエストのステータス：" &lt;&lt; result.at("status").get&lt;std::int64_t&gt;() &lt;&lt; "\n";
+std::string node_id = result.at("nodeId").get&lt;std::string&gt;();
+
+// パラメータ定義を確認してください
+auto info = client.node().get_node_info_in_graph({"my_graph", node_id});
+for (const auto&amp; p : info.at("nodeInfo").at("runParams")) {
+    std::cout &lt;&lt; "パラメータ：" &lt;&lt; p.at("name").get&lt;std::string&gt;() &lt;&lt; "\n";
+}
+
+// 動作パラメータを設定する
+client.node().set_node_param_data(
+    {"my_graph", node_id, "threshold", "run_params", atom::sdk::JsonValue(0.7)});
+
+// モデルファイルをアップロードする
+client.node().set_node_param_data(
+    {"my_graph", node_id, "model", "init_params",
+     std::filesystem::path("/path/to/model.bin")});</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_c_8"><a class="anchor" href="#_c_8"></a>C#</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// ノードの作成
+var info = await client.Node.CreateNodeInfoAsync(
+    new CreateNodeParams("my_graph", "FilterNode"));
+Console.WriteLine($"ノード作成リクエストのステータス：{info.Status}");
+string nodeId = info.NodeId;
+
+// パラメータ定義を確認してください
+var nodeInfo = await client.Node.GetNodeInfoInGraphModelAsync(
+    new NodeRef("my_graph", nodeId));
+
+// 動作パラメータを設定する
+await client.Node.SetNodeParamDataAsync(
+    new NodeParamUpdate("my_graph", nodeId, "threshold", "run_params", 0.7));
+
+// モデルファイルをアップロードする
+await client.Node.SetNodeParamDataAsync(
+    new NodeParamUpdate("my_graph", nodeId, "model", "init_params",
+        new FileInfo("/path/to/model.bin")));</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_ノードを接続する"><a class="anchor" href="#_ノードを接続する"></a>ノードを接続する</h3>
+<div class="paragraph">
+<p>データは <code>output_node</code> の <code>output_port</code> から <code>input_node</code> の <code>input_port</code> に流れます。</p>
+</div>
+<div class="sect3">
+<h4 id="_python_5"><a class="anchor" href="#_python_5"></a>Python</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeConnectionParams
+
+client.node.connect_nodes(
+    NodeConnectionParams(
+        "my_graph",
+        output_node_id=node_a_id,  # データを出力するノード
+        output_port_name="result",
+        input_node_id=node_b_id,   # データを受信するノード
+        input_port_name="input",
+    )
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_c_9"><a class="anchor" href="#_c_9"></a>C++</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">client.node().connect_nodes(
+    {"my_graph",
+     node_a_id, "result",  // 出力データ
+     node_b_id, "input"}); // データを受信する</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_c_10"><a class="anchor" href="#_c_10"></a>C#</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">await client.Node.ConnectNodesAsync(
+    new NodeConnectionParams(
+        "my_graph",
+        nodeAId, "result", // 出力データ
+        nodeBId, "input")); // データを受信する</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_ノードをアクティブにして出力を読み取ります"><a class="anchor" href="#_ノードをアクティブにして出力を読み取ります"></a>ノードをアクティブにして出力を読み取ります</h3>
+<div class="sect3">
+<h4 id="_python_6"><a class="anchor" href="#_python_6"></a>Python</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import numpy as np
+from atom_sdk import NodeRef, PortRef
+
+# ノードの初期化（ロード init_params リソース）
+client.node.initial_node(NodeRef("my_graph", node_id))
+
+# ノードとダウンストリームをアクティブ化する
+result = client.node.activate_node(NodeRef("my_graph", node_id))
+print("完了：", result["finish"])
+
+# 読む JSON タイプポート出力
+data = client.node.get_node_port_data(PortRef("my_graph", node_id, "result", "outputs"))
+print(data)
+
+# 点群タイプのポート出力の読み取り
+raw = client.node.get_points_data(PortRef("my_graph", node_id, "points", "outputs"))
+points = np.frombuffer(raw, dtype=np.float32).reshape(-1, 3)
+print(f"ポイント：{len(points)}")</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_c_11"><a class="anchor" href="#_c_11"></a>C++</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">// 初期化
+client.node().initial_node({"my_graph", node_id});
+
+// アクティブ化する
+auto result = client.node().activate_node({"my_graph", node_id});
+std::cout &lt;&lt; "完了：" &lt;&lt; result["finish"] &lt;&lt; "\n";
+
+// 読む JSON タイプポート
+auto port_data = client.node().get_node_port_data({"my_graph", node_id, "result", "outputs"});
+std::cout &lt;&lt; port_data.data.dump() &lt;&lt; "\n";
+
+// 点群を読み取る
+auto raw = client.node().get_points_data({"my_graph", node_id, "points", "outputs"});
+size_t n = raw.size() / (3 * sizeof(float));
+std::cout &lt;&lt; "ポイント：" &lt;&lt; n &lt;&lt; "\n";</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_c_12"><a class="anchor" href="#_c_12"></a>C#</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 初期化
+await client.Node.InitialNodeAsync(new NodeRef("my_graph", nodeId));
+
+// アクティブ化する
+var result = await client.Node.ActivateNodeResultAsync(new NodeRef("my_graph", nodeId));
+Console.WriteLine($"完了：{result.Finish}");
+
+// 読む JSON タイプポート
+var data = await client.Node.GetNodePortDataAsync(new PortRef("my_graph", nodeId, "result", "outputs"));
+Console.WriteLine(data);
+
+// 点群を読み取る
+var raw = await client.Node.GetPointsDataAsync(new PortRef("my_graph", nodeId, "points", "outputs"));
+int nPoints = raw.Length / (3 * sizeof(float));
+Console.WriteLine($"ポイント：{nPoints}");</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_サブグラフノードの操作"><a class="anchor" href="#_サブグラフノードの操作"></a>サブグラフノードの操作</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>メイングラフ (サブグラフのノードを含む) に graph node がある場合、<code>GraphNodeService</code> を使用してその内部を操作します。</p>
+</div>
+<div class="paragraph">
+<p><strong>2 つのレイヤー ID</strong> に注意してください。</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>graph_node_id</code>: メイン グラフ ID 内の「サブグラフを含む」ノード</p>
+</li>
+<li>
+<p><code>node_id</code>: サブグラフ <strong>内部</strong> のノード ID</p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="_サブグラフに入り内部ノードを操作する"><a class="anchor" href="#_サブグラフに入り内部ノードを操作する"></a>サブグラフに入り、内部ノードを操作する</h3>
+<div class="sect3">
+<h4 id="_python_7"><a class="anchor" href="#_python_7"></a>Python</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SubGraphCreateNodeParams, SubGraphNodeParamUpdate, SubGraphRef
+
+# サブ画像を入力してください
+result = client.graph_node.open_graph(SubGraphRef("my_graph", graph_node_id))
+print(f"サブグラフ内のノードの数：{len(result['graph'].get('nodes', []))}")
+
+# サブグラフ内にノードを作成
+inner = client.graph_node.create_node(
+    SubGraphCreateNodeParams("my_graph", graph_node_id, "FilterNode")
+)
+print("サブグラフノード作成リクエストステータス：", inner["status"])
+inner_id = inner["nodeId"]
+
+# サブグラフの内部ノードのパラメータを設定します
+client.graph_node.set_node_param_data(
+    SubGraphNodeParamUpdate(
+        "my_graph", graph_node_id, inner_id, "threshold", "run_params", 0.7
+    )
+)
+
+# サブグラフ全体を実行する
+result = client.graph_node.run_graph(SubGraphRef("my_graph", graph_node_id))
+print("リクエストステータス：", result["status"])
+print("時間がかかる：", result.get("total_time"), "ms")</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_c_13"><a class="anchor" href="#_c_13"></a>C++</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">// サブ画像を入力してください
+auto opened = client.graph_node().open_graph({"my_graph", graph_node_id});
+
+// サブグラフ内にノードを作成
+auto result = client.graph_node().create_node(
+    {"my_graph", graph_node_id, "FilterNode"});
+std::cout &lt;&lt; "サブグラフノード作成リクエストステータス：" &lt;&lt; result.at("status").get&lt;std::int64_t&gt;() &lt;&lt; "\n";
+std::string inner_id = result.at("nodeId").get&lt;std::string&gt;();
+
+// パラメータを設定する
+client.graph_node().set_node_param_data(
+    {"my_graph", graph_node_id, inner_id, "threshold", "run_params",
+     atom::sdk::JsonValue(0.7)});
+
+// サブグラフの実行
+auto run = client.graph_node().run_graph({"my_graph", graph_node_id});
+std::cout &lt;&lt; "リクエストステータス：" &lt;&lt; run.at("status").get&lt;std::int64_t&gt;() &lt;&lt; "\n";
+std::cout &lt;&lt; "時間がかかる：" &lt;&lt; run.at("total_time") &lt;&lt; "ms\n";</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_c_14"><a class="anchor" href="#_c_14"></a>C#</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// サブ画像を入力してください
+var opened = await client.GraphNode.OpenGraphInfoAsync(
+    new SubGraphRef("my_graph", graphNodeId));
+
+// サブグラフ内にノードを作成
+var info = await client.GraphNode.CreateNodeInfoAsync(
+    new SubGraphCreateNodeParams("my_graph", graphNodeId, "FilterNode"));
+Console.WriteLine($"サブグラフノード作成リクエストステータス：{info.Status}");
+string innerId = info.NodeId;
+
+// パラメータを設定する
+await client.GraphNode.SetNodeParamDataAsync(
+    new SubGraphNodeParamUpdate(
+        "my_graph", graphNodeId, innerId, "threshold", "run_params", 0.7));
+
+// サブグラフの実行
+var run = await client.GraphNode.RunGraphResultAsync(
+    new SubGraphRef("my_graph", graphNodeId));
+Console.WriteLine($"リクエストステータス：{run.Status}");
+Console.WriteLine($"時間がかかる：{run.TotalTime}ms");</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_よくあるタスクを簡単にチェック"><a class="anchor" href="#_よくあるタスクを簡単にチェック"></a>よくあるタスクを簡単にチェック</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 40%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">タスク</th>
+<th class="tableblock halign-left valign-top">インターフェイス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">グラフの作成/削除</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GraphService.create_graph</code> / <code>delete_graph</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>.atom</code> ファイルをインポートします</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GraphService.load_graph</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">メイングラフにノードを追加</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeService.create_node</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">メイン グラフ ノードを接続します</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeService.connect_nodes</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ノードパラメータを設定する</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeService.set_node_param_data</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">読み取りノード JSON 出力</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeService.get_node_port_data</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ノード点群出力の読み取り</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeService.get_points_data</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">サブピクチャー操作に入る</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GraphNodeService.open_graph</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">サブグラフの実行</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GraphNodeService.run_graph</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_グラフを作成せずに単一ノードを直接実行する"><a class="anchor" href="#_グラフを作成せずに単一ノードを直接実行する"></a>グラフを作成せずに単一ノードを直接実行する</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>最初にグラフを構築せずにノードの機能をすばやくテストするために使用されます。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SingleNodeParams
+
+result = client.runtime.run_single_node_no_graph(
+    SingleNodeParams(
+        "MathAddNode",
+        inputs={"a": 3.0, "b": 2.0},
+        run_params={"mode": "add"},
+    )
+)
+print("ノード出力：", result.get("outputs"))</code></pre>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="how-to-choose-service.html">適切な Service を選択します</a></span>
+  <span class="next"><a href="error-handling.html">エラー処理とトラブルシューティング</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

@@ -1,0 +1,2774 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Python parameter object :: Atom SDK Developer Guide</title>
+    <link rel="prev" href="overview.html">
+    <link rel="next" href="public_api.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          Online Product Documentation
+                  </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="Search documentation"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              This manual only
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            Switch manual
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK Developer Guide</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          Download Center
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          Official Website
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            English
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK Developer Guide</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">welcome</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">quick start</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">quick start</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">sample sample</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Getting Started</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK Getting Started</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService Getting Started</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService Getting Started</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService Getting Started</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">User Guide</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">Select the appropriate Service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">Graph and node operations</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">Error handling and troubleshooting</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">FAQ</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">basic concepts</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/what-is-atom-sdk.html">What is Atom SDK</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-node-subgraph.html">graph, node, subgraph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-vs-runtime.html">The difference between Graph and Runtime</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/timestamp.html">What is Timestamp</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/runtime-frame.html">Runtime input frames (RuntimeFrame / RuntimePassiveBinoFrame)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/point-cloud-protocol.html">Binary protocol for point cloud type input and output</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/param-binding.html">Parameter types and binding names</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API Reference</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API Reference Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="overview.html">Python Overview and Installation</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="params.html">Python parameter object</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="public_api.html">Python Public Utility API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ version — User Guide</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ parameter object</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">Atom SDK — C# Version</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/params.html">C# Parameter object</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK Developer Guide</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK Developer Guide</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK Developer Guide</a></li>
+    <li>API Reference</li>
+    <li>Python SDK</li>
+    <li><a href="params.html">Python parameter object</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="On this page"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Python parameter object</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Many methods in Python SDK no longer directly receive a long list of positional parameters, but receive parameter objects, such as <code>CreateNodeParams(&#8230;&#8203;)</code>, <code>NodeConnectionParams(&#8230;&#8203;)</code>, <code>RuntimeRunParams(&#8230;&#8203;)</code>.</p>
+</div>
+<div class="paragraph">
+<p>This design is to make the calling code clearer, especially in scenarios where there are many parameters such as node connections, subgraph operations, and runtime frame data, and the order is easy to be reversed, and the case is easily written incorrectly.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_how_to_import"><a class="anchor" href="#_how_to_import"></a>How to import</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>All public parameter objects can be imported directly from <code>atom_sdk</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import (
+    BindingRef,
+    ChangeNodeIOParams,
+    ChangeSubGraphNodeIOParams,
+    CopyGraphParams,
+    CopyNodeParams,
+    CreateNodeParams,
+    CreateDynamicNodeParams,
+    CreateDynamicSubGraphNodeParams,
+    CreateGraphParams,
+    CreateGraphNodeParams,
+    EditGraphCommentParams,
+    EditGraphNameParams,
+    EditNodeCommentParams,
+    EditSubGraphNameParams,
+    EditSubGraphNodeCommentParams,
+    ExportGraphParams,
+    ExportSubGraphParams,
+    FileParamRef,
+    GenerateGraphNodeByNodesParams,
+    ImportExtensionNodesByPathParams,
+    LoadGraphParams,
+    NodeConnectionParams,
+    NodeBindingUpdate,
+    NodeParamUpdate,
+    NodeRef,
+    PointCloudRef,
+    PortRef,
+    RuntimeBindingDataUpdate,
+    RuntimeFrame,
+    RuntimePassiveBinoFrame,
+    RuntimeParamsUpdate,
+    RuntimeRunParams,
+    RuntimeStrategyParamsUpdate,
+    SetSubgraphAsCustomSubgraphParams,
+    SingleNodeParams,
+    SubGraphBindingUpdate,
+    SubGraphConnectionParams,
+    SubGraphCopyNodeParams,
+    SubGraphCreateNodeParams,
+    SubGraphNodeParamUpdate,
+    SubGraphNodeRef,
+    SubGraphPortRef,
+    SubGraphRef,
+)</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_naming_convention"><a class="anchor" href="#_naming_convention"></a>Naming convention</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Parameter objects are named according to their purpose, not according to the interface verb:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 33.3333%;">
+<col style="width: 50.0001%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">suffix</th>
+<th class="tableblock halign-left valign-top">meaning</th>
+<th class="tableblock halign-left valign-top">example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Ref</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">refers to an existing object and is only responsible for locating resources.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeRef</code>、<code>PortRef</code>、<code>BindingRef</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Params</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Complete input parameters required for an interface call</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CreateNodeParams</code>、<code>RuntimeRunParams</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Update</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Modify existing configuration or runtime data</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeParamUpdate</code>、<code>NodeBindingUpdate</code>、<code>RuntimeParamsUpdate</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Therefore, a class name like <code>NodeRef</code> means "point to a node", <code>NodeBindingUpdate</code> means "update node binding", and <code>RuntimeParamsUpdate</code> means "update runtime parameters". Old action names such as <code>Set&#8230;&#8203;Data</code> are no longer used as public class names.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_when_to_use_parameter_objects"><a class="anchor" href="#_when_to_use_parameter_objects"></a>When to use parameter objects</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 40%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Scenario</th>
+<th class="tableblock halign-left valign-top">Recommended writing method
+
+The</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">method only has a simple value, such as <code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pass the string directly, for example <code>client.graph.open_graph("demo")</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">method requires multiple business fields</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pass parameter object, for example <code>client.node.create_node(CreateNodeParams(&#8230;&#8203;))</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The order of parameters is easily confused, such as wiring, subgraph positioning, and runtime frames.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">must use the parameter object first</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>If you are not sure what parameters a method requires, first look at the corresponding Service page:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="graph.html" class="xref page">GraphService</a></p>
+</li>
+<li>
+<p><a href="node.html" class="xref page">NodeService</a></p>
+</li>
+<li>
+<p><a href="graph_node.html" class="xref page">GraphNodeService</a></p>
+</li>
+<li>
+<p><a href="runtime.html" class="xref page">RuntimeService</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_graphservice_parameters"><a class="anchor" href="#_graphservice_parameters"></a>GraphService parameters</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_creategraphparams"><a class="anchor" href="#_creategraphparams"></a><code>CreateGraphParams</code></h3>
+<div class="paragraph">
+<p>for <code>client.graph.create_graph(&#8230;&#8203;)</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">New image name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Picture remarks, optional</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import CreateGraphParams
+
+result = client.graph.create_graph(CreateGraphParams("demo_graph", description="Demonstration diagram"))
+print("Request status:", result["status"])</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_copygraphparams"><a class="anchor" href="#_copygraphparams"></a><code>CopyGraphParams</code></h3>
+<div class="paragraph">
+<p>for <code>client.graph.copy_graph(&#8230;&#8203;)</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Source image name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>new_graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The name of the new image after copying</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import CopyGraphParams
+
+client.graph.copy_graph(CopyGraphParams("demo_graph", "demo_graph_backup"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_loadgraphparams"><a class="anchor" href="#_loadgraphparams"></a><code>LoadGraphParams</code></h3>
+<div class="paragraph">
+<p>for <code>client.graph.load_graph(&#8230;&#8203;)</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code>
+Figure name used in Atom after</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">import</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>file_path</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str | pathlib.Path</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Local <code>.atom</code> image file path</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from pathlib import Path
+from atom_sdk import LoadGraphParams
+
+result = client.graph.load_graph(LoadGraphParams("imported_graph", Path("/data/demo.atom")))
+print("Request status:", result["status"])</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_importextensionnodesbypathparams"><a class="anchor" href="#_importextensionnodesbypathparams"></a><code>ImportExtensionNodesByPathParams</code></h3>
+<div class="paragraph">
+<p>for <code>client.graph.import_extension_nodes_by_path(&#8230;&#8203;)</code>. This parameter usually comes from
+<code>client.graph.load_graph(&#8230;&#8203;)</code> Returns the <code>extensionNodes</code> field in the value.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>extension_nodes</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>load_graph</code> The <code>extensionNodes</code> field in the return value</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import ImportExtensionNodesByPathParams
+
+load_result = client.graph.load_graph(LoadGraphParams("imported_graph", Path("/data/demo.atom")))
+extension_nodes = load_result.get("extensionNodes") or {}
+if extension_nodes:
+    client.graph.import_extension_nodes_by_path(
+        ImportExtensionNodesByPathParams(extension_nodes)
+    )</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_exportgraphparams"><a class="anchor" href="#_exportgraphparams"></a><code>ExportGraphParams</code></h3>
+<div class="paragraph">
+<p>for <code>client.graph.export_graph(&#8230;&#8203;)</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The name of the graph to be exported</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dl_models_info</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Model information that needs to be packaged when exporting, optional</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>custom_nodes</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Custom node information that needs to be packaged when exporting, optional</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import ExportGraphParams
+
+client.graph.export_graph(ExportGraphParams("demo_graph"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_editgraphnameparams"><a class="anchor" href="#_editgraphnameparams"></a><code>EditGraphNameParams</code></h3>
+<div class="paragraph">
+<p>for <code>client.graph.edit_graph_name(&#8230;&#8203;)</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Current image name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>new_graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Modified picture name</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_editgraphcommentparams"><a class="anchor" href="#_editgraphcommentparams"></a><code>EditGraphCommentParams</code></h3>
+<div class="paragraph">
+<p>for <code>client.graph.edit_graph_comment(&#8230;&#8203;)</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Picture name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>comment</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">New note content</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_nodeservice_parameters"><a class="anchor" href="#_nodeservice_parameters"></a>NodeService parameters</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_noderef"><a class="anchor" href="#_noderef"></a><code>NodeRef</code></h3>
+<div class="paragraph">
+<p>Main graph node reference, used to locate "a certain node in a certain graph".</p>
+</div>
+<div class="paragraph">
+<p>Used for:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>client.node.delete_node(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.node.get_node_params(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.node.get_node_info_in_graph(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.node.activate_node(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.node.initial_node(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.node.update_node(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.runtime.get_node_params_info_with_strategy(&#8230;&#8203;)</code></p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Picture name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Node ID</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeRef
+
+client.node.activate_node(NodeRef("demo_graph", "node-001"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_createnodeparams"><a class="anchor" href="#_createnodeparams"></a><code>CreateNodeParams</code></h3>
+<div class="paragraph">
+<p>for <code>client.node.create_node(&#8230;&#8203;)</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Main image name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Node class name or node name recognized by the server</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import CreateNodeParams
+
+result = client.node.create_node(
+    CreateNodeParams("demo_graph", "DetectAndSegment")
+)
+print("Request status:", result["status"])
+node_id = result["nodeId"]</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_createdynamicnodeparams"><a class="anchor" href="#_createdynamicnodeparams"></a><code>CreateDynamicNodeParams</code></h3>
+<div class="paragraph">
+<p>for <code>client.node.create_dynamic_io_node(&#8230;&#8203;)</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Main image name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Node class name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Dynamic input and output definition</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_changenodeioparams"><a class="anchor" href="#_changenodeioparams"></a><code>ChangeNodeIOParams</code></h3>
+<div class="paragraph">
+<p>for <code>client.node.change_node_io(&#8230;&#8203;)</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Picture name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The node to be modified ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Updated dynamic input and output definitions</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_creategraphnodeparams"><a class="anchor" href="#_creategraphnodeparams"></a><code>CreateGraphNodeParams</code></h3>
+<div class="paragraph">
+<p>for <code>client.node.create_graph_node(&#8230;&#8203;)</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parent image name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">new graph node name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>sub_graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The name of the subgraph to be wrapped</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_generategraphnodebynodesparams"><a class="anchor" href="#_generategraphnodebynodesparams"></a><code>GenerateGraphNodeByNodesParams</code></h3>
+<div class="paragraph">
+<p>for <code>client.node.generate_graph_node_by_nodes(&#8230;&#8203;)</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parent image name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">new graph node name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_ids</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>list[str]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">List of nodes to be packed into the subgraph ID</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_copynodeparams"><a class="anchor" href="#_copynodeparams"></a><code>CopyNodeParams</code></h3>
+<div class="paragraph">
+<p>for <code>client.node.create_node_by_copy(&#8230;&#8203;)</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Main image name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">New node name after copying</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The target node to be copied ID</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_nodeconnectionparams"><a class="anchor" href="#_nodeconnectionparams"></a><code>NodeConnectionParams</code></h3>
+<div class="paragraph">
+<p>Used for <code>client.node.connect_nodes(&#8230;&#8203;)</code> and <code>client.node.disconnect_nodes(&#8230;&#8203;)</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Picture name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>output_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">source node, which is the node that generates data</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>output_port_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Source node output port name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>input_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">target node, which is the node that receives data</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>input_port_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Target node input port name</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Remember one rule: data flow is <code>output &#8594; input</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeConnectionParams
+
+client.node.connect_nodes(
+    NodeConnectionParams(
+        graph_name="demo_graph",
+        output_node_id="source_node",
+        output_port_name="image_out",
+        input_node_id="detect_node",
+        input_port_name="image_in",
+    )
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_portref"><a class="anchor" href="#_portref"></a><code>PortRef</code></h3>
+<div class="paragraph">
+<p>Main graph node port reference, used to read an input or output port of a node.</p>
+</div>
+<div class="paragraph">
+<p>Used for:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>client.node.get_node_port_data(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.node.get_points_data(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.node.get_points_data_parsed(&#8230;&#8203;)</code></p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Picture name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Node ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>port_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Port name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>io_type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">port direction, usually <code>"inputs"</code> or <code>"outputs"</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import PortRef
+
+port = PortRef("demo_graph", "detect_node", "result", "outputs")
+data = client.node.get_node_port_data(port)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_nodeparamupdate"><a class="anchor" href="#_nodeparamupdate"></a><code>NodeParamUpdate</code></h3>
+<div class="paragraph">
+<p>for <code>client.node.set_node_param_data(&#8230;&#8203;)</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Picture name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Node ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>param_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parameter name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>param_type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">parameter type, usually <code>"init_params"</code> or <code>"run_params"</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">parameter value; if it is <code>PathLike</code>, SDK will automatically upload as a file</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from pathlib import Path
+from atom_sdk import NodeParamUpdate
+
+client.node.set_node_param_data(
+    NodeParamUpdate("demo_graph", "detect_node", "threshold", "run_params", 0.5)
+)
+
+client.node.set_node_param_data(
+    NodeParamUpdate("demo_graph", "detect_node", "model", "init_params", Path("/models/model.onnx"))
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_nodebindingupdate"><a class="anchor" href="#_nodebindingupdate"></a><code>NodeBindingUpdate</code></h3>
+<div class="paragraph">
+<p>for <code>client.node.set_binding_name(&#8230;&#8203;)</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Picture name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Node ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>binding_type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">binding type, such as <code>"inputs"</code>, <code>"outputs"</code>, <code>"init_params"</code>, <code>"run_params"</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>origin_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Original port name or parameter name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>binding_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">New binding name; passing an empty string usually means canceling the binding</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeBindingUpdate
+
+client.node.set_binding_name(
+    NodeBindingUpdate("demo_graph", "detect_node", "outputs", "result", "detect_result")
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_editnodecommentparams"><a class="anchor" href="#_editnodecommentparams"></a><code>EditNodeCommentParams</code></h3>
+<div class="paragraph">
+<p>for <code>client.node.edit_node_comment(&#8230;&#8203;)</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Picture name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Node ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>comment</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">New note content</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_singlenodeparams"><a class="anchor" href="#_singlenodeparams"></a><code>SingleNodeParams</code></h3>
+<div class="paragraph">
+<p>for <code>client.runtime.run_single_node_no_graph(&#8230;&#8203;)</code>
+and <code>client.runtime.run_single_node_no_graph_parsed(&#8230;&#8203;)</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Node class name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>inputs</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enter the port value. Common paths, pictures, PLY point clouds, numbers, and dictionaries are automatically processed according to the node input port type.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>run_params</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Operating parameters</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>init_params</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Initialization parameters</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>output_data_types</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, str] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Output port type mapping for <code>run_single_node_no_graph_parsed(&#8230;&#8203;)</code> to parse by output name value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>output_point_dims</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, int] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">point cloud output dimension prompt; normal <code>convertResponse</code> output usually comes with its own dimensions, only point cloud bytes without dimension header are needed</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>input_data_types</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, str] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Input port type mapping. Usually can be omitted, SDK will query by node name when encountering path or bytes input</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>input_point_dims</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, int] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Point cloud input dimension hint; usually automatically inferred from the input type</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>RuntimeService will try to automatically handle input based on the node port type. For example, the <code>File</code> input will be retained as a path string, the <code>ColorImage</code> path will be converted into a base64 image list, and the <code>.ply</code> path of <code>XYZPoints</code> will be converted into a Atom point cloud binary.</p>
+</div>
+<div class="paragraph">
+<p>It is recommended to use <code>run_single_node_no_graph_parsed(&#8230;&#8203;)</code> first, which will keep <code>outputs</code> and key unchanged, and only parse transmission formats such as point clouds and images into structured objects:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from pathlib import Path
+from atom_sdk import SingleNodeParams
+
+result = client.runtime.run_single_node_no_graph_parsed(
+    SingleNodeParams(
+        node_name="EstimateNormal",
+        inputs={"points": Path("/data/scan.ply")},
+    )
+)
+
+clouds = result["outputs"]["points"]
+print(clouds[0].shape)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you need to see the original return from the server, use <code>run_single_node_no_graph(&#8230;&#8203;)</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SingleNodeParams
+
+raw_result = client.runtime.run_single_node_no_graph(
+    SingleNodeParams(
+        node_name="MathAddNode",
+        inputs={"a": 1.0, "b": 2.0},
+        run_params={"threshold": 0.5},
+        init_params={},
+    )
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When the node information cannot be queried automatically, you can also manually pass <code>input_data_types</code> or <code>output_data_types</code> as a clue.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_graphnodeservice_parameters"><a class="anchor" href="#_graphnodeservice_parameters"></a>GraphNodeService parameters</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>GraphNodeService</code> operates the subgraph inside graph node, so this set of parameter objects usually has one more <code>graph_node_id</code>.</p>
+</div>
+<div class="sect2">
+<h3 id="_subgraphref"><a class="anchor" href="#_subgraphref"></a><code>SubGraphRef</code></h3>
+<div class="paragraph">
+<p>Subpicture reference, used to locate "a graph node internal subpicture in a certain parent picture".</p>
+</div>
+<div class="paragraph">
+<p>Used for:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>client.graph_node.open_graph(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.graph_node.run_graph(&#8230;&#8203;)</code></p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parent image name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">node ID in  parent graph graph node</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_subgraphcreatenodeparams"><a class="anchor" href="#_subgraphcreatenodeparams"></a><code>SubGraphCreateNodeParams</code></h3>
+<div class="paragraph">
+<p>for <code>client.graph_node.create_node(&#8230;&#8203;)</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parent image name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node node ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The node class name to be created</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_createdynamicsubgraphnodeparams"><a class="anchor" href="#_createdynamicsubgraphnodeparams"></a><code>CreateDynamicSubGraphNodeParams</code></h3>
+<div class="paragraph">
+<p>for <code>client.graph_node.create_dynamic_io_node(&#8230;&#8203;)</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parent image name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node node ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The node class name to be created</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Dynamic input and output definition</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_subgraphcopynodeparams"><a class="anchor" href="#_subgraphcopynodeparams"></a><code>SubGraphCopyNodeParams</code></h3>
+<div class="paragraph">
+<p>for <code>client.graph_node.create_node_by_copy(&#8230;&#8203;)</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parent image name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node node ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">New node name after copying</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The target node to be copied ID</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_changesubgraphnodeioparams"><a class="anchor" href="#_changesubgraphnodeioparams"></a><code>ChangeSubGraphNodeIOParams</code></h3>
+<div class="paragraph">
+<p>for <code>client.graph_node.change_node_io(&#8230;&#8203;)</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parent image name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node node ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Node ID in subgraph</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Updated dynamic input and output definitions</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_subgraphnoderef"><a class="anchor" href="#_subgraphnoderef"></a><code>SubGraphNodeRef</code></h3>
+<div class="paragraph">
+<p>Node reference within the subgraph, used to locate "a node in a graph node internal subgraph".</p>
+</div>
+<div class="paragraph">
+<p>Used for:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>client.graph_node.delete_node(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.graph_node.get_node_params(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.graph_node.get_node_info_in_graph(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.graph_node.activate_node(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.graph_node.initial_node(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.graph_node.update_node(&#8230;&#8203;)</code></p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parent image name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node node ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Node ID in subgraph</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_subgraphconnectionparams"><a class="anchor" href="#_subgraphconnectionparams"></a><code>SubGraphConnectionParams</code></h3>
+<div class="paragraph">
+<p>Used for <code>client.graph_node.connect_nodes(&#8230;&#8203;)</code> and <code>client.graph_node.disconnect_nodes(&#8230;&#8203;)</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parent image name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node node ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>output_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The internal source node of the subgraph is the node that generates data.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>output_port_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Source node output port name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>input_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The target node in the subgraph is the node that receives the data</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>input_port_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Target node input port name</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SubGraphConnectionParams
+
+client.graph_node.connect_nodes(
+    SubGraphConnectionParams(
+        "demo_graph",
+        "graph_node_id",
+        "source_sub_node",
+        "image_out",
+        "target_sub_node",
+        "image_in",
+    )
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_subgraphportref"><a class="anchor" href="#_subgraphportref"></a><code>SubGraphPortRef</code></h3>
+<div class="paragraph">
+<p>Node port reference within the subgraph.</p>
+</div>
+<div class="paragraph">
+<p>Used for:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>client.graph_node.get_node_port_data(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.graph_node.get_points_data(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.graph_node.get_points_data_parsed(&#8230;&#8203;)</code></p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parent image name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node node ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Node ID in subgraph</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>port_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Port name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>io_type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">port direction, usually <code>"inputs"</code> or <code>"outputs"</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_subgraphnodeparamupdate"><a class="anchor" href="#_subgraphnodeparamupdate"></a><code>SubGraphNodeParamUpdate</code></h3>
+<div class="paragraph">
+<p>for <code>client.graph_node.set_node_param_data(&#8230;&#8203;)</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parent image name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node node ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Node ID in subgraph</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>param_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parameter name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>param_type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">parameter type, usually <code>"init_params"</code> or <code>"run_params"</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">parameter value; if it is <code>PathLike</code>, SDK will automatically upload as a file</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_subgraphbindingupdate"><a class="anchor" href="#_subgraphbindingupdate"></a><code>SubGraphBindingUpdate</code></h3>
+<div class="paragraph">
+<p>for <code>client.graph_node.set_binding_name(&#8230;&#8203;)</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parent image name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node node ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Node ID in subgraph</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>binding_type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Binding type</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>origin_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Original port name or parameter name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>binding_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">New binding name; passing an empty string usually means canceling the binding</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_editsubgraphnameparams"><a class="anchor" href="#_editsubgraphnameparams"></a><code>EditSubGraphNameParams</code></h3>
+<div class="paragraph">
+<p>for <code>client.graph_node.edit_graph_name(&#8230;&#8203;)</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parent image name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node node ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>new_sub_graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Modified sub-picture name</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_exportsubgraphparams"><a class="anchor" href="#_exportsubgraphparams"></a><code>ExportSubGraphParams</code></h3>
+<div class="paragraph">
+<p>for <code>client.graph_node.export_graph(&#8230;&#8203;)</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parent image name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node node ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dl_models_info</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Optional, model information that needs to be packaged</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>custom_nodes</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Optional, custom node information that needs to be packaged</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_setsubgraphascustomsubgraphparams"><a class="anchor" href="#_setsubgraphascustomsubgraphparams"></a><code>SetSubgraphAsCustomSubgraphParams</code></h3>
+<div class="paragraph">
+<p>for <code>client.graph_node.set_subgraph_as_custom_subgraph(&#8230;&#8203;)</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parent image name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node node ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>custom_subgraph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Exported custom subgraph template name</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_editsubgraphnodecommentparams"><a class="anchor" href="#_editsubgraphnodecommentparams"></a><code>EditSubGraphNodeCommentParams</code></h3>
+<div class="paragraph">
+<p>for <code>client.graph_node.edit_node_comment(&#8230;&#8203;)</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parent image name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node node ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Node ID in subgraph</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>comment</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">New note content</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_runtimeservice_parameters"><a class="anchor" href="#_runtimeservice_parameters"></a>RuntimeService parameters</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_runtimeparamsupdate"><a class="anchor" href="#_runtimeparamsupdate"></a><code>RuntimeParamsUpdate</code></h3>
+<div class="paragraph">
+<p>Used for <code>client.runtime.set_shared_params(&#8230;&#8203;)</code> and <code>client.runtime.set_run_params(&#8230;&#8203;)</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Picture name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>params_data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">to bind the parameter dictionary named key</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import RuntimeParamsUpdate
+
+client.runtime.set_run_params(
+    RuntimeParamsUpdate("demo_graph", {"threshold": 0.5})
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_rungraph_two_input_modes"><a class="anchor" href="#_rungraph_two_input_modes"></a>RunGraph Two input modes</h3>
+<div class="paragraph">
+<p><code>RuntimeRunParams</code> is divided into two modes according to the configuration of <code>EpicProInput</code> in the picture. The input structures of the two modes are different and cannot be mixed:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 42.8571%;">
+<col style="width: 28.5715%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Mode</th>
+<th class="tableblock halign-left valign-top"><code>run_mode</code></th>
+<th class="tableblock halign-left valign-top">What should be transmitted</th>
+<th class="tableblock halign-left valign-top">Suitable for the scenario</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Normal mode</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"others"</code> or do not pass</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">One or more <code>RuntimeFrame</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The image is run as a normal image + point cloud input</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Passive binocular mode</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"passive_bino"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">a <code>RuntimePassiveBinoFrame</code>, it is recommended to use <code>RuntimeRunParams.passive_bino_from_file(&#8230;&#8203;)</code> or <code>passive_bino_from_images(&#8230;&#8203;)</code> construct</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The <code>EpicProInput</code> in the picture is configured as <code>passive_bino</code>, and the input is a copy of EPICRAW3</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Normal mode passes an encoded copy of EPICRAW and <code>cam2_base</code>, which can also be generated by SDK from images, point clouds and camera parameters. Passive binocular mode only passes EPICRAW3 and <code>cam2_base</code>; the three images, internal parameters, distortion and <code>passive_bino_params</code> will be parsed from EPICRAW3.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_runtimeframe"><a class="anchor" href="#_runtimeframe"></a><code>RuntimeFrame</code></h3>
+<div class="paragraph">
+<p>Single frame input at runtime in normal mode, only used when <code>run_mode="others"</code> or <code>run_mode</code> is omitted. Please use the three factory entrances:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>RuntimeFrame.from_file(&#8230;&#8203;)</code>: Read the existing EPICRAW file.</p>
+</li>
+<li>
+<p><code>RuntimeFrame.from_bytes(&#8230;&#8203;)</code>: Receive existing EPICRAW bytes.</p>
+</li>
+<li>
+<p><code>RuntimeFrame.from_data(&#8230;&#8203;)</code>: Generates EPICRAW from NumPy images, point clouds, and camera parameters.</p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>epicraw</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Full EPICRAW raw bytes, or object convertible by <code>bytes()</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cam2_base</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Camera to base coordinate system transformation, rotation vector form, <code>[x, y, z, rx, ry, rz]</code> with length 6 (translation + Rodrigues rotation vector); the server currently only supports this form, and does not support matrices</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>roi</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Region of interest, optional. Among them <code>cam2ROIFrame</code> also only supports rotation vector form with length 6</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>from_data(&#8230;&#8203;)</code> automatically selects EPICRAW2 when it only has normal <code>intrinsic</code> / <code>distortion</code>; EPICRAW3 is automatically selected when <code>camera_params</code> contains extended parameters such as <code>TextureSrc</code>, <code>DepthSrc1</code> or <code>DepthSrc2</code>. Explicitly passing <code>version=2</code> or <code>version=3</code> can override the automatic selection. Normal mode&#8217;s EPICRAW3 standard layout contains only <code>Depth + TextureBGR</code>; Depth is generated from point cloud Z values ​​and does not contain the full PointCloud.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import numpy as np
+from atom_sdk import RuntimeFrame
+
+image = np.zeros((2, 3, 3), dtype=np.uint8)
+points = np.zeros((2, 3, 3), dtype=np.float32)
+points[:, :, 2] = 1.0
+
+frame = RuntimeFrame.from_data(
+    points=points,
+    image=image,
+    intrinsic=[[600.0, 0.0, 320.0], [0.0, 600.0, 240.0], [0.0, 0.0, 1.0]],
+    distortion=[0.0, 0.0, 0.0, 0.0, 0.0],
+    cam2_base=[0.0, 0.0, 0.5, 0.0, 0.0, 0.0],  # Rotate vector form:[x, y, z, rx, ry, rz]
+    roi={"min": {"x": -0.5, "y": -0.5, "z": 0.1}, "max": {"x": 0.5, "y": 0.5, "z": 2.0}},
+    camera_params={
+        "TextureSrc": {
+            "CameraMatrix": [600.0, 0.0, 320.0, 0.0, 600.0, 240.0, 0.0, 0.0, 1.0],
+            "CameraDistortion": [0.0, 0.0, 0.0, 0.0, 0.0],
+            "CameraRotation": [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0],
+            "CameraTranslation": [0.0, 0.0, 0.0],
+        }
+    },
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_runtimepassivebinoframe"><a class="anchor" href="#_runtimepassivebinoframe"></a><code>RuntimePassiveBinoFrame</code></h3>
+<div class="paragraph">
+<p>Single frame input in passive binocular mode, only for <code>run_mode="passive_bino"</code>. The server will parse the three images, internal parameters, distortion and <code>passive_bino_params</code> from EPICRAW3; SDK will only pass <code>cam2_base</code> additionally.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>epicraw3</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Full EPICRAW3 raw bytes, or object convertible by <code>bytes()</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cam2_base</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Camera to base coordinate system transformation, rotation vector form, <code>[x, y, z, rx, ry, rz]</code> with length 6 (translation + Rodrigues rotation vector); the server currently only supports this form, and does not support matrices</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import RuntimePassiveBinoFrame
+
+frame = RuntimePassiveBinoFrame.from_file(
+    "/data/passive_bino.epicraw",
+    cam2_base=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>It can also be constructed from an existing bytes or three pictures:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">frame = RuntimePassiveBinoFrame.from_bytes(
+    epicraw3_bytes,
+    cam2_base=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+)
+
+camera_params = {
+    "CameraMatrix": [2113.997971632298, 0.0, 1956.222038925553, 0.0, 2113.7299751270057, 1505.0473199581195, 0.0, 0.0, 1.0],
+    "CameraDistortion": [0.049901632334, -0.037810281265, -0.00048319461, -0.000276258172, -0.026886293015],
+    "CameraRotation": [0.9995132330503337, -0.005059159488191983, -0.030784766728731865, 0.004951704878090689, 0.9999813828533568, -0.003565748937897527, 0.030802233296787017, 0.003411576169582241, 0.999519676430619],
+    "CameraTranslation": [-25.837377992238334, -0.6852264771262435, -4.372034519324568],
+}
+
+frame = RuntimePassiveBinoFrame.from_images(
+    image_list=[depth_src1, depth_src2, texture_bgr],
+    params={
+        "DepthSrc1": camera_params,
+        "DepthSrc2": camera_params,
+        "TextureSrc": camera_params,
+    },
+    cam2_base=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_runtimerunparams"><a class="anchor" href="#_runtimerunparams"></a><code>RuntimeRunParams</code></h3>
+<div class="paragraph">
+<p>for <code>client.runtime.run_graph(&#8230;&#8203;)</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Picture name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>frames</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>list[RuntimeFrame]</code> or <code>list[RuntimePassiveBinoFrame]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Input frame list</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>run_mode</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">default <code>"others"</code>; passive binocular transmission <code>"passive_bino"</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>RuntimeRunParams</code> checks the element type of <code>frames</code>. Normal mode must pass <code>RuntimeFrame</code>; <code>passive_bino</code> mode must pass only one <code>RuntimePassiveBinoFrame</code>. If ordinary <code>dict</code> is passed, <code>TypeError</code> will be thrown directly, so that parameter format errors can be discovered as early as possible.</p>
+</div>
+<div class="paragraph">
+<p>Normal mode example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import RuntimeRunParams
+
+result = client.runtime.run_graph(
+    RuntimeRunParams("demo_graph", frames=[frame])
+)
+print("Request status:", result["status"])</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>passive_bino</code> recommends using factory methods to avoid forgetting <code>run_mode</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">params = RuntimeRunParams.passive_bino_from_file(
+    "demo_graph",
+    "/data/passive_bino.epicraw",
+    cam2_base=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+)
+
+params = RuntimeRunParams.passive_bino_from_images(
+    "demo_graph",
+    image_list=[depth_src1, depth_src2, texture_bgr],
+    params=passive_bino_params,
+    cam2_base=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>passive_bino_from_image(&#8230;&#8203;)</code> is a compatibility alias of
+<code>passive_bino_from_images(&#8230;&#8203;)</code> with the same parameters and return value. New code should
+prefer the plural form.</p>
+</div>
+<div class="paragraph">
+<p>Do not use ordinary <code>RuntimeFrame</code> for passive binocular mode; please use <code>RuntimePassiveBinoFrame</code> or <code>RuntimeRunParams.passive_bino_*</code> factory entry.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_bindingref"><a class="anchor" href="#_bindingref"></a><code>BindingRef</code></h3>
+<div class="paragraph">
+<p>Output binding references at runtime.</p>
+</div>
+<div class="paragraph">
+<p>Used for:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>client.runtime.get_binded_output_value(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.runtime.get_binded_point_cloud(&#8230;&#8203;)</code></p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Picture name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>binding_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Output binding name</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_pointcloudref"><a class="anchor" href="#_pointcloudref"></a><code>PointCloudRef</code></h3>
+<div class="paragraph">
+<p>Runtime point cloud output binding reference.</p>
+</div>
+<div class="paragraph">
+<p>for <code>client.runtime.get_binded_point_cloud_parsed(&#8230;&#8203;)</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Picture name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>binding_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Output binding name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>point_dim</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Dimensions of each point, common values are <code>3</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The runtime point cloud response header does not necessarily contain the dimensions of each point. When you want to get the two-dimensional point table directly, it is recommended to pass <code>point_dim=3</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import PointCloudRef
+
+clouds = client.runtime.get_binded_point_cloud_parsed(
+    PointCloudRef("demo_graph", "cloud_output", point_dim=3)
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_runtimebindingdataupdate"><a class="anchor" href="#_runtimebindingdataupdate"></a><code>RuntimeBindingDataUpdate</code></h3>
+<div class="paragraph">
+<p>for <code>client.runtime.set_graph_binding_data(&#8230;&#8203;)</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Picture name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>binding_data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">to the binding data dictionary with the binding name key</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_runtimestrategyparamsupdate"><a class="anchor" href="#_runtimestrategyparamsupdate"></a><code>RuntimeStrategyParamsUpdate</code></h3>
+<div class="paragraph">
+<p>for <code>client.runtime.set_params_in_strategy(&#8230;&#8203;)</code>.</p>
+</div>
+<div class="paragraph">
+<p>Currently only available for <code>PoseListFilter</code>, <code>PickPointFilter</code>, <code>PoseListSorterInXOY</code>,
+There are 6 types of nodes: <code>PickPointSorterInXOY</code>, <code>PickPointSorterNew</code>, <code>PoseListSorter</code>.</p>
+</div>
+<div class="paragraph">
+<p><code>params_data</code> generally starts from <code>client.runtime.get_node_params_info_with_strategy(&#8230;&#8203;)</code>
+Take out <code>paramsData</code> in the return value, modify the fields that need to be updated and then return them as a whole.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Picture name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Node ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>params_data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The complete parameter structure modified from <code>paramsData</code> returned from the server</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_fileparamref"><a class="anchor" href="#_fileparamref"></a><code>FileParamRef</code></h3>
+<div class="paragraph">
+<p>for <code>client.runtime.get_file_param_md5(&#8230;&#8203;)</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Picture name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>param_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parameter binding name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>param_type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">parameter type, default <code>"init_params"</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_the_most_common_place_to_make_mistakes"><a class="anchor" href="#_the_most_common_place_to_make_mistakes"></a>The most common place to make mistakes</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_connection_direction"><a class="anchor" href="#_connection_direction"></a>Connection direction</h3>
+<div class="paragraph">
+<p>The main and sub-picture connections follow the same direction:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">output_node.output_port -&gt; input_node.input_port</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>That is to say:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>output_node_id</code> / <code>output_port_name</code> is the data source</p>
+</li>
+<li>
+<p><code>input_node_id</code> / <code>input_port_name</code> is the data receiver</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_do_not_mix_main_graph_nodes_and_subgraph_nodes"><a class="anchor" href="#_do_not_mix_main_graph_nodes_and_subgraph_nodes"></a>Do not mix main graph nodes and subgraph nodes</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Main picture parameter object</th>
+<th class="tableblock halign-left valign-top">Subpicture parameter object</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeRef</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SubGraphNodeRef</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeConnectionParams</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SubGraphConnectionParams</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>PortRef</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SubGraphPortRef</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeParamUpdate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SubGraphNodeParamUpdate</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeBindingUpdate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SubGraphBindingUpdate</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>If the method entry is <code>client.graph_node</code>, the <code>SubGraph*</code> parameter object is usually used.</p>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="overview.html">Python Overview and Installation</a></span>
+  <span class="next"><a href="public_api.html">Python Public Utility API</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

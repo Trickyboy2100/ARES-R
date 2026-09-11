@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Camera Discovery and Connection :: Epic Eye SDK Developer Guide</title>
+    <link rel="prev" href="../get-started/examples.html">
+    <link rel="next" href="capture.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+         <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" /> 
+         <span class="navbar-title">Online Product Documentation</span>
+      </a>
+
+      
+
+
+    </div>
+
+      <div id="topbar-nav" class="navbar-menu">
+        <div class="navbar-end">
+
+          
+            <div class="navbar-item search hide-for-print">
+              <div id="search-field" class="field has-filter">
+                <input id="search-input" type="text" placeholder="Enter keywords to search" >
+                <label class="filter checkbox">
+                  <input type="checkbox" data-facet-filter="component:epic-eye-sdk">Only this manual
+                </label>
+              </div>
+            </div>
+          
+          <button class="navbar-burger" data-target="topbar-nav">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Switch Manual</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Epic Eye SDK Developer Guide</a>
+          </div>
+        </div>
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">Download Center</a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">Official Website</a>
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+            <a class="navbar-link" href="#"><span class="globe-icon">🌐</span>English</a>
+            <div class="navbar-dropdown">
+                <a class="navbar-item" href="http://docs.qianyi.ai/zh/index.html">简体中文</a>
+                <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+                <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+            </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-logo {
+  height: 32px;
+  margin-right: 8px;
+}
+
+.navbar-title {
+  font-size: 18px;
+  color: #333;
+}
+
+.globe-icon {
+  margin-right: 5px;
+}
+
+.navbar-item {
+  color: #000 !important;
+}
+
+.navbar-item:hover {
+  background-color: #3273dc !important;
+  color: #fff !important;
+}
+
+.navbar-item a {
+  color: #000 !important;
+}
+
+.navbar-item a:hover {
+  color: #fff !important;
+}
+
+.navbar-dropdown .navbar-item {
+  color: #000 !important;
+}
+
+.navbar-dropdown .navbar-item:hover {
+  background-color: #3273dc !important;
+  color: #fff !important;
+}
+
+.navbar-link:hover {
+  background-color: #3273dc !important;
+  color: #fff !important;
+}
+
+.navbar-link a {
+  color: #000 !important;
+}
+
+.navbar-link a:hover {
+  color: #fff !important;
+}
+
+.language-selector .navbar-link {
+  display: flex;
+  align-items: center;
+  color: #000 !important;
+}
+
+.navbar-link {
+  color: #000 !important;
+}
+
+/* 添加这个新规则，使下拉菜单激活时保持链接的蓝色背景 */
+.navbar-item.has-dropdown.is-active .navbar-link,
+.navbar-item.has-dropdown:focus .navbar-link,
+.navbar-item.has-dropdown:focus-within .navbar-link {
+  background-color: #3273dc !important;
+  color: #fff !important;
+}
+
+/* 添加这个规则，确保鼠标悬停在下拉菜单项上时父级链接保持蓝色背景 */
+.navbar-item.has-dropdown:hover .navbar-link {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* 添加这个特定的样式规则，确保搜索框区域在悬停时背景不变 */
+.navbar-item.search.hide-for-print:hover {
+  background-color: transparent !important;  /* 使背景透明，保持原来的背景色 */
+}
+
+/* 确保搜索框内的输入框在悬停时也不改变背景 */
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input {
+  background-color: inherit !important;
+}
+</style> 
+<div class="body">
+<div class="nav-container" data-component="epic-eye-sdk" data-version="4.0.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Epic Eye SDK Developer Guide</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Welcome</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Quick Start</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">Quick Start</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/examples.html">Examples</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">User Guide</span>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="discovery.html">Camera Discovery and Connection</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="capture.html">Shooting and EpicRaw Decoding</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="config.html">Camera Configuration &amp; Parameters</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="intrinsic-calibration.html">Quoted</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="hand-eye-calibration.html">Hand-eye-marked.</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="line-scan.html">Wire-sweeping</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="stream2d.html">Stream2D Live video</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API References</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">C# — Overview and integration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/device.html">C# — Devices and Networks</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/capture.html">C# — Photography and data acquisition</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/epicraw.html">C# — EpicRaw Parsing</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/camera-config.html">C# — Camera Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/intrinsics.html">C# — Internal participation in deformation LUT</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/intrinsic-calibration.html">C# — Quoted</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/hand-eye-calibration.html">C# — Hand-eye-marked.</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/line-scan.html">C# — Wire sweep</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/stream2d.html">C# — Stream2D</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/alignment.html">C# — Texture Alignment</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/data-models.html">C# — Data type and field</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python — Overview and installation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">Python — Request to run configuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/device.html">Python — Devices and Networks</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/capture.html">Python — Photography and data acquisition</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/epicraw.html">Python — EpicRaw Parsing</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/camera-config.html">Python — Camera Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/intrinsics.html">Python — Internal participation in deformation LUT</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/intrinsic-calibration.html">Python — Quoted</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/hand-eye-calibration.html">Python — Hand-eye-marked.</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/line-scan.html">Python — Wire sweep</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/stream2d.html">Python — Stream2D</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/alignment.html">Python — Texture Alignment</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/data-models.html">Python — Data type and field</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">C++ — Overview and integration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/device.html">C++ — Devices and Networks</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/capture.html">C++ — Photography and data acquisition</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/epicraw.html">C++ — EpicRaw Parsing</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/camera-config.html">C++ — Camera Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/intrinsics.html">C++ — Internal participation in deformation LUT</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/intrinsic-calibration.html">C++ — Quoted</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/hand-eye-calibration.html">C++ — Hand-eye-marked.</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/line-scan.html">C++ — Wire sweep</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/stream2d.html">C++ — Stream2D</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/alignment.html">C++ — Texture Alignment and Completion</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/data-models.html">C++ — Data type and field</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Epic Eye SDK Developer Guide</span>
+    <span class="version">4.0.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Epic Eye SDK Developer Guide</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">4.0.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Epic Eye SDK Developer Guide</a></li>
+    <li>User Guide</li>
+    <li><a href="discovery.html">Camera Discovery and Connection</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Content"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside><article class="doc">
+<h1 class="page">Camera Discovery and Connection</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This page describes the camera search, continuous discovery and connection confirmation.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_camera_address_format"><a class="anchor" href="#_camera_address_format"></a>Camera Address Format</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Online APIs that access a camera generally use the camera address as the first <code>ip</code> parameter, for example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>127.0.0.1:5000
+10.10.11.35:5000</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_search_for_cameras"><a class="anchor" href="#_search_for_cameras"></a>Search for Cameras</h2>
+<div class="sectionbody">
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="title">Search result</div>
+<div class="paragraph">
+<p><code>SearchCamera()</code>, <code>search_camera()</code>, and <code>searchCamera()</code> search the current network and return the cameras found in that search.</p>
+</div>
+<div class="paragraph">
+<p>The search may take several seconds.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Each result includes the camera address, serial number, model, and alias.</p>
+</div>
+<div class="sect2">
+<h3 id="_python"><a class="anchor" href="#_python"></a>Python</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import epiceye
+
+cameras = epiceye.search_camera()
+if not cameras:
+    raise SystemExit("No camera was searched")
+
+ip = cameras[0]["ip"]
+print("Use camera:", ip)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_c"><a class="anchor" href="#_c"></a>C++</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "epiceye.h"
+using namespace TFTech;
+
+std::vector&lt;EpicEyeInfo&gt; cameras;
+if (EpicEye::searchCamera(cameras) &amp;&amp; !cameras.empty()) {
+    std::string ip = cameras[0].IP;
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_c_2"><a class="anchor" href="#_c_2"></a>C#</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using TFTech;
+
+var cameras = EpicEye.SearchCamera();
+string ip = cameras[0].IP;</code></pre>
+</div>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="title">Can&#8217;t find the camera?</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Confirming that computers are in the same section as cameras;</p>
+</li>
+<li>
+<p>Check if the firewall&#8217;s stopped. UDP Broadcasting (discovery of reliance on broadcasting);</p>
+</li>
+<li>
+<p>Known IP Use it directly. <code>ip</code>, Skip the search.</p>
+</li>
+</ol>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_continuous_discovery"><a class="anchor" href="#_continuous_discovery"></a>Continuous Discovery</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Continuous discovery maintains an up-to-date camera list while the application is running:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>C#</strong>: subscribe to <code>DiscoveredCamerasChanged</code>, start or stop discovery with <code>StartDiscovery()</code> / <code>StopDiscovery()</code>, and read the list with <code>GetDiscoveredCameras()</code>.</p>
+</li>
+<li>
+<p><strong>C++</strong>: register a callback with <code>setDiscoveryCallback()</code>, start or stop discovery with <code>startDiscovery()</code> / <code>stopDiscovery()</code>, and read the list with <code>getDiscoveredCameras()</code>.</p>
+</li>
+<li>
+<p><strong>Python</strong>: register a callback with <code>set_discovery_callback()</code>, start or stop discovery with <code>start_discovery()</code> / <code>stop_discovery()</code>, and read the list with <code>get_discovered_cameras()</code>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>When the event or callback runs, call the corresponding list method to read the latest camera list.</p>
+</div>
+<div class="sect2">
+<h3 id="_python_2"><a class="anchor" href="#_python_2"></a>Python</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import epiceye
+
+def on_changed() -&gt; None:
+    print(epiceye.get_discovered_cameras())
+
+epiceye.set_discovery_callback(on_changed)
+epiceye.start_discovery()
+# Apply exit:epiceye.stop_discovery()</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_c_3"><a class="anchor" href="#_c_3"></a>C++</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">EpicEye::setDiscoveryCallback([] {
+    std::vector&lt;EpicEyeInfo&gt; cameras;
+    EpicEye::getDiscoveredCameras(cameras);
+});
+EpicEye::startDiscovery();
+// Apply exit:EpicEye::stopDiscovery();</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_c_4"><a class="anchor" href="#_c_4"></a>C#</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">EpicEye.DiscoveredCamerasChanged += () =&gt;
+    Console.WriteLine(EpicEye.GetDiscoveredCameras().Count);
+EpicEye.StartDiscovery();
+// Apply exit:EpicEye.StopDiscovery();</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Continuous detection of life cycle</div>
+<div class="paragraph">
+<p>Register the event or callback before starting discovery. Read the current list when needed, and stop discovery before the application exits.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_use_a_known_address"><a class="anchor" href="#_use_a_known_address"></a>Use a Known Address</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When the camera address is known, pass it directly as <code>ip</code>; camera discovery is not required.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_confirm_connection"><a class="anchor" href="#_confirm_connection"></a>Confirm Connection</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Read basic information to confirm the camera address and service connection.</p>
+</div>
+<div class="sect2">
+<h3 id="_python_3"><a class="anchor" href="#_python_3"></a>Python</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">info = epiceye.get_info("127.0.0.1:5000")
+print(info)   # None Could not close temporary folder: %s</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_c_5"><a class="anchor" href="#_c_5"></a>C++</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">EpicEyeInfo info;
+if (!EpicEye::getInfo("127.0.0.1:5000", info)) {
+    // Connection failed
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_c_6"><a class="anchor" href="#_c_6"></a>C#</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var info = EpicEye.GetInfo("127.0.0.1:5000");
+Console.WriteLine(info.Data?.SN);</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="../get-started/examples.html">Examples</a></span>
+  <span class="next"><a href="capture.html">Shooting and EpicRaw Decoding</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

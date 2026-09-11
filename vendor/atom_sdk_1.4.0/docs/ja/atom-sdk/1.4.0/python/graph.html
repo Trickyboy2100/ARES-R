@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>GraphService（Python） :: Atom SDK 開発者ガイド</title>
+    <link rel="prev" href="public_api.html">
+    <link rel="next" href="node.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          オンライン製品ドキュメント
+                  </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="ドキュメントを検索"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              このマニュアルのみ
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            マニュアルを切り替え
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK 開発者ガイド</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          ダウンロードセンター
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          公式サイト
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            日本語
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK 開発者ガイド</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">ようこそ</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">クイックスタート</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">クイックスタート</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">サンプルサンプル</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">入門利用</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK 入門利用</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">ユーザーガイド</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">適切な Service を選択します</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">グラフとノードの操作</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">エラー処理とトラブルシューティング</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">よくある質問</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">基本的な概念</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/what-is-atom-sdk.html">Atom SDK とは</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-node-subgraph.html">グラフ、ノード、サブグラフ</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-vs-runtime.html">Graph と Runtime の違い</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/timestamp.html">Timestampとは何ですか</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/runtime-frame.html">ランタイム入力フレーム (RuntimeFrame / RuntimePassiveBinoFrame)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/point-cloud-protocol.html">点群タイプの入出力用のバイナリ プロトコル</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/param-binding.html">パラメータのタイプとバインディング名</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API リファレンス</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API リファレンスの概要</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="overview.html">Python の概要とインストール</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="params.html">Python パラメータ オブジェクト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="public_api.html">Python パブリック ユーティリティ API</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ バージョン — ユーザーガイド</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ パラメータ オブジェクト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">Atom SDK — C# バージョン</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/params.html">C# パラメータオブジェクト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK 開発者ガイド</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK 開発者ガイド</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK 開発者ガイド</a></li>
+    <li>API リファレンス</li>
+    <li>Python SDK</li>
+    <li><a href="graph.html">GraphService（Python）</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="このページの内容"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">GraphService（Python）</h1>
+<div class="sect1">
+<h2 id="_新しいパラメータ形式"><a class="anchor" href="#_新しいパラメータ形式"></a>新しいパラメータ形式</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Python SDK 次に、複雑な入力パラメータをパラメータ オブジェクトにラップします。この利点は、フィールド名が明確であり、複数の文字列パラメーターを逆方向に渡すのが簡単ではないことです。
+フィールドの完全な説明については、<a href="params.html" class="xref page">Python 参数对象</a> を参照してください。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import (
+    CopyGraphParams,
+    CreateGraphParams,
+    ExportGraphParams,
+    ImportExtensionNodesByPathParams,
+    LoadGraphParams,
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>パラメーター オブジェクトが必要なのは、パラメーターが多く、エラーが発生しやすいメソッドのみです。単純なメソッドでは <code>graph_name: str</code> を直接渡します。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">メソッド</th>
+<th class="tableblock halign-left valign-top">入力パラメータの形式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>create_graph</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CreateGraphParams(graph_name, description=None)</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>copy_graph</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CopyGraphParams(graph_name, new_graph_name)</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>load_graph</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>LoadGraphParams(graph_name, file_path)</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>import_extension_nodes_by_path</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>ImportExtensionNodesByPathParams(extension_nodes)</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>export_graph</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>ExportGraphParams(graph_name, dl_models_info=None, custom_nodes=None)</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>edit_graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>EditGraphNameParams(graph_name, new_graph_name)</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>edit_graph_comment</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>EditGraphCommentParams(graph_name, comment)</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>delete_graph</code> / <code>open_graph</code> / <code>release_graph</code> / <code>run_graph</code> / <code>clear_graph</code> / <code>get_timestamp</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>直接転送 <code>graph_name</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>get_graph_dl_nodes_model_info</code> / <code>get_graph_custom_nodes</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>直接転送 <code>graph_name</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>get_graph_workcell_models_info</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>直接転送 <code>graph_name</code>、オプションの <code>graph_node_id=</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>get_graph_json_data</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>直接転送 <code>graph_name</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>list_graphs</code> / <code>get_all_custom_subgraphs_no_thumbnail</code> / <code>get_all_nodes_info</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>にはパラメーターは必要ありません</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_推奨される呼び出し順序"><a class="anchor" href="#_推奨される呼び出し順序"></a>推奨される呼び出し順序</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">create_graph / list_graphs
+        |
+    open_graph          &lt;- SDK 自動キャッシュ timestamp
+        |
+   ノードの編集             &lt;- 参照してください NodeService
+        |
+    run_graph           &lt;- SDK 自動キャリー timestamp
+        |
+  release_graph / delete_graph</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_インターフェースの詳細説明"><a class="anchor" href="#_インターフェースの詳細説明"></a>インターフェースの詳細説明</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_create_graphparams"><a class="anchor" href="#_create_graphparams"></a><code>create_graph(params)</code></h3>
+<div class="paragraph">
+<p>新しい画像を作成します。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ オブジェクト</strong>:<br>
+<code>CreateGraphParams</code></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>新しいピクチャ名、サーバー上でグローバルに一意</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>description</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str | None</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>オプション、画像メモ</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>戻り値</strong>: <code>dict[str, Any]</code>、通常はグラフ構造と <code>timestamp</code> が含まれます。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import CreateGraphParams
+
+result = client.graph.create_graph(
+    CreateGraphParams("my_graph", description="検出プロセスの主要な図")
+)
+print("正常に作成されました，status：", result["status"])</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_list_graphs"><a class="anchor" href="#_list_graphs"></a><code>list_graphs()</code></h3>
+<div class="paragraph">
+<p>サーバー上のすべてのメインイメージの概要情報のリストを取得します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">graphs = client.graph.list_graphs()
+for graph in graphs:
+    print(graph.get("graphName"), graph.get("updateTime"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_copy_graphparams"><a class="anchor" href="#_copy_graphparams"></a><code>copy_graph(params)</code></h3>
+<div class="paragraph">
+<p>既存のイメージをコピーします。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ オブジェクト</strong>:<br>
+<code>CopyGraphParams</code></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ソースイメージ名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>new_graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>コピー後の新しいイメージの名前</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import CopyGraphParams
+
+result = client.graph.copy_graph(
+    CopyGraphParams("my_graph", "my_graph_backup")
+)
+print("正常にコピーされました：", result)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_delete_graphgraph_name"><a class="anchor" href="#_delete_graphgraph_name"></a><code>delete_graph(graph_name)</code></h3>
+<div class="paragraph">
+<p>画像を削除し、ローカルの timestamp キャッシュをクリアします。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">client.graph.delete_graph("my_graph")</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>削除は元に戻せません。電話をかける前に、この写真が不要であることを確認してください。</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_all_nodes_info"><a class="anchor" href="#_get_all_nodes_info"></a><code>get_all_nodes_info()</code></h3>
+<div class="paragraph">
+<p>現在サーバーに登録されているすべてのノード定義を取得します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">nodes_info = client.graph.get_all_nodes_info()
+for node_type, info in nodes_info.items():
+    print(node_type, info.get("description", ""))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_all_custom_subgraphs_no_thumbnail"><a class="anchor" href="#_get_all_custom_subgraphs_no_thumbnail"></a><code>get_all_custom_subgraphs_no_thumbnail()</code></h3>
+<div class="paragraph">
+<p>すべてのカスタム スプライト テンプレートの概要を取得します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">subgraphs = client.graph.get_all_custom_subgraphs_no_thumbnail()
+for item in subgraphs:
+    print(item.get("graphName"), item.get("isCustomSubgraph"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_graph_dl_nodes_model_infograph_name"><a class="anchor" href="#_get_graph_dl_nodes_model_infograph_name"></a><code>get_graph_dl_nodes_model_info(graph_name)</code></h3>
+<div class="paragraph">
+<p>グラフをエクスポートするときにパッケージ化する必要がある深層学習モデルの情報を取得します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">models = client.graph.get_graph_dl_nodes_model_info("my_graph")
+print(models)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_graph_custom_nodesgraph_name"><a class="anchor" href="#_get_graph_custom_nodesgraph_name"></a><code>get_graph_custom_nodes(graph_name)</code></h3>
+<div class="paragraph">
+<p>グラフで使用されるカスタム ノード情報を取得します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">custom_nodes = client.graph.get_graph_custom_nodes("my_graph")
+print(custom_nodes)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_graph_workcell_models_infograph_name_graph_node_idnone"><a class="anchor" href="#_get_graph_workcell_models_infograph_name_graph_node_idnone"></a><code>get_graph_workcell_models_info(graph_name, *, graph_node_id=None)</code></h3>
+<div class="paragraph">
+<p>graph node に関連付けられたグラフまたは workcell モデル情報を取得します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">workcells = client.graph.get_graph_workcell_models_info("my_graph", graph_node_id="graph_node_id")
+print(workcells)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_graph_bindingsgraph_name"><a class="anchor" href="#_get_graph_bindingsgraph_name"></a><code>get_graph_bindings(graph_name)</code></h3>
+<div class="paragraph">
+<p>グラフに現在設定されているすべてのバインディング名を取得します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">bindings = client.graph.get_graph_bindings("my_graph")
+print("出力バインディング：", bindings.get("outputs"))</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>戻り値は通常、<code>inputs</code>、<code>outputs</code>、<code>init_params</code>、<code>run_params</code> でグループ化されます。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_load_graphparams"><a class="anchor" href="#_load_graphparams"></a><code>load_graph(params)</code></h3>
+<div class="paragraph">
+<p>このマップ ファイル (<code>.atom</code> 形式) を Atom プラットフォームにアップロードしてインポートし、使用可能なマップを取得します。
+インポートする前に、SDK はまず現在のグラフ リストを読み取ります。 <code>graph_name</code> がすでに存在する場合はスローされます
+<code>ValueError</code>、<code>/Graph/LoadGraph</code> は呼び出されず、既存のピクチャは上書きされません。新しい画像名を使用するか、既存の画像を削除して再試行する必要があります。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ オブジェクト</strong>:<br>
+<code>LoadGraphParams</code></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>インポート後にサーバーで使用されるグラフの名前</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>file_path</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str | pathlib.Path</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ローカル マップ ファイルのパス</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from pathlib import Path
+from atom_sdk import LoadGraphParams
+
+result = client.graph.load_graph(
+    LoadGraphParams("imported_graph", Path("/backup/my_graph.atom"))
+)
+print("リクエストステータス：", result["status"])
+print("インポートの進行状況：", result.get("percent"))</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>インポートされた <code>.atom</code> パッケージに拡張ノード ファイルが含まれている場合、<code>load_graph</code> の戻り値には <code>extensionNodes</code> が含まれます。拡張ノードをインポートするときにこのフィールドを渡すだけです。 <code>load_graph</code> 戻り値全体をサーバーに渡さないでください。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import ImportExtensionNodesByPathParams
+
+extension_nodes = result.get("extensionNodes") or {}
+if extension_nodes:
+    import_result = client.graph.import_extension_nodes_by_path(
+        ImportExtensionNodesByPathParams(extension_nodes)
+    )
+    print(import_result)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_import_extension_nodes_by_pathparams"><a class="anchor" href="#_import_extension_nodes_by_pathparams"></a><code>import_extension_nodes_by_path(params)</code></h3>
+<div class="paragraph">
+<p><code>load_graph(&#8230;&#8203;)</code> 戻り値の <code>extensionNodes</code> フィールドで記述された拡張ノード ファイルをインポートします。
+このインターフェイスは拡張ノード マッピングのみを受け取ります。<code>load_graph</code> 戻り値全体を直接渡さないでください。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ オブジェクト</strong>:<br>
+<code>ImportExtensionNodesByPathParams</code></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>extension_nodes</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>dict[str, Any]</code>
+戻り値の</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>load_graph(&#8230;&#8203;)</code> <code>extensionNodes</code> には、サーバーが拡張ノードをインポートするために必要な情報が含まれています</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>戻り値</strong>: <code>dict[str, Any]</code>、通常はリクエストのステータスが含まれます。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import ImportExtensionNodesByPathParams
+
+extension_nodes = result.get("extensionNodes") or {}
+if extension_nodes:
+    result = client.graph.import_extension_nodes_by_path(
+        ImportExtensionNodesByPathParams(extension_nodes)
+    )
+    print("拡張ノードのインポートステータス：", result.get("status"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_export_graphparams"><a class="anchor" href="#_export_graphparams"></a><code>export_graph(params)</code></h3>
+<div class="paragraph">
+<p>グラフと関連モデルをエクスポートし、ノード情報を展開します。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ オブジェクト</strong>:<br>
+<code>ExportGraphParams</code></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>エクスポートするグラフの名前</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>dl_models_info</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>dict[str, Any] | None</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>一緒にパッケージ化する必要があるオプションのモデル情報</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>custom_nodes</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>dict[str, Any] | None</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>一緒にパッケージ化する必要があるオプションのカスタム ノード情報</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import ExportGraphParams
+
+result = client.graph.export_graph(ExportGraphParams("my_graph"))
+print("ダウンロードアドレス：", result.get("url"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_open_graphgraph_name"><a class="anchor" href="#_open_graphgraph_name"></a><code>open_graph(graph_name)</code></h3>
+<div class="paragraph">
+<p>メインイメージを開いて、サーバーから返された <code>timestamp</code> をキャッシュします。後でノード、接続、パラメータを編集すると、SDK には自動的にこのバージョン番号が付けられます。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">result = client.graph.open_graph("my_graph")
+print("初めて開くかどうか：", result.get("firstOpen"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_edit_graph_nameparams"><a class="anchor" href="#_edit_graph_nameparams"></a><code>edit_graph_name(params)</code></h3>
+<div class="paragraph">
+<p>画像の名前を変更します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import EditGraphNameParams
+
+client.graph.edit_graph_name(EditGraphNameParams("my_graph", "my_graph_v2"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_release_graphgraph_name"><a class="anchor" href="#_release_graphgraph_name"></a><code>release_graph(graph_name)</code></h3>
+<div class="paragraph">
+<p>メインイメージを解放し、ローカルの timestamp キャッシュをクリアします。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">client.graph.release_graph("my_graph")</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_run_graphgraph_name_timeout_seconds30"><a class="anchor" href="#_run_graphgraph_name_timeout_seconds30"></a><code>run_graph(graph_name, *, timeout_seconds=30)</code></h3>
+<div class="paragraph">
+<p>メインイメージ全体を実行し、サーバーが完了ステータスを返すかタイムアウトを待つまで内部で自動的にポーリングします。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">result = client.graph.run_graph("my_graph", timeout_seconds=120)
+print("リクエストステータス：", result["status"])
+print("完了しましたか？：", result.get("finish"))
+print("時間がかかる：", result.get("total_time"))</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>timeout_seconds=None</code> は、サーバーが完了またはエラーを返すまで待機することを意味します。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_clear_graphgraph_name"><a class="anchor" href="#_clear_graphgraph_name"></a><code>clear_graph(graph_name)</code></h3>
+<div class="paragraph">
+<p>前回の実行でグラフに残った中間データをクリアします。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">client.graph.clear_graph("my_graph")</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_edit_graph_commentparams"><a class="anchor" href="#_edit_graph_commentparams"></a><code>edit_graph_comment(params)</code></h3>
+<div class="paragraph">
+<p>図のメモを変更します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import EditGraphCommentParams
+
+client.graph.edit_graph_comment(EditGraphCommentParams("my_graph", "新しいプロセスのメモ"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_graph_json_datagraph_name"><a class="anchor" href="#_get_graph_json_datagraph_name"></a><code>get_graph_json_data(graph_name)</code></h3>
+<div class="paragraph">
+<p>グラフの元のJSON構造データを取得します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">graph_json = client.graph.get_graph_json_data("my_graph")
+print(graph_json.get("graph_data"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_timestampgraph_name"><a class="anchor" href="#_get_timestampgraph_name"></a><code>get_timestamp(graph_name)</code></h3>
+<div class="paragraph">
+<p>サーバーからグラフの最新の timestamp を取得し、それを SDK ローカル キャッシュに同期します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">result = client.graph.get_timestamp("my_graph")
+print("現在の timestamp：", result.get("timestamp"))</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>通常、手動で呼び出す必要はありませんが、ローカル キャッシュとサーバーが同期していない疑いがある場合にのみ行われます。</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_完全な例"><a class="anchor" href="#_完全な例"></a>完全な例</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import AtomClient, CreateGraphParams
+from atom_sdk.core.errors import AtomApiError
+
+client = AtomClient(base_url="http://127.0.0.1:10026")
+GRAPH_NAME = "demo_graph"
+
+try:
+    created = client.graph.create_graph(CreateGraphParams(GRAPH_NAME, description="デモ図"))
+    print("グラフ作成リクエストのステータス：", created["status"])
+    opened = client.graph.open_graph(GRAPH_NAME)
+    print("グラフノードの数：", len(opened.get("graph", {}).get("nodes", [])))
+
+    nodes_info = client.graph.get_all_nodes_info()
+    print("利用可能なノードの数：", len(nodes_info))
+
+    run_result = client.graph.run_graph(GRAPH_NAME)
+    print("実行リクエストのステータス：", run_result["status"])
+    print("実行が完了しました：", run_result.get("finish"))
+
+except AtomApiError as exc:
+    print("サーバーエラー：", exc)
+
+finally:
+    client.graph.release_graph(GRAPH_NAME)</code></pre>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="public_api.html">Python パブリック ユーティリティ API</a></span>
+  <span class="next"><a href="node.html">NodeService（Python）</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

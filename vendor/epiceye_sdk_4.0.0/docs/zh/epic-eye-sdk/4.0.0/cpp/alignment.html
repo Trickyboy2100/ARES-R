@@ -1,0 +1,1532 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>C++ — 纹理对齐与补全 :: Epic Eye SDK 开发手册</title>
+    <link rel="prev" href="stream2d.html">
+    <link rel="next" href="data-models.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+         <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" /> 
+         <span class="navbar-title">在线产品文档</span>
+      </a>
+
+      
+
+
+    </div>
+
+      <div id="topbar-nav" class="navbar-menu">
+        <div class="navbar-end">
+
+          
+            <div class="navbar-item search hide-for-print">
+              <div id="search-field" class="field has-filter">
+                <input id="search-input" type="text" placeholder="输入关键词搜索" >
+                <label class="filter checkbox">
+                  <input type="checkbox" data-facet-filter="component:epic-eye-sdk">仅本手册
+                </label>
+              </div>
+            </div>
+          
+          <button class="navbar-burger" data-target="topbar-nav">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">切换手册</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Epic Eye SDK 开发手册</a>
+          </div>
+        </div>
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">下载中心</a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">官网</a>
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+            <a class="navbar-link" href="#"><span class="globe-icon">🌐</span>简体中文</a>
+            <div class="navbar-dropdown">
+                <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+                <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+                <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+            </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-logo {
+  height: 32px;
+  margin-right: 8px;
+}
+
+.navbar-title {
+  font-size: 18px;
+  color: #333;
+}
+
+.globe-icon {
+  margin-right: 5px;
+}
+
+.navbar-item {
+  color: #000 !important;
+}
+
+.navbar-item:hover {
+  background-color: #3273dc !important;
+  color: #fff !important;
+}
+
+.navbar-item a {
+  color: #000 !important;
+}
+
+.navbar-item a:hover {
+  color: #fff !important;
+}
+
+.navbar-dropdown .navbar-item {
+  color: #000 !important;
+}
+
+.navbar-dropdown .navbar-item:hover {
+  background-color: #3273dc !important;
+  color: #fff !important;
+}
+
+.navbar-link:hover {
+  background-color: #3273dc !important;
+  color: #fff !important;
+}
+
+.navbar-link a {
+  color: #000 !important;
+}
+
+.navbar-link a:hover {
+  color: #fff !important;
+}
+
+.language-selector .navbar-link {
+  display: flex;
+  align-items: center;
+  color: #000 !important;
+}
+
+.navbar-link {
+  color: #000 !important;
+}
+
+/* 添加这个新规则，使下拉菜单激活时保持链接的蓝色背景 */
+.navbar-item.has-dropdown.is-active .navbar-link,
+.navbar-item.has-dropdown:focus .navbar-link,
+.navbar-item.has-dropdown:focus-within .navbar-link {
+  background-color: #3273dc !important;
+  color: #fff !important;
+}
+
+/* 添加这个规则，确保鼠标悬停在下拉菜单项上时父级链接保持蓝色背景 */
+.navbar-item.has-dropdown:hover .navbar-link {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* 添加这个特定的样式规则，确保搜索框区域在悬停时背景不变 */
+.navbar-item.search.hide-for-print:hover {
+  background-color: transparent !important;  /* 使背景透明，保持原来的背景色 */
+}
+
+/* 确保搜索框内的输入框在悬停时也不改变背景 */
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input {
+  background-color: inherit !important;
+}
+</style> <div class="body">
+<div class="nav-container" data-component="epic-eye-sdk" data-version="4.0.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Epic Eye SDK 开发手册</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">欢迎</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">快速开始</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">快速开始</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/examples.html">示例</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">使用指南</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/discovery.html">相机发现与连接</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/capture.html">拍摄与 EpicRaw 解码</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/config.html">相机配置与参数</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/intrinsic-calibration.html">内参标定</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/hand-eye-calibration.html">手眼标定</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/line-scan.html">线扫采集</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/stream2d.html">Stream2D 实时视频</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API 参考</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API 参考总览</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">C# — 概览与集成</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/device.html">C# — 设备与网络</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/capture.html">C# — 拍摄与数据获取</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/epicraw.html">C# — EpicRaw 解析</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/camera-config.html">C# — 相机配置</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/intrinsics.html">C# — 内参与去畸变 LUT</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/intrinsic-calibration.html">C# — 内参标定</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/hand-eye-calibration.html">C# — 手眼标定</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/line-scan.html">C# — 线扫</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/stream2d.html">C# — Stream2D</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/alignment.html">C# — 纹理对齐</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/data-models.html">C# — 数据类型与字段</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python — 概览与安装</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">Python — 请求运行配置</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/device.html">Python — 设备与网络</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/capture.html">Python — 拍摄与数据获取</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/epicraw.html">Python — EpicRaw 解析</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/camera-config.html">Python — 相机配置</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/intrinsics.html">Python — 内参与去畸变 LUT</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/intrinsic-calibration.html">Python — 内参标定</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/hand-eye-calibration.html">Python — 手眼标定</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/line-scan.html">Python — 线扫</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/stream2d.html">Python — Stream2D</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/alignment.html">Python — 纹理对齐</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/data-models.html">Python — 数据类型与字段</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="overview.html">C++ — 概览与集成</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="device.html">C++ — 设备与网络</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="capture.html">C++ — 拍摄与数据获取</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="epicraw.html">C++ — EpicRaw 解析</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="camera-config.html">C++ — 相机配置</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="intrinsics.html">C++ — 内参与去畸变 LUT</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="intrinsic-calibration.html">C++ — 内参标定</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="hand-eye-calibration.html">C++ — 手眼标定</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="line-scan.html">C++ — 线扫</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="stream2d.html">C++ — Stream2D</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="alignment.html">C++ — 纹理对齐与补全</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="data-models.html">C++ — 数据类型与字段</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Epic Eye SDK 开发手册</span>
+    <span class="version">4.0.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Epic Eye SDK 开发手册</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">4.0.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Epic Eye SDK 开发手册</a></li>
+    <li>API 参考</li>
+    <li>C++ SDK</li>
+    <li><a href="alignment.html">C++ — 纹理对齐与补全</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="本页内容"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside><article class="doc">
+<h1 class="page">C++ — 纹理对齐与补全</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>对应 <code>alignment.cpp</code>，全部为纯本地计算。外参方向为深度/点云坐标系到纹理相机坐标系：<code>P_texture = R × P_depth + T</code>。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_接口详解"><a class="anchor" href="#_接口详解"></a>接口详解</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_aligntexturefromdepth_裸指针重载"><a class="anchor" href="#_aligntexturefromdepth_裸指针重载"></a><code>alignTextureFromDepth</code> 裸指针重载</h3>
+<div class="paragraph">
+<p><strong>用途</strong>：把深度图转换到纹理图坐标，输出尺寸与深度图一致；输出缓冲区由应用分配。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 30%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depth</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const float *</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度图数据，单位为毫米。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depthW</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度图宽度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depthH</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度图高度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>texture</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const uint8_t *</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图像数据。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureW</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图宽度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureH</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图高度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>matType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图像的 OpenCV Mat 类型。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depthIntrinsic</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const double[9]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度相机的 3×3 内参矩阵。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureIntrinsic</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const double[9]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理相机的 3×3 内参矩阵。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureDistortion</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const double[5]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理相机畸变系数。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>rotation</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const double[9]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度坐标系到纹理坐标系的 3×3 旋转矩阵。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>translation</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const double[3]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度坐标系到纹理坐标系的三维平移向量。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>output</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>uint8_t *</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">用于接收计算结果。</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>bool</code>。</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_aligntexturefromdepth_vector_重载"><a class="anchor" href="#_aligntexturefromdepth_vector_重载"></a><code>alignTextureFromDepth</code> vector 重载</h3>
+<div class="paragraph">
+<p><strong>用途</strong>：与上项相同，由 SDK 设置 <code>alignedTexture</code> 容量，推荐使用。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 30%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depth</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;float&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度图数据，单位为毫米。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depthW</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度图宽度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depthH</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度图高度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>texture</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;uint8_t&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图像数据。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureW</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图宽度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureH</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图高度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>matType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图像的 OpenCV Mat 类型。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depthIntrinsic</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度相机的 3×3 内参矩阵。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureIntrinsic</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理相机的 3×3 内参矩阵。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureDistortion</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理相机畸变系数。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>rotation</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度坐标系到纹理坐标系的 3×3 旋转矩阵。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>translation</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度坐标系到纹理坐标系的三维平移向量。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>alignedTexture</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::vector&lt;uint8_t&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">用于接收对齐后的纹理图像。</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>bool</code>。</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_aligntexturefrompointcloud_裸指针重载"><a class="anchor" href="#_aligntexturefrompointcloud_裸指针重载"></a><code>alignTextureFromPointCloud</code> 裸指针重载</h3>
+<div class="paragraph">
+<p><strong>用途</strong>：把有序 XYZ 点云投影到纹理图；输出缓冲区由应用分配。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 30%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pointCloud</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const float *</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">是否生成点云，或用于传入点云数据。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pointCloudW</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">点云宽度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pointCloudH</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">点云高度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>texture</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const uint8_t *</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图像数据。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureW</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图宽度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureH</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图高度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>matType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图像的 OpenCV Mat 类型。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureIntrinsic</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const double[9]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理相机的 3×3 内参矩阵。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureDistortion</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const double[5]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理相机畸变系数。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>rotation</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const double[9]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度坐标系到纹理坐标系的 3×3 旋转矩阵。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>translation</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const double[3]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度坐标系到纹理坐标系的三维平移向量。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>output</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>uint8_t *</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">用于接收计算结果。</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>bool</code>。</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_aligntexturefrompointcloud_vector_重载"><a class="anchor" href="#_aligntexturefrompointcloud_vector_重载"></a><code>alignTextureFromPointCloud</code> vector 重载</h3>
+<div class="paragraph">
+<p><strong>用途</strong>：与上项相同，由 SDK 管理输出容量，推荐使用。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 30%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pointCloud</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;float&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">是否生成点云，或用于传入点云数据。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pointCloudW</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">点云宽度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pointCloudH</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">点云高度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>texture</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;uint8_t&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图像数据。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureW</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图宽度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureH</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图高度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>matType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图像的 OpenCV Mat 类型。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureIntrinsic</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理相机的 3×3 内参矩阵。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureDistortion</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理相机畸变系数。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>rotation</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度坐标系到纹理坐标系的 3×3 旋转矩阵。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>translation</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度坐标系到纹理坐标系的三维平移向量。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>alignedTexture</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::vector&lt;uint8_t&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">用于接收对齐后的纹理图像。</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>bool</code>。</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_parsetextureextrinsics"><a class="anchor" href="#_parsetextureextrinsics"></a><code>parseTextureExtrinsics</code></h3>
+<div class="paragraph">
+<p><strong>用途</strong>：从 Raw3 <code>TextureBGR</code> 元数据解析纹理内参、畸变和深度到纹理的外参。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 30%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>metaDataStr</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::string &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">EpicRaw 元数据字符串。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cameraMatrix</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">按行排列的 3×3 相机内参矩阵。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>distortion</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Brown-Conrady 畸变系数。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>rotation</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度坐标系到纹理坐标系的 3×3 旋转矩阵。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>translation</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度坐标系到纹理坐标系的三维平移向量。</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：字段完整且数值有效为 <code>true</code>。</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_fillblackpixelsbyintrinsics"><a class="anchor" href="#_fillblackpixelsbyintrinsics"></a><code>fillBlackPixelsByIntrinsics</code></h3>
+<div class="paragraph">
+<p><strong>用途</strong>：用输出内参到纹理内参的二维映射补全黑像素，适合外参接近同轴的场景。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 30%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>alignedTexture</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::vector&lt;uint8_t&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">用于接收对齐后的纹理图像。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>outW</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">输出图像宽度。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>outH</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">输出图像高度。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>texture</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;uint8_t&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图像数据。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureW</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图宽度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureH</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图高度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>matType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图像的 OpenCV Mat 类型。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>outputIntrinsic</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">输出图像的 3×3 内参矩阵。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureIntrinsic</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理相机的 3×3 内参矩阵。</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>bool</code>。</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_fillblackpixelswithdepth"><a class="anchor" href="#_fillblackpixelswithdepth"></a><code>fillBlackPixelsWithDepth</code></h3>
+<div class="paragraph">
+<p><strong>用途</strong>：搜索邻域有效 Z，经真实 R/T 投影补全黑像素；无邻域深度时回退内参映射。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 30%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>alignedTexture</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::vector&lt;uint8_t&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">用于接收对齐后的纹理图像。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>outW</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">输出图像宽度。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>outH</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">输出图像高度。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depth</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;float&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度图数据，单位为毫米。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depthW</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度图宽度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depthH</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度图高度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>texture</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;uint8_t&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图像数据。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureW</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图宽度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureH</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图高度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>matType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图像的 OpenCV Mat 类型。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depthIntrinsic</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度相机的 3×3 内参矩阵。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureIntrinsic</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理相机的 3×3 内参矩阵。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureDistortion</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理相机畸变系数。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>rotation</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度坐标系到纹理坐标系的 3×3 旋转矩阵。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>translation</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度坐标系到纹理坐标系的三维平移向量。</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>bool</code>。</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_fillinvaliddepthpixelsbytextureinterpolation"><a class="anchor" href="#_fillinvaliddepthpixelsbytextureinterpolation"></a><code>fillInvalidDepthPixelsByTextureInterpolation</code></h3>
+<div class="paragraph">
+<p><strong>用途</strong>：从有效对齐点拟合输出坐标到原纹理 UV 的仿射模型，快速填补无效深度区域。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 30%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>alignedTexture</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::vector&lt;uint8_t&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">用于接收对齐后的纹理图像。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depth</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;float&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度图数据，单位为毫米。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depthW</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度图宽度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depthH</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度图高度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>texture</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;uint8_t&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图像数据。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureW</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图宽度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureH</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图高度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>matType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图像的 OpenCV Mat 类型。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depthIntrinsic</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度相机的 3×3 内参矩阵。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureIntrinsic</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理相机的 3×3 内参矩阵。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureDistortion</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理相机畸变系数。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>rotation</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度坐标系到纹理坐标系的 3×3 旋转矩阵。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>translation</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度坐标系到纹理坐标系的三维平移向量。</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>bool</code>。</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_filterdepthoutliers"><a class="anchor" href="#_filterdepthoutliers"></a><code>filterDepthOutliers</code></h3>
+<div class="paragraph">
+<p><strong>用途</strong>：原地移除深度中值离群、孤立点和小连通域。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 30%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depth</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::vector&lt;float&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度图数据，单位为毫米。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>width</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">图像宽度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>height</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">图像高度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>medianWindow</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度中值滤波窗口大小；默认值为 <code>3</code>。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>medianThresh</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>double</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度中值离群阈值，单位为毫米；默认值为 <code>50.0</code>。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>sameDepthThresh</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>double</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">相邻点深度一致性阈值，单位为毫米；默认值为 <code>30.0</code>。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>minSameNeighbors</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>minSameNeighbors</code> 参数；默认值为 <code>3</code>。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>connectThresh</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>double</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">连通域深度连续阈值，单位为毫米；默认值为 <code>20.0</code>。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>minComponentArea</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">保留连通域所需的最小点数；默认值为 <code>5</code>。</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>size_t</code>，置零的点数。</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_removehorizontalbands"><a class="anchor" href="#_removehorizontalbands"></a><code>removeHorizontalBands</code></h3>
+<div class="paragraph">
+<p><strong>用途</strong>：在纹理坐标空间检测水平错位条纹并重采样；原始有效深度像素保持不变。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 30%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>image</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::vector&lt;uint8_t&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">用于接收图像。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>width</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">图像宽度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>height</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">图像高度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depth</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;float&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度图数据，单位为毫米。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depthIntrinsic</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度相机的 3×3 内参矩阵。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureIntrinsic</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理相机的 3×3 内参矩阵。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureDistortion</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理相机畸变系数。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>rotation</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度坐标系到纹理坐标系的 3×3 旋转矩阵。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>translation</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度坐标系到纹理坐标系的三维平移向量。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>texture</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;uint8_t&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图像数据。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureW</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图宽度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureH</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图高度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>matType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图像的 OpenCV Mat 类型。</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>bool</code>。</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_aligntextureimage_点云重载"><a class="anchor" href="#_aligntextureimage_点云重载"></a><code>alignTextureImage</code> 点云重载</h3>
+<div class="paragraph">
+<p><strong>用途</strong>：完成点云投影、深度辅助补全的一站式离线对齐。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 30%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>texture</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;uint8_t&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图像数据。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureW</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图宽度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureH</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图高度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>matType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图像的 OpenCV Mat 类型。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pointCloud</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;float&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">是否生成点云，或用于传入点云数据。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pointCloudW</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">点云宽度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pointCloudH</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">点云高度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depth</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;float&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度图数据，单位为毫米。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depthW</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度图宽度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depthH</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度图高度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureIntrinsic</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理相机的 3×3 内参矩阵。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureDistortion</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理相机畸变系数。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>rotation</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度坐标系到纹理坐标系的 3×3 旋转矩阵。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>translation</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度坐标系到纹理坐标系的三维平移向量。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depthIntrinsic</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度相机的 3×3 内参矩阵。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>alignedTexture</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::vector&lt;uint8_t&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">用于接收对齐后的纹理图像。</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>bool</code>。</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_aligntextureimage_深度重载"><a class="anchor" href="#_aligntextureimage_深度重载"></a><code>alignTextureImage</code> 深度重载</h3>
+<div class="paragraph">
+<p><strong>用途</strong>：完成深度反投影、纹理采样和快速无效区补全的一站式离线对齐。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 30%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>texture</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;uint8_t&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图像数据。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureW</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图宽度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureH</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图高度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>matType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理图像的 OpenCV Mat 类型。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depth</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;float&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度图数据，单位为毫米。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depthW</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度图宽度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depthH</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度图高度，单位为像素。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depthIntrinsic</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度相机的 3×3 内参矩阵。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureIntrinsic</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理相机的 3×3 内参矩阵。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureDistortion</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">纹理相机畸变系数。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>rotation</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度坐标系到纹理坐标系的 3×3 旋转矩阵。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>translation</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>const std::vector&lt;double&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深度坐标系到纹理坐标系的三维平移向量。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>alignedTexture</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::vector&lt;uint8_t&gt; &amp;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">用于接收对齐后的纹理图像。</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>bool</code>。
+<code>matType=16 (CV_8UC3)</code> 时每通道 1 字节；<code>matType=18 (CV_16UC3)</code> 时每通道 2 字节。裸指针输出容量必须乘以实际通道字节数。</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_示例解析外参并对齐"><a class="anchor" href="#_示例解析外参并对齐"></a>示例：解析外参并对齐</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">std::string metadata;
+if (!TFTech::EpicEye::getEpicRawElementMetaDataStr(
+        document, TFTech::EpicRaw3DataType::TextureBGR, metadata)) return;
+
+std::vector&lt;double&gt; textureMatrix, textureDistortion, rotation, translation;
+if (!TFTech::EpicEye::parseTextureExtrinsics(
+        metadata, textureMatrix, textureDistortion, rotation, translation)) return;
+
+std::vector&lt;uint8_t&gt; aligned;
+bool ok = TFTech::EpicEye::alignTextureImage(
+    texture,
+    textureWidth,
+    textureHeight,
+    matType,
+    depth,
+    depthWidth,
+    depthHeight,
+    depthMatrix,
+    textureMatrix,
+    textureDistortion,
+    rotation,
+    translation,
+    aligned);</code></pre>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="stream2d.html">C++ — Stream2D</a></span>
+  <span class="next"><a href="data-models.html">C++ — 数据类型与字段</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

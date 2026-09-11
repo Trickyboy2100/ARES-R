@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>点群タイプの入出力用のバイナリ プロトコル :: Atom SDK 開発者ガイド</title>
+    <link rel="prev" href="runtime-frame.html">
+    <link rel="next" href="param-binding.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          オンライン製品ドキュメント
+                  </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="ドキュメントを検索"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              このマニュアルのみ
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            マニュアルを切り替え
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK 開発者ガイド</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          ダウンロードセンター
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          公式サイト
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            日本語
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK 開発者ガイド</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">ようこそ</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">クイックスタート</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">クイックスタート</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">サンプルサンプル</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">入門利用</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK 入門利用</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">ユーザーガイド</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">適切な Service を選択します</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">グラフとノードの操作</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">エラー処理とトラブルシューティング</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">よくある質問</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">基本的な概念</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="what-is-atom-sdk.html">Atom SDK とは</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="graph-node-subgraph.html">グラフ、ノード、サブグラフ</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="graph-vs-runtime.html">Graph と Runtime の違い</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="timestamp.html">Timestampとは何ですか</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="runtime-frame.html">ランタイム入力フレーム (RuntimeFrame / RuntimePassiveBinoFrame)</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="point-cloud-protocol.html">点群タイプの入出力用のバイナリ プロトコル</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="param-binding.html">パラメータのタイプとバインディング名</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API リファレンス</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API リファレンスの概要</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python の概要とインストール</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/params.html">Python パラメータ オブジェクト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/public_api.html">Python パブリック ユーティリティ API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ バージョン — ユーザーガイド</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ パラメータ オブジェクト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">Atom SDK — C# バージョン</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/params.html">C# パラメータオブジェクト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK 開発者ガイド</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK 開発者ガイド</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK 開発者ガイド</a></li>
+    <li>基本的な概念</li>
+    <li><a href="point-cloud-protocol.html">点群タイプの入出力用のバイナリ プロトコル</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="このページの内容"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">点群タイプの入出力用のバイナリ プロトコル</h1>
+<div class="sect1">
+<h2 id="_それは何をするのですか一文"><a class="anchor" href="#_それは何をするのですか一文"></a>それは何をするのですか（一文）</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>Points</code>/<code>XYZPoints</code>/<code>NormalPoints</code>/<code>RGBPoints</code> これらのポート タイプは、ノードの入力または出力として使用されるかどうかに関係なく、通常の JSON ではなく、カスタマイズされたコンパクト バイナリ形式を送信します。 Runtime 単一ノードの直接操作は、ノードのポート タイプに従って <code>.ply</code> パスとエンコードされたバイトを自動的に処理しようとします。 Python SDK は、この形式を手動で処理しやすくするために、3 つの関数 <code>encode_point_cloud_payload</code> / <code>load_ply_points</code> / <code>decode_point_cloud_payload</code> も公開しています。</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>これは、通常モード <code>RuntimeFrame</code> の点群形式ではありません。通常モード <code>RuntimeFrame.point_cloud</code> は、別の単純な形式、<code>[height, width, 3]</code> reshape float32 の元の配列を使用します。後述のプロトコル ヘッダーはありません。パッシブ双眼 <code>passive_bino</code> モードは EPICRAW3 を送信し、個別に <code>point_cloud</code> を送信しません。この 2 つを混合することはできません。詳細については、<a href="runtime-frame.html" class="xref page">ランタイム入力フレーム (RuntimeFrame / RuntimePassiveBinoFrame)</a> を参照してください。</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_なぜこのような仕組みがあるのでしょうか"><a class="anchor" href="#_なぜこのような仕組みがあるのでしょうか"></a>なぜこのような仕組みがあるのでしょうか？</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>点群データの量は通常非常に大きく (数万点から数百万点)、送信と分析に JSON を使用するオーバーヘッドが高すぎます。サーバーは、コンパクトな <code>float32</code> バイナリ形式に同意しました。同時に、ポートが一度に複数の点群を伝送する場合があることを考慮して、サーバーによる 1 回の分割を容易にするために、形式には「点群の数 + 各部分の長さ」のヘッダー情報が含まれています。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_それはあなたの成長にどのような影響を与えますか"><a class="anchor" href="#_それはあなたの成長にどのような影響を与えますか"></a>それはあなたの成長にどのような影響を与えますか</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>点群タイプの入力</strong> (<code>SingleNodeParams(&#8230;&#8203;, inputs={"points": &#8230;&#8203;})</code> など) に値を渡すときは、ローカルの <code>.ply</code> パスを直接渡すことをお勧めします。 SDK は、ノードの入力ポートのタイプに応じて、プロトコルで必要な形式に自動的にエンコードします。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SingleNodeParams
+
+result = client.runtime.run_single_node_no_graph(
+    SingleNodeParams("EstimateNormal", inputs={"points": "/data/scan.ply"})
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>すでにポイント配列を持っている場合、またはポイントの次元を明示的に制御する必要がある場合は、手動でコードを記述することもできます。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SingleNodeParams, encode_point_cloud_payload, load_ply_points
+
+points = load_ply_points("/data/scan.ply")           # から PLY ファイル読み取りフラット化 xyz フロートリスト
+payload = encode_point_cloud_payload(points, point_dim=3)  # プロトコルで必要なバイナリ形式にエンコードされる
+
+result = client.runtime.run_single_node_no_graph(
+    SingleNodeParams("EstimateNormal", inputs={"points": payload})
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>サーバーから点群タイプの出力を読み取るとき</strong>、ほとんどのインターフェイス SDK はそれを自動的に解析します (<code>get_binded_point_cloud_parsed</code> など)。このプロトコル層について気にする必要はありません。ただし、<code>run_single_node_no_graph</code> は次のノードの例外です。これらのノードはカプセル化されていない生の点群バイト (<code>bytes</code>) を直接返すため、解析するには <code>decode_point_cloud_payload</code> を自分で呼び出す必要があります。</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>CalculateEdge</code></p>
+</li>
+<li>
+<p><code>CalculateEdgeNew</code></p>
+</li>
+<li>
+<p><code>EstimateNormal</code></p>
+</li>
+<li>
+<p><code>DownSample</code></p>
+</li>
+<li>
+<p><code>DownSampleWithNormal</code></p>
+</li>
+<li>
+<p><code>FilterByNormal</code></p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import decode_point_cloud_payload
+
+result = client.runtime.run_single_node_no_graph(
+    SingleNodeParams("EstimateNormal", inputs={"points": payload})
+)
+# result はい bytes，いいえ dict —— これは上記のノードの修正された動作です
+clouds = decode_point_cloud_payload(result, has_dim_in_header=False, point_dim=6)
+print(clouds[0].shape)          # (ポイント, 6)  -&gt; [x, y, z, nx, ny, nz]
+print(clouds[0].tolist()[:2])</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>point_dim</code> は、ノード出力ポートの実際のタイプに従って決定する必要があります。 <code>XYZPoints</code>/<code>Points</code> は <code>3</code> に渡されます。 <code>NormalPoints</code> (法線ベクトル付き)/<code>RGBPoints</code> (カラー付き) が <code>6</code> に渡されます。詳細については、ノード定義の <code>outputs_info</code> の <code>dtype</code> を参照してください。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_問題が発生する可能性があるとき"><a class="anchor" href="#_問題が発生する可能性があるとき"></a>問題が発生する可能性があるとき</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>SDK はノードの入力タイプが見つからないか、古いバージョン SDK を使用しています</strong>: この場合、<code>inputs={"points": "/data/scan.ply"}</code> は通常のファイルとしてアップロードされ、PLY ファイルの内容がそのままサーバーに渡されます。サーバーが <code>float32</code> を押して解析すると、<code>AtomApiError: buffer size must be a multiple of element size</code> がレポートされます。<br>
+解決策: SDK をアップグレードするか、<code>input_data_types={"points": "XYZPoints"}</code> を使用して SDK にポートの種類を明示的に伝えます。 Python は、<code>load_ply_points</code> + <code>encode_point_cloud_payload</code> を使用して手動でエンコードして送信することもできます。</p>
+</li>
+<li>
+<p><strong>run_single_node_no_graph は dict を返さなければならないと考えられました</strong>: 上記の特別なノードの場合、戻り値は <code>bytes</code> であり、直接 <code>result["xxx"]</code> は <code>TypeError: byte indices must be integers</code> を報告します。<br>
+解決策: 最初にタイプを決定するか、調整しているノードを事前に把握し、<code>bytes</code> で直接処理し、<code>decode_point_cloud_payload</code> を使用して解析します。</p>
+</li>
+<li>
+<p><strong>point_dim 送信エラー</strong>: <code>point_dim=3</code> に従って法線ベクトルを使用して出力を解析すると、<code>reshape</code> の後にデータの不整合が発生します (各行が次のポイントの座標を現在のポイントのフィールドと誤認します)。<br>
+解決策: ノードの <code>outputs_info</code> をチェックして、ポートの <code>dtype</code> が <code>XYZPoints</code> (3) または <code>NormalPoints</code>/<code>RGBPoints</code> (6) であるかどうかを確認します。</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_問題への対処方法"><a class="anchor" href="#_問題への対処方法"></a>問題への対処方法</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><code>.ply</code> パスを直接渡すことを優先し、SDK がノード ポート タイプに従って自動的にエンコードされるようにします。ノード タイプを自動的にクエリできない場合は、明示的に <code>input_data_types</code> を渡すか、<code>load_ply_points</code> + <code>encode_point_cloud_payload</code> を使用して Python に <code>bytes</code> を手動で生成します。</p>
+</li>
+<li>
+<p><code>run_single_node_no_graph</code> を呼び出す前に、ノード名が上記の特別なリストに含まれているかどうかを確認してください。その場合は、事前に <code>bytes</code> を取得することを期待してください。</p>
+</li>
+<li>
+<p><code>bytes</code> を取得したら、<code>decode_point_cloud_payload(raw, has_dim_in_header=False, point_dim=&#8230;&#8203;)</code> を使用して解析します。このシナリオでは、<code>has_dim_in_header</code> は常に <code>False</code> を渡します。</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_技術的な詳細"><a class="anchor" href="#_技術的な詳細"></a>技術的な詳細</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>プロトコルの本質は、リトル エンディアン順に配置された <code>float32</code> の配列です。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>[cloud_count, size_0, size_1, ..., size_{cloud_count-1}, data_0..., data_1..., ...]</pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cloud_count</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">には今回、いくつかの点群が含まれていました。 <code>SingleNodeParams</code> シナリオでは、通常は <code>1</code> です。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>size_i</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">番目の <code>i</code> 点群の平坦化された浮動小数点の合計数 (ポイント × <code>point_dim</code>、バイトではありません)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data_i</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>i</code> 点群の元のデータ。 <code>point_dim</code> のグループに連続して配置されます。</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>decode_point_cloud_payload(payload, *, has_dim_in_header, point_dim=None)</code>：</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">パラメータ</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>payload</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bytes</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">生の二値点群ストリーム</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>has_dim_in_header</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bool</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ヘッダー情報に各点群の追加の寸法が含まれるかどうか。 <code>run_single_node_no_graph`のスペシャルノードシーンを固定送信`False</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>point_dim</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code> または <code>None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ヘッダ情報に次元がない場合、reshapeの各点の寸法を手動で指定します</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>list[ParsedPointCloud]</code> を返します。<code>ParsedPointCloud.values</code> は平坦化された <code>array('f')</code>、<code>.shape</code> は推奨形状、<code>.tolist()</code> は <code>shape</code> によってネストされたリストに変換されます。</p>
+</div>
+<div class="paragraph">
+<p><code>encode_point_cloud_payload(points, *, point_dim=3)</code>：</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 33.3333%;">
+<col style="width: 50.0001%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">パラメータ</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>points</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">平坦化された浮動小数点シーケンス、または行方向の点シーケンス (<code>[(x,y,z), &#8230;&#8203;]</code> など)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">は自動的にフラット化され、2 つの書き込み方法は同等です。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>point_dim</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ポイントあたりのチャネル数: xyz は <code>3</code> を使用し、法線ベクトル/カラーでは <code>6</code> を使用します</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>load_ply_points(path, *, properties=("x", "y", "z"))</code>：</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">パラメータ</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>path</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ファイルパス</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PLY ファイル、<code>ascii</code>/<code>binary_little_endian</code>/<code>binary_big_endian</code> を自動的に認識します</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>properties</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tuple[str, &#8230;&#8203;]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">順番に平坦化された、抽出される頂点属性名。法線ベクトルを渡すことができます <code>("x","y","z","nx","ny","nz")</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>vertex</code> 要素で宣言された属性のみが解析され、<code>face</code>、<code>camera</code> などの他の element は自動的にスキップされます。</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="runtime-frame.html">ランタイム入力フレーム (RuntimeFrame / RuntimePassiveBinoFrame)</a></span>
+  <span class="next"><a href="param-binding.html">パラメータのタイプとバインディング名</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

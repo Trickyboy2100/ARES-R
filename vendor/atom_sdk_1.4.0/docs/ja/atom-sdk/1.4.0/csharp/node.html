@@ -1,0 +1,2428 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>NodeService（C#） :: Atom SDK 開発者ガイド</title>
+    <link rel="prev" href="graph.html">
+    <link rel="next" href="graph_node.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          オンライン製品ドキュメント
+                  </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="ドキュメントを検索"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              このマニュアルのみ
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            マニュアルを切り替え
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK 開発者ガイド</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          ダウンロードセンター
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          公式サイト
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            日本語
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK 開発者ガイド</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">ようこそ</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">クイックスタート</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">クイックスタート</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">サンプルサンプル</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">入門利用</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK 入門利用</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">ユーザーガイド</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">適切な Service を選択します</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">グラフとノードの操作</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">エラー処理とトラブルシューティング</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">よくある質問</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">基本的な概念</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/what-is-atom-sdk.html">Atom SDK とは</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-node-subgraph.html">グラフ、ノード、サブグラフ</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-vs-runtime.html">Graph と Runtime の違い</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/timestamp.html">Timestampとは何ですか</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/runtime-frame.html">ランタイム入力フレーム (RuntimeFrame / RuntimePassiveBinoFrame)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/point-cloud-protocol.html">点群タイプの入出力用のバイナリ プロトコル</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/param-binding.html">パラメータのタイプとバインディング名</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API リファレンス</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API リファレンスの概要</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python の概要とインストール</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/params.html">Python パラメータ オブジェクト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/public_api.html">Python パブリック ユーティリティ API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ バージョン — ユーザーガイド</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ パラメータ オブジェクト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="overview.html">Atom SDK — C# バージョン</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="params.html">C# パラメータオブジェクト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK 開発者ガイド</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK 開発者ガイド</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK 開発者ガイド</a></li>
+    <li>API リファレンス</li>
+    <li>C# SDK</li>
+    <li><a href="node.html">NodeService（C#）</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="このページの内容"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">NodeService（C#）</h1>
+<div class="sect1">
+<h2 id="_サービス紹介"><a class="anchor" href="#_サービス紹介"></a>サービス紹介</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>NodeService</code> は、メイン グラフ (Graph) の内部ノード* に対する完全な操作セットを担当します。ノードの作成 (コピーを含む)、削除、接続と切断、パラメータの読み書き、バインディング名の設定、ノードのアクティブ化/初期化/更新などの機能を提供します。すべてのメソッドは非同期であり、<code>OpenGraphAsync</code> の後に呼び出す必要があります (タイムスタンプの一貫性を維持するため)。</p>
+</div>
+<div class="paragraph">
+<p><strong>名前空間</strong>: <code>AtomSdk.Services</code></p>
+</div>
+<div class="paragraph">
+<p><strong>入口</strong>: <code>client.Node</code></p>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_該当するシナリオ"><a class="anchor" href="#_該当するシナリオ"></a>該当するシナリオ</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>開いたメイン グラフでノードを追加または削除します。</p>
+</li>
+<li>
+<p>接続ポートを介して複数のノードをコンピューティング パイプラインに直列に接続します。</p>
+</li>
+<li>
+<p>ノードの初期化パラメータと動作パラメータを読み取るか変更します。</p>
+</li>
+<li>
+<p>Runtime フェーズが名前でデータの読み取りと書き込みを行うように、ポートの Runtime バインディング名を設定します。</p>
+</li>
+<li>
+<p>ノードを単独で実行して出力をデバッグします (<code>ActivateNodeAsync</code> / <code>UpdateNodeAsync</code>)。</p>
+</li>
+</ul>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_推奨される呼び出し順序"><a class="anchor" href="#_推奨される呼び出し順序"></a>推奨される呼び出し順序</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">client.Graph.OpenGraphAsync(graphName)  （まずグラフを開いてタイムスタンプを取得します）
+        ↓
+CreateNodeAsync          （ノードの作成）
+        ↓
+SetNodeParamDataAsync    （パラメータを設定する，何度でも呼び出せる）
+        ↓
+ConnectNodesAsync        （ノードポートを接続する）
+        ↓
+InitialNodeAsync         （ノードの初期化，オプション）
+        ↓
+ActivateNodeAsync        （アクティブ化する/単一ノードを実行する，ポーリングは完了を待っています）
+        ↓
+GetNodePortDataAsync     （出力ポートデータの読み取り）</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_インターフェースの詳細説明"><a class="anchor" href="#_インターフェースの詳細説明"></a>インターフェースの詳細説明</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_createnodeasync"><a class="anchor" href="#_createnodeasync"></a>CreateNodeAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// オリジナル JsonElement バージョン
+Task&lt;JsonElement&gt; CreateNodeAsync(
+    CreateNodeParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// ジェネリック版
+Task&lt;T&gt; CreateNodeAsync&lt;T&gt;(
+    CreateNodeParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 強く型付けされた便利なバージョン
+Task&lt;NodeReference&gt; CreateNodeInfoAsync(
+    CreateNodeParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的</strong>: 指定されたメイン グラフに新しいノード インスタンスを作成します。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名前</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>メイン画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ノード タイプ名 (<code>GetAllNodesInfoAsync</code> から取得)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>キャンセルトークン、オプション</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>戻り値</strong>: <code>Task&lt;JsonElement&gt;</code>、キーフィールド:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>新しいノードの一意の ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ノードタイプ名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>timestamp</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>double</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>操作後のグラフのタイムスタンプ</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Graph.OpenGraphAsync("my_graph");
+
+// 厳密に型指定されたバージョン（おすすめ）
+var node = await client.Node.CreateNodeInfoAsync(
+    new CreateNodeParams("my_graph", "ResizeImage"));
+Console.WriteLine($"ノードが正常に作成されました，ID: {node.NodeId}");
+Console.WriteLine($"リクエストステータス: {node.Status}");
+
+// オリジナル JsonElement バージョン
+var raw = await client.Node.CreateNodeAsync(new CreateNodeParams("my_graph", "DetectAndSegment"));
+string nodeId = raw.GetProperty("nodeId").GetString()!;
+Console.WriteLine($"リクエストステータス: {raw.GetProperty("status").GetInt32()}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_createdynamicionodeasync"><a class="anchor" href="#_createdynamicionodeasync"></a>CreateDynamicIoNodeAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// オリジナル JsonElement バージョン
+Task&lt;JsonElement&gt; CreateDynamicIoNodeAsync(
+    CreateDynamicNodeParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// ジェネリック版
+Task&lt;T&gt; CreateDynamicIoNodeAsync&lt;T&gt;(
+    CreateDynamicNodeParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 強く型付けされた便利なバージョン
+Task&lt;NodeReference&gt; CreateDynamicIoNodeInfoAsync(
+    CreateDynamicNodeParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的</strong>: メイン グラフに動的入力および出力定義を含むノードを作成します。</p>
+</div>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var dynamicNode = await client.Node.CreateDynamicIoNodeAsync(
+    new CreateDynamicNodeParams(
+        "demo_graph",
+        "DynamicNode",
+        new Dictionary&lt;string, object?&gt;
+        {
+            ["inputs"] = new[] { new Dictionary&lt;string, object?&gt; { ["name"] = "image_in" } }
+        }));</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_changenodeioasync"><a class="anchor" href="#_changenodeioasync"></a>ChangeNodeIoAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// オリジナル JsonElement バージョン
+Task&lt;JsonElement&gt; ChangeNodeIoAsync(
+    ChangeNodeIOParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// ジェネリック版
+Task&lt;T&gt; ChangeNodeIoAsync&lt;T&gt;(
+    ChangeNodeIOParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的</strong>: 動的ノードの入出力構造を変更します。動的ノードを作成した後、ビジネス構成に応じてポートを追加または調整するのに適しています。</p>
+</div>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">await client.Node.ChangeNodeIoAsync(
+    new ChangeNodeIOParams(
+        "demo_graph",
+        dynamicNode.GetProperty("nodeId").GetString()!,
+        new Dictionary&lt;string, object?&gt;
+        {
+            ["outputs"] = new[] { new Dictionary&lt;string, object?&gt; { ["name"] = "mask_out" } }
+        }));</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_createnodebycopyasync"><a class="anchor" href="#_createnodebycopyasync"></a>CreateNodeByCopyAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// オリジナル JsonElement バージョン
+Task&lt;JsonElement&gt; CreateNodeByCopyAsync(
+    CopyNodeParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// ジェネリック版
+Task&lt;T&gt; CreateNodeByCopyAsync&lt;T&gt;(
+    CopyNodeParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 強く型付けされた便利なバージョン
+Task&lt;NodeReference&gt; CreateNodeByCopyInfoAsync(
+    CopyNodeParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的</strong>: グラフ内の既存のノード (パラメータ設定を含む) をコピーし、同じタイプの新しいノードを作成します。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名前</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>メイン画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>新しいノードの名前</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>コピー元のノード ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>キャンセルトークン、オプション</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>戻り値</strong>: <code>Task&lt;JsonElement&gt;</code>、<code>nodeId</code>、<code>nodeName</code>、および新しいノードのその他の情報。</p>
+</div>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Graph.OpenGraphAsync("my_graph");
+
+// 既存のノードをコピーする（すべてのパラメータ設定を保持する）
+var copy = await client.Node.CreateNodeByCopyInfoAsync(
+    new CopyNodeParams("my_graph", "ResizeImage_copy", "node-id-abcdef"));
+Console.WriteLine($"ノードを正常にコピーしています，新しい ID: {copy.NodeId}");
+Console.WriteLine($"リクエストステータス: {copy.Status}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_creategraphnodeasync"><a class="anchor" href="#_creategraphnodeasync"></a>CreateGraphNodeAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// オリジナル JsonElement バージョン
+Task&lt;JsonElement&gt; CreateGraphNodeAsync(
+    CreateGraphNodeParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// ジェネリック版
+Task&lt;T&gt; CreateGraphNodeAsync&lt;T&gt;(
+    CreateGraphNodeParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 強く型付けされた便利なバージョン
+Task&lt;NodeReference&gt; CreateGraphNodeInfoAsync(
+    CreateGraphNodeParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的</strong>: 既存のサブグラフに基づいてメイン ピクチャに GraphNode を作成します。</p>
+</div>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var graphNode = await client.Node.CreateGraphNodeInfoAsync(
+    new CreateGraphNodeParams("demo_graph", "SubFlow", "sub_graph_alpha"));
+Console.WriteLine($"GraphNode ID: {graphNode.NodeId}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_generategraphnodebynodesasync"><a class="anchor" href="#_generategraphnodebynodesasync"></a>GenerateGraphNodeByNodesAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// オリジナル JsonElement バージョン
+Task&lt;JsonElement&gt; GenerateGraphNodeByNodesAsync(
+    GenerateGraphNodeByNodesParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// ジェネリック版
+Task&lt;T&gt; GenerateGraphNodeByNodesAsync&lt;T&gt;(
+    GenerateGraphNodeByNodesParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 強く型付けされた便利なバージョン
+Task&lt;NodeReference&gt; GenerateGraphNodeByNodesInfoAsync(
+    GenerateGraphNodeByNodesParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的</strong>: メイン グラフ内の既存のノードのグループをパックして、新しい GraphNode を生成します。</p>
+</div>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var packed = await client.Node.GenerateGraphNodeByNodesInfoAsync(
+    new GenerateGraphNodeByNodesParams("demo_graph", "PackedNode", new[] { "node-a", "node-b" }));
+Console.WriteLine($"パッケージの生成 GraphNode: {packed.NodeId}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_deletenodeasync"><a class="anchor" href="#_deletenodeasync"></a>DeleteNodeAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// オリジナル JsonElement バージョン
+Task&lt;JsonElement&gt; DeleteNodeAsync(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// ジェネリック版
+Task&lt;T&gt; DeleteNodeAsync&lt;T&gt;(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// 強く型付けされた便利なバージョン
+Task&lt;NodeTimestampInfo&gt; DeleteNodeInfoAsync(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的</strong>: 指定されたノードをメイン グラフから削除します (また、関連するすべての接続が自動的に切断されます)。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名前</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>メイン画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>削除するノード ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>キャンセルトークン、オプション</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>戻り値</strong>: <code>Task&lt;JsonElement&gt;</code>、操作後のタイムスタンプ情報が含まれます。</p>
+</div>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Graph.OpenGraphAsync("my_graph");
+
+var result = await client.Node.DeleteNodeInfoAsync(new NodeRef("my_graph", "node-id-abcdef"));
+Console.WriteLine($"ノードが削除されました，現在のタイムスタンプ: {result.Timestamp}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_connectnodesasync"><a class="anchor" href="#_connectnodesasync"></a>ConnectNodesAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// オリジナル JsonElement バージョン
+Task&lt;JsonElement&gt; ConnectNodesAsync(
+    NodeConnectionParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// ジェネリック版
+Task&lt;T&gt; ConnectNodesAsync&lt;T&gt;(
+    NodeConnectionParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 強く型付けされた便利なバージョン
+Task&lt;NodeTimestampInfo&gt; ConnectNodesInfoAsync(
+    NodeConnectionParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的</strong>: 2 つのノードのポートを接続すると、データは <code>outputNode.outputPort</code> から <code>inputNode.inputPort</code> に流れます。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名前</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>メイン画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>outputNodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>データを生成するノード ID (上流ノード)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>outputPortName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>上流ノードの出力ポート名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>inputNodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>データを受信するノード ID (下流ノード)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>inputPortName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>下流ノードの入力ポート名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>キャンセルトークン、オプション</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>戻り値</strong>: <code>Task&lt;JsonElement&gt;</code>、操作後のタイムスタンプ情報が含まれます。</p>
+</div>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Graph.OpenGraphAsync("my_graph");
+
+var resize = await client.Node.CreateNodeInfoAsync(new CreateNodeParams("my_graph", "ResizeImage"));
+var detect = await client.Node.CreateNodeInfoAsync(new CreateNodeParams("my_graph", "DetectAndSegment"));
+Console.WriteLine($"ノード作成リクエストのステータス: resize={resize.Status}, detect={detect.Status}");
+
+// するだろう ResizeImage の resized_image 接続されているポート DetectAndSegment の image ポート
+await client.Node.ConnectNodesInfoAsync(
+    new NodeConnectionParams(
+        "my_graph",
+        outputNodeId: resize.NodeId, outputPortName: "resized_image", // 上流：ResizeImage
+        inputNodeId: detect.NodeId, inputPortName: "image"));  // 下流：DetectAndSegment
+Console.WriteLine("ノードが接続されました");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_disconnectnodesasync"><a class="anchor" href="#_disconnectnodesasync"></a>DisconnectNodesAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// オリジナル JsonElement バージョン
+Task&lt;JsonElement&gt; DisconnectNodesAsync(
+    NodeConnectionParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// ジェネリック版
+Task&lt;T&gt; DisconnectNodesAsync&lt;T&gt;(
+    NodeConnectionParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 強く型付けされた便利なバージョン
+Task&lt;NodeTimestampInfo&gt; DisconnectNodesInfoAsync(
+    NodeConnectionParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的</strong>: 2 つのノード ポート間の既存の接続を切断します (パラメーターは <code>ConnectNodesAsync</code> と完全に対称です)。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名前</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>メイン画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>outputNodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>上流ノード ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>outputPortName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>上流ノードの出力ポート名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>inputNodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>下流ノード ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>inputPortName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>下流ノード入力ポート名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>キャンセルトークン、オプション</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>戻り値</strong>: <code>Task&lt;JsonElement&gt;</code>、操作後のタイムスタンプを含みます。</p>
+</div>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Graph.OpenGraphAsync("my_graph");
+
+await client.Node.DisconnectNodesInfoAsync(
+    new NodeConnectionParams(
+        "my_graph",
+        outputNodeId: "resize-node-id", outputPortName: "resized_image",
+        inputNodeId: "detect-node-id", inputPortName: "image"));
+Console.WriteLine("ノード接続が切断されました");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getnodeparamsasync"><a class="anchor" href="#_getnodeparamsasync"></a>GetNodeParamsAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// オリジナル JsonElement バージョン
+Task&lt;JsonElement&gt; GetNodeParamsAsync(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// ジェネリック版
+Task&lt;T&gt; GetNodeParamsAsync&lt;T&gt;(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// 強く型付けされた便利なバージョン
+Task&lt;NodeParamsSnapshot&gt; GetNodeParamsSnapshotAsync(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的</strong>: 指定したノードのすべてのパラメーター (初期化パラメーターと実行パラメーターを含む) の現在値のスナップショットを取得します。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名前</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>メイン画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ノードID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>キャンセルトークン、オプション</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>戻り値</strong>: <code>Task&lt;JsonElement&gt;</code>、パラメータ辞書、フィールド名はパラメータ名です。</p>
+</div>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+var params_ = await client.Node.GetNodeParamsSnapshotAsync(new NodeRef("my_graph", "node-id-123"));
+Console.WriteLine($"パラメータのスナップショット: {params_}");
+
+// またはオリジナルを使用する JsonElement 特定のパラメータの読み取り方法
+var raw = await client.Node.GetNodeParamsAsync(new NodeRef("my_graph", "node-id-123"));
+if (raw.TryGetProperty("threshold", out var threshold))
+{
+    Console.WriteLine($"しきい値: {threshold.GetDouble()}");
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getnodeinfoingraphasync"><a class="anchor" href="#_getnodeinfoingraphasync"></a>GetNodeInfoInGraphAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// オリジナル JsonElement バージョン
+Task&lt;JsonElement&gt; GetNodeInfoInGraphAsync(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// ジェネリック版
+Task&lt;T&gt; GetNodeInfoInGraphAsync&lt;T&gt;(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// 強く型付けされた便利なバージョン
+Task&lt;NodeInfoInGraph&gt; GetNodeInfoInGraphModelAsync(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的</strong>: グラフ内のノードの完全な説明情報 (ポートリスト、パラメーター定義、現在値、接続ステータスなど) を取得します。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名前</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>メイン画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ノードID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>キャンセルトークン、オプション</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>戻り値</strong>: <code>Task&lt;JsonElement&gt;</code>、ノードの完全な説明情報が含まれます。</p>
+</div>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+var info = await client.Node.GetNodeInfoInGraphModelAsync(
+    new NodeRef("my_graph", "node-id-123"));
+Console.WriteLine($"ノード名: {info.NodeName}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getnodeportdataasync"><a class="anchor" href="#_getnodeportdataasync"></a>GetNodePortDataAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// オリジナル JsonElement バージョン
+Task&lt;JsonElement&gt; GetNodePortDataAsync(
+    PortRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// ジェネリック版
+Task&lt;T&gt; GetNodePortDataAsync&lt;T&gt;(
+    PortRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的</strong>: ノードの特定のポートの現在のデータ値を読み取ります (JSON 形式)。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名前</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>メイン画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ノードID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>portName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ポート名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>ioType</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ポート タイプ、<code>"input"</code> または <code>"output"</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>キャンセルトークン、オプション</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>戻り値</strong>: <code>Task&lt;JsonElement&gt;</code>、ポート データ値 (形式はノード タイプによって決まります)。</p>
+</div>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+// 出力ポートデータの読み取り
+var portData = await client.Node.GetNodePortDataAsync(
+    new PortRef("my_graph", "detect-node-id", "results", "outputs"));
+Console.WriteLine($"試験結果: {portData}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_downloaddataasync"><a class="anchor" href="#_downloaddataasync"></a>DownloadDataAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// オリジナル JsonElement バージョン
+Task&lt;JsonElement&gt; DownloadDataAsync(
+    PortRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// ジェネリック版
+Task&lt;T&gt; DownloadDataAsync&lt;T&gt;(
+    PortRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的</strong>: ノード ポート データのダウンロード リンクを生成します。これは、ポート出力が大きく、呼び出し元がリンクに従ってダウンロードする必要があるシナリオに適しています。</p>
+</div>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var download = await client.Node.DownloadDataAsync(
+    new PortRef("demo_graph", "node-1", "points", "outputs"));
+Console.WriteLine(download);</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getpointsdataparsedasync"><a class="anchor" href="#_getpointsdataparsedasync"></a>GetPointsDataParsedAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">Task&lt;IReadOnlyList&lt;ParsedPointCloud&gt;&gt; GetPointsDataParsedAsync(
+    PortRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的</strong>: ノード点群を直接読み取り、解析します。最初に使用することをお勧めします。</p>
+</div>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var clouds = await client.Node.GetPointsDataParsedAsync(
+    new PortRef("my_graph", "lidar-node-id", "pointcloud", "outputs"));
+Console.WriteLine($"点群 shape: {string.Join(" x ", clouds[0].Shape)}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getpointsdataasync"><a class="anchor" href="#_getpointsdataasync"></a>GetPointsDataAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">Task&lt;byte[]&gt; GetPointsDataAsync(
+    PortRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>使用方法</strong>: ノードポートの点群データをバイナリ形式で読み取り、元の <code>byte[]</code> を返します。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名前</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>メイン画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ノードID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>portName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ポート名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>ioType</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ポート タイプ、<code>"input"</code> または <code>"output"</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>キャンセルトークン、オプション</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>戻り値</strong>: <code>Task&lt;byte[]&gt;</code>、元の点群バイナリ データ。
+注:
+* ここで返されるのは、サーバー側の元の <code>byte[]</code> です
+* <code>Node/GetPointsData</code> のバイトの前には、Atom 自身の点群ヘッダー情報が続きます
+* 通常のシナリオでは、最初に上記の <code>GetPointsDataParsedAsync(&#8230;&#8203;)</code> を使用することをお勧めします。</p>
+</div>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.IO;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+byte[] pointCloud = await client.Node.GetPointsDataAsync(
+    new PortRef("my_graph", "lidar-node-id", "pointcloud", "outputs"));
+Console.WriteLine($"raw bytes: {pointCloud.Length}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_setnodeparamdataasync"><a class="anchor" href="#_setnodeparamdataasync"></a>SetNodeParamDataAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// オリジナル JsonElement バージョン
+Task&lt;JsonElement&gt; SetNodeParamDataAsync(
+    NodeParamUpdate paramsData,
+    CancellationToken cancellationToken = default)
+
+// ジェネリック版
+Task&lt;T&gt; SetNodeParamDataAsync&lt;T&gt;(
+    NodeParamUpdate paramsData,
+    CancellationToken cancellationToken = default)
+
+// 強く型付けされた便利なバージョン
+Task&lt;NodeTimestampInfo&gt; SetNodeParamDataInfoAsync(
+    NodeParamUpdate paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的</strong>: ノードの特定のパラメータ値を設定します。基本タイプ (文字列、数値、ブール値) とバイナリ ファイル (<code>byte[]</code>) をサポートします。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名前</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>メイン画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ノードID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>パラメータ名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramType</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>パラメータのタイプ、通常は <code>"init_params"</code> または <code>"run_params"</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>value</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>object?</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>パラメーター値、<code>string</code>、数値タイプ、<code>bool</code>、<code>byte[]</code>、<code>FileInfo</code> をサポート</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>キャンセルトークン、オプション</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>戻り値</strong>: <code>Task&lt;JsonElement&gt;</code>、操作後のタイムスタンプ情報が含まれます。</p>
+</div>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.IO;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Graph.OpenGraphAsync("my_graph");
+
+// 数値パラメータを設定する
+await client.Node.SetNodeParamDataInfoAsync(
+    new NodeParamUpdate(
+        "my_graph", "resize-node-id", "scale_factor", "run_params", 0.5));
+
+// 文字列パラメータを設定する
+await client.Node.SetNodeParamDataAsync(
+    new NodeParamUpdate(
+        "my_graph", "model-node-id", "model_path", "init_params",
+        "/models/resnet50.onnx"));
+
+// ファイルパラメータを設定する（モデルファイルなど）
+await client.Node.SetNodeParamDataAsync(
+    new NodeParamUpdate(
+        "my_graph", "model-node-id", "model_file", "init_params",
+        new FileInfo("/models/custom.onnx")));
+
+Console.WriteLine("パラメータ設定完了");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_setbindingnameasync"><a class="anchor" href="#_setbindingnameasync"></a>SetBindingNameAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// オリジナル JsonElement バージョン
+Task&lt;JsonElement&gt; SetBindingNameAsync(
+    NodeBindingUpdate paramsData,
+    CancellationToken cancellationToken = default)
+
+// ジェネリック版
+Task&lt;T&gt; SetBindingNameAsync&lt;T&gt;(
+    NodeBindingUpdate paramsData,
+    CancellationToken cancellationToken = default)
+
+// 強く型付けされた便利なバージョン
+Task&lt;NodeTimestampInfo&gt; SetBindingNameInfoAsync(
+    NodeBindingUpdate paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的</strong>: Runtime ステージが <code>bindingName</code> を介してポート データを直接読み書きできるように、ノード ポートの Runtime バインディング名を設定します。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名前</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>メイン画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ノードID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>bindingType</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>バインディング タイプ、通常は <code>"inputs"</code> または <code>"outputs"</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>originName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ポートの元の名前</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>bindingName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>がバインドされた後に Runtime で使用される名前</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>キャンセルトークン、オプション</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>戻り値</strong>: <code>Task&lt;JsonElement&gt;</code>、操作後のタイムスタンプ情報が含まれます。</p>
+</div>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Graph.OpenGraphAsync("my_graph");
+
+// するだろう DetectAndSegment の results 出力ポート バインディングの名前は次のとおりです。 "result"
+await client.Node.SetBindingNameInfoAsync(
+    new NodeBindingUpdate(
+        "my_graph", "detect-node-id", "outputs", "results", "result"));
+
+Console.WriteLine("バインディング名が正常に設定されました，Runtime ステージ可 'result' 結果の読み取り");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_editnodecommentasync"><a class="anchor" href="#_editnodecommentasync"></a>EditNodeCommentAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// オリジナル JsonElement バージョン
+Task&lt;JsonElement&gt; EditNodeCommentAsync(
+    EditNodeCommentParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// ジェネリック版
+Task&lt;T&gt; EditNodeCommentAsync&lt;T&gt;(
+    EditNodeCommentParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的</strong>: ノードのコメントを変更します。 SDK は現在のグラフの <code>timestamp</code> を自動的に引き継ぎ、サーバーが戻った後に新しいタイムスタンプを同期します。</p>
+</div>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">await client.Node.EditNodeCommentAsync(
+    new EditNodeCommentParams("demo_graph", "node-1", "これは新しいメモです"));</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_activatenodeasync"><a class="anchor" href="#_activatenodeasync"></a>ActivateNodeAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// オリジナル JsonElement バージョン（ポーリングは完了を待っています）
+Task&lt;JsonElement&gt; ActivateNodeAsync(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default,
+    TimeSpan? timeout = null)
+
+// ジェネリック版
+Task&lt;T&gt; ActivateNodeAsync&lt;T&gt;(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default,
+    TimeSpan? timeout = null)
+
+// 強く型付けされた便利なバージョン
+Task&lt;NodeRunResult&gt; ActivateNodeResultAsync(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default,
+    TimeSpan? timeout = null)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的</strong>: 指定したノードをアクティブ化して実行します。SDK は、実行が完了して戻るまで内部的にポーリングします。デフォルトでは最大 30 秒待機します。 <code>timeout</code> を超える場合は、<code>AtomTimeoutException</code> をスローします。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名前</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>メイン画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ノードID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>キャンセル トークン。呼び出し元がアクティブにキャンセルするために使用します。</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>timeout</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>TimeSpan?</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>SDK ポーリング待機タイムアウト; <code>null</code> はデフォルトの 30 秒を使用し、<code>Timeout.InfiniteTimeSpan</code> は永久に待機することを意味します</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>戻り値</strong>: <code>Task&lt;JsonElement&gt;</code>、ノードの演算結果、各出力ポートのデータを含む。</p>
+</div>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Graph.OpenGraphAsync("my_graph");
+
+var result = await client.Node.ActivateNodeResultAsync(
+    new NodeRef("my_graph", "detect-node-id"),
+    timeout: TimeSpan.FromSeconds(60));
+Console.WriteLine($"ノード操作が完了しました，リクエストステータス: {result.Status}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_initialnodeasync"><a class="anchor" href="#_initialnodeasync"></a>InitialNodeAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// オリジナル JsonElement バージョン
+Task&lt;JsonElement&gt; InitialNodeAsync(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// ジェネリック版
+Task&lt;T&gt; InitialNodeAsync&lt;T&gt;(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// 強く型付けされた便利なバージョン
+Task&lt;NodeTimestampInfo&gt; InitialNodeInfoAsync(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的</strong>: ノードを初期化します (ノードの init ロジックをトリガーします。通常、パラメーター設定の完了後、初めて実行する前に呼び出されます)。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名前</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>メイン画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ノードID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>キャンセルトークン、オプション</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>戻り値</strong>: <code>Task&lt;JsonElement&gt;</code>、操作後のタイムスタンプ情報が含まれます。</p>
+</div>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Graph.OpenGraphAsync("my_graph");
+
+// パラメータを設定した後、ノードを初期化します
+await client.Node.SetNodeParamDataAsync(
+    new NodeParamUpdate("my_graph", "model-node-id", "model_path", "init_params", "/models/resnet50.onnx"));
+var ts = await client.Node.InitialNodeInfoAsync(new NodeRef("my_graph", "model-node-id"));
+Console.WriteLine($"ノードの初期化が完了しました，タイムスタンプ: {ts.Timestamp}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_updatenodeasync"><a class="anchor" href="#_updatenodeasync"></a>UpdateNodeAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// オリジナル JsonElement バージョン（単一のリクエスト，ポーリングなし）
+Task&lt;JsonElement&gt; UpdateNodeAsync(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// ジェネリック版
+Task&lt;T&gt; UpdateNodeAsync&lt;T&gt;(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// 強く型付けされた便利なバージョン
+Task&lt;NodeRunResult&gt; UpdateNodeResultAsync(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的</strong>: ノードを更新して実行します (ノードの update/run ロジックをトリガーします)。このインターフェイスは、サーバー <code>UpdateNode</code> によって定義された要求を 1 つだけ開始し、<code>finish</code> をポーリングしません。サーバーが <code>finish=false</code> を返した場合、SDK もこの応答を呼び出し元に直接返します。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名前</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>メイン画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ノードID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>キャンセル トークン。呼び出し元がアクティブにキャンセルするために使用します。</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>戻り値</strong>: <code>Task&lt;JsonElement&gt;</code>、ノードの実行結果。</p>
+</div>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Graph.OpenGraphAsync("my_graph");
+
+var result = await client.Node.UpdateNodeResultAsync(
+    new NodeRef("my_graph", "detect-node-id"));
+Console.WriteLine($"ノード更新リクエストが返されました，リクエストステータス: {result.Status}");</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_完全な例"><a class="anchor" href="#_完全な例"></a>完全な例</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>次の例は、メイン グラフでの単純な 2 ノード パイプラインの構築と実行を示しています。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Core;
+using AtomSdk.Models;
+
+class NodeWorkflowExample
+{
+    static async Task Main()
+    {
+        var client = new AtomClient("http://localhost:8080");
+        const string graphName = "node_demo_graph";
+
+        try
+        {
+            // 1. 図を作成して開く
+            var graphInfo = await client.Graph.CreateGraphInfoAsync(new CreateGraphParams(graphName));
+            await client.Graph.OpenGraphAsync(graphName);
+            Console.WriteLine($"[1] 図を作成して開いた，リクエストステータス={graphInfo.Status}");
+
+            // 2. 2 つのノードを作成する
+            var resizeNode = await client.Node.CreateNodeInfoAsync(new CreateNodeParams(graphName, "ResizeImage"));
+            var detectNode = await client.Node.CreateNodeInfoAsync(new CreateNodeParams(graphName, "DetectAndSegment"));
+            Console.WriteLine($"[2] ノードが作成されました: resize={resizeNode.NodeId}, detect={detectNode.NodeId}, リクエストステータス={detectNode.Status}");
+
+            // 3. 設定 ResizeImage パラメータ
+            await client.Node.SetNodeParamDataAsync(
+                new NodeParamUpdate(
+                    graphName, resizeNode.NodeId, "scale_factor", "run_params", 0.5));
+            Console.WriteLine("[3] パラメータ設定完了");
+
+            // 4. ノードを接続する
+            await client.Node.ConnectNodesAsync(
+                new NodeConnectionParams(
+                    graphName,
+                    outputNodeId: resizeNode.NodeId, outputPortName: "resized_image",
+                    inputNodeId: detectNode.NodeId, inputPortName: "image"));
+            Console.WriteLine("[4] ノードが接続されました");
+
+            // 5. のために DetectAndSegment 出力ポートの設定 Runtime バインディング名
+            await client.Node.SetBindingNameAsync(
+                new NodeBindingUpdate(
+                    graphName, detectNode.NodeId, "outputs", "results", "result"));
+            Console.WriteLine("[5] バインディング名が設定されています");
+
+            // 6. グラフ全体を実行する，ほとんどが待ちます 30 秒
+            var runResult = await client.Graph.RunGraphResultAsync(
+                graphName,
+                timeout: TimeSpan.FromSeconds(30));
+            Console.WriteLine($"[6] チャートの実行が完了しました，リクエストステータス: {runResult.Status}");
+
+            // 7. 出力データの読み取り
+            var portData = await client.Node.GetNodePortDataAsync(
+                new PortRef(graphName, detectNode.NodeId, "results", "outputs"));
+            Console.WriteLine($"[7] 試験結果: {portData}");
+
+            // 8. リリースチャート
+            await client.Graph.ReleaseGraphAsync(graphName);
+            Console.WriteLine("[8] 画像が公開されました");
+        }
+        catch (AtomApiException ex)
+        {
+            Console.WriteLine($"サーバーエラー {ex.Status}: {ex.Message}");
+        }
+        catch (AtomHttpException ex)
+        {
+            Console.WriteLine($"HTTP エラー {ex.StatusCode}: {ex.Message}");
+        }
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="graph.html">GraphService（C#）</a></span>
+  <span class="next"><a href="graph_node.html">GraphNodeService（C#）</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

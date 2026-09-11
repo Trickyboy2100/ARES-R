@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>C# RuntimeService 入门使用 :: Atom SDK 开发手册</title>
+    <link rel="prev" href="cpp.html">
+    <link rel="next" href="../guides/how-to-choose-service.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          在线产品文档        </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="输入关键词搜索"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              仅本手册
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            切换手册
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK 开发手册</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          下载中心
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          官网
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            简体中文
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK 开发手册</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">欢迎</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">快速开始</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">快速开始</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">示例样本</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">入门使用</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="index.html">Atom SDK 入门使用</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="python.html">Python RuntimeService 入门使用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="cpp.html">C++ RuntimeService 入门使用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="csharp.html">C# RuntimeService 入门使用</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">使用指南</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">选择合适的 Service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">图与节点操作</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">错误处理与排查</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">常见问题解答</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">基础概念</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/what-is-atom-sdk.html">什么是 Atom SDK</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-node-subgraph.html">图、节点、子图</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-vs-runtime.html">Graph 与 Runtime 的区别</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/timestamp.html">Timestamp 是什么</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/runtime-frame.html">运行时输入帧（RuntimeFrame / RuntimePassiveBinoFrame）</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/point-cloud-protocol.html">点云类型输入输出的二进制协议</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/param-binding.html">参数类型与绑定名</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API 参考</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API 参考总览</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python 概览与安装</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/params.html">Python 参数对象</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/public_api.html">Python 公共工具 API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ 版 — 使用指南</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ 参数对象</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">Atom SDK — C# 版本</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/params.html">C# 参数对象</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK 开发手册</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK 开发手册</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK 开发手册</a></li>
+    <li>入门使用</li>
+    <li>C#</li>
+    <li><a href="csharp.html">C# RuntimeService 入门使用</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="本页内容"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">C# RuntimeService 入门使用</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>本页只介绍通过 C# <code>RuntimeService</code> 使用 ATOM 的四个流程，不介绍创建图、连线和节点编辑。
+完整参数和底层协议见高级版的 <a href="../csharp/runtime.html" class="xref page">C# RuntimeService</a>。</p>
+</div>
+<div class="paragraph">
+<p>所有 Runtime 接口都是异步方法，需要使用 <code>await</code>。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_0_创建客户端"><a class="anchor" href="#_0_创建客户端"></a>0. 创建客户端</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Collections.Generic;
+using System.IO;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://127.0.0.1:10026");
+const string graphName = "detection_graph";</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_1_获取算法图列表"><a class="anchor" href="#_1_获取算法图列表"></a>1. 获取算法图列表</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>ListGraphSummariesAsync()</code> 返回 Runtime 当前可见的算法图摘要。使用强类型版本时，图名在
+<code>GraphName</code> 属性中。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var graphs = await client.Runtime.ListGraphSummariesAsync();
+Console.WriteLine($"算法图数量：{graphs.Length}");
+foreach (var graph in graphs)
+{
+    Console.WriteLine($"图名：{graph.GraphName}");
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>如果需要查看服务端原始 JSON，也可以调用 <code>ListGraphsAsync()</code>。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_2_运行算法图并解析结果"><a class="anchor" href="#_2_运行算法图并解析结果"></a>2. 运行算法图并解析结果</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_2_1_选择运行模式"><a class="anchor" href="#_2_1_选择运行模式"></a>2.1 选择运行模式</h3>
+<div class="paragraph">
+<p>Runtime 图运行有两种模式。先确认图中 <code>EpicProInput</code> 的配置，再选择对应的输入方式：</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 28.5714%;">
+<col style="width: 28.5714%;">
+<col style="width: 28.5715%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">模式</th>
+<th class="tableblock halign-left valign-top">构造方式</th>
+<th class="tableblock halign-left valign-top">输入对象</th>
+<th class="tableblock halign-left valign-top">适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">普通模式</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>new RuntimeRunParams(graphName, frames)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">一个或多个 <code>RuntimeFrame</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">普通图像、点云或标准 EPICRAW 输入</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">被动双目模式</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RuntimeRunParams.PassiveBinoFromFile/Bytes/Images(&#8230;&#8203;)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">一个 <code>RuntimePassiveBinoFrame</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">已经有被动双目 EPICRAW3 输入</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>两种模式不要混用：普通模式使用 <code>RuntimeFrame</code>，被动双目模式使用
+<code>RuntimePassiveBinoFrame</code>。图中的 <code>EpicProInput</code> 节点也必须配置为对应模式，并且图中包含 <code>EpicPro输出</code> 节点，否则运行会失败。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_2_2_普通模式加载图并运行"><a class="anchor" href="#_2_2_普通模式加载图并运行"></a>2.2 普通模式：加载图并运行</h3>
+<div class="paragraph">
+<p>普通模式下，使用已有 EPICRAW 文件构造 <code>RuntimeFrame</code>。<code>Cam2Base</code> 必须使用长度为 6 的
+旋转矢量 <code>[x, y, z, rx, ry, rz]</code>。
+普通模式的 <code>RuntimeFrame</code> 还要传入 ROI。本例使用一个简单的三维包围盒；实际项目请替换成你的 ROI 范围。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var loaded = await client.Runtime.LoadGraphInfoAsync(graphName);
+Console.WriteLine($"加载状态：{loaded.Status}");
+
+var roi = new Dictionary&lt;string, object?&gt;
+{
+    ["min"] = new Dictionary&lt;string, double&gt; { ["x"] = -0.5, ["y"] = -0.5, ["z"] = 0.1 },
+    ["max"] = new Dictionary&lt;string, double&gt; { ["x"] = 0.5, ["y"] = 0.5, ["z"] = 2.0 },
+    ["cam2ROIFrame"] = new[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
+};
+var frame = RuntimeFrame.FromFile(
+    "/data/frame.epicraw",
+    new[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 }, roi);
+
+var runResult = await client.Runtime.RunGraphResultAsync(
+    new RuntimeRunParams(graphName, new[] { frame }));
+Console.WriteLine($"运行状态：{runResult.Status}");
+Console.WriteLine($"运行汇总：{runResult}");</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>运行汇总中的具体字段由算法图决定。完整的节点结果通常通过输出绑定读取。</p>
+</div>
+<div class="paragraph">
+<p>如果数据来自相机、采集程序或网络缓冲区，不需要先保存为文件，直接传完整 EPICRAW bytes：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 由业务层提供完整 EPICRAW bytes，这里替换成你的采集接口。
+byte[] epicRawBytes = GetEpicRawBytesFromCamera();
+var bytesFrame = RuntimeFrame.FromBytes(
+    epicRawBytes,
+    new[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
+    roi);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>如果上游只有原始图像和点云，也可以不生成文件，直接使用 <code>RuntimeFrame.FromData(&#8230;&#8203;)</code>：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 由相机或采集程序提供 pointValues 和 imageBytes。
+var points = new RuntimePointData(pointValues, 640, 480);
+var image = new RuntimeImageData(imageBytes, 640, 480);
+var intrinsic = new[,] { { 600.0, 0.0, 320.0 }, { 0.0, 600.0, 240.0 }, { 0.0, 0.0, 1.0 } };
+var distortion = new[] { 0.0, 0.0, 0.0, 0.0, 0.0 };
+
+var dataFrame = RuntimeFrame.FromData(
+    points,
+    image,
+    new[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
+    intrinsic,
+    distortion);
+dataFrame.Roi = roi;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>pointValues</code> 和 <code>imageBytes</code> 可以直接来自相机或采集程序，SDK 会在内存中封装成 EPICRAW。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_2_3_被动双目模式使用_epicraw3_文件"><a class="anchor" href="#_2_3_被动双目模式使用_epicraw3_文件"></a>2.3 被动双目模式：使用 EPICRAW3 文件</h3>
+<div class="paragraph">
+<p>如果业务侧已经拿到完整的被动双目 EPICRAW3 文件，直接使用
+<code>RuntimeRunParams.PassiveBinoFromFile(&#8230;&#8203;)</code>。服务端会从文件中解析三张图、内参、畸变和被动双目参数。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var passiveRun = await client.Runtime.RunGraphResultAsync(
+    RuntimeRunParams.PassiveBinoFromFile(
+        graphName,
+        "/data/passive_bino.epicraw",
+        new[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 }));
+Console.WriteLine($"被动双目运行状态：{passiveRun.Status}");</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>运行完成后，仍然使用下面的输出绑定接口读取结果，不需要更换结果解析方式。
+被动双目工厂方法当前使用 EPICRAW3 中的被动双目参数，接口只额外接收 <code>Cam2Base</code>，不传普通模式的 <code>Roi</code>。</p>
+</div>
+<div class="paragraph">
+<p>如果业务层已经拿到完整 EPICRAW3 bytes，也可以直接传入内存数据：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">byte[] epicRaw3Bytes = GetEpicRaw3BytesFromCamera();
+var passiveRun = await client.Runtime.RunGraphResultAsync(
+    RuntimeRunParams.PassiveBinoFromBytes(
+        graphName,
+        epicRaw3Bytes,
+        new[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 }));</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>如果业务层拿到的是三张原始图，则使用 <code>RuntimeRunParams.PassiveBinoFromImages(&#8230;&#8203;)</code>，并提供
+<code>DepthSrc1</code>、<code>DepthSrc2</code>、<code>TextureSrc</code> 三路相机元数据。</p>
+</div>
+<div class="paragraph">
+<p>如果业务层拿到的是三张原始图，可以使用 <code>PassiveBinoFromImages(&#8230;&#8203;)</code>。三张图的顺序固定为
+<code>DepthSrc1</code>、<code>DepthSrc2</code>、<code>TextureSrc</code>，每一路都要提供相机元数据。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var cameraParams = new Dictionary&lt;string, object?&gt;
+{
+    ["CameraMatrix"] = new[] { 600.0, 0.0, 320.0, 0.0, 600.0, 240.0, 0.0, 0.0, 1.0 },
+    ["CameraDistortion"] = new[] { 0.0, 0.0, 0.0, 0.0, 0.0 },
+    ["CameraRotation"] = new[] { 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0 },
+    ["CameraTranslation"] = new[] { 0.0, 0.0, 0.0 },
+};
+var passiveParams = new Dictionary&lt;string, object?&gt;
+{
+    ["DepthSrc1"] = cameraParams,
+    ["DepthSrc2"] = cameraParams,
+    ["TextureSrc"] = cameraParams,
+};
+var paramsData = RuntimeRunParams.PassiveBinoFromImages(
+    graphName,
+    new[] {
+        new RuntimePassiveBinoImage(depthSrc1, 640, 480, 2),
+        new RuntimePassiveBinoImage(depthSrc2, 640, 480, 2),
+        new RuntimePassiveBinoImage(textureBgr, 640, 480, 16),
+    },
+    passiveParams,
+    new[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 });
+var result = await client.Runtime.RunGraphResultAsync(paramsData);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>depthSrc1</code>、<code>depthSrc2</code>、<code>textureBgr</code> 是业务层提供的原始像素 bytes；<code>2</code> 表示 <code>CV_16UC1</code>，<code>16</code> 表示 <code>CV_8UC3</code>。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_2_4_查看输出绑定"><a class="anchor" href="#_2_4_查看输出绑定"></a>2.4 查看输出绑定</h3>
+<div class="paragraph">
+<p>使用强类型接口查看绑定名称和数据类型：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var outputsInfo = await client.Runtime.GetBindedOutputsInfoModelAsync(graphName);
+foreach (var output in outputsInfo.Outputs)
+{
+    Console.WriteLine(
+        $"绑定名：{output.BindingName}，数据类型：{output.DataType}");
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>如果想读取某个节点的结果，需要在图中把该节点输出端口配置为输出绑定；RuntimeService 不能
+直接按 <code>node_id</code> 查询任意节点端口。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_2_5_读取不同类型的数据"><a class="anchor" href="#_2_5_读取不同类型的数据"></a>2.5 读取不同类型的数据</h3>
+<div class="paragraph">
+<p>普通 JSON 数据使用 <code>GetBindedOutputValueAsync</code>：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var value = await client.Runtime.GetBindedOutputValueAsync(
+    new BindingRef(graphName, "detection_result"));
+Console.WriteLine($"普通结果：{value}");</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>点云使用解析接口。XYZ 点云通常传 <code>pointDim: 3</code>，带法向量或颜色的点云通常传 <code>6</code>：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var clouds = await client.Runtime.GetBindedPointCloudParsedAsync(
+    new PointCloudRef(graphName, "filtered_cloud", pointDim: 3));
+Console.WriteLine($"点云数量：{clouds.Count}");
+Console.WriteLine($"第一份点云 shape：{string.Join(" x ", clouds[0].Shape)}");</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>如果需要原始点云字节：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var rawCloud = await client.Runtime.GetBindedPointCloudAsync(
+    new BindingRef(graphName, "filtered_cloud"));
+Console.WriteLine($"原始字节数：{rawCloud.Length}");</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_2_6_释放图"><a class="anchor" href="#_2_6_释放图"></a>2.6 释放图</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">await client.Runtime.ReleaseGraphAsync(graphName);</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_3_单独调用某个算法"><a class="anchor" href="#_3_单独调用某个算法"></a>3. 单独调用某个算法</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>RunSingleNodeNoGraphParsedAsync</code> 不需要先创建或加载算法图。推荐使用 parsed 版本，输出会按
+端口类型解析成 JSON、点云或图片。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var parsed = await client.Runtime.RunSingleNodeNoGraphParsedAsync(
+    new SingleNodeParams(
+        "EstimateNormal",
+        inputs: new Dictionary&lt;string, object?&gt;
+        {
+            ["points"] = new FileInfo("/data/scan.ply"),
+        },
+        outputDataTypes: new Dictionary&lt;string, string&gt;
+        {
+            ["points"] = "XYZPoints",
+        },
+        outputPointDims: new Dictionary&lt;string, int&gt;
+        {
+            ["points"] = 3,
+        }));
+
+var clouds = (IReadOnlyList&lt;ParsedPointCloud&gt;)parsed.Outputs["points"]!;
+Console.WriteLine($"点云数量：{clouds.Count}");</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>解析后的 <code>Outputs</code> 规则：普通类型是 <code>JsonElement</code>，点云是
+<code>IReadOnlyList&lt;ParsedPointCloud&gt;</code>，图片是 <code>IReadOnlyList&lt;ParsedImage&gt;</code>。</p>
+</div>
+<div class="paragraph">
+<p>如果需要服务端原始结果，使用 <code>RunSingleNodeNoGraphAsync</code>：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var raw = await client.Runtime.RunSingleNodeNoGraphAsync(
+    new SingleNodeParams(
+        "EstimateNormal",
+        inputs: new Dictionary&lt;string, object?&gt;
+        {
+            ["points"] = new FileInfo("/data/scan.ply"),
+        }));
+
+if (raw.IsBinary)
+{
+    Console.WriteLine($"原始字节数：{raw.BinaryData!.Length}");
+}
+else
+{
+    Console.WriteLine($"原始 JSON：{raw.JsonData}");
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_4_修改算法图参数后再次运行"><a class="anchor" href="#_4_修改算法图参数后再次运行"></a>4. 修改算法图参数后再次运行</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Runtime 参数修改不需要使用 <code>NodeService</code>。调用顺序是：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">LoadGraphAsync → GetMetaInfoAsync → SetSharedParamsAsync / SetRunParamsAsync → RunGraphAsync</code></pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_4_1_查看图暴露的参数"><a class="anchor" href="#_4_1_查看图暴露的参数"></a>4.1 查看图暴露的参数</h3>
+<div class="paragraph">
+<p><code>GetMetaInfoModelAsync</code> 会返回共享参数和运行参数。参数名以返回的 <code>BindingName</code> 为准。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">await client.Runtime.LoadGraphAsync(graphName);
+var meta = await client.Runtime.GetMetaInfoModelAsync(graphName);
+
+foreach (var item in meta.SharedParams)
+{
+    Console.WriteLine($"共享参数：{item.BindingName}，类型：{item.DataType}");
+}
+foreach (var item in meta.RuntimeParams)
+{
+    Console.WriteLine($"运行参数：{item.BindingName}，类型：{item.DataType}");
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_4_2_设置参数并再次运行"><a class="anchor" href="#_4_2_设置参数并再次运行"></a>4.2 设置参数并再次运行</h3>
+<div class="paragraph">
+<p>下面的参数名只是示例，必须替换为 <code>GetMetaInfoModelAsync</code> 返回的真实绑定名：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">await client.Runtime.SetSharedParamsAsync(
+    new RuntimeParamsUpdate(
+        graphName,
+        new Dictionary&lt;string, object?&gt;
+        {
+            ["camera_id"] = "cam-01",
+        }));
+
+await client.Runtime.SetRunParamsAsync(
+    new RuntimeParamsUpdate(
+        graphName,
+        new Dictionary&lt;string, object?&gt;
+        {
+            ["confidence"] = 0.8,
+        }));
+
+// 后续运行和读取结果与第 2 节完全一致。
+var newRunResult = await client.Runtime.RunGraphResultAsync(
+    new RuntimeRunParams(graphName, new[] { frame }));
+var newValue = await client.Runtime.GetBindedOutputValueAsync(
+    new BindingRef(graphName, "detection_result"));
+Console.WriteLine($"修改参数后的结果：{newValue}");</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>如果结果没有变化，检查绑定名拼写、参数属于共享参数还是运行参数，以及是否读取了新的输出值。</p>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="cpp.html">C++ RuntimeService 入门使用</a></span>
+  <span class="next"><a href="../guides/how-to-choose-service.html">选择合适的 Service</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

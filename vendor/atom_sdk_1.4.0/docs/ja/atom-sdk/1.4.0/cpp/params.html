@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>C++ パラメータ オブジェクト :: Atom SDK 開発者ガイド</title>
+    <link rel="prev" href="overview.html">
+    <link rel="next" href="graph.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          オンライン製品ドキュメント
+                  </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="ドキュメントを検索"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              このマニュアルのみ
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            マニュアルを切り替え
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK 開発者ガイド</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          ダウンロードセンター
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          公式サイト
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            日本語
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK 開発者ガイド</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">ようこそ</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">クイックスタート</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">クイックスタート</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">サンプルサンプル</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">入門利用</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK 入門利用</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">ユーザーガイド</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">適切な Service を選択します</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">グラフとノードの操作</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">エラー処理とトラブルシューティング</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">よくある質問</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">基本的な概念</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/what-is-atom-sdk.html">Atom SDK とは</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-node-subgraph.html">グラフ、ノード、サブグラフ</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-vs-runtime.html">Graph と Runtime の違い</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/timestamp.html">Timestampとは何ですか</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/runtime-frame.html">ランタイム入力フレーム (RuntimeFrame / RuntimePassiveBinoFrame)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/point-cloud-protocol.html">点群タイプの入出力用のバイナリ プロトコル</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/param-binding.html">パラメータのタイプとバインディング名</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API リファレンス</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API リファレンスの概要</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python の概要とインストール</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/params.html">Python パラメータ オブジェクト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/public_api.html">Python パブリック ユーティリティ API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="overview.html">Atom SDK C++ バージョン — ユーザーガイド</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="params.html">C++ パラメータ オブジェクト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">Atom SDK — C# バージョン</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/params.html">C# パラメータオブジェクト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK 開発者ガイド</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK 開発者ガイド</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK 開発者ガイド</a></li>
+    <li>API リファレンス</li>
+    <li>C++ SDK</li>
+    <li><a href="params.html">C++ パラメータ オブジェクト</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="このページの内容"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">C++ パラメータ オブジェクト</h1>
+<div class="sect1">
+<h2 id="_命名規則"><a class="anchor" href="#_命名規則"></a>命名規則</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">サフィックス</th>
+<th class="tableblock halign-left valign-top">目的</th>
+<th class="tableblock halign-left valign-top">例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>*Ref</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>は既存のオブジェクトを参照し、リソースの検索のみを行います。</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>NodeRef</code>、<code>PortRef</code>、<code>BindingRef</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>*Params</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>インターフェイス呼び出しの完全なパラメーター</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CreateNodeParams</code>、<code>RuntimeRunParams</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>*Update</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>既存の構成、パラメータ、またはランタイム データを変更します</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>NodeParamUpdate</code>、<code>RuntimeParamsUpdate</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>それは次のように理解できます。
+* `Ref`は「誰を操作したいですか?」
+* `Params`は「徹底的にやります」
+* `Update`は「すでにあるものを何かに変えたい」</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_基本的な書き方"><a class="anchor" href="#_基本的な書き方"></a>基本的な書き方</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>C++ パラメーター オブジェクトはすべて通常の <code>struct</code> であり、集合体を使用して初期化できます。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">client.node().create_node({"my_graph", "ResizeImage"});
+client.node().activate_node({"my_graph", node_id});
+client.runtime().get_binded_output_value({"my_graph", "result"});</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>多くのフィールドがある場合は、コードを明確にするために型を明示的に記述することをお勧めします。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">atom::sdk::NodeConnectionParams connection{
+    "my_graph",
+    source_node_id, "result",
+    target_node_id, "input"
+};
+client.node().connect_nodes(connection);</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_共通パラメータオブジェクト"><a class="anchor" href="#_共通パラメータオブジェクト"></a>共通パラメータオブジェクト</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_graph"><a class="anchor" href="#_graph"></a>Graph</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">パラメータオブジェクト</th>
+<th class="tableblock halign-left valign-top">は次の目的で使用されます。</th>
+<th class="tableblock halign-left valign-top">フィールドの順序</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CreateGraphParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph.create_graph</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name, description?</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CopyGraphParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph.copy_graph</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name, new_graph_name</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>EditGraphNameParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph.edit_graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name, new_graph_name</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>EditGraphCommentParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph.edit_graph_comment</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name, comment</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>LoadGraphParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph.load_graph</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name, file_path</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph.import_extension_nodes_by_path</code>
+戻り値の</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>load_graph</code> <code>extensionNodes</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>ExportGraphParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph.export_graph</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name, dl_models_info, custom_nodes</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto graph = client.graph().create_graph({"demo_graph", "created by C++ SDK"});
+auto graph_status = graph.at("status").get&lt;std::int64_t&gt;();
+client.graph().copy_graph({"demo_graph", "demo_graph_backup"});
+client.graph().load_graph({"imported_graph", std::filesystem::path("/tmp/demo.atom")});
+client.graph().edit_graph_name({"demo_graph", "demo_graph_v2"});
+client.graph().edit_graph_comment({"demo_graph_v2", "新しいプロセスのメモ"});</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_node"><a class="anchor" href="#_node"></a>Node</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">パラメータオブジェクト</th>
+<th class="tableblock halign-left valign-top">は次の目的で使用されます。</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>NodeRef</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>既存のノードの削除、クエリ、アクティブ化、初期化、更新</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CreateNodeParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ノードの作成</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CreateDynamicNodeParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>動的IOノードの作成</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CopyNodeParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ノードのコピー</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>ChangeNodeIOParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>動的ノードの入力と出力を変更する</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CreateGraphNodeParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>既存のサブグラフから作成 graph node</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>GenerateGraphNodeByNodesParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>は複数のノード graph node によってパッケージ化され生成されます</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>NodeConnectionParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ノードの接続または切断</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PortRef</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ノードポートデータまたは点群の読み取り</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>NodeParamUpdate</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ノードパラメータを設定する</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>NodeBindingUpdate</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ノードバインディング名を設定します</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>EditNodeCommentParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ノードのコメントを変更</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto node = client.node().create_node({"my_graph", "DetectAndSegment", "ノードの検出"});
+std::string node_id = node.at("nodeId").get&lt;std::string&gt;();
+auto status = node.at("status").get&lt;std::int64_t&gt;();
+
+client.node().activate_node({"my_graph", node_id});
+client.node().create_graph_node({"my_graph", "SubFlow", "sub_graph_alpha"});
+client.node().generate_graph_node_by_nodes({"my_graph", "PackedNode", {"node-a", "node-b"}});
+client.node().edit_node_comment({"my_graph", node_id, "これは新しいメモです"});</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>動的 IO ノードは、サーバーによって合意された IO 構成を渡す必要があります。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">client.node().create_dynamic_io_node({
+    "my_graph",
+    "DynamicNode",
+    atom::sdk::json::parse(R"({"inputs":[{"name":"image_in"}]})")
+});
+client.node().change_node_io({
+    "my_graph",
+    node_id,
+    atom::sdk::json::parse(R"({"outputs":[{"name":"mask_out"}]})")
+});</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>ノードを接続する場合、フィールドの順序は「出力が最初、入力が最後」になります。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">client.node().connect_nodes({
+    "my_graph",
+    resize_node_id, "resized_image",
+    detect_node_id, "image"
+});</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>通常の JSON パラメータを設定する場合は、値として <code>atom::sdk::JsonValue</code> を使用します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">client.node().set_node_param_data({
+    "my_graph",
+    node_id,
+    "threshold",
+    "init_params",
+    atom::sdk::JsonValue(0.7)
+});</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>ファイルパラメータを設定する場合、値として <code>std::filesystem::path</code> を使用すると、SDK がファイルによってアップロードされます。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">client.node().set_node_param_data({
+    "my_graph",
+    node_id,
+    "model",
+    "init_params",
+    std::filesystem::path("/models/detector.onnx")
+});</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>通常、バインド名は <code>"inputs"</code>、<code>"outputs"</code>、<code>"init_params"</code>、または <code>"run_params"</code> です。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">client.node().set_binding_name({
+    "my_graph",
+    node_id,
+    "outputs",
+    "results",
+    "result"
+});</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_graphnode"><a class="anchor" href="#_graphnode"></a>GraphNode</h3>
+<div class="paragraph">
+<p><code>GraphNodeService</code> はサブグラフ ノード内のノードで動作するため、パラメーター オブジェクト <code>graph_node_id</code> が <code>NodeService</code> よりも 1 つ多くなります。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">メイン グラフ ノード オブジェクト</th>
+<th class="tableblock halign-left valign-top">サブグラフ ノード オブジェクト</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>NodeRef</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SubGraphNodeRef</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CreateNodeParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SubGraphCreateNodeParams</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CreateDynamicNodeParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CreateDynamicSubGraphNodeParams</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CopyNodeParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SubGraphCopyNodeParams</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>ChangeNodeIOParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>ChangeSubGraphNodeIOParams</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>NodeConnectionParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SubGraphConnectionParams</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PortRef</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SubGraphPortRef</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>NodeParamUpdate</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SubGraphNodeParamUpdate</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>NodeBindingUpdate</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SubGraphBindingUpdate</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>EditGraphNameParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>EditSubGraphNameParams</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>ExportGraphParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>ExportSubGraphParams</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>EditNodeCommentParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>EditSubGraphNodeCommentParams</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">client.graph_node().open_graph({"main_graph", graph_node_id});
+
+auto inner = client.graph_node().create_node({
+    "main_graph",
+    graph_node_id,
+    "FilterNode"
+});
+auto status = inner.at("status").get&lt;std::int64_t&gt;();
+
+client.graph_node().set_node_param_data({
+    "main_graph",
+    graph_node_id,
+    inner_node_id,
+    "threshold",
+    "run_params",
+    atom::sdk::JsonValue(0.5)
+});
+
+client.graph_node().create_dynamic_io_node({
+    "main_graph",
+    graph_node_id,
+    "DynamicNode",
+    atom::sdk::json::parse(R"({"outputs":[{"name":"mask_out"}]})")
+});
+client.graph_node().change_node_io({
+    "main_graph",
+    graph_node_id,
+    inner_node_id,
+    atom::sdk::json::parse(R"({"inputs":[{"name":"prompt"}]})")
+});
+client.graph_node().edit_graph_name({"main_graph", graph_node_id, "subgraph_v2"});
+client.graph_node().set_subgraph_as_custom_subgraph({"main_graph", graph_node_id, "custom_subgraph"});</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_runtime"><a class="anchor" href="#_runtime"></a>Runtime</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">パラメータオブジェクト</th>
+<th class="tableblock halign-left valign-top">は次の目的で使用されます。</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>RuntimeParamsUpdate</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>shared/run パラメータを設定します</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>RuntimeRunParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>は通常のフレームまたは EPICRAW3 を送信してグラフを実行します</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>RuntimePassiveBinoFrame</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>passive_bino</code> モードで EPICRAW3 生データを送信する</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>RuntimePassiveBinoImage</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>は EPICRAW3 を構築するときに単一の元のイメージを記述します</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>BindingRef</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>バインディング出力値または生の点群を読み取ります</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PointCloudRef</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>境界点群の読み取りと解析</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>RuntimeBindingDataUpdate</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>入力データをバインドするグラフを設定します</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>RuntimeStrategyParamsUpdate</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ポリシーパラメータを設定する</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>FileParamRef</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ファイルパラメータのクエリMD5</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SingleNodeParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>は、グラフを構築せずに単一のノードを直接実行します。 <code>run_single_node_no_graph_parsed</code> と連携して出力を自動的に解析することをお勧めします。</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>RuntimeStrategyParamsUpdate</code> は現在、<code>PoseListFilter</code>、<code>PickPointFilter</code> でのみ動作します。
+<code>PoseListSorterInXOY</code>、<code>PickPointSorterInXOY</code>、<code>PickPointSorterNew</code>、
+<code>PoseListSorter</code> ノードは次の 6 種類です。
+その <code>params_data</code> は通常 <code>runtime().get_node_params_info_with_strategy(&#8230;&#8203;)</code> から始まります
+戻り値から <code>paramsData</code> を取り出し、更新が必要なフィールドを変更して、それらをまとめて返します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">atom::sdk::JsonObject run_params;
+run_params["threshold"] = 0.7;
+client.runtime().set_run_params({"demo_graph", run_params});
+
+auto result = client.runtime().get_binded_output_value({"demo_graph", "result"});</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>RuntimeRunParams</code> には 2 つの入力モードがあります。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">モード</th>
+<th class="tableblock halign-left valign-top"><code>run_mode</code></th>
+<th class="tableblock halign-left valign-top">何を渡すべきですか?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>通常モード</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>"others"</code> または空白のままにします</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>frames</code> に 1 つ以上の <code>RuntimeFrame</code> を入れてください</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>パッシブ双眼モード</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>"passive_bino"</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>passive_bino_frame</code> に <code>RuntimePassiveBinoFrame</code> を 1 つ入れます</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>2 つのモードを混合しないでください。通常モードは完全な EPICRAW を送信します。パッシブ双眼モードは、専用のパッシブ双眼 EPICRAW3 を送信します。
+通常モードでは、最初に <code>RuntimeFrame</code> が構築され、次に <code>RuntimeRunParams</code> が配置されます。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto frame = atom::sdk::RuntimeFrame::from_bytes(
+    epicraw_bytes,
+    cam_to_base,
+    std::nullopt
+);
+
+auto run_result = client.runtime().run_graph({"demo_graph", {frame}});
+auto status = run_result.at("status").get&lt;std::int64_t&gt;();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>RuntimeFrame::from_file(&#8230;&#8203;)</code> を使用してファイルを読み取ることも、<code>RuntimeFrame::from_data(&#8230;&#8203;)</code> を使用して <code>RuntimePointData</code>、<code>RuntimeImageData</code> およびカメラ パラメーターからローカルで EPICRAW2/3 を生成することもできます。
+<code>run_mode</code> を忘れないように、パッシブ双眼モードで <code>RuntimeRunParams</code> ファクトリ メソッドを使用することをお勧めします。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto run_result = client.runtime().run_graph(
+    atom::sdk::RuntimeRunParams::passive_bino_from_file(
+        "demo_graph",
+        "/data/passive_bino.epicraw",
+        cam_to_base));</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>すでに EPICRAW3 bytes がある場合は <code>RuntimeRunParams::passive_bino_from_bytes(&#8230;&#8203;)</code> を使用します。元の画像が 3 つあり、画像オブジェクトが <code>RuntimePassiveBinoImage{data, width, height, mat_type}</code> の場合は <code>RuntimeRunParams::passive_bino_from_images(&#8230;&#8203;)</code> を使用し、<code>mat_type</code> は OpenCV Mat type エンコーディングを使用します。
+<code>passive_bino_from_images(&#8230;&#8203;)</code> の <code>params</code> には、<code>DepthSrc1</code>、<code>DepthSrc2</code>、<code>TextureSrc</code>、metadata が含まれている必要があり、それぞれに次の 4 つのフィールドが含まれている必要があります。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">json::object camera_params;
+camera_params["CameraMatrix"] = json::array{
+    2113.997971632298, 0, 1956.222038925553,
+    0, 2113.7299751270057, 1505.0473199581195,
+    0, 0, 1};
+camera_params["CameraDistortion"] = json::array{
+    0.049901632334, -0.037810281265, -0.00048319461,
+    -0.000276258172, -0.026886293015};
+camera_params["CameraRotation"] = json::array{
+    0.9995132330503337, -0.005059159488191983, -0.030784766728731865,
+    0.004951704878090689, 0.9999813828533568, -0.003565748937897527,
+    0.030802233296787017, 0.003411576169582241, 0.999519676430619};
+camera_params["CameraTranslation"] = json::array{
+    -25.837377992238334, -0.6852264771262435, -4.372034519324568};
+
+json::object passive_bino_params;
+passive_bino_params["DepthSrc1"] = camera_params;
+passive_bino_params["DepthSrc2"] = camera_params;
+passive_bino_params["TextureSrc"] = camera_params;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_間違いを犯しやすい"><a class="anchor" href="#_間違いを犯しやすい"></a>間違いを犯しやすい</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_1_接続シーケンスが入力に出力されます"><a class="anchor" href="#_1_接続シーケンスが入力に出力されます"></a>1. 接続シーケンスが入力に出力されます</h3>
+<div class="paragraph">
+<p><code>NodeConnectionParams</code> と <code>SubGraphConnectionParams</code> の両方のフィールド順序は次のとおりです。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">graph_name, output_node_id, output_port_name, input_node_id, input_port_name</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>つまり、最初にデータの流出元のノードとポートを書き込み、次にデータの流入元のノードとポートを書き込みます。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_2_単一ノードの直接操作には_runtimeservice_を使用します"><a class="anchor" href="#_2_単一ノードの直接操作には_runtimeservice_を使用します"></a>2. 単一ノードの直接操作には RuntimeService を使用します。</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">atom::sdk::SingleNodeParams params;
+params.node_name = "MathAddNode";
+params.inputs["a"] = atom::sdk::JsonValue(1.0);
+params.inputs["b"] = atom::sdk::JsonValue(2.0);
+
+auto result = client.runtime().run_single_node_no_graph_parsed(params);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>SingleNodeParams</code> は <code>input_data_types</code> / <code>input_point_dims</code> に明示的に入力することもできますが、通常の使用には必要ありません。 <code>RuntimeService</code> が <code>std::filesystem::path</code> や <code>ByteBuffer</code> などの判定が必要な入力に遭遇すると、 <code>node_name</code> を押してノードの入力ポート タイプをクエリします。
+* <code>File</code> 入力はパス文字列を送信するだけであり、ファイルの内容は読み取りません。
+* <code>ColorImage</code> / <code>Image</code> パスは base64 イメージ リストに変換されます。
+* <code>XYZPoints</code> / <code>NormalPoints</code> などの点群ポートの <code>.ply</code> パスは、Atom 点群バイナリに変換されます。
+* ポートの種類を照会できない場合でも、<code>ByteBuffer</code> またはパスのコンテンツは古いルールに従ってファイル フィールドとしてアップロードされます。
+推奨される <code>run_single_node_no_graph_parsed</code> を使用する場合、<code>SingleNodeParams</code> を明示的に入力することもできます <code>output_data_types</code> / <code>output_point_dims</code>:
+* <code>output_data_types</code> は、どの出力が <code>XYZPoints</code>、<code>ColorImage</code> などの解析可能なタイプであるかを SDK に伝えます。
+* <code>output_point_dims</code> は点群出力寸法プロンプトに使用されます。 <code>XYZPoints</code> のデフォルトは 3、<code>NormalPoints</code>/<code>RGBPoints</code> のデフォルトは 6 です。
+* 入力しない場合、SDK は <code>node_name</code> を押してノードの出力ポート タイプを照会します。サーバーが raw bytes を返す場合、唯一の点群出力ポートを決定できる必要があります。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_3_runtimeframe_フィールド名がサーバーのフィールド名と異なります"><a class="anchor" href="#_3_runtimeframe_フィールド名がサーバーのフィールド名と異なります"></a>3. RuntimeFrame フィールド名がサーバーのフィールド名と異なります</h3>
+<div class="paragraph">
+<p>C++ のフィールド名は <code>cam_to_base</code> です。 SDK は、リクエストをパッケージ化するときにサーバーが必要とする <code>cam2Base</code> に変換されます。 <code>cam_to_base</code> サーバーは現在、長さ 6 の回転ベクトル形式 <code>[x, y, z, rx, ry, rz]</code> (平行移動 + Rodrigues 回転ベクトル) のみをサポートしており、4x4/3x4 行列はサポートしていません。 SDK は <code>RuntimeFrame</code>/<code>RuntimePassiveBinoFrame</code> を構築するときに長さを検証し、それが満たされない場合は <code>std::invalid_argument</code> をスローします。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_4_シンプルなインターフェイスでも文字列を直接転送します"><a class="anchor" href="#_4_シンプルなインターフェイスでも文字列を直接転送します"></a>4. シンプルなインターフェイスでも文字列を直接転送します</h3>
+<div class="paragraph">
+<p>次のインターフェイスでは、直接の文字列パラメータが引き続き保持されます。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">client.graph().open_graph("my_graph");
+client.graph().run_graph("my_graph");
+client.runtime().load_graph("my_graph");
+client.runtime().get_meta_info("my_graph");</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>インターフェイスに複数のビジネス フィールドが必要な場合は、パラメータ オブジェクトを使用します。</p>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="overview.html">Atom SDK C++ バージョン — ユーザーガイド</a></span>
+  <span class="next"><a href="graph.html">GraphService（C++）</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

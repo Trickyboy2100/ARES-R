@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>C# RuntimeService Getting Started :: Atom SDK Developer Guide</title>
+    <link rel="prev" href="cpp.html">
+    <link rel="next" href="../guides/how-to-choose-service.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          Online Product Documentation
+                  </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="Search documentation"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              This manual only
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            Switch manual
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK Developer Guide</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          Download Center
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          Official Website
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            English
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK Developer Guide</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">welcome</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">quick start</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">quick start</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">sample sample</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Getting Started</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="index.html">Atom SDK Getting Started</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="python.html">Python RuntimeService Getting Started</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="cpp.html">C++ RuntimeService Getting Started</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="csharp.html">C# RuntimeService Getting Started</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">User Guide</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">Select the appropriate Service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">Graph and node operations</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">Error handling and troubleshooting</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">FAQ</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">basic concepts</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/what-is-atom-sdk.html">What is Atom SDK</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-node-subgraph.html">graph, node, subgraph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-vs-runtime.html">The difference between Graph and Runtime</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/timestamp.html">What is Timestamp</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/runtime-frame.html">Runtime input frames (RuntimeFrame / RuntimePassiveBinoFrame)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/point-cloud-protocol.html">Binary protocol for point cloud type input and output</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/param-binding.html">Parameter types and binding names</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API Reference</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API Reference Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python Overview and Installation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/params.html">Python parameter object</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/public_api.html">Python Public Utility API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ version — User Guide</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ parameter object</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">Atom SDK — C# Version</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/params.html">C# Parameter object</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK Developer Guide</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK Developer Guide</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK Developer Guide</a></li>
+    <li>Getting Started</li>
+    <li>C#</li>
+    <li><a href="csharp.html">C# RuntimeService Getting Started</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="On this page"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">C# RuntimeService Getting Started</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This page covers the four common RuntimeService workflows. See <a href="../csharp/runtime.html" class="xref page">the full C# RuntimeService reference</a> for all options.</p>
+</div>
+<div class="paragraph">
+<p>All Runtime methods are asynchronous and use <code>await</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_0_create_a_client"><a class="anchor" href="#_0_create_a_client"></a>0. Create a client</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System.Collections.Generic;
+using System;
+using System.IO;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://127.0.0.1:10026");
+const string graphName = "detection_graph";</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_1_list_graphs"><a class="anchor" href="#_1_list_graphs"></a>1. List graphs</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var graphs = await client.Runtime.ListGraphSummariesAsync();
+foreach (var graph in graphs)
+{
+    Console.WriteLine(graph.GraphName);
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_2_run_a_graph_and_read_its_result"><a class="anchor" href="#_2_run_a_graph_and_read_its_result"></a>2. Run a graph and read its result</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_2_1_normal_mode"><a class="anchor" href="#_2_1_normal_mode"></a>2.1 Normal mode</h3>
+<div class="paragraph">
+<p>Normal mode uses one or more <code>RuntimeFrame</code> objects.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var roi = new Dictionary&lt;string, object?&gt;
+{
+    ["min"] = new Dictionary&lt;string, double&gt; { ["x"] = -0.5, ["y"] = -0.5, ["z"] = 0.1 },
+    ["max"] = new Dictionary&lt;string, double&gt; { ["x"] = 0.5, ["y"] = 0.5, ["z"] = 2.0 },
+    ["cam2ROIFrame"] = new[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
+};
+
+await client.Runtime.LoadGraphInfoAsync(graphName);
+var frame = RuntimeFrame.FromFile(
+    "/data/frame.epicraw",
+    new[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
+    roi);
+var result = await client.Runtime.RunGraphResultAsync(
+    new RuntimeRunParams(graphName, new[] { frame }));
+Console.WriteLine(result.Status);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For camera or network data, use <code>RuntimeFrame.FromBytes(&#8230;&#8203;)</code>. For raw image and point-cloud data, use <code>RuntimeFrame.FromData(&#8230;&#8203;)</code>.</p>
+</div>
+<div class="paragraph">
+<p>If your application has raw image and point-cloud data, build the frame in memory with <code>RuntimeFrame.FromData(&#8230;&#8203;)</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var points = new RuntimePointData(pointValues, 640, 480);
+var image = new RuntimeImageData(imageBytes, 640, 480);
+var frameFromData = RuntimeFrame.FromData(
+    points,
+    image,
+    new[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
+    new[,] { { 600.0, 0.0, 320.0 }, { 0.0, 600.0, 240.0 }, { 0.0, 0.0, 1.0 } },
+    new[] { 0.0, 0.0, 0.0, 0.0, 0.0 });
+frameFromData.Roi = roi;
+var result = await client.Runtime.RunGraphResultAsync(
+    new RuntimeRunParams(graphName, new[] { frameFromData }));</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Replace <code>pointValues</code> and <code>imageBytes</code> with the buffers supplied by your camera or acquisition code.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_2_2_passive_binocular_mode"><a class="anchor" href="#_2_2_passive_binocular_mode"></a>2.2 Passive-binocular mode</h3>
+<div class="paragraph">
+<p>Use <code>RuntimeRunParams.PassiveBinoFromFile/Bytes/Images(&#8230;&#8203;)</code> when the graph input is configured as <code>passive_bino</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var paramsData = RuntimeRunParams.PassiveBinoFromBytes(
+    graphName,
+    GetEpicRaw3BytesFromCamera(),
+    new[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 });
+var result = await client.Runtime.RunGraphResultAsync(paramsData);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For three raw images, use <code>PassiveBinoFromImages(&#8230;&#8203;)</code> and provide the three camera metadata objects.</p>
+</div>
+<div class="paragraph">
+<p>If your application has three raw passive-binocular images, use <code>PassiveBinoFromImages(&#8230;&#8203;)</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var cameraParams = new Dictionary&lt;string, object?&gt;
+{
+    ["CameraMatrix"] = new[] { 600.0, 0.0, 320.0, 0.0, 600.0, 240.0, 0.0, 0.0, 1.0 },
+    ["CameraDistortion"] = new[] { 0.0, 0.0, 0.0, 0.0, 0.0 },
+    ["CameraRotation"] = new[] { 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0 },
+    ["CameraTranslation"] = new[] { 0.0, 0.0, 0.0 },
+};
+var passiveParams = new Dictionary&lt;string, object?&gt;
+{
+    ["DepthSrc1"] = cameraParams,
+    ["DepthSrc2"] = cameraParams,
+    ["TextureSrc"] = cameraParams,
+};
+var paramsData = RuntimeRunParams.PassiveBinoFromImages(
+    graphName,
+    new[] {
+        new RuntimePassiveBinoImage(depthSrc1, 640, 480, 2),
+        new RuntimePassiveBinoImage(depthSrc2, 640, 480, 2),
+        new RuntimePassiveBinoImage(textureBgr, 640, 480, 16),
+    },
+    passiveParams,
+    new[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 });
+var result = await client.Runtime.RunGraphResultAsync(paramsData);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The image order is fixed: <code>DepthSrc1</code>, <code>DepthSrc2</code>, <code>TextureSrc</code>. <code>2</code> is <code>CV_16UC1</code>; <code>16</code> is <code>CV_8UC3</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_2_3_read_output_bindings"><a class="anchor" href="#_2_3_read_output_bindings"></a>2.3 Read output bindings</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var info = await client.Runtime.GetBindedOutputsInfoModelAsync(graphName);
+foreach (var output in info.Outputs)
+{
+    Console.WriteLine($"{output.BindingName}: {output.DataType}");
+}
+
+var value = await client.Runtime.GetBindedOutputValueAsync(
+    new BindingRef(graphName, "detection_result"));
+var clouds = await client.Runtime.GetBindedPointCloudParsedAsync(
+    new PointCloudRef(graphName, "filtered_cloud", pointDim: 3));</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To read a node result, configure that node port as an output binding first. RuntimeService cannot query an arbitrary node port by <code>node_id</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">await client.Runtime.ReleaseGraphAsync(graphName);</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_3_run_one_algorithm_without_a_graph"><a class="anchor" href="#_3_run_one_algorithm_without_a_graph"></a>3. Run one algorithm without a graph</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var parsed = await client.Runtime.RunSingleNodeNoGraphParsedAsync(
+    new SingleNodeParams(
+        "EstimateNormal",
+        inputs: new Dictionary&lt;string, object?&gt;
+        {
+            ["points"] = new FileInfo("/data/scan.ply"),
+        },
+        outputDataTypes: new Dictionary&lt;string, string&gt;
+        {
+            ["points"] = "XYZPoints",
+        },
+        outputPointDims: new Dictionary&lt;string, int&gt;
+        {
+            ["points"] = 3,
+        }));
+
+var raw = await client.Runtime.RunSingleNodeNoGraphAsync(
+    new SingleNodeParams(
+        "EstimateNormal",
+        inputs: new Dictionary&lt;string, object?&gt;
+        {
+            ["points"] = new FileInfo("/data/scan.ply"),
+        }));</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Parsed outputs are exposed by port name. Raw output keeps JSON or binary data for your own parsing.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_4_change_parameters_and_run_again"><a class="anchor" href="#_4_change_parameters_and_run_again"></a>4. Change parameters and run again</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">await client.Runtime.LoadGraphAsync(graphName);
+var meta = await client.Runtime.GetMetaInfoModelAsync(graphName);
+
+await client.Runtime.SetSharedParamsAsync(
+    new RuntimeParamsUpdate(
+        graphName,
+        new Dictionary&lt;string, object?&gt; { ["camera_id"] = "cam-01" }));
+await client.Runtime.SetRunParamsAsync(
+    new RuntimeParamsUpdate(
+        graphName,
+        new Dictionary&lt;string, object?&gt; { ["confidence"] = 0.8 }));
+
+var result = await client.Runtime.RunGraphResultAsync(
+    new RuntimeRunParams(graphName, new[] { frame }));
+var value = await client.Runtime.GetBindedOutputValueAsync(
+    new BindingRef(graphName, "detection_result"));</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Replace example parameter and binding names with the names returned by the service.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="cpp.html">C++ RuntimeService Getting Started</a></span>
+  <span class="next"><a href="../guides/how-to-choose-service.html">Select the appropriate Service</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

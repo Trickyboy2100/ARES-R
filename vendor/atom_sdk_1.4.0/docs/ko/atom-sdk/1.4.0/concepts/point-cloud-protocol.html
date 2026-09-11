@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>포인트 클라우드 유형 입출력을 위한 바이너리 프로토콜 :: Atom SDK 개발자 가이드</title>
+    <link rel="prev" href="runtime-frame.html">
+    <link rel="next" href="param-binding.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          온라인 제품 문서
+                  </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="문서 검색"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              이 매뉴얼만
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            매뉴얼 전환
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK 개발자 가이드</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          다운로드 센터
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          공식 웹사이트
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            한국어
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK 개발자 가이드</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">환영합니다</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">빠른 시작</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">빠른 시작</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">샘플 샘플</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">입문 사용</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK 입문 사용</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">사용자 가이드</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">적절한 Service을 선택합니다.</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">그래프 및 노드 작업</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">오류 처리 및 문제 해결</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">FAQ</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">기본 개념</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="what-is-atom-sdk.html">Atom SDK 란 무엇입니까?</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="graph-node-subgraph.html">그래프, 노드, 하위 그래프</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="graph-vs-runtime.html">Graph과 Runtime의 차이점</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="timestamp.html">Timestamp이 무엇인가요?</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="runtime-frame.html">런타임 입력 프레임(RuntimeFrame / RuntimePassiveBinoFrame)</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="point-cloud-protocol.html">포인트 클라우드 유형 입출력을 위한 바이너리 프로토콜</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="param-binding.html">매개변수 유형 및 바인딩 이름</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API 참조</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API 참조 개요</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python 개요 및 설치</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/params.html">Python 매개변수 객체</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/public_api.html">Python 공용 유틸리티 API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ 버전 — 사용자 가이드</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ 매개변수 객체</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">Atom SDK — C# 버전</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/params.html">C# 매개변수 객체</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK 개발자 가이드</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK 개발자 가이드</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK 개발자 가이드</a></li>
+    <li>기본 개념</li>
+    <li><a href="point-cloud-protocol.html">포인트 클라우드 유형 입출력을 위한 바이너리 프로토콜</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="이 페이지의 내용"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">포인트 클라우드 유형 입출력을 위한 바이너리 프로토콜</h1>
+<div class="sect1">
+<h2 id="_그것은_무엇을_하는가한_문장"><a class="anchor" href="#_그것은_무엇을_하는가한_문장"></a>그것은 무엇을 하는가(한 문장)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>Points</code>/<code>XYZPoints</code>/<code>NormalPoints</code>/<code>RGBPoints</code> 노드 입력 또는 출력으로 사용되는 이러한 포트 유형은 일반 JSON가 아닌 사용자 정의된 압축 바이너리 형식을 전송합니다. Runtime 단일 노드 직접 작업은 노드 포트 유형에 따라 <code>.ply</code> 경로와 인코딩된 바이트를 자동으로 처리하려고 시도합니다. Python SDK은 또한 이 형식을 수동으로 처리하는 데 도움이 되는 세 가지 기능 <code>encode_point_cloud_payload</code> / <code>load_ply_points</code> / `decode_point_cloud_payload`을 노출합니다.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>이는 일반 모드 <code>RuntimeFrame`의 포인트 클라우드 형식이 아닙니다. 일반 모드 `RuntimeFrame.point_cloud`는 아래 언급된 프로토콜 헤더 없이 또 다른 간단한 형식인 `[height, width, 3]</code> reshape float32 원래 배열을 사용합니다. 수동 쌍안 <code>passive_bino</code> 모드는 EPICRAW3을 전송하고, `point_cloud`을 개별적으로 전송하지 않습니다. 이 둘은 혼합될 수 없습니다. 자세한 내용은 <a href="runtime-frame.html" class="xref page">런타임 입력 프레임(RuntimeFrame / RuntimePassiveBinoFrame)</a>을 참조하세요.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_왜_이런_메커니즘이_있는_걸까요"><a class="anchor" href="#_왜_이런_메커니즘이_있는_걸까요"></a>왜 이런 메커니즘이 있는 걸까요?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>포인트 클라우드 데이터의 양은 일반적으로 매우 크며(수만에서 수백만 포인트), 전송 및 분석을 위해 JSON을 사용하는 데 드는 오버헤드가 너무 높습니다. 서버가 컴팩트 <code>float32</code> 바이너리 형식에 동의했습니다. 동시에 포트가 한 번에 여러 포인트 클라우드를 전송하는 경우가 있다는 점을 고려하여 서버에서 일회성 분할을 용이하게 하기 위해 "포인트 클라우드 수 + 각 부분의 길이"라는 헤더 정보를 포함하는 형식입니다.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_그것이_당신의_발달에_어떤_영향을_미칩니_까"><a class="anchor" href="#_그것이_당신의_발달에_어떤_영향을_미칩니_까"></a>그것이 당신의 발달에 어떤 영향을 미칩니 까?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>포인트 클라우드 유형 입력</strong>(예: <code>SingleNodeParams(&#8230;&#8203;, inputs={"points": &#8230;&#8203;})</code>)에 값을 전달할 때 로컬 <code>.ply</code> 경로를 직접 전달하는 것이 좋습니다. SDK는 노드 입력 포트 유형에 따라 프로토콜에 필요한 형식으로 자동으로 인코딩합니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SingleNodeParams
+
+result = client.runtime.run_single_node_no_graph(
+    SingleNodeParams("EstimateNormal", inputs={"points": "/data/scan.ply"})
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>이미 포인트 배열이 있거나 포인트 크기를 명시적으로 제어해야 하는 경우 수동으로 코딩할 수도 있습니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SingleNodeParams, encode_point_cloud_payload, load_ply_points
+
+points = load_ply_points("/data/scan.ply")           # 에서 PLY 파일 읽기가 평면화됨 xyz 플로트 목록
+payload = encode_point_cloud_payload(points, point_dim=3)  # 프로토콜에서 요구하는 바이너리 형식으로 인코딩됩니다.
+
+result = client.runtime.run_single_node_no_graph(
+    SingleNodeParams("EstimateNormal", inputs={"points": payload})
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>서버에서 포인트 클라우드 유형 출력을 읽을 때</strong> 대부분의 인터페이스 SDK는 자동으로 이를 구문 분석하므로(예: <code>get_binded_point_cloud_parsed</code>) 이 프로토콜 계층에 신경 쓸 필요가 없습니다. 그러나 <code>run_single_node_no_graph`는 다음 노드에 대한 예외입니다. 이 노드는 캡슐화되지 않은 원시 포인트 클라우드 바이트(`bytes</code>)를 직접 반환하며 구문 분석하려면 `decode_point_cloud_payload`를 직접 호출해야 합니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>CalculateEdge</code></p>
+</li>
+<li>
+<p><code>CalculateEdgeNew</code></p>
+</li>
+<li>
+<p><code>EstimateNormal</code></p>
+</li>
+<li>
+<p><code>DownSample</code></p>
+</li>
+<li>
+<p><code>DownSampleWithNormal</code></p>
+</li>
+<li>
+<p><code>FilterByNormal</code></p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import decode_point_cloud_payload
+
+result = client.runtime.run_single_node_no_graph(
+    SingleNodeParams("EstimateNormal", inputs={"points": payload})
+)
+# result 예 bytes，아니요 dict —— 이는 위 노드의 고정된 동작입니다.
+clouds = decode_point_cloud_payload(result, has_dim_in_header=False, point_dim=6)
+print(clouds[0].shape)          # (포인트, 6)  -&gt; [x, y, z, nx, ny, nz]
+print(clouds[0].tolist()[:2])</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>point_dim`은 노드 출력 포트의 실제 유형에 따라 결정되어야 합니다. `XYZPoints</code>/<code>Points`는 `3`에 전달됩니다. `NormalPoints</code>(일반 벡터 포함)/<code>RGBPoints</code>(색상 포함)가 `6`에 전달됩니다. 자세한 내용은 노드 정의의 `outputs_info`의 `dtype`을 참조하세요.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_문제가_발생할_수_있는_경우"><a class="anchor" href="#_문제가_발생할_수_있는_경우"></a>문제가 발생할 수 있는 경우</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>SDK 노드 입력 유형을 찾을 수 없거나 이전 버전인 SDK을 사용할 수 없습니다.</strong>: 이 경우 <code>inputs={"points": "/data/scan.ply"}`는 일반 파일로 업로드될 수 있으며, PLY 파일 내용은 그대로 서버에 전달됩니다. 서버가 구문 분석을 위해 `float32`를 누르면 `AtomApiError: buffer size must be a multiple of element size`가 보고됩니다.<br>
+해결 방법: SDK을(를) 업그레이드하거나 `input_data_types={"points": "XYZPoints"}`을 사용하여 SDK에 포트 유형을 명시적으로 알려주세요. Python는 `load_ply_points</code> + `encode_point_cloud_payload`를 사용하여 수동으로 인코딩한 후 전송할 수도 있습니다.</p>
+</li>
+<li>
+<p><strong>run_single_node_no_graph이 dict을 반환해야 한다고 생각</strong>: 위에 나열된 특수 노드의 경우 반환 값은 `bytes`이며 직접 `result["xxx"]`는 `TypeError: byte indices must be integers`를 보고합니다.<br>
+해결 방법: 유형을 먼저 결정하거나 조정하려는 노드를 미리 알고 `bytes`로 직접 처리한 다음 `decode_point_cloud_payload`을 사용하여 구문 분석합니다.</p>
+</li>
+<li>
+<p><strong>point_dim 전송 오류</strong>: <code>point_dim=3`에 따라 법선 벡터로 출력을 구문 분석하면 `reshape</code> 이후 데이터 정렬이 잘못됩니다(각 줄은 다음 점의 좌표를 현재 점의 필드로 착각합니다).<br>
+해결 방법: 노드의 <code>outputs_info`을 확인하여 포트의 `dtype`이 `XYZPoints</code>(3) 또는 <code>NormalPoints</code>/<code>RGBPoints</code>(6)인지 확인합니다.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_문제를_다루는_방법"><a class="anchor" href="#_문제를_다루는_방법"></a>문제를 다루는 방법</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><code>.ply</code> 경로를 직접 전달하는 데 우선순위를 두고 SDK이 노드 포트 유형에 따라 자동으로 인코딩되도록 합니다. 노드 유형을 자동으로 쿼리할 수 없는 경우 <code>input_data_types`를 명시적으로 전달하거나 `load_ply_points</code> + `encode_point_cloud_payload`를 사용하여 Python에서 `bytes`을 수동으로 생성합니다.</p>
+</li>
+<li>
+<p>`run_single_node_no_graph`을 호출하기 전에 노드 이름이 위의 특수 목록에 있는지 확인하십시오. 그렇다면 `bytes`을 미리 얻을 수 있을 것으로 예상하십시오.</p>
+</li>
+<li>
+<p>`bytes`을 얻은 후 `decode_point_cloud_payload(raw, has_dim_in_header=False, point_dim=&#8230;&#8203;)`을 사용하여 구문 분석합니다. 이 시나리오에서는 `has_dim_in_header`가 항상 `False`를 통과합니다.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_기술적인_세부사항"><a class="anchor" href="#_기술적인_세부사항"></a>기술적인 세부사항</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>프로토콜의 핵심은 리틀 엔디안 순서로 배열된 <code>float32</code> 배열입니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>[cloud_count, size_0, size_1, ..., size_{cloud_count-1}, data_0..., data_1..., ...]</pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cloud_count</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">이번에는 여러 개의 포인트 클라우드를 탑재했습니다. <code>SingleNodeParams</code> 시나리오에서는 일반적으로 `1`입니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>size_i</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">번째 <code>i</code> 포인트 클라우드의 평면화된 부동 소수점의 총 개수(바이트가 아닌 포인트 × <code>point_dim</code>)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data_i</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>i</code> 포인트 클라우드의 원본 데이터는 <code>point_dim</code> 그룹으로 연속적으로 배열됩니다.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>decode_point_cloud_payload(payload, *, has_dim_in_header, point_dim=None)</code>：</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">매개변수</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>payload</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bytes</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">원시 바이너리 포인트 클라우드 스트림</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>has_dim_in_header</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bool</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">헤더 정보에 각 포인트 클라우드의 추가 차원이 포함되어 있는지 여부. <code>run_single_node_no_graph`의 특수 노드 장면이 고정적으로 전송됩니다. `False</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>point_dim</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code> 또는 <code>None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">헤더 정보에 차원이 없는 경우 reshape에 각 포인트의 차원을 수동으로 지정합니다.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>`list[ParsedPointCloud]`을 반환합니다. `ParsedPointCloud.values`은 병합된 `array('f')`이고, `.shape`은 권장 모양이고, `.tolist()`는 `shape`에 의해 중첩 목록으로 변환됩니다.</p>
+</div>
+<div class="paragraph">
+<p><code>encode_point_cloud_payload(points, *, point_dim=3)</code>：</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 33.3333%;">
+<col style="width: 50.0001%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">매개변수</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>points</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">평면화된 부동 소수점 시퀀스 또는 행 방향 포인트 시퀀스(예: <code>[(x,y,z), &#8230;&#8203;]</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">은 자동으로 병합되며 두 가지 쓰기 방법은 동일합니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>point_dim</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">포인트당 채널 수: xyz은 `3`를 사용하고 일반 벡터/색상은 `6`를 사용합니다.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>load_ply_points(path, *, properties=("x", "y", "z"))</code>：</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">매개변수</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>path</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">파일 경로</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PLY 파일은 <code>ascii</code>/<code>binary_little_endian</code>/`binary_big_endian`를 자동으로 인식합니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>properties</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tuple[str, &#8230;&#8203;]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">추출할 정점 속성 이름이며 순서대로 평면화됩니다. 법선 벡터는 `("x","y","z","nx","ny","nz")`로 전달될 수 있습니다.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>vertex</code> 요소에 선언된 속성만 구문 분석되며, <code>face</code>, <code>camera</code> 등과 같은 다른 element 요소는 자동으로 건너뜁니다.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="runtime-frame.html">런타임 입력 프레임(RuntimeFrame / RuntimePassiveBinoFrame)</a></span>
+  <span class="next"><a href="param-binding.html">매개변수 유형 및 바인딩 이름</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

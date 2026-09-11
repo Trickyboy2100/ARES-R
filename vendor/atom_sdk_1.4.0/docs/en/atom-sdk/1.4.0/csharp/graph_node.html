@@ -1,0 +1,3006 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>GraphNodeService（C#） :: Atom SDK Developer Guide</title>
+    <link rel="prev" href="node.html">
+    <link rel="next" href="runtime.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          Online Product Documentation
+                  </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="Search documentation"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              This manual only
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            Switch manual
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK Developer Guide</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          Download Center
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          Official Website
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            English
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK Developer Guide</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">welcome</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">quick start</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">quick start</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">sample sample</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Getting Started</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK Getting Started</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService Getting Started</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService Getting Started</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService Getting Started</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">User Guide</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">Select the appropriate Service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">Graph and node operations</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">Error handling and troubleshooting</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">FAQ</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">basic concepts</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/what-is-atom-sdk.html">What is Atom SDK</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-node-subgraph.html">graph, node, subgraph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-vs-runtime.html">The difference between Graph and Runtime</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/timestamp.html">What is Timestamp</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/runtime-frame.html">Runtime input frames (RuntimeFrame / RuntimePassiveBinoFrame)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/point-cloud-protocol.html">Binary protocol for point cloud type input and output</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/param-binding.html">Parameter types and binding names</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API Reference</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API Reference Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python Overview and Installation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/params.html">Python parameter object</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/public_api.html">Python Public Utility API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ version — User Guide</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ parameter object</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="overview.html">Atom SDK — C# Version</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="params.html">C# Parameter object</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK Developer Guide</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK Developer Guide</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK Developer Guide</a></li>
+    <li>API Reference</li>
+    <li>C# SDK</li>
+    <li><a href="graph_node.html">GraphNodeService（C#）</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="On this page"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">GraphNodeService（C#）</h1>
+<div class="sect1">
+<h2 id="_service_introduction"><a class="anchor" href="#_service_introduction"></a>Service introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>GraphNodeService</code> is responsible for node operations within * the subgraph node (GraphNode). In the Atom platform, a main graph can contain subgraph nodes (GraphNode), and the subgraph also has its own node topology inside. The interface design of <code>GraphNodeService</code> is highly symmetrical to <code>NodeService</code>. The difference is that each method requires an additional input of <code>graphNodeId</code> (ID of the subgraph node) to locate the subgraph level where the operation target is located. All methods are asynchronous.</p>
+</div>
+<div class="paragraph">
+<p><strong>namespace</strong>: <code>AtomSdk.Services</code></p>
+</div>
+<div class="paragraph">
+<p><strong>Entrance</strong>: <code>client.GraphNode</code></p>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_applicable_scenarios"><a class="anchor" href="#_applicable_scenarios"></a>Applicable scenarios</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Operate nodes inside a subgraph node (GraphNode) in the main graph;</p>
+</li>
+<li>
+<p>Create, delete, and connect nodes within the subgraph to form the calculation logic within the subgraph;</p>
+</li>
+<li>
+<p>Read and write parameters and port data of nodes in the subgraph;</p>
+</li>
+<li>
+<p>Activate, initialize, update, or run nodes inside subgraph nodes;</p>
+</li>
+<li>
+<p>Run the entire subgraph directly (<code>RunGraphAsync</code>).</p>
+</li>
+</ul>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_relation_to_nodeservice"><a class="anchor" href="#_relation_to_nodeservice"></a>Relation to NodeService</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Compare dimensions</th>
+<th class="tableblock halign-left valign-top">NodeService</th>
+<th class="tableblock halign-left valign-top">GraphNodeService</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Operation object</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Nodes in the main graph
+Nodes inside the</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>subgraph node (GraphNode)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Extra parameters</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>None</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>requires <code>graphNodeId</code> (subgraph node ID)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Interface signature</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>NodeRef</code>, <code>PortRef</code> and other parameter objects</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SubGraphNodeRef</code>, <code>SubGraphPortRef</code> and other parameter objects</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Special interface</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>None</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>RunGraphAsync</code> (run the entire subgraph)</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_recommended_calling_order"><a class="anchor" href="#_recommended_calling_order"></a>Recommended calling order</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">client.Graph.OpenGraphAsync(graphName)    (Open the main image first)
+        ↓
+OpenGraphAsync(SubGraphRef)              (Open subplot,Refresh timestamp)
+        ↓
+CreateNodeAsync(SubGraphCreateNodeParams)          (Create nodes in subgraph)
+        ↓
+SetNodeParamDataAsync(SubGraphNodeParamUpdate)     (Set node parameters in subgraph)
+        |
+        ↓
+ConnectNodesAsync(SubGraphConnectionParams)        (Connect node ports in subgraph)
+        ↓
+RunGraphAsync(SubGraphRef)               (Run the entire subgraph,Polling waiting for completion)</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_interface_detailed_explanation"><a class="anchor" href="#_interface_detailed_explanation"></a>Interface detailed explanation</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_opengraphasync"><a class="anchor" href="#_opengraphasync"></a>OpenGraphAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; OpenGraphAsync(
+    SubGraphRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; OpenGraphAsync&lt;T&gt;(
+    SubGraphRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// Strongly typed convenience version
+Task&lt;GraphOpenResult&gt; OpenGraphInfoAsync(
+    SubGraphRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Open the specified subgraph node, refresh and obtain the current timestamp of the subgraph (this method must be called before any editing of the internal nodes of the subgraph).</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameters</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Main image name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphNodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ID of the subgraph node (GraphNode) in the main graph</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Cancellation token, optional</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Return value</strong>: <code>Task&lt;JsonElement&gt;</code>, including <code>timestamp</code> and other sub-picture information, SDK automatically saves the timestamp.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+// Open the main image first
+await client.Graph.OpenGraphAsync("main_graph");
+
+// Open the subgraph node again
+var openResult = await client.GraphNode.OpenGraphInfoAsync(
+    new SubGraphRef("main_graph", "subgraph-node-id"));
+Console.WriteLine($"Subpicture is open,Timestamp: {openResult.Timestamp}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_editgraphnameasync"><a class="anchor" href="#_editgraphnameasync"></a>EditGraphNameAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; EditGraphNameAsync(
+    EditSubGraphNameParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; EditGraphNameAsync&lt;T&gt;(
+    EditSubGraphNameParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Use</strong>: Modify the name of the GraphNode internal subgraph.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">await client.GraphNode.EditGraphNameAsync(
+    new EditSubGraphNameParams("main_graph", "subgraph-node-id", "subgraph_v2"));</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getallnodesinfoasync"><a class="anchor" href="#_getallnodesinfoasync"></a>GetAllNodesInfoAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; GetAllNodesInfoAsync(
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; GetAllNodesInfoAsync&lt;T&gt;(
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Read all node definitions available in subgraph editing scenarios. The returned content is not bound to a certain picture or a certain GraphNode, so no request parameters are required.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var nodes = await client.GraphNode.GetAllNodesInfoAsync();</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getgraphbindingsasync"><a class="anchor" href="#_getgraphbindingsasync"></a>GetGraphBindingsAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; GetGraphBindingsAsync(
+    SubGraphRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; GetGraphBindingsAsync&lt;T&gt;(
+    SubGraphRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Read the binding information of the subgraph currently exposed to the outside world, often used to confirm which subgraph input and output can be accessed in the Runtime stage.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var bindings = await client.GraphNode.GetGraphBindingsAsync(
+    new SubGraphRef("main_graph", "subgraph-node-id"));</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getgraphdlnodesmodelinfoasync"><a class="anchor" href="#_getgraphdlnodesmodelinfoasync"></a>GetGraphDlNodesModelInfoAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; GetGraphDlNodesModelInfoAsync(
+    SubGraphRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; GetGraphDlNodesModelInfoAsync&lt;T&gt;(
+    SubGraphRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Read the model information that the deep learning node in the subgraph depends on, usually called before exporting the subgraph.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var dlModels = await client.GraphNode.GetGraphDlNodesModelInfoAsync(
+    new SubGraphRef("main_graph", "subgraph-node-id"));</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getgraphcustomnodesasync"><a class="anchor" href="#_getgraphcustomnodesasync"></a>GetGraphCustomNodesAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; GetGraphCustomNodesAsync(
+    SubGraphRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; GetGraphCustomNodesAsync&lt;T&gt;(
+    SubGraphRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Read the custom node information referenced in the subgraph, usually called before exporting the subgraph.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var customNodes = await client.GraphNode.GetGraphCustomNodesAsync(
+    new SubGraphRef("main_graph", "subgraph-node-id"));</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_setsubgraphascustomsubgraphasync"><a class="anchor" href="#_setsubgraphascustomsubgraphasync"></a>SetSubgraphAsCustomSubgraphAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; SetSubgraphAsCustomSubgraphAsync(
+    SetSubgraphAsCustomSubgraphParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; SetSubgraphAsCustomSubgraphAsync&lt;T&gt;(
+    SetSubgraphAsCustomSubgraphParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Save the current sub-picture as a custom sub-picture template for subsequent reuse in other pictures.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">await client.GraphNode.SetSubgraphAsCustomSubgraphAsync(
+    new SetSubgraphAsCustomSubgraphParams(
+        "main_graph", "subgraph-node-id", "custom_subgraph"));</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_createnodeasync"><a class="anchor" href="#_createnodeasync"></a>CreateNodeAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; CreateNodeAsync(
+    SubGraphCreateNodeParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; CreateNodeAsync&lt;T&gt;(
+    SubGraphCreateNodeParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// Strongly typed convenience version
+Task&lt;NodeReference&gt; CreateNodeInfoAsync(
+    SubGraphCreateNodeParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Create a new node inside the specified subgraph node.</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameters</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Main image name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphNodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Subgraph node ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The name of the node type to be created</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Cancellation token, optional</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Return value</strong>: <code>Task&lt;JsonElement&gt;</code>, <code>nodeId</code>, <code>nodeName</code> and other information of the new node.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Graph.OpenGraphAsync("main_graph");
+await client.GraphNode.OpenGraphAsync(new SubGraphRef("main_graph", "subgraph-node-id"));
+
+var node = await client.GraphNode.CreateNodeInfoAsync(
+    new SubGraphCreateNodeParams(
+        "main_graph", "subgraph-node-id", "ResizeImage"));
+Console.WriteLine($"The node in the subgraph is created successfully.,ID: {node.NodeId}");
+Console.WriteLine($"Request status: {node.Status}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_createdynamicionodeasync"><a class="anchor" href="#_createdynamicionodeasync"></a>CreateDynamicIoNodeAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; CreateDynamicIoNodeAsync(
+    CreateDynamicSubGraphNodeParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; CreateDynamicIoNodeAsync&lt;T&gt;(
+    CreateDynamicSubGraphNodeParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// Strongly typed convenience version
+Task&lt;NodeReference&gt; CreateDynamicIoNodeInfoAsync(
+    CreateDynamicSubGraphNodeParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Create nodes with dynamic input and output definitions in the GraphNode internal subgraph.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var inner = await client.GraphNode.CreateDynamicIoNodeAsync(
+    new CreateDynamicSubGraphNodeParams(
+        "main_graph",
+        "subgraph-node-id",
+        "DynamicNode",
+        new Dictionary&lt;string, object?&gt;
+        {
+            ["outputs"] = new[] { new Dictionary&lt;string, object?&gt; { ["name"] = "mask_out" } }
+        }));</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_changenodeioasync"><a class="anchor" href="#_changenodeioasync"></a>ChangeNodeIoAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; ChangeNodeIoAsync(
+    ChangeSubGraphNodeIOParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; ChangeNodeIoAsync&lt;T&gt;(
+    ChangeSubGraphNodeIOParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Modify the input and output structure of dynamic nodes in the subgraph.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">await client.GraphNode.ChangeNodeIoAsync(
+    new ChangeSubGraphNodeIOParams(
+        "main_graph",
+        "subgraph-node-id",
+        inner.GetProperty("nodeId").GetString()!,
+        new Dictionary&lt;string, object?&gt;
+        {
+            ["inputs"] = new[] { new Dictionary&lt;string, object?&gt; { ["name"] = "prompt" } }
+        }));</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_createnodebycopyasync"><a class="anchor" href="#_createnodebycopyasync"></a>CreateNodeByCopyAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; CreateNodeByCopyAsync(
+    SubGraphCopyNodeParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; CreateNodeByCopyAsync&lt;T&gt;(
+    SubGraphCopyNodeParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// Strongly typed convenience version
+Task&lt;NodeReference&gt; CreateNodeByCopyInfoAsync(
+    SubGraphCopyNodeParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Copy existing nodes (including parameter configuration) in the subgraph and create a new node of the same type.</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameters</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Main image name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphNodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Subgraph node ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>New node name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Source node to copy ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Cancellation token, optional</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Return value</strong>: <code>Task&lt;JsonElement&gt;</code>, <code>nodeId</code>, <code>nodeName</code> of the new node.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Graph.OpenGraphAsync("main_graph");
+await client.GraphNode.OpenGraphAsync(new SubGraphRef("main_graph", "subgraph-node-id"));
+
+var copy = await client.GraphNode.CreateNodeByCopyInfoAsync(
+    new SubGraphCopyNodeParams(
+        "main_graph", "subgraph-node-id", "ResizeImage_backup", "original-node-id"));
+Console.WriteLine($"Copied successfully,new node ID: {copy.NodeId}");
+Console.WriteLine($"Request status: {copy.Status}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_deletenodeasync"><a class="anchor" href="#_deletenodeasync"></a>DeleteNodeAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; DeleteNodeAsync(
+    SubGraphNodeRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; DeleteNodeAsync&lt;T&gt;(
+    SubGraphNodeRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// Strongly typed convenience version
+Task&lt;NodeTimestampInfo&gt; DeleteNodeInfoAsync(
+    SubGraphNodeRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Delete the specified node in the subgraph.</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameters</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Main image name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphNodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Subgraph node ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The node to be deleted ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Cancellation token, optional</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Return value</strong>: <code>Task&lt;JsonElement&gt;</code>, including the post-operation timestamp.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Graph.OpenGraphAsync("main_graph");
+await client.GraphNode.OpenGraphAsync(new SubGraphRef("main_graph", "subgraph-node-id"));
+
+var ts = await client.GraphNode.DeleteNodeInfoAsync(
+    new SubGraphNodeRef("main_graph", "subgraph-node-id", "inner-node-id"));
+Console.WriteLine($"The node in the subgraph has been deleted,Timestamp: {ts.Timestamp}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_connectnodesasync"><a class="anchor" href="#_connectnodesasync"></a>ConnectNodesAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; ConnectNodesAsync(
+    SubGraphConnectionParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; ConnectNodesAsync&lt;T&gt;(
+    SubGraphConnectionParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// Strongly typed convenience version
+Task&lt;NodeTimestampInfo&gt; ConnectNodesInfoAsync(
+    SubGraphConnectionParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: A port connecting two nodes in a subgraph, data flows from <code>outputNode.outputPort</code> to <code>inputNode.inputPort</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameters</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Main image name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphNodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Subgraph node ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>outputNodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>upstream node ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>outputPortName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Upstream node output port name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>inputNodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Downstream node ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>inputPortName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Downstream node input port name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Cancellation token, optional</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Return value</strong>: <code>Task&lt;JsonElement&gt;</code>, including the post-operation timestamp.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Graph.OpenGraphAsync("main_graph");
+await client.GraphNode.OpenGraphAsync(new SubGraphRef("main_graph", "subgraph-node-id"));
+
+await client.GraphNode.ConnectNodesInfoAsync(
+    new SubGraphConnectionParams(
+        "main_graph", "subgraph-node-id",
+        outputNodeId: "resize-node-id", outputPortName: "resized_image",
+        inputNodeId: "detect-node-id", inputPortName: "image"));
+Console.WriteLine("Nodes in the subgraph are connected");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_disconnectnodesasync"><a class="anchor" href="#_disconnectnodesasync"></a>DisconnectNodesAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; DisconnectNodesAsync(
+    SubGraphConnectionParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; DisconnectNodesAsync&lt;T&gt;(
+    SubGraphConnectionParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// Strongly typed convenience version
+Task&lt;NodeTimestampInfo&gt; DisconnectNodesInfoAsync(
+    SubGraphConnectionParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Disconnect a port between two nodes within a subgraph (parameters are completely symmetrical to <code>ConnectNodesAsync</code>).</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameters</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Main image name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphNodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Subgraph node ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>outputNodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>upstream node ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>outputPortName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Upstream node output port name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>inputNodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Downstream node ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>inputPortName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Downstream node input port name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Cancellation token, optional</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Return value</strong>: <code>Task&lt;JsonElement&gt;</code>, including the post-operation timestamp.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Graph.OpenGraphAsync("main_graph");
+await client.GraphNode.OpenGraphAsync(new SubGraphRef("main_graph", "subgraph-node-id"));
+
+await client.GraphNode.DisconnectNodesInfoAsync(
+    new SubGraphConnectionParams(
+        "main_graph", "subgraph-node-id",
+        outputNodeId: "resize-node-id", outputPortName: "resized_image",
+        inputNodeId: "detect-node-id", inputPortName: "image"));
+Console.WriteLine("The node connection in the subgraph has been disconnected");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getnodeparamsasync"><a class="anchor" href="#_getnodeparamsasync"></a>GetNodeParamsAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; GetNodeParamsAsync(
+    SubGraphNodeRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; GetNodeParamsAsync&lt;T&gt;(
+    SubGraphNodeRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// Strongly typed convenience version
+Task&lt;NodeParamsSnapshot&gt; GetNodeParamsSnapshotAsync(
+    SubGraphNodeRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Get a snapshot of the current values ​​of all parameters of the specified node in the subgraph.</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameters</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Main image name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphNodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Subgraph node ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Node ID in subgraph</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Cancellation token, optional</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Return value</strong>: <code>Task&lt;JsonElement&gt;</code>, parameter dictionary.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+var raw = await client.GraphNode.GetNodeParamsAsync(
+    new SubGraphNodeRef("main_graph", "subgraph-node-id", "inner-node-id"));
+
+if (raw.TryGetProperty("threshold", out var threshold))
+{
+    Console.WriteLine($"Threshold parameter: {threshold.GetDouble()}");
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getnodeinfoingraphasync"><a class="anchor" href="#_getnodeinfoingraphasync"></a>GetNodeInfoInGraphAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; GetNodeInfoInGraphAsync(
+    SubGraphNodeRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; GetNodeInfoInGraphAsync&lt;T&gt;(
+    SubGraphNodeRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// Strongly typed convenience version
+Task&lt;NodeInfoInGraph&gt; GetNodeInfoInGraphModelAsync(
+    SubGraphNodeRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Get the complete description information of the nodes in the subgraph (port list, parameter definition, connection status, etc.).</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameters</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Main image name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphNodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Subgraph node ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Node ID in subgraph</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Cancellation token, optional</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Return value</strong>: <code>Task&lt;JsonElement&gt;</code>, complete description information of the node.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+var info = await client.GraphNode.GetNodeInfoInGraphModelAsync(
+    new SubGraphNodeRef("main_graph", "subgraph-node-id", "inner-node-id"));
+Console.WriteLine($"Node name: {info.NodeName},Number of ports: {info.Ports?.Length ?? 0}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getnodeportdataasync"><a class="anchor" href="#_getnodeportdataasync"></a>GetNodePortDataAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; GetNodePortDataAsync(
+    SubGraphPortRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; GetNodePortDataAsync&lt;T&gt;(
+    SubGraphPortRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Read the current JSON data of a port of a node in the subgraph.</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameters</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Main image name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphNodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Subgraph node ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Node ID in subgraph</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>portName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Port name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>ioType</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>port type, <code>"input"</code> or <code>"output"</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Cancellation token, optional</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Return value</strong>: <code>Task&lt;JsonElement&gt;</code>, port data value.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+var portData = await client.GraphNode.GetNodePortDataAsync(
+    new SubGraphPortRef(
+        "main_graph", "subgraph-node-id", "inner-node-id", "results", "outputs"));
+Console.WriteLine($"port data: {portData}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_downloaddataasync"><a class="anchor" href="#_downloaddataasync"></a>DownloadDataAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; DownloadDataAsync(
+    SubGraphPortRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; DownloadDataAsync&lt;T&gt;(
+    SubGraphPortRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Generate download links for subgraph node port data. It is suitable for scenarios where the subgraph port output is large and the caller wants to download according to the link.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var download = await client.GraphNode.DownloadDataAsync(
+    new SubGraphPortRef(
+        "main_graph", "subgraph-node-id", "inner-node-id", "results", "outputs"));
+Console.WriteLine(download);</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getpointsdataparsedasync"><a class="anchor" href="#_getpointsdataparsedasync"></a>GetPointsDataParsedAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">Task&lt;IReadOnlyList&lt;ParsedPointCloud&gt;&gt; GetPointsDataParsedAsync(
+    SubGraphPortRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Directly read and parse the subgraph node point cloud, it is recommended to use it first.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var clouds = await client.GraphNode.GetPointsDataParsedAsync(
+    new SubGraphPortRef(
+        "main_graph", "subgraph-node-id", "lidar-node-id", "pointcloud", "outputs"));
+Console.WriteLine($"Sub-image point cloud shape: {string.Join(" x ", clouds[0].Shape)}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getpointsdataasync"><a class="anchor" href="#_getpointsdataasync"></a>GetPointsDataAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">Task&lt;byte[]&gt; GetPointsDataAsync(
+    SubGraphPortRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Read the point cloud data of the node port in the subgraph in binary format and return the original <code>byte[]</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameters</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Main image name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphNodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Subgraph node ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Node ID in subgraph</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>portName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Port name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>ioType</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>port type, <code>"input"</code> or <code>"output"</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Cancellation token, optional</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Return value</strong>: <code>Task&lt;byte[]&gt;</code>, original point cloud binary data.
+Note:
+* What is returned here is the original <code>byte[]</code> on the server side
+* The bytes of <code>GraphNode/GetPointsData</code> are also preceded by Atom point cloud header information.
+* In ordinary scenarios, it is recommended to use the above <code>GetPointsDataParsedAsync(&#8230;&#8203;)</code> first.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.IO;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+byte[] pointCloud = await client.GraphNode.GetPointsDataAsync(
+    new SubGraphPortRef(
+        "main_graph", "subgraph-node-id", "lidar-node-id", "pointcloud", "outputs"));
+Console.WriteLine($"raw bytes: {pointCloud.Length}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_setnodeparamdataasync"><a class="anchor" href="#_setnodeparamdataasync"></a>SetNodeParamDataAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; SetNodeParamDataAsync(
+    SubGraphNodeParamUpdate paramsData,
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; SetNodeParamDataAsync&lt;T&gt;(
+    SubGraphNodeParamUpdate paramsData,
+    CancellationToken cancellationToken = default)
+
+// Strongly typed convenience version
+Task&lt;NodeTimestampInfo&gt; SetNodeParamDataInfoAsync(
+    SubGraphNodeParamUpdate paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Set a certain parameter value of the node in the subgraph. Supports basic types and binaries (<code>byte[]</code>).</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameters</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Main image name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphNodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Subgraph node ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Node ID in subgraph</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Parameter name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramType</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>parameter type, <code>"init_params"</code> or <code>"run_params"</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>value</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>object?</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>parameter value, supports <code>string</code>, numerical value, <code>bool</code>, <code>byte[]</code>, <code>FileInfo</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Cancellation token, optional</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Return value</strong>: <code>Task&lt;JsonElement&gt;</code>, including the post-operation timestamp.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Graph.OpenGraphAsync("main_graph");
+await client.GraphNode.OpenGraphAsync(new SubGraphRef("main_graph", "subgraph-node-id"));
+
+// Set numerical parameters of nodes within the subgraph
+await client.GraphNode.SetNodeParamDataInfoAsync(
+    new SubGraphNodeParamUpdate(
+        "main_graph", "subgraph-node-id", "resize-node-id",
+        "scale_factor", "run_params", 0.5));
+
+Console.WriteLine("Subgraph node parameters have been set");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_setbindingnameasync"><a class="anchor" href="#_setbindingnameasync"></a>SetBindingNameAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; SetBindingNameAsync(
+    SubGraphBindingUpdate paramsData,
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; SetBindingNameAsync&lt;T&gt;(
+    SubGraphBindingUpdate paramsData,
+    CancellationToken cancellationToken = default)
+
+// Strongly typed convenience version
+Task&lt;NodeTimestampInfo&gt; SetBindingNameInfoAsync(
+    SubGraphBindingUpdate paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Set the Runtime binding name for the port of the node in the subgraph.</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameters</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Main image name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphNodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Subgraph node ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Node ID in subgraph</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>bindingType</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>binding type, <code>"input"</code> or <code>"output"</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>originName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The original name of the port</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>bindingName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code>
+The binding name used in</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Runtime</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Cancellation token, optional</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Return value</strong>: <code>Task&lt;JsonElement&gt;</code>, including the post-operation timestamp.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Graph.OpenGraphAsync("main_graph");
+await client.GraphNode.OpenGraphAsync(new SubGraphRef("main_graph", "subgraph-node-id"));
+
+await client.GraphNode.SetBindingNameInfoAsync(
+    new SubGraphBindingUpdate(
+        "main_graph", "subgraph-node-id", "detect-node-id",
+        "outputs", "boxes", "subgraph_result"));
+
+Console.WriteLine("Subgraph node binding name setting completed");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_editnodecommentasync"><a class="anchor" href="#_editnodecommentasync"></a>EditNodeCommentAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; EditNodeCommentAsync(
+    EditSubGraphNodeCommentParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; EditNodeCommentAsync&lt;T&gt;(
+    EditSubGraphNodeCommentParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Modify the node remarks in the subgraph. SDK will automatically carry <code>timestamp</code> of the current main image, and synchronize the new timestamp after the server returns.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">await client.GraphNode.EditNodeCommentAsync(
+    new EditSubGraphNodeCommentParams(
+        "main_graph", "subgraph-node-id", "inner-node-id", "This is a new note"));</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_activatenodeasync"><a class="anchor" href="#_activatenodeasync"></a>ActivateNodeAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version(Polling waiting for completion)
+Task&lt;JsonElement&gt; ActivateNodeAsync(
+    SubGraphNodeRef paramsData,
+    CancellationToken cancellationToken = default,
+    TimeSpan? timeout = null)
+
+// Generic version
+Task&lt;T&gt; ActivateNodeAsync&lt;T&gt;(
+    SubGraphNodeRef paramsData,
+    CancellationToken cancellationToken = default,
+    TimeSpan? timeout = null)
+
+// Strongly typed convenience version
+Task&lt;NodeRunResult&gt; ActivateNodeResultAsync(
+    SubGraphNodeRef paramsData,
+    CancellationToken cancellationToken = default,
+    TimeSpan? timeout = null)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Activate and run the specified node in the subgraph, SDK polls internally until execution is completed and returns. The default is to wait up to 30 seconds; if it exceeds <code>timeout</code>, throw <code>AtomTimeoutException</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameters</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Main image name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphNodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Subgraph node ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Node ID in subgraph</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Cancellation token, used by the caller to actively cancel</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>timeout</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>TimeSpan?</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>SDK polling wait timeout; <code>null</code> uses the default 30 seconds, <code>Timeout.InfiniteTimeSpan</code> means waiting forever</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Return value</strong>: <code>Task&lt;JsonElement&gt;</code>, node running result.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+var result = await client.GraphNode.ActivateNodeResultAsync(
+    new SubGraphNodeRef("main_graph", "subgraph-node-id", "inner-node-id"),
+    timeout: TimeSpan.FromSeconds(60));
+Console.WriteLine($"Node activation in subgraph completed,Request status: {result.Status}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_initialnodeasync"><a class="anchor" href="#_initialnodeasync"></a>InitialNodeAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; InitialNodeAsync(
+    SubGraphNodeRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; InitialNodeAsync&lt;T&gt;(
+    SubGraphNodeRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// Strongly typed convenience version
+Task&lt;NodeTimestampInfo&gt; InitialNodeInfoAsync(
+    SubGraphNodeRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Initialize the specified node within the subgraph (trigger node init logic).</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameters</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Main image name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphNodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Subgraph node ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Node ID in subgraph</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Cancellation token, optional</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Return value</strong>: <code>Task&lt;JsonElement&gt;</code>, including the post-operation timestamp.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Graph.OpenGraphAsync("main_graph");
+await client.GraphNode.OpenGraphAsync(new SubGraphRef("main_graph", "subgraph-node-id"));
+
+var ts = await client.GraphNode.InitialNodeInfoAsync(
+    new SubGraphNodeRef("main_graph", "subgraph-node-id", "model-node-id"));
+Console.WriteLine($"The node initialization in the subgraph is completed.,Timestamp: {ts.Timestamp}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_updatenodeasync"><a class="anchor" href="#_updatenodeasync"></a>UpdateNodeAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version(single request,No polling)
+Task&lt;JsonElement&gt; UpdateNodeAsync(
+    SubGraphNodeRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; UpdateNodeAsync&lt;T&gt;(
+    SubGraphNodeRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// Strongly typed convenience version
+Task&lt;NodeRunResult&gt; UpdateNodeResultAsync(
+    SubGraphNodeRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Update and run the specified node within the subgraph. This interface only initiates one request as defined by the server <code>UpdateNode</code> and does not poll <code>finish</code>; if the server returns <code>finish=false</code>, SDK will also return this response directly to the caller.</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameters</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Main image name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphNodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Subgraph node ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Node ID in subgraph</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Cancellation token, used by the caller to actively cancel</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Return value</strong>: <code>Task&lt;JsonElement&gt;</code>, node running result.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+var result = await client.GraphNode.UpdateNodeResultAsync(
+    new SubGraphNodeRef("main_graph", "subgraph-node-id", "process-node-id"));
+Console.WriteLine($"The node update request within the subgraph has been returned,Request status: {result.Status}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_exportgraphasync"><a class="anchor" href="#_exportgraphasync"></a>ExportGraphAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; ExportGraphAsync(
+    ExportSubGraphParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; ExportGraphAsync&lt;T&gt;(
+    ExportSubGraphParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// Strongly typed convenience version
+Task&lt;GraphExportResult&gt; ExportGraphResultAsync(
+    ExportSubGraphParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Export GraphNode internal subgraph, which can be accompanied by deep learning model information and custom node information that the subgraph depends on.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var exported = await client.GraphNode.ExportGraphResultAsync(
+    new ExportSubGraphParams("main_graph", "subgraph-node-id"));
+Console.WriteLine($"export path: {exported.FilePath}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_releasegraphasync"><a class="anchor" href="#_releasegraphasync"></a>ReleaseGraphAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; ReleaseGraphAsync(
+    SubGraphRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; ReleaseGraphAsync&lt;T&gt;(
+    SubGraphRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Release the editing resources of the GraphNode internal subgraph. If you want to continue editing after releasing, you need to call <code>OpenGraphAsync</code> again.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">await client.GraphNode.ReleaseGraphAsync(
+    new SubGraphRef("main_graph", "subgraph-node-id"));</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_cleargraphasync"><a class="anchor" href="#_cleargraphasync"></a>ClearGraphAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; ClearGraphAsync(
+    SubGraphRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; ClearGraphAsync&lt;T&gt;(
+    SubGraphRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Clean up the running intermediate state of the GraphNode internal subgraph, but retain the subgraph structure and node parameters.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">await client.GraphNode.ClearGraphAsync(
+    new SubGraphRef("main_graph", "subgraph-node-id"));</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_rungraphasync_subgraph_specific"><a class="anchor" href="#_rungraphasync_subgraph_specific"></a>RunGraphAsync(&#8230;&#8203;) (subgraph-specific)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version(Polling waiting for completion)
+Task&lt;JsonElement&gt; RunGraphAsync(
+    SubGraphRef paramsData,
+    CancellationToken cancellationToken = default,
+    TimeSpan? timeout = null)
+
+// Generic version
+Task&lt;T&gt; RunGraphAsync&lt;T&gt;(
+    SubGraphRef paramsData,
+    CancellationToken cancellationToken = default,
+    TimeSpan? timeout = null)
+
+// Strongly typed convenience version
+Task&lt;NodeRunResult&gt; RunGraphResultAsync(
+    SubGraphRef paramsData,
+    CancellationToken cancellationToken = default,
+    TimeSpan? timeout = null)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Run the entire subgraph node (triggering the execution of all nodes in the subgraph in topological order), SDK polls internally until it is completed and returns. The default is to wait up to 30 seconds; if it exceeds <code>timeout</code>, throw <code>AtomTimeoutException</code>. This is a method unique to <code>GraphNodeService</code>, and there is no corresponding interface in <code>NodeService</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameters</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Main image name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphNodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Subgraph node ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Cancellation token, used by the caller to actively cancel</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>timeout</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>TimeSpan?</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>SDK polling wait timeout; <code>null</code> uses the default 30 seconds, <code>Timeout.InfiniteTimeSpan</code> means waiting forever</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Return value</strong>: <code>Task&lt;JsonElement&gt;</code>, the summary result after the subgraph is completed.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Graph.OpenGraphAsync("main_graph");
+
+// Run the entire subgraph,most wait 60 seconds
+var result = await client.GraphNode.RunGraphResultAsync(
+    new SubGraphRef("main_graph", "subgraph-node-id"),
+    timeout: TimeSpan.FromSeconds(60));
+Console.WriteLine($"Subgraph execution completed,Request status: {result.Status}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_complete_example"><a class="anchor" href="#_complete_example"></a>Complete example</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following example demonstrates finding a subgraph node in the main graph, opening and configuring the subgraph, and finally running the subgraph:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Core;
+using AtomSdk.Models;
+
+class GraphNodeWorkflowExample
+{
+    static async Task Main()
+    {
+        var client = new AtomClient("http://localhost:8080");
+        const string mainGraph = "main_pipeline";
+        const string subgraphNodeId = "subgraph-node-001";
+
+        try
+        {
+            // 1. Open main image
+            await client.Graph.OpenGraphAsync(mainGraph);
+            Console.WriteLine("[1] The main image is open");
+
+            // 2. Open subgraph node(Get subgraph timestamp)
+            var subOpen = await client.GraphNode.OpenGraphInfoAsync(
+                new SubGraphRef(mainGraph, subgraphNodeId));
+            Console.WriteLine($"[2] Subpicture is open,Timestamp: {subOpen.Timestamp}");
+
+            // 3. Create nodes within a subgraph
+            var preprocessNode = await client.GraphNode.CreateNodeInfoAsync(
+                new SubGraphCreateNodeParams(
+                    mainGraph, subgraphNodeId, "PreprocessNode", "Image preprocessing"));
+            var modelNode = await client.GraphNode.CreateNodeInfoAsync(
+                new SubGraphCreateNodeParams(
+                    mainGraph, subgraphNodeId, "InferenceNode", "Model reasoning"));
+            Console.WriteLine($"[3] The creation of nodes in the subgraph is completed: {preprocessNode.NodeId}, {modelNode.NodeId}, Request status={modelNode.Status}");
+
+            // 4. Set model node parameters
+            await client.GraphNode.SetNodeParamDataAsync(
+                new SubGraphNodeParamUpdate(
+                    mainGraph, subgraphNodeId, modelNode.NodeId,
+                    "model_path", "init_params", "/models/detector.onnx"));
+            Console.WriteLine("[4] Parameters have been set");
+
+            // 5. Connect nodes within a subgraph
+            await client.GraphNode.ConnectNodesAsync(
+                new SubGraphConnectionParams(
+                    mainGraph, subgraphNodeId,
+                    outputNodeId: preprocessNode.NodeId, outputPortName: "output",
+                    inputNodeId: modelNode.NodeId, inputPortName: "input"));
+            Console.WriteLine("[5] Nodes in the subgraph are connected");
+
+            // 6. Set the binding name for the output port
+            await client.GraphNode.SetBindingNameAsync(
+                new SubGraphBindingUpdate(
+                    mainGraph, subgraphNodeId, modelNode.NodeId,
+                    "outputs", "predictions", "subgraph_output"));
+            Console.WriteLine("[6] Binding name is set");
+
+            // 7. Run the entire subgraph,most wait 30 seconds
+            var runResult = await client.GraphNode.RunGraphResultAsync(
+                new SubGraphRef(mainGraph, subgraphNodeId),
+                timeout: TimeSpan.FromSeconds(30));
+            Console.WriteLine($"[7] Subgraph execution completed,Request status: {runResult.Status}");
+
+            // 8. Read the output node port data in the subgraph
+            var output = await client.GraphNode.GetNodePortDataAsync(
+                new SubGraphPortRef(
+                    mainGraph, subgraphNodeId, modelNode.NodeId,
+                    "predictions", "outputs"));
+            Console.WriteLine($"[8] Output data: {output}");
+        }
+        catch (AtomApiException ex)
+        {
+            Console.WriteLine($"Server error {ex.Status}: {ex.Message}");
+        }
+        catch (AtomHttpException ex)
+        {
+            Console.WriteLine($"HTTP Error {ex.StatusCode}: {ex.Message}");
+        }
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="node.html">NodeService（C#）</a></span>
+  <span class="next"><a href="runtime.html">RuntimeService（C#）</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

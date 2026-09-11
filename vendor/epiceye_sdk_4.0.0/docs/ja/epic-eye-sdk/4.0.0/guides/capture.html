@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>撮影と撮影 EpicRaw デコード :: Epic Eye SDK 開発者ガイド</title>
+    <link rel="prev" href="discovery.html">
+    <link rel="next" href="config.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+         <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" /> 
+         <span class="navbar-title">オンライン製品ドキュメント</span>
+      </a>
+
+      
+
+
+    </div>
+
+      <div id="topbar-nav" class="navbar-menu">
+        <div class="navbar-end">
+
+          
+            <div class="navbar-item search hide-for-print">
+              <div id="search-field" class="field has-filter">
+                <input id="search-input" type="text" placeholder="キーワードを入力して検索" >
+                <label class="filter checkbox">
+                  <input type="checkbox" data-facet-filter="component:epic-eye-sdk">このマニュアルのみ</label>
+                </div>
+              </div>
+          
+          <button class="navbar-burger" data-target="topbar-nav">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">マニュアル切替</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Epic Eye SDK 開発者ガイド</a>
+          </div>
+        </div>
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">ダウンロードセンター</a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">公式サイト</a>
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+            <a class="navbar-link" href="#"><span class="globe-icon">🌐</span>日本語</a>
+            <div class="navbar-dropdown">
+                <a class="navbar-item" href="http://docs.qianyi.ai/zh/index.html">简体中文</a>
+                <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+                <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+            </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-logo {
+  height: 32px;
+  margin-right: 8px;
+}
+
+.navbar-title {
+  font-size: 18px;
+  color: #333;
+}
+
+.globe-icon {
+  margin-right: 5px;
+}
+
+.navbar-item {
+  color: #000 !important;
+}
+
+.navbar-item:hover {
+  background-color: #3273dc !important;
+  color: #fff !important;
+}
+
+.navbar-item a {
+  color: #000 !important;
+}
+
+.navbar-item a:hover {
+  color: #fff !important;
+}
+
+.navbar-dropdown .navbar-item {
+  color: #000 !important;
+}
+
+.navbar-dropdown .navbar-item:hover {
+  background-color: #3273dc !important;
+  color: #fff !important;
+}
+
+.navbar-link:hover {
+  background-color: #3273dc !important;
+  color: #fff !important;
+}
+
+.navbar-link a {
+  color: #000 !important;
+}
+
+.navbar-link a:hover {
+  color: #fff !important;
+}
+
+.language-selector .navbar-link {
+  display: flex;
+  align-items: center;
+  color: #000 !important;
+}
+
+.navbar-link {
+  color: #000 !important;
+}
+
+/* 添加这个新规则，使下拉菜单激活时保持链接的蓝色背景 */
+.navbar-item.has-dropdown.is-active .navbar-link,
+.navbar-item.has-dropdown:focus .navbar-link,
+.navbar-item.has-dropdown:focus-within .navbar-link {
+  background-color: #3273dc !important;
+  color: #fff !important;
+}
+
+/* 添加这个规则，确保鼠标悬停在下拉菜单项上时父级链接保持蓝色背景 */
+.navbar-item.has-dropdown:hover .navbar-link {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* 添加这个特定的样式规则，确保搜索框区域在悬停时背景不变 */
+.navbar-item.search.hide-for-print:hover {
+  background-color: transparent !important;  /* 使背景透明，保持原来的背景色 */
+}
+
+/* 确保搜索框内的输入框在悬停时也不改变背景 */
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input {
+  background-color: inherit !important;
+}
+</style> 
+<div class="body">
+<div class="nav-container" data-component="epic-eye-sdk" data-version="4.0.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Epic Eye SDK 開発者ガイド</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">ようこそ</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">クイックスタート</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">クイックスタート</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/examples.html">サンプル</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">ユーザーガイド</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="discovery.html">見つけられるカメラおよび接続される</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="capture.html">撮影と撮影 EpicRaw デコード</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="config.html">カメラの構成及び変数</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="intrinsic-calibration.html">見積り</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="hand-eye-calibration.html">手目印。</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="line-scan.html">ワイヤースイープ</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="stream2d.html">Stream2D ライブビデオ</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API リファレンス</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API リファレンス</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">C# — 概要と統合</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/device.html">C# — デバイスとネットワーク</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/capture.html">C# — 撮影・データ取得</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/epicraw.html">C# — EpicRaw 解析</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/camera-config.html">C# — カメラの構成</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/intrinsics.html">C# — 変形内部への参加 LUT</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/intrinsic-calibration.html">C# — 見積り</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/hand-eye-calibration.html">C# — 手目印。</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/line-scan.html">C# — ワイヤースイープ</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/stream2d.html">C# — Stream2D</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/alignment.html">C# — テクスチャのアライメント</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/data-models.html">C# — データの種類とフィールド</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python — 概要とインストール</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">Python — 設定を実行するリクエスト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/device.html">Python — デバイスとネットワーク</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/capture.html">Python — 撮影・データ取得</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/epicraw.html">Python — EpicRaw 解析</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/camera-config.html">Python — カメラの構成</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/intrinsics.html">Python — 変形内部への参加 LUT</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/intrinsic-calibration.html">Python — 見積り</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/hand-eye-calibration.html">Python — 手目印。</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/line-scan.html">Python — ワイヤースイープ</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/stream2d.html">Python — Stream2D</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/alignment.html">Python — テクスチャのアライメント</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/data-models.html">Python — データの種類とフィールド</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">C++ — 概要と統合</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/device.html">C++ — デバイスとネットワーク</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/capture.html">C++ — 撮影・データ取得</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/epicraw.html">C++ — EpicRaw 解析</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/camera-config.html">C++ — カメラの構成</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/intrinsics.html">C++ — 変形内部への参加 LUT</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/intrinsic-calibration.html">C++ — 見積り</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/hand-eye-calibration.html">C++ — 手目印。</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/line-scan.html">C++ — ワイヤースイープ</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/stream2d.html">C++ — Stream2D</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/alignment.html">C++ — テクスチャのアライメントと完成</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/data-models.html">C++ — データの種類とフィールド</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Epic Eye SDK 開発者ガイド</span>
+    <span class="version">4.0.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Epic Eye SDK 開発者ガイド</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">4.0.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Epic Eye SDK 開発者ガイド</a></li>
+    <li>ユーザーガイド</li>
+    <li><a href="capture.html">撮影と撮影 EpicRaw デコード</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Content"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside><article class="doc">
+<h1 class="page">撮影と撮影 EpicRaw デコード</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Frame データ使用原子プロセス:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>シュートをトリガーし、取得 <code>frameId</code>。</p>
+</li>
+<li>
+<p><code>frameId</code> を指定して EpicRaw をダウンロードします。</p>
+</li>
+<li>
+<p>バイトをロードする <code>EpicRawDocument</code>。</p>
+</li>
+<li>
+<p>必要に応じて同じ文書から画像、深さ、クラウド、内部キュウリ、または要素メタデータを解読します。</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_c"><a class="anchor" href="#_c"></a>C#</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">ApiResponse&lt;string&gt; trigger = await EpicEye.TriggerCaptureAsync(ip);
+string frameId = trigger.Data!;
+
+var (rawBytes, transmitMs, speedMbps) =
+    await EpicEye.GetFrameInEpicRawWithTimeStatsAsync(ip, frameId);
+if (rawBytes is null
+    || !EpicEye.TryLoadEpicRawDocumentFromBytes(rawBytes, out var document)
+    || document is null)
+{
+    throw new InvalidDataException("EpicRaw インヴァリッド");
+}
+
+var (image, imageWidth, imageHeight) =
+    EpicEye.DecodeImageFromEpicRaw(document);
+var (depth, depthWidth, depthHeight) =
+    EpicEye.DecodeDepthFromEpicRaw(document);
+
+var (distortion, cameraMatrix, lutWidth, lutHeight) =
+    EpicEye.GetDepthIntrinsicsFromEpicRaw(document);
+byte[]? lut = await EpicEye.GetUndistortLutAsync(
+    ip,
+    timeout: 15000,
+    depthWidth: lutWidth,
+    depthHeight: lutHeight,
+    cameraMatrix: cameraMatrix,
+    distortion: distortion);
+var (pointCloud, pointCloudWidth, pointCloudHeight) =
+    EpicEye.DecodePointCloudFromEpicRaw(document, lut);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>transmitMs</code> 統計のみ HTTP 応答は時間がかかります。<code>speedMbps</code> この応答機の平均伝送速度です。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_python"><a class="anchor" href="#_python"></a>Python</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">frame_id = epiceye.trigger_frame(ip, pointcloud=True)
+raw = epiceye.get_frame_in_epicraw(ip, frame_id)
+document = epiceye.try_load_epic_raw_document_from_bytes(raw)
+
+image = epiceye.decode_image_from_epicraw(document)
+depth, depth_width, depth_height = epiceye.decode_depth_from_epicraw(document)
+
+distortion, camera_matrix, lut_width, lut_height = (
+    epiceye.get_depth_intrinsics_from_epicraw(document)
+)
+lut = epiceye.get_undistort_lut(
+    ip, lut_width, lut_height, camera_matrix, distortion
+)
+cloud, cloud_width, cloud_height = (
+    epiceye.decode_point_cloud_from_epicraw(document, lut)
+)</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_c_2"><a class="anchor" href="#_c_2"></a>C++</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">std::string frameId;
+TFTech::EpicEye::triggerFrame(ip, frameId, true);
+
+std::vector&lt;uint8_t&gt; rawBytes;
+TFTech::EpicEye::getFrameInEpicRaw(ip, frameId, rawBytes);
+
+TFTech::EpicRawDocument document;
+TFTech::EpicEye::tryLoadEpicRawDocumentFromBytes(rawBytes, document);
+
+std::vector&lt;uint8_t&gt; image;
+int imageWidth = 0, imageHeight = 0, channelBytes = 0;
+TFTech::EpicEye::decodeImageFromEpicRaw(
+    document, image, imageWidth, imageHeight, channelBytes);
+
+std::vector&lt;float&gt; depth;
+int depthWidth = 0, depthHeight = 0;
+TFTech::EpicEye::decodeDepthFromEpicRaw(
+    document, depth, depthWidth, depthHeight);
+
+std::vector&lt;double&gt; distortion, cameraMatrix;
+int lutWidth = 0, lutHeight = 0;
+TFTech::EpicEye::getDepthIntrinsicsFromEpicRaw(
+    document, distortion, cameraMatrix, lutWidth, lutHeight);
+std::vector&lt;float&gt; lut;
+TFTech::EpicEye::getUndistortLut(
+    ip, lutWidth, lutHeight, cameraMatrix, distortion, lut);
+
+std::vector&lt;float&gt; cloud;
+int cloudWidth = 0, cloudHeight = 0;
+TFTech::EpicEye::decodePointCloudFromEpicRaw(
+    document, lut, cloud, cloudWidth, cloudHeight);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>深さとポイントのクラウドユニットはミリメートルです。クラウドメモリレイアウトは <code>H × W × 3</code>、チャネルの発注はあります <code>(X, Y, Z)</code>。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_パッシブダブルプルポーズ"><a class="anchor" href="#_パッシブダブルプルポーズ"></a>パッシブダブルプルポーズ</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>パッシブダブルアイ EpicRaw3 ミディミアム <code>DepthSrcImg1</code>、<code>DepthSrcImg2</code> 必要な要素のために、<code>TextureBGR</code> オプションの要素です。 解像度は、利用可能なテクスチャを追加して、固定順に2方向のディープソースマップを返します。</p>
+</div>
+<div class="sect2">
+<h3 id="_c_3"><a class="anchor" href="#_c_3"></a>C#</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">IReadOnlyList&lt;EpicRawImage&gt;? images =
+    EpicEye.DecodePassiveBinocularImagesFromEpicRaw(document);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_python_2"><a class="anchor" href="#_python_2"></a>Python</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">left, right, texture = (
+    epiceye.decode_passive_binocular_images_from_epicraw(document)
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Python バックナンバー NumPy トリプルグループ。テクスチャがないとき <code>texture is None</code>。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_c_4"><a class="anchor" href="#_c_4"></a>C++</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">std::vector&lt;EpicRawImage&gt; images;
+bool ok = EpicEye::decodePassiveBinocularImagesFromEpicRaw(
+    document, images);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>C# / C++ 記述項目はデータ タイプ、幅、高い、を含んでいますOpenCV <code>MatType</code> コピーがデータビューだけを読み込みます。 2 方向のマップが欠落しているか、要素の長さが関連付けられている <code>MatType</code> マッチング時に失敗した解析。テクスチャが存在しないときに返す 2 テクスチャが存在しても問題がないと、全体の解像度が失敗しました。</p>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="discovery.html">見つけられるカメラおよび接続される</a></span>
+  <span class="next"><a href="config.html">カメラの構成及び変数</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

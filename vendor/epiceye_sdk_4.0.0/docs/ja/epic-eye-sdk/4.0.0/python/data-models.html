@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Python — データの種類とフィールド :: Epic Eye SDK 開発者ガイド</title>
+    <link rel="prev" href="alignment.html">
+    <link rel="next" href="../cpp/overview.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+         <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" /> 
+         <span class="navbar-title">オンライン製品ドキュメント</span>
+      </a>
+
+      
+
+
+    </div>
+
+      <div id="topbar-nav" class="navbar-menu">
+        <div class="navbar-end">
+
+          
+            <div class="navbar-item search hide-for-print">
+              <div id="search-field" class="field has-filter">
+                <input id="search-input" type="text" placeholder="キーワードを入力して検索" >
+                <label class="filter checkbox">
+                  <input type="checkbox" data-facet-filter="component:epic-eye-sdk">このマニュアルのみ</label>
+                </div>
+              </div>
+          
+          <button class="navbar-burger" data-target="topbar-nav">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">マニュアル切替</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Epic Eye SDK 開発者ガイド</a>
+          </div>
+        </div>
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">ダウンロードセンター</a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">公式サイト</a>
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+            <a class="navbar-link" href="#"><span class="globe-icon">🌐</span>日本語</a>
+            <div class="navbar-dropdown">
+                <a class="navbar-item" href="http://docs.qianyi.ai/zh/index.html">简体中文</a>
+                <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+                <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+            </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-logo {
+  height: 32px;
+  margin-right: 8px;
+}
+
+.navbar-title {
+  font-size: 18px;
+  color: #333;
+}
+
+.globe-icon {
+  margin-right: 5px;
+}
+
+.navbar-item {
+  color: #000 !important;
+}
+
+.navbar-item:hover {
+  background-color: #3273dc !important;
+  color: #fff !important;
+}
+
+.navbar-item a {
+  color: #000 !important;
+}
+
+.navbar-item a:hover {
+  color: #fff !important;
+}
+
+.navbar-dropdown .navbar-item {
+  color: #000 !important;
+}
+
+.navbar-dropdown .navbar-item:hover {
+  background-color: #3273dc !important;
+  color: #fff !important;
+}
+
+.navbar-link:hover {
+  background-color: #3273dc !important;
+  color: #fff !important;
+}
+
+.navbar-link a {
+  color: #000 !important;
+}
+
+.navbar-link a:hover {
+  color: #fff !important;
+}
+
+.language-selector .navbar-link {
+  display: flex;
+  align-items: center;
+  color: #000 !important;
+}
+
+.navbar-link {
+  color: #000 !important;
+}
+
+/* 添加这个新规则，使下拉菜单激活时保持链接的蓝色背景 */
+.navbar-item.has-dropdown.is-active .navbar-link,
+.navbar-item.has-dropdown:focus .navbar-link,
+.navbar-item.has-dropdown:focus-within .navbar-link {
+  background-color: #3273dc !important;
+  color: #fff !important;
+}
+
+/* 添加这个规则，确保鼠标悬停在下拉菜单项上时父级链接保持蓝色背景 */
+.navbar-item.has-dropdown:hover .navbar-link {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* 添加这个特定的样式规则，确保搜索框区域在悬停时背景不变 */
+.navbar-item.search.hide-for-print:hover {
+  background-color: transparent !important;  /* 使背景透明，保持原来的背景色 */
+}
+
+/* 确保搜索框内的输入框在悬停时也不改变背景 */
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input {
+  background-color: inherit !important;
+}
+</style> 
+<div class="body">
+<div class="nav-container" data-component="epic-eye-sdk" data-version="4.0.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Epic Eye SDK 開発者ガイド</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">ようこそ</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">クイックスタート</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">クイックスタート</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/examples.html">サンプル</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">ユーザーガイド</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/discovery.html">見つけられるカメラおよび接続される</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/capture.html">撮影と撮影 EpicRaw デコード</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/config.html">カメラの構成及び変数</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/intrinsic-calibration.html">見積り</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/hand-eye-calibration.html">手目印。</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/line-scan.html">ワイヤースイープ</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/stream2d.html">Stream2D ライブビデオ</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API リファレンス</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API リファレンス</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">C# — 概要と統合</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/device.html">C# — デバイスとネットワーク</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/capture.html">C# — 撮影・データ取得</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/epicraw.html">C# — EpicRaw 解析</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/camera-config.html">C# — カメラの構成</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/intrinsics.html">C# — 変形内部への参加 LUT</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/intrinsic-calibration.html">C# — 見積り</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/hand-eye-calibration.html">C# — 手目印。</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/line-scan.html">C# — ワイヤースイープ</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/stream2d.html">C# — Stream2D</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/alignment.html">C# — テクスチャのアライメント</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/data-models.html">C# — データの種類とフィールド</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="overview.html">Python — 概要とインストール</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="runtime.html">Python — 設定を実行するリクエスト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="device.html">Python — デバイスとネットワーク</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="capture.html">Python — 撮影・データ取得</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="epicraw.html">Python — EpicRaw 解析</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="camera-config.html">Python — カメラの構成</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="intrinsics.html">Python — 変形内部への参加 LUT</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="intrinsic-calibration.html">Python — 見積り</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="hand-eye-calibration.html">Python — 手目印。</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="line-scan.html">Python — ワイヤースイープ</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="stream2d.html">Python — Stream2D</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="alignment.html">Python — テクスチャのアライメント</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="data-models.html">Python — データの種類とフィールド</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">C++ — 概要と統合</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/device.html">C++ — デバイスとネットワーク</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/capture.html">C++ — 撮影・データ取得</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/epicraw.html">C++ — EpicRaw 解析</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/camera-config.html">C++ — カメラの構成</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/intrinsics.html">C++ — 変形内部への参加 LUT</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/intrinsic-calibration.html">C++ — 見積り</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/hand-eye-calibration.html">C++ — 手目印。</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/line-scan.html">C++ — ワイヤースイープ</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/stream2d.html">C++ — Stream2D</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/alignment.html">C++ — テクスチャのアライメントと完成</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/data-models.html">C++ — データの種類とフィールド</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Epic Eye SDK 開発者ガイド</span>
+    <span class="version">4.0.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Epic Eye SDK 開発者ガイド</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">4.0.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Epic Eye SDK 開発者ガイド</a></li>
+    <li>API リファレンス</li>
+    <li>Python SDK</li>
+    <li><a href="data-models.html">Python — データの種類とフィールド</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Content"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside><article class="doc">
+<h1 class="page">Python — データの種類とフィールド</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>このページの先頭へ Python API 返品について <code>dict</code>、データクラス、エンメレータ、メタグループ。 辞書はケースに敏感です。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="epiceye-info"><a class="anchor" href="#epiceye-info"></a><code>EpicEyeInfo</code> キーワード</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 66.6668%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">キー</th>
+<th class="tableblock halign-left valign-top">タイプ:</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>version</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">カメラサービスエンドソフトウェアバージョン。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>sn</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">カメラのシリアル番号。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>firmwareVersion</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">固体パッケージ版; 提供されていないとき空の文字列。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>hardwareVersion</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ハードウェアバージョン; 利用可能な場合の空の文字列。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ip</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">アドレスへのカメラアクセス、結果は通常ポートベースです。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ipv4SubnetMask</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IPv4 サブネットマスク。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ipv6</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IPv6 設定されていない場合、アドレス、空。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>model</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">カメラタイプは名前を表示します。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cameraModel</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#camera-model">カメラモデルカウント値</a>。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>alias</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ユーザ構成カメラのエイリアス。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>width</code> / <code>height</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">デフォルトの画像幅、単位ピクセル。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isDhcpEnabled</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bool</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">有効活用 DHCP。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>uid</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">カメラのみがマークされています。</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="camera-model"><a class="anchor" href="#camera-model"></a>カメラモデルカウント値</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>0 LaserL</code>、<code>1 SS</code>、<code>2 SM</code>、<code>3 SMAir</code>、<code>4 DL</code>、<code>5 PixelMiniMonochrome</code>、<code>6 X</code>、<code>7 PixelProMonochrome</code>、<code>8 LaserLV2S</code>、<code>9 LaserLV3</code>、<code>10 PixelWeld</code>、<code>11 PixelMiniColor</code>、<code>12 PixelProColor</code>、<code>13 LogL</code>、<code>14 PixelMiniMonochromeV2</code>、<code>15 LaserLV3Lite</code>、<code>16 LaserMV3</code>、<code>17 LaserMV3Lite</code>。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="simple-camera-parameter"><a class="anchor" href="#simple-camera-parameter"></a><code>SimpleCameraParameter</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>get_parameter_list</code> 非変数のデータクラスを返します。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 66.6668%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">プロパティ</th>
+<th class="tableblock halign-left valign-top">タイプ:</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">非空のパラメータプリセット固有の識別子、直接に渡すことができます <code>set_parameter</code>。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">パラメータプリセット名。</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>渡される完全な現在の構成 <code>get_config</code> お問い合わせ</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="reconstructor-type"><a class="anchor" href="#reconstructor-type"></a><code>ReconstructorType</code> 戻り値</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 66.6668%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">バリュー</th>
+<th class="tableblock halign-left valign-top">お名前 (必須)</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>0</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Mono</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">深みのあるソース再構築。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>1</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>BinoWithoutColor</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">二重深さの源は、独立した色ソースを再建しませんでした。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>2</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>BinoWithColor</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">独立した色のテクスチャソースで再構築されたダブルディープソース。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>999</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Unknown</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">一時的なフォルダを閉じることができません: %s</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="ip-config"><a class="anchor" href="#ip-config"></a>IP パラメータの設定</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>set_epiceye_ip_config</code> 以下が生成されます。 UDP オブジェクト:`DestinationIP` 現在のカメラとして IPv4；<code>IP</code> 手動モードのための新しい IPv4；<code>NetMask</code> (a) サブネットマスク;`Type` はい。 <code>"DHCP"</code> または <code>"Manual"</code>；<code>SN</code> 対象カメラの現在のシリアル番号と一致して、他の機器の誤順を防止するために使用される必要があります。<code>camera_ip_config.py</code> 検索結果から自動検索結果または <code>get_info</code> エントリー SN、注文ラインは輸入しなくてはなりません。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="temperature-info"><a class="anchor" href="#temperature-info"></a>温度の辞書</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>timestamp_ms</code> (a)カメラの端のためのサンプル時間スタンプ;`cpu_celsius`、<code>gpu_celsius</code>、<code>npu_celsius</code> 摂氏温度または摂氏温度の温度はあります <code>None</code>. センサー、レーザー、力、キャビティ、等のような機械タイプの排他的な場所は、余分キーと戻り、利用できないか、または読解できません <code>None</code>。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="camera-config-params"><a class="anchor" href="#camera-config-params"></a>カメラ構成辞書</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>get_config()</code> 現在のフルパラメータのスキームを返し、変更および渡された <code>set_config()</code>. 操作によって変更されない機械タイプの排他的な分野を達成して下さい。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 66.6668%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">キー</th>
+<th class="tableblock halign-left valign-top">タイプ:</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">パラメーターのみ ID。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">変数プログラム名。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>selected</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bool</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">現行のプログラムであるかどうか。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>profileType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>0</code> 正常な変数,<code>1</code> をクリックし、</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>captureMode</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Optional[int]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>0</code> ビデオストリーム,<code>1</code> 構造ライト,<code>2</code> 受動のバイナリ,<code>3</code> ワイヤーを振りかける、<code>4</code> 固定ライン広がり。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>structuredLightParams</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">構造 軽い露出、利益、投射、質の源、決断および ROI 引数。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>swingLineScanParams</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Optional[dict]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ワイヤースイープ Z 範囲、軽い平面の角度、雲密度およびレーザーの明るさ。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>passiveBinocularParams</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Optional[dict]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">受動の二重eyed の露出、利益、質の源および決断。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>videoStreamParams</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Optional[dict]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ビデオストリーム露出、ゲイン、解像度、グラフィックソーススイッチ。</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>グループのための公開鍵の設定:`depthSrcExpTime2D`（ms）、<code>depthSrcGain2D</code>（dB）、<code>depthSrcExposureMode</code>（0 マニュアル/1 オート。<code>colorSrcExpTime2D</code>（ms）、<code>colorSrcGain2D</code>（dB）、<code>colorSrcExposureMode</code>、<code>paramsBatch3D=[{depthSrcExpTime3D,depthSrcGain3D}]</code>、<code>textureSource</code>（0 なし なし/1 深さの源/2 色の源,<code>flashLightOn`深さ:/色: 色: 2D 決断モード、深さ 3D 決断モード,`smoothLevel</code>、<code>filterLevel</code>。</p>
+</div>
+<div class="paragraph">
+<p>構造ライトは付加的に含んでいます <code>exposurePartitions</code>、<code>patternMode</code>、<code>projectorBrightness</code>、<code>fillHoleLevel</code>、<code>roi3DOn</code>、<code>roi3D={min[3],max[3],transform[6]}</code>. 追加ラインスイープが含まれています <code>minZ/maxZ</code>（mm）、<code>startLightPlaneAngle/endLightPlaneAngle</code>(度)<code>pointCloudDensity</code>、<code>laserBrightness</code>. 追加のビデオストリームが含まれている <code>depthSrc1On</code>、<code>depthSrc2On</code>、<code>colorSrcOn</code>。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="camera-config-style"><a class="anchor" href="#camera-config-style"></a>スタイル辞書の設定</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>トップレベルプレス <code>common</code>、<code>structuredLight</code>、<code>swingLineScan</code>、<code>passiveBinocular</code>、<code>videoStream</code> グループ化。各パラメーターの説明には、 <code>displayText</code>、<code>dataType</code>、<code>bounds</code>、<code>step</code>、<code>default</code>、<code>priority</code>、<code>componentType</code>；<code>componentType</code> はい はい <code>Input</code>、<code>Select</code>、<code>Switch</code>、<code>Tab</code>、<code>Slider</code> または <code>Object</code>。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="epicraw-enums"><a class="anchor" href="#epicraw-enums"></a>EpicRaw エヌメレーション</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>FileType</code>：<code>EpicRaw1</code>、<code>EpicRaw2</code>、<code>EpicRaw3</code>。<code>EpicRaw3DataType</code>：<code>DepthSrcImg1=0</code>、<code>DepthSrcImg2=1</code>、<code>TextureBGR=2</code>、<code>Depth=3</code>、<code>PointCloud=4</code>、<code>PointCloudNormal=5</code>。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="epicraw-document"><a class="anchor" href="#epicraw-document"></a><code>EpicRawDocument</code></h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 66.6668%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">プロパティ</th>
+<th class="tableblock halign-left valign-top">タイプ:</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>file_type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>FileType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">文書のフォーマット。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>raw1</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Optional[EpicRaw1]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Raw1 コンテンツのみ Raw1 ドキュメントは空ではありません。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>raw2</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Optional[EpicRaw2]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Raw2 コンテンツのみ Raw2 ドキュメントは空ではありません。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>raw3</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Optional[dict]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Raw3 ヘッダーと要素リスト、唯一の Raw3 ドキュメントは空ではありません。</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Raw3 辞書は含ま <code>header_length</code>、<code>elements_count</code>、<code>element_lengths</code>、<code>meta_data_str_length</code>、<code>meta_data_str</code>、<code>elements</code>. 各要素に含まれている <code>header_length</code>、<code>data_type</code>、<code>data_length</code>、<code>width</code>、<code>height</code>、<code>mat_type</code>、<code>meta_data_length</code>、<code>meta_data_str</code>、<code>data</code>。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="epicraw-image"><a class="anchor" href="#epicraw-image"></a><code>EpicRawImage</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>読まれただけ <code>NamedTuple</code>：<code>data_type: EpicRaw3DataType</code>、<code>width: int</code>、<code>height: int</code>、<code>mat_type: int</code>、<code>data: memoryview</code>。<code>mat_type=16</code> 組織体制 <code>CV_8UC3</code>，<code>18</code> 組織体制 <code>CV_16UC3</code>。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="line-scan-types"><a class="anchor" href="#line-scan-types"></a>スレッドバック値</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>start_line_scan()</code> バックナンバー <code>{"frameId": str}</code>；<code>stop_line_scan()</code> ストップステート文字列を直接返します。<code>get_line_scan_status()</code> 文字列を返す:`"Idle"`、<code>"Starting"</code>、<code>"WaitingForConnection"</code>、<code>"Streaming"</code>、<code>"Finalizing"</code>、<code>"Saving"</code>、<code>"Completed"</code>、<code>"Stopping"</code>、<code>"Stopped"</code> または <code>"Failed"</code>。</p>
+</div>
+<div class="paragraph">
+<p><code>WaitingForConnection</code> デバイスが活性化され、待機している意味 SDK ラインスイープの作成 WebSocket；<code>Completed</code> ラインの清潔を意味します。 EpicRaw (a) 処理の成功;`Stopped` (a) 自主的なキャンセルの結果として;`Failed` 開始、伝達、閉鎖または保存フェーズが失敗することを示します。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="stream2d-types"><a class="anchor" href="#stream2d-types"></a>Stream2D タイプ:</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 66.6668%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">タイプ:/フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ:</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ステータス <code>isStreaming</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bool</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">活動の流れはありません。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ステータス <code>peerCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">活動内容 peer 番号。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ステータス <code>cameraCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">フローに関与するグラフの数。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Offer <code>peerId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">カメラの配分。 peer ID。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Offer <code>answerSdp</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">WebRTC Answer SDP。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Stream2DSession</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">セッションハンドル</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">保存する SDK インテリア RTC このセッションで peer 情報として、 <code>stop_stream2d_rtc_session</code> エントリー</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Stream2DSessionResult.frame_count</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">受信したストリームフレームの数。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Stream2DSessionResult.peer_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Optional[str]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">このセッションについて peer ID。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">リワインド <code>frame_index</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">詳しくはこちら 1 フレーム番号の開始。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">リワインド <code>frame.data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bytes</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RTP 組織再編 H264 Annex-B フレームを符号化して下さい;SDK 解読しないでください。再コードしないでください。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">リワインド <code>frame.pts</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">整数または <code>None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">受信フレームの時間スタンプ。</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="intrinsic-calibration-types"><a class="anchor" href="#intrinsic-calibration-types"></a>インライン辞書</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_パネル識別結果"><a class="anchor" href="#_パネル識別結果"></a>パネル識別結果</h3>
+<div class="paragraph">
+<p><code>boardType: int</code> プレートです。<code>-1</code> (a) 認識されていないことを示す。<code>boardHint: str</code> ヒントを設定するには、<code>previewImages: list[dict]</code> テストマークの構成されたプレビュー。</p>
+</div>
+<div class="paragraph">
+<p>ひとつひとつひとつひとつ。 <code>previewImages</code> 要素は以下で構成されます:`dataUri: str`(画像として直接使用可) <code>src</code> それは&#8230;&#8203; Data URI または相対的な URL）、<code>name: str</code>(画像のソースの識別)<code>width: int</code> とりあえず <code>height: int</code>(ピクセルサイズ)。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_追加するplot_を削除します"><a class="anchor" href="#_追加するplot_を削除します"></a>追加する/Plot を削除します。</h3>
+<div class="paragraph">
+<p>結果を追加 完了 完了 完了 完了 <code>detectSuccess</code>、<code>pairIndex</code>、<code>pairCount`カメラは位置を調整します。 `boardPose=[tx,ty,tz,qx,qy,qz,qw]</code>(単位変更) mm、失敗したと推定される <code>None</code>）、<code>boardTiltAngle</code>(度)<code>boardTiltWarning</code> そして構造 <code>previewImages</code>. 結果の削除は下記のものを含んでいます <code>removedIndex</code> 削除された後 <code>pairCount</code>。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_結果を計算する"><a class="anchor" href="#_結果を計算する"></a>結果を計算する</h3>
+<div class="paragraph">
+<p>計算には以下が含まれます。</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>cameraParameters</code>、<code>parameterErrors</code>：<code>DepthSrc1 → DepthSrc2</code> 平坦な結果とエラー。</p>
+</li>
+<li>
+<p><code>colorCameraParameters</code>、<code>colorParameterErrors</code>：<code>BinoWithColor</code> それは&#8230;&#8203; <code>DepthSrc1 → TextureSrc</code> 平坦な結果とエラー、他のタイプは <code>None</code>。</p>
+</li>
+<li>
+<p><code>cameraParametersConfig`_: と `CameraParameters.json</code> 対応する設定の完全構成は、パスできるのは1つだけです。 <code>set_intrinsic_parameters()</code> . . . .</p>
+</li>
+<li>
+<p><code>stereoRms</code>、<code>colorStereoRms</code>、`shouldWarnRms`深さ: RMS、任意色 RMS、およびあらゆる RMS 安全のしきい値が上回っているかどうか。</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><code>cameraParameters</code> 組織体制 <code>Image_Width/Image_Height`現在の位置:/主人公/カメラから。 9 Internistur ら. 5 メタモルファシス、数値マトリックス `E[9]`基本的なマトリックス `F[9]`主がカメラから回転 `R[9]</code> 平和が動く。 <code>T[3]</code>（mm）。<code>parameterErrors</code> 合計を含めて下さい <code>MasterError/SlaveError/StereoError</code> 投稿エラー。 <code>AllPoseErrorM/AllPoseErrorS</code>。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="camera-parameters-config"><a class="anchor" href="#camera-parameters-config"></a><code>CameraParametersConfig</code></h3>
+<div class="paragraph">
+<p>です。 <code>CameraParametersConfig.from_dict(result["cameraParametersConfig"])</code> 計算を変換する SDK オブジェクトの強力なタイプ。<code>set_intrinsic_parameters()</code> そのタイプを、いいえ受け入れて下さい。 <code>dict</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 22.2222%;">
+<col style="width: 22.2222%;">
+<col style="width: 55.5556%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">プロパティ</th>
+<th class="tableblock halign-left valign-top">タイプ:</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>reconstructor_type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ReconstructorType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>MONO</code>、<code>BINO_WITHOUT_COLOR</code>、<code>BINO_WITH_COLOR</code> または <code>UNKNOWN</code>。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>transformation_reference</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TransformationReference</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DEPTH_SRC1</code>、<code>DEPTH_SRC2</code> または <code>TEXTURE_SRC</code>。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depth_src1</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IntrinsicParams</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ファーストディープカメラ、いつもそこに。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depth_src2</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Optional[IntrinsicParams]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">現在のビルダーに必要な第2の深さのカメラか二次変数;すべての支えられた再建のタイプは執筆時に存在しなければなりません。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>texture_src</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Optional[IntrinsicParams]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(b)独立したカラーカメラ。<code>BINO_WITH_COLOR</code> 存在しなければなりません。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>swing_line_scan_light_plane_params</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Optional[SwingLineScanLightPlaneParams]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">行をスイングすると、平面のパラメータをスワイプし、それらが書かれているように維持します。</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>IntrinsicParams</code> 組織体制 <code>width</code>、<code>height</code>、<code>camera_matrix[9]</code>、<code>distortion[5]</code>、<code>rotation[9]</code> とりあえず <code>translation[3]</code>. 回転行列はあります OpenCV ラインファースト・ストレージ、コラムのベクトル直乗;正方形の単位として mm。<code>SwingLineScanLightPlaneParams</code> 組織体制 <code>start_angle</code>、<code>end_angle</code> とりあえず <code>light_plane_params</code>。</p>
+</div>
+<div class="paragraph">
+<p>Laser M V3 それは&#8230;&#8203; <code>depth_src1/depth_src2</code> 詳しくはこちら <code>cameraParameters</code> 主よ。/カメラから、<code>texture_src</code> 詳しくはこちら <code>colorCameraParameters</code> カメラから。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="intrinsic-accuracy"><a class="anchor" href="#intrinsic-accuracy"></a>精度チェック結果</h3>
+<div class="paragraph">
+<p><code>boardPose=[tx,ty,tz,qx,qy,qz,qw]</code> カメラの座標系では逆ユニットです。 mm. 残りのフィールドは構造化されたプレビューです <code>previewImages</code>、<code>boardTypeDetected</code>、<code>boardHint</code>、<code>boardPositionValid</code>、<code>calibrationBoardSizeRatio</code>、<code>cameraAccuracyPass</code>、<code>colorCalibrationBoardSizeRatio</code>、<code>colorCameraAccuracyPass</code>、<code>stereoAveragePixelError</code>、<code>stereoMaxPixelError</code>、<code>colorStereoAveragePixelError</code>、<code>colorStereoMaxPixelError</code>、<code>stereoAveragePass</code>、<code>stereoMaxPass</code>、<code>colorStereoAveragePass</code>、<code>colorStereoMaxPass</code>、<code>stereoMetricsValid</code>、<code>boardTiltAngle</code>、<code>boardTiltWarning</code>。</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="hand-eye-types"><a class="anchor" href="#hand-eye-types"></a>ハンドアイマーク型</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>boardPoseArray</code> 固定する <code>[x,y,z,qx,qy,qz,qw]`所在地 ユニット mm。`robotPose</code> 選択したロボットの長さ、フィールドオーダー、角度ユニット、およびEuratomシーケンス。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 22.2222%;">
+<col style="width: 22.2222%;">
+<col style="width: 55.5556%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">タイプ:</th>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RobotParameters</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>brand</code>、<code>model</code>、<code>rotationType</code>、<code>eulerType</code>、<code>angleUnit</code>、<code>axisNumber</code>、<code>marks</code>、<code>isCustomRobot</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ロボット位置表現の規則;要求を解釈するために形成されたカメラ <code>robotPose</code>。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ConfigureHandEyeCalibrationParams</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>installationType</code>、<code>robotParams</code>、<code>updateFields</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(b) インストールとロボット構成;`updateFields` デフォルトで2つを書きます。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HandEyePointData</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>robotPose</code>、<code>boardPoseArray</code>、<code>id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">同じコレクションの時間にロボットの位置および版の位置のグループ。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SpecialParams</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>offset</code>、<code>boardPosition</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3/4 Axe ロボティクスは 3 つの追加のパラメーターが必要です。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CalculateHandEyeCalibrationResultParams</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>installationType</code>、<code>handEyePoints</code>、<code>specialParams</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ハンドアイ計算リクエスト。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">印のタブレットの位置 <code>dict</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>boardPoseArray</code>、<code>cameraInternalAccuracy</code>、<code>imgBase64</code>、<code>gridSize</code> 待たせます。</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">パレットテストの結果;任意分野は含んでいます <code>imageBytes</code>、<code>epicRawBytes</code>、<code>status</code>。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ハンドアイ計算機 <code>dict</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>success</code>、<code>pose</code>、<code>hecError</code>、<code>hecWarnData</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>hecError</code> 組織体制 <code>rotMean</code>、<code>rotMax</code>、<code>transMean</code>、<code>transMax</code>。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CalculateRobotAccuracyParams</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>directionPoseData</code>、<code>direction</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">開始ポイント/エンドポイント <code>boardPoseArray</code>、<code>robotPose</code>、<code>cameraInternalAccuracy</code>;方向はあります <code>x/y/z</code>。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ロボットの精度の実績 <code>dict</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>boardDistance</code>、<code>robotDistance</code>、<code>moveDistance</code>、<code>positionPrecision</code>、<code>orientationPrecision</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ロボットは精密な結果を動かす。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CalculateHandEyeAccuracyParams</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>boardPoseArray</code>、<code>robotPose</code>、<code>gridSize</code>、<code>directionZ</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">保存された手目の結果を使用して検証;Eye-to-Hand それは&#8230;&#8203; <code>robotPose</code> 空にすることができます。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">手の精度と目線の正確さ。 <code>dict</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>boardPoseArray</code>、<code>matrix4x4</code>、<code>robotMatrix4x4</code>、<code>x/y/x1/y1/x2/y2</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ロボットのプレートの検索結果と診断データがシステムを調整します。</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="alignment.html">Python — テクスチャのアライメント</a></span>
+  <span class="next"><a href="../cpp/overview.html">C++ — 概要と統合</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

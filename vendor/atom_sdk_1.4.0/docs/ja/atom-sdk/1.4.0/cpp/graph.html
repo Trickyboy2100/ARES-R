@@ -1,0 +1,1667 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>GraphService（C++） :: Atom SDK 開発者ガイド</title>
+    <link rel="prev" href="params.html">
+    <link rel="next" href="node.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          オンライン製品ドキュメント
+                  </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="ドキュメントを検索"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              このマニュアルのみ
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            マニュアルを切り替え
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK 開発者ガイド</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          ダウンロードセンター
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          公式サイト
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            日本語
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK 開発者ガイド</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">ようこそ</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">クイックスタート</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">クイックスタート</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">サンプルサンプル</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">入門利用</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK 入門利用</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">ユーザーガイド</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">適切な Service を選択します</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">グラフとノードの操作</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">エラー処理とトラブルシューティング</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">よくある質問</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">基本的な概念</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/what-is-atom-sdk.html">Atom SDK とは</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-node-subgraph.html">グラフ、ノード、サブグラフ</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-vs-runtime.html">Graph と Runtime の違い</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/timestamp.html">Timestampとは何ですか</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/runtime-frame.html">ランタイム入力フレーム (RuntimeFrame / RuntimePassiveBinoFrame)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/point-cloud-protocol.html">点群タイプの入出力用のバイナリ プロトコル</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/param-binding.html">パラメータのタイプとバインディング名</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API リファレンス</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API リファレンスの概要</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python の概要とインストール</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/params.html">Python パラメータ オブジェクト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/public_api.html">Python パブリック ユーティリティ API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="overview.html">Atom SDK C++ バージョン — ユーザーガイド</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="params.html">C++ パラメータ オブジェクト</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">Atom SDK — C# バージョン</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/params.html">C# パラメータオブジェクト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK 開発者ガイド</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK 開発者ガイド</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK 開発者ガイド</a></li>
+    <li>API リファレンス</li>
+    <li>C++ SDK</li>
+    <li><a href="graph.html">GraphService（C++）</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="このページの内容"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">GraphService（C++）</h1>
+<div class="sect1">
+<h2 id="_サービス紹介"><a class="anchor" href="#_サービス紹介"></a>サービス紹介</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>GraphService</code> は Atom SDK のメインのグラフ管理サービスであり、作成、クエリ、コピー、削除、インポートとエクスポート、グラフ全体の運用開始など、グラフのライフ サイクル全体を担当します。すべての操作は、<code>GraphNodeService</code> によって管理されるサブグラフとは異なり、サーバー側でホストされる「メイン グラフ」上で実行されます。</p>
+</div>
+<div class="paragraph">
+<p><strong>ヘッダーファイル:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+// または個別に引用（パス client.hpp 自動的に含まれる）
+#include "atom_sdk/services/graph.hpp"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>入口:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">atom::sdk::AtomClient client("http://127.0.0.1:10026");
+atom::sdk::GraphService&amp; gs = client.graph();</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_該当するシナリオ"><a class="anchor" href="#_該当するシナリオ"></a>該当するシナリオ</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>プログラム起動時にワークシートを初期化（作成またはインポート）</p>
+</li>
+<li>
+<p>複数画像のワークフローを動的に管理 (コピー、削除)</p>
+</li>
+<li>
+<p>構成されたグラフをエクスポートしてアーカイブするか、他のサーバーに移行します</p>
+</li>
+<li>
+<p>画像全体の動作とクリーニングを制御します</p>
+</li>
+</ul>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_推奨される呼び出し順序"><a class="anchor" href="#_推奨される呼び出し順序"></a>推奨される呼び出し順序</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">create_graph / load_graph
+        ↓
+  open_graph          ← 編集モードに入る，協力する NodeService ノードの編集
+        ↓
+  run_graph           ← 全体像を実行する（タイムスタンプを内部で自動的に管理する）
+        ↓
+  clear_graph         ← 実行状態をクリーンアップする（オプション）
+        ↓
+ release_graph        ← 編集リソースをリリースする（オプション）
+        ↓
+ delete_graph         ← チャートを破棄する（オプション）</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_インターフェースの詳細説明"><a class="anchor" href="#_インターフェースの詳細説明"></a>インターフェースの詳細説明</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_create_graph"><a class="anchor" href="#_create_graph"></a>create_graph</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject create_graph(const CreateGraphParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> サーバー側で新しい空のイメージを作成します。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">パラメータ</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像の一意の名前。既存の画像と同じ名前を付けることはできません。</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.description</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::optional&lt;std::string&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>オプションの画像説明情報、<code>std::nullopt</code> を渡すと説明がないことを意味します</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*戻り値: * <code>JsonObject</code>、新しく作成されたグラフのメタ情報、キー フィールドが含まれます:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string/int</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ユニークなフィギュアID</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>例:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+
+    // 説明のないグラフを作成する
+    auto result = client.graph().create_graph({"my_detection_graph"});
+
+    // 説明付きの図を作成する
+    auto result2 = client.graph().create_graph(
+        {"my_seg_graph", "インスタンスセグメンテーション用のメイン画像"});
+
+    std::string name = result.at("name").get&lt;std::string&gt;();
+    std::cout &lt;&lt; "図の作成：" &lt;&lt; name &lt;&lt; std::endl;
+    std::cout &lt;&lt; "リクエストステータス：" &lt;&lt; result.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_list_graphs"><a class="anchor" href="#_list_graphs"></a>list_graphs</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonArray list_graphs() const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> サーバー上で現在表示されているすべての画像をリストします。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ:</strong> なし</p>
+</div>
+<div class="paragraph">
+<p>*戻り値: * <code>JsonArray</code>、配列内の各要素は <code>JsonValue</code> (内部的にはオブジェクト) であり、グラフの基本情報が含まれます。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>description</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像の説明 (空の場合があります)</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>例:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+
+    atom::sdk::JsonArray graphs = client.graph().list_graphs();
+
+    std::cout &lt;&lt; "シェアする " &lt;&lt; graphs.size() &lt;&lt; " 画像：" &lt;&lt; std::endl;
+    for (const auto&amp; g : graphs) {
+        const auto&amp; obj = g;
+        std::string name = obj.at("name").get&lt;std::string&gt;();
+        std::cout &lt;&lt; "  - " &lt;&lt; name &lt;&lt; std::endl;
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_all_custom_subgraphs_no_thumbnail"><a class="anchor" href="#_get_all_custom_subgraphs_no_thumbnail"></a>get_all_custom_subgraphs_no_thumbnail</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonArray get_all_custom_subgraphs_no_thumbnail() const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> テンプレート選択リストに適した、サムネイルを除くすべてのカスタム サブ画像の概要リストを読み取ります。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto custom_subgraphs = client.graph().get_all_custom_subgraphs_no_thumbnail();</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_copy_graph"><a class="anchor" href="#_copy_graph"></a>copy_graph</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject copy_graph(const CopyGraphParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>使用方法:</strong> 既存の画像をコピーし、新しい名前でコピーを作成します。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">パラメータ</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ソースイメージ名 (すでに存在している必要があります)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.new_graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>新しいピクチャ名 (既存のピクチャと同じ名前を付けることはできません)</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*戻り値: * <code>JsonObject</code>、新しいグラフのメタ情報が含まれます。構造は <code>create_graph</code> 戻り値と同じです。</p>
+</div>
+<div class="paragraph">
+<p><strong>例:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+
+    auto result = client.graph().copy_graph(
+        {"production_graph", "test_graph_copy"});
+
+    std::string new_name = result.at("name").get&lt;std::string&gt;();
+    std::cout &lt;&lt; "コピー完了，新しい写真のタイトル：" &lt;&lt; new_name &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_edit_graph_name"><a class="anchor" href="#_edit_graph_name"></a>edit_graph_name</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonValue edit_graph_name(const EditGraphNameParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> 画像の名前を変更します。現在、サーバーは通常 <code>true</code> を返します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">client.graph().edit_graph_name({"demo_graph", "demo_graph_v2"});</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_edit_graph_comment"><a class="anchor" href="#_edit_graph_comment"></a>edit_graph_comment</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonValue edit_graph_comment(const EditGraphCommentParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> 図面メモを変更します。 SDK は、現在キャッシュされている <code>timestamp</code> を自動的に取得します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">client.graph().edit_graph_comment({"demo_graph", "新しいプロセスのメモ"});</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_delete_graph"><a class="anchor" href="#_delete_graph"></a>delete_graph</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonValue delete_graph(const std::string&amp; graph_name) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> 指定されたグラフを削除し、同時にローカル タイムスタンプ キャッシュをクリアします。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">パラメータ</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>削除するイメージの名前</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*戻り値: * <code>JsonValue</code>、通常は動作ステータス情報。</p>
+</div>
+<div class="paragraph">
+<p><strong>例:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+
+    auto result = client.graph().delete_graph("obsolete_graph");
+    std::cout &lt;&lt; "正常に削除されました" &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_all_nodes_info"><a class="anchor" href="#_get_all_nodes_info"></a>get_all_nodes_info</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject get_all_nodes_info() const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> 現在サーバーに登録されているすべてのノード定義を読み取り、利用可能なノード タイプを理解します。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ:</strong> なし</p>
+</div>
+<div class="paragraph">
+<p>*戻り値: * <code>JsonObject</code>、すべてのノード定義が含まれます。通常、ノード タイプ名は key、ノードの説明は value です。</p>
+</div>
+<div class="paragraph">
+<p><strong>例:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+
+    auto nodes_info = client.graph().get_all_nodes_info();
+
+    std::cout &lt;&lt; "登録ノード数：" &lt;&lt; nodes_info.size() &lt;&lt; std::endl;
+    for (const auto&amp; [key, val] : nodes_info) {
+        std::cout &lt;&lt; "  ノードの種類：" &lt;&lt; key &lt;&lt; std::endl;
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_graph_dl_nodes_model_info"><a class="anchor" href="#_get_graph_dl_nodes_model_info"></a>get_graph_dl_nodes_model_info</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject get_graph_dl_nodes_model_info(const std::string&amp; graph_name) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> グラフ内の深層学習ノードが依存するモデル情報を読み取ります。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto dl_models = client.graph().get_graph_dl_nodes_model_info("demo_graph");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_graph_custom_nodes"><a class="anchor" href="#_get_graph_custom_nodes"></a>get_graph_custom_nodes</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject get_graph_custom_nodes(const std::string&amp; graph_name) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> グラフ内で参照されているカスタム ノード情報を読み取ります。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto custom_nodes = client.graph().get_graph_custom_nodes("demo_graph");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_graph_workcell_models_info"><a class="anchor" href="#_get_graph_workcell_models_info"></a>get_graph_workcell_models_info</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject get_graph_workcell_models_info(
+    const std::string&amp; graph_name,
+    std::optional&lt;std::string&gt; graph_node_id = std::nullopt) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> メイン画像を読み込むか、graphnodeに対応するworkcellのモデル情報を指定します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto workcell = client.graph().get_graph_workcell_models_info(
+    "demo_graph",
+    "graph-node-id");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_graph_bindings"><a class="anchor" href="#_get_graph_bindings"></a>get_graph_bindings</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject get_graph_bindings(const std::string&amp; graph_name) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> 入力バインディングと出力バインディングのメタディスクリプションを含む、指定されたグラフによって外部に公開されているバインディング情報を読み取ります。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">パラメータ</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像名</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*戻り値: * <code>JsonObject</code>、バインディング名、タイプ、データ形式、その他の説明情報が含まれます。</p>
+</div>
+<div class="paragraph">
+<p><strong>例:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+
+    auto bindings = client.graph().get_graph_bindings("detection_graph");
+
+    for (const auto&amp; [key, val] : bindings) {
+        std::cout &lt;&lt; "バインディング：" &lt;&lt; key &lt;&lt; std::endl;
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_graph_json_data"><a class="anchor" href="#_get_graph_json_data"></a>get_graph_json_data</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject get_graph_json_data(const std::string&amp; graph_name) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> グラフの元の JSON 構造を読み取ります。 <code>status</code> が返されたオブジェクトに追加されます。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto graph_json = client.graph().get_graph_json_data("demo_graph");
+std::cout &lt;&lt; graph_json.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_load_graph"><a class="anchor" href="#_load_graph"></a>load_graph</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject load_graph(const LoadGraphParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> グラフをローカル ファイルからサーバーにインポート (ロード) すると、サーバーはグラフを <code>graph_name</code> という名前で登録します。
+インポートする前に、SDK はまず現在のグラフ リストを読み取ります。 <code>params.graph_name</code> がすでに存在する場合、<code>AtomError</code> がスローされ、<code>/Graph/LoadGraph</code> は呼び出されず、既存のグラフは上書きされません。新しいグラフ名を使用するか、既存のグラフを削除して再試行する必要があります。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">パラメータ</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>インポート後にサーバーで使用されるグラフの名前</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.file_path</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::filesystem::path</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ローカル マップ ファイル パス (通常は <code>.json</code> または SDK 独自の形式)</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*戻り値: * <code>JsonObject</code>、インポート結果情報が含まれます。</p>
+</div>
+<div class="paragraph">
+<p><strong>例:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;filesystem&gt;
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+
+    std::filesystem::path graph_file = "/data/graphs/detection_v2.json";
+    auto result = client.graph().load_graph({"detection_v2", graph_file});
+
+    std::cout &lt;&lt; "画像のインポートに成功しました" &lt;&lt; std::endl;
+    std::cout &lt;&lt; "リクエストステータス：" &lt;&lt; result.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_import_extension_nodes_by_path"><a class="anchor" href="#_import_extension_nodes_by_path"></a>import_extension_nodes_by_path</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonValue import_extension_nodes_by_path(const JsonObject&amp; extension_nodes) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> <code>load_graph`で解凍した拡張ノードファイルをインポートします。このインターフェースは通常、
+`load_graph</code> の後に呼び出されると、パラメーターは戻り値で <code>load_graph</code> および <code>extensionNodes</code> に渡されます。
+フィールドには、<code>load_graph</code> 戻りオブジェクト全体を渡さないでください。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">パラメータ</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>extension_nodes</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>load_graph</code> 戻り値の <code>extensionNodes</code> フィールド</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>例:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto loaded = client.graph().load_graph({"detection_v2", graph_file});
+const auto* extension_nodes = atom::sdk::json::if_contains(loaded, "extensionNodes");
+if (extension_nodes != nullptr &amp;&amp; extension_nodes-&gt;is_object() &amp;&amp;
+    !extension_nodes-&gt;empty()) {
+    auto imported = client.graph().import_extension_nodes_by_path(
+        *extension_nodes);
+    std::cout &lt;&lt; atom::sdk::json::serialize(imported) &lt;&lt; std::endl;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_export_graph"><a class="anchor" href="#_export_graph"></a>export_graph</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject export_graph(const ExportGraphParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> サーバー グラフとそれに付随するモデル情報およびカスタム ノード情報をアーカイブ可能な形式でエクスポートします。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">パラメータ</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>エクスポートするグラフの名前</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.dl_models_info</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>深層学習モデルの記述情報が添付されています (空でも可)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.custom_nodes</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>に添付されたカスタム ノードの説明 (空でも可)</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*戻り値: * <code>JsonObject</code>、エクスポートされたグラフ データとメタ情報を含みます。</p>
+</div>
+<div class="paragraph">
+<p><strong>例:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+
+    // グラフ構造のみをエクスポート，追加情報はありません
+    auto exported = client.graph().export_graph({"detection_v2"});
+
+    // モデル情報のエクスポートが付属しています
+    atom::sdk::JsonObject models_info;
+    // models_info["yolo_v8"] = atom::sdk::JsonObject{...};
+    auto exported2 = client.graph().export_graph({"detection_v2", models_info});
+
+    std::cout &lt;&lt; "図は正常にエクスポートされました" &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_open_graph"><a class="anchor" href="#_open_graph"></a>open_graph</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject open_graph(const std::string&amp; graph_name) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> グラフを開いて編集状態に入ります。その後、<code>NodeService</code> を通じてグラフ内のノードを編集できます。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">パラメータ</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像名</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*戻り値: * <code>JsonObject</code>、グラフの現在のステータス情報が含まれます。</p>
+</div>
+<div class="paragraph">
+<p><strong>例:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+
+    // 画像を開いて編集モードに入ります
+    auto result = client.graph().open_graph("my_graph");
+
+    // 後で使用できます NodeService 追加する/ノードの編集
+    auto&amp; ns = client.node();
+    auto node = ns.create_node({"my_graph", "DetectionNode"});
+
+    std::cout &lt;&lt; "画像が開いています，編集を開始できます" &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_release_graph"><a class="anchor" href="#_release_graph"></a>release_graph</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonValue release_graph(const std::string&amp; graph_name) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> グラフの編集状態リソースを解放し、(グラフを削除せずに) グラフを編集モードから終了させます。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">パラメータ</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像名</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*戻り値: * <code>JsonValue</code>、演算結果。</p>
+</div>
+<div class="paragraph">
+<p><strong>例:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+
+    client.graph().open_graph("my_graph");
+
+    // ... 図の編集 ...
+
+    // 編集完了，編集リソースをリリースする
+    client.graph().release_graph("my_graph");
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_run_graph"><a class="anchor" href="#_run_graph"></a>run_graph</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject run_graph(
+    const std::string&amp; graph_name,
+    std::optional&lt;double&gt; timeout_seconds = 30.0) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> メイン グラフ全体を実行し、グラフ内のすべてのノードがトポロジ順に実行されるようにトリガーします。 SDK は、<code>finish</code> が <code>true</code> になるか、<code>timeout_seconds</code> を超えるまでサーバーにポーリングして応答を求めます。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">パラメータ</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>timeout_seconds</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::optional&lt;double&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ポーリング待機タイムアウト、デフォルトは <code>30.0</code> 秒です。 <code>std::nullopt</code> を渡すことは、完了するまで待機するか、サーバーがエラーを報告することを意味します</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*戻り値: * <code>JsonObject</code>、実行結果とステータス情報を含みます。</p>
+</div>
+<div class="paragraph">
+<p><strong>例:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+
+    // メインイメージを実行する，ほとんどが待ちます 60 秒
+    auto result = client.graph().run_graph("detection_graph", 60.0);
+
+    // 実行が完了したかどうかを確認する
+    if (result.contains("finish")) {
+        bool finished = result.at("finish").get&lt;bool&gt;();
+        std::cout &lt;&lt; "実行が完了しました：" &lt;&lt; (finished ? "はい" : "いいえ") &lt;&lt; std::endl;
+    }
+    std::cout &lt;&lt; "リクエストステータス：" &lt;&lt; result.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_clear_graph"><a class="anchor" href="#_clear_graph"></a>clear_graph</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject clear_graph(const std::string&amp; graph_name) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> グラフの実行中の中間状態をクリーンアップします。通常は、状態がクリーンであることを確認するために再実行前に呼び出されます。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">パラメータ</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像名</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*戻り値: * <code>JsonObject</code>、演算結果。</p>
+</div>
+<div class="paragraph">
+<p><strong>例:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+
+    // クリーンして再実行
+    client.graph().clear_graph("detection_graph");
+    auto result = client.graph().run_graph("detection_graph");
+    std::cout &lt;&lt; "リクエストステータス：" &lt;&lt; result.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_timestamp"><a class="anchor" href="#_get_timestamp"></a>get_timestamp</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject get_timestamp(const std::string&amp; graph_name) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> グラフの現在のタイムスタンプを読み取り、データのバージョンと同期ステータスを確認します。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">パラメータ</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像名</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*戻り値: * <code>JsonObject</code>、タイムスタンプ情報を含む:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>timestamp</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>int64/double</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>図の現在のタイムスタンプ</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>例:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+
+    auto ts_info = client.graph().get_timestamp("detection_graph");
+
+    if (ts_info.contains("timestamp")) {
+        double ts = ts_info.at("timestamp").get&lt;double&gt;();
+        std::cout &lt;&lt; "現在のタイムスタンプ：" &lt;&lt; ts &lt;&lt; std::endl;
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_完全な例"><a class="anchor" href="#_完全な例"></a>完全な例</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>以下に、ダイアグラムの作成、編集のために開く、実行、クリーニング、削除という完全なダイアグラム管理プロセスを示します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;filesystem&gt;
+#include &lt;iostream&gt;
+#include &lt;stdexcept&gt;
+
+int main() {
+    try {
+        atom::sdk::AtomClient client("http://127.0.0.1:10026");
+        auto&amp; gs = client.graph();
+
+        // 1. 既存の図をリストする
+        auto graphs = gs.list_graphs();
+        std::cout &lt;&lt; "既存の写真の数：" &lt;&lt; graphs.size() &lt;&lt; std::endl;
+
+        // 2. ファイルから図をインポート
+        gs.load_graph({"demo_graph", "/data/demo_graph.json"});
+        std::cout &lt;&lt; "画像のインポートが完了しました" &lt;&lt; std::endl;
+
+        // 3. 図を開く（編集モードに入る）
+        gs.open_graph("demo_graph");
+
+        // 4. 利用可能なノード タイプを表示する
+        auto node_types = gs.get_all_nodes_info();
+        std::cout &lt;&lt; "利用可能なノードタイプの数：" &lt;&lt; node_types.size() &lt;&lt; std::endl;
+
+        // 5. グラフ全体を実行する
+        auto run_result = gs.run_graph("demo_graph");
+        std::cout &lt;&lt; "リクエストステータス：" &lt;&lt; run_result.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+        // 6. タイムスタンプの読み取り，結果の適時性を確認する
+        auto ts = gs.get_timestamp("demo_graph");
+        if (ts.contains("timestamp")) {
+            std::cout &lt;&lt; "図のタイムスタンプ：" &lt;&lt; ts.at("timestamp").get&lt;double&gt;() &lt;&lt; std::endl;
+        }
+
+        // 7. 実行状態をクリーンアップする
+        gs.clear_graph("demo_graph");
+
+        // 8. 編集リソースをリリースする
+        gs.release_graph("demo_graph");
+
+        // 9. 画像の削除（オプション）
+        gs.delete_graph("demo_graph");
+        std::cout &lt;&lt; "デモ完了" &lt;&lt; std::endl;
+
+    } catch (const atom::sdk::AtomError&amp; e) {
+        std::cerr &lt;&lt; "SDK エラー：" &lt;&lt; e.what() &lt;&lt; std::endl;
+        return 1;
+    } catch (const std::exception&amp; e) {
+        std::cerr &lt;&lt; "異常：" &lt;&lt; e.what() &lt;&lt; std::endl;
+        return 1;
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="params.html">C++ パラメータ オブジェクト</a></span>
+  <span class="next"><a href="node.html">NodeService（C++）</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

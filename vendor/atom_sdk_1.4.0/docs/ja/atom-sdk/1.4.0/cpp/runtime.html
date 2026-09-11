@@ -1,0 +1,2909 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>RuntimeService（C++） :: Atom SDK 開発者ガイド</title>
+    <link rel="prev" href="graph_node.html">
+    <link rel="next" href="../csharp/overview.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          オンライン製品ドキュメント
+                  </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="ドキュメントを検索"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              このマニュアルのみ
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            マニュアルを切り替え
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK 開発者ガイド</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          ダウンロードセンター
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          公式サイト
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            日本語
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK 開発者ガイド</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">ようこそ</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">クイックスタート</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">クイックスタート</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">サンプルサンプル</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">入門利用</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK 入門利用</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">ユーザーガイド</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">適切な Service を選択します</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">グラフとノードの操作</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">エラー処理とトラブルシューティング</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">よくある質問</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">基本的な概念</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/what-is-atom-sdk.html">Atom SDK とは</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-node-subgraph.html">グラフ、ノード、サブグラフ</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-vs-runtime.html">Graph と Runtime の違い</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/timestamp.html">Timestampとは何ですか</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/runtime-frame.html">ランタイム入力フレーム (RuntimeFrame / RuntimePassiveBinoFrame)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/point-cloud-protocol.html">点群タイプの入出力用のバイナリ プロトコル</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/param-binding.html">パラメータのタイプとバインディング名</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API リファレンス</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API リファレンスの概要</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python の概要とインストール</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/params.html">Python パラメータ オブジェクト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/public_api.html">Python パブリック ユーティリティ API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="overview.html">Atom SDK C++ バージョン — ユーザーガイド</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="params.html">C++ パラメータ オブジェクト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">Atom SDK — C# バージョン</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/params.html">C# パラメータオブジェクト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK 開発者ガイド</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK 開発者ガイド</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK 開発者ガイド</a></li>
+    <li>API リファレンス</li>
+    <li>C++ SDK</li>
+    <li><a href="runtime.html">RuntimeService（C++）</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="このページの内容"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">RuntimeService（C++）</h1>
+<div class="sect1">
+<h2 id="_サービス紹介"><a class="anchor" href="#_サービス紹介"></a>サービス紹介</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>RuntimeService</code> は、Atom SDK の推論ランタイム サービスであり、運用環境での高頻度推論用に特別に設計されています。 <code>GraphService</code>/<code>NodeService</code> のグラフ編集プロセスとは異なり、<code>RuntimeService</code> は、グラフのロード、パラメーターの設定、バッチ推論の実行、構成されたグラフのバインド出力の読み取りなど、完全な推論閉ループを提供します。通常の画像 + 点群マルチフレーム入力、パッシブ双眼 EPICRAW3 入力、ストラテジ ノード パラメーター、およびグラフに依存しないシングルノード直接実行モードをサポートします。</p>
+</div>
+<div class="paragraph">
+<p><strong>ヘッダーファイル:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+// または個別に引用（パス client.hpp 自動的に含まれる）
+#include "atom_sdk/services/runtime.hpp"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>入口:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">atom::sdk::AtomClient client("http://127.0.0.1:10026");
+atom::sdk::RuntimeService&amp; rs = client.runtime();</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_該当するシナリオ"><a class="anchor" href="#_該当するシナリオ"></a>該当するシナリオ</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>構成/編集したグラフをランタイム グラフおよびループ推論としてロードします</p>
+</li>
+<li>
+<p>通常モードまたはパッシブ両眼モードEPICRAW3で画像＋点群データを入力し、検出・領域分割結果を読み取る</p>
+</li>
+<li>
+<p>実行パラメータを動的に更新します (グラフを再構築せずに)</p>
+</li>
+<li>
+<p>バインディング出力の読み取り (JSON 結果または点群バイト)</p>
+</li>
+<li>
+<p>グラフ構造に依存せずに個々のノードを迅速にテスト</p>
+</li>
+<li>
+<p>アップロードの繰り返しを避けるために、MD5 にファイル タイプ パラメータをクエリします。</p>
+</li>
+</ul>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_コアタイプ"><a class="anchor" href="#_コアタイプ"></a>コアタイプ</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_run_graph_2つの入力モード"><a class="anchor" href="#_run_graph_2つの入力モード"></a>run_graph 2つの入力モード</h3>
+<div class="paragraph">
+<p><code>run_graph(const RuntimeRunParams&amp;)</code> は、<code>RuntimeRunParams::run_mode</code> に基づいて 2 つの入力構造を区別します。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">モード</th>
+<th class="tableblock halign-left valign-top"><code>run_mode</code></th>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">入力内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>通常モード</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>"others"</code> または空白のままにします</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>frames</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>1 つ以上の <code>RuntimeFrame</code>、各フレームには完全な EPICRAW + <code>cam_to_base</code> が含まれます</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>パッシブ双眼モード</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>"passive_bino"</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>passive_bino_frame</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>、<code>RuntimePassiveBinoFrame</code>、完全な EPICRAW3 + <code>cam_to_base</code> を含む</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>cam_to_base</code> サーバーは現在、長さ 6 の回転ベクトル形式 <code>[x, y, z, rx, ry, rz]</code> (平行移動 + Rodrigues 回転ベクトル) のみをサポートしており、4x4/3x4 行列はサポートしていません。長さが満たされていない場合、構築中に <code>std::invalid_argument</code> がスローされます。 <code>roi["cam2ROIFrame"]</code> (指定されている場合) も、長さ 6 の回転ベクトル形式のみをサポートします。
+2 つのモードを混合しないでください。通常モードでは EPICRAW2 または標準レイアウト EPICRAW3 をカプセル化できます。パッシブ双眼モードでは <code>RuntimePassiveBinoFrame</code> を使用する必要があります。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_通常モード_runtimeframe_構造体"><a class="anchor" href="#_通常モード_runtimeframe_構造体"></a>通常モード: RuntimeFrame 構造体</h3>
+<div class="paragraph">
+<p><code>RuntimeFrame</code> は、<code>run_mode="others"</code> のコア パラメーターである EPICRAW の完全なコピーを通常モードでカプセル化します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">namespace atom::sdk {
+
+struct RuntimeFrame {
+    ByteBuffer epicraw;
+    JsonValue cam_to_base;
+    std::optional&lt;JsonValue&gt; roi;
+};
+
+}  // namespace atom::sdk</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>すでに EPICRAW bytes またはファイルがある場合は、それを直接カプセル化します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto bytes_frame = atom::sdk::RuntimeFrame::from_bytes(epicraw_bytes, cam2base_json);
+auto file_frame = atom::sdk::RuntimeFrame::from_file("frame.epicraw", cam2base_json);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>生の画像と点群から生成:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">atom::sdk::RuntimePointData points{point_values, width, height, 3};
+atom::sdk::RuntimeImageData image{image_bytes, width, height, 3, 1};
+auto frame = atom::sdk::RuntimeFrame::from_data(
+    points, image, cam2base_json, intrinsic_json, distortion_json);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>バージョンが指定されていない場合、通常の内部パラメータ/歪みは EPICRAW2 を生成します。 <code>camera_params</code> に <code>TextureSrc</code>、<code>DepthSrc1</code>、または <code>DepthSrc2</code> が含まれる場合、EPICRAW3 が生成されます。標準の EPICRAW3 は <code>Depth + TextureBGR</code> のみを書き込み、完全な PointCloud は書き込みません。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_パッシブ双眼モード_runtimepassivebinoframe"><a class="anchor" href="#_パッシブ双眼モード_runtimepassivebinoframe"></a>パッシブ双眼モード: RuntimePassiveBinoFrame</h3>
+<div class="paragraph">
+<p>図の <code>EpicProInput</code> ノードが <code>passive_bino</code> として構成されている場合は、EPICRAW3 元のバイトの完全なコピーを送信してください。サーバーは 3 つの画像、内部パラメータ、歪み、および EPICRAW3 からの <code>passive_bino_params</code> を解析します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto params = atom::sdk::RuntimeRunParams::passive_bino_from_file(
+    "detection_graph",
+    "/data/passive_bino.epicraw",
+    cam2base_json);
+
+auto result = client.runtime().run_graph(params);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>ビジネス層がEPICRAW3bytesを取得している場合は、<code>RuntimeRunParams::passive_bino_from_bytes(&#8230;&#8203;)`を使用できます。ビジネス層が 3 つの元の画像を取得した場合、`RuntimeRunParams::passive_bino_from_images(&#8230;&#8203;)</code> を使用でき、その画像は <code>RuntimePassiveBinoImage{data, width, height, mat_type}</code> で表されます。 <code>mat_type</code> は、<code>CV_8UC1=0</code>、<code>CV_16UC1=2</code>、<code>CV_8UC3=16</code> などの OpenCV Mat type エンコーディングです。
+<code>passive_bino_from_images(&#8230;&#8203;)</code> の <code>params</code> には、<code>DepthSrc1</code>、<code>DepthSrc2</code>、<code>TextureSrc</code>、metadata が含まれている必要があり、それぞれに次の 4 つのフィールドが含まれている必要があります。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">json::object camera_params;
+camera_params["CameraMatrix"] = json::array{
+    2113.997971632298, 0, 1956.222038925553,
+    0, 2113.7299751270057, 1505.0473199581195,
+    0, 0, 1};
+camera_params["CameraDistortion"] = json::array{
+    0.049901632334, -0.037810281265, -0.00048319461,
+    -0.000276258172, -0.026886293015};
+camera_params["CameraRotation"] = json::array{
+    0.9995132330503337, -0.005059159488191983, -0.030784766728731865,
+    0.004951704878090689, 0.9999813828533568, -0.003565748937897527,
+    0.030802233296787017, 0.003411576169582241, 0.999519676430619};
+camera_params["CameraTranslation"] = json::array{
+    -25.837377992238334, -0.6852264771262435, -4.372034519324568};
+
+json::object passive_bino_params;
+passive_bino_params["DepthSrc1"] = camera_params;
+passive_bino_params["DepthSrc2"] = camera_params;
+passive_bino_params["TextureSrc"] = camera_params;</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">`RuntimePassiveBinoImage`フィールド</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>data</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>生のピクセルバイト数</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>width</code> / <code>height</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像の幅と高さ</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>mat_type</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>OpenCV Mat type、<code>CV_8UC1=0</code>、<code>CV_16UC1=2</code>、<code>CV_8UC3=16</code> など</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_singlenodeparsedresultタイプ推奨"><a class="anchor" href="#_singlenodeparsedresultタイプ推奨"></a>SingleNodeParsedResultタイプ(推奨)</h3>
+<div class="paragraph">
+<p><code>run_single_node_no_graph_parsed</code> は <code>SingleNodeParsedResult</code> を返します。サーバーからの元の戻り値を保持し、<code>outputs</code> 内の識別可能な点群と画像を解析します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">using SingleNodeParsedOutput =
+    std::variant&lt;JsonValue, std::vector&lt;ParsedPointCloud&gt;, std::vector&lt;ParsedImage&gt;&gt;;
+
+struct SingleNodeParsedResult {
+    JsonValue raw;
+    std::unordered_map&lt;std::string, SingleNodeParsedOutput&gt; outputs;
+};</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>読み取り方法：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">atom::sdk::SingleNodeParsedResult result =
+    client.runtime().run_single_node_no_graph_parsed(params);
+
+const auto&amp; clouds = std::get&lt;std::vector&lt;atom::sdk::ParsedPointCloud&gt;&gt;(
+    result.outputs.at("points"));</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_singlenoderesult_タイプ_オプション"><a class="anchor" href="#_singlenoderesult_タイプ_オプション"></a>SingleNodeResult タイプ (オプション)</h3>
+<div class="paragraph">
+<p><code>run_single_node_no_graph</code> は元の <code>SingleNodeResult</code>、つまり variant を返します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">using SingleNodeResult = std::variant&lt;JsonValue, ByteBuffer&gt;;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>自分で判断して読む必要があります。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">atom::sdk::SingleNodeResult result = client.runtime().run_single_node_no_graph(params);
+
+if (std::holds_alternative&lt;atom::sdk::JsonValue&gt;(result)) {
+    const auto&amp; json_result = std::get&lt;atom::sdk::JsonValue&gt;(result);
+    // プロセス JSON 結果
+} else {
+    const auto&amp; bin_result = std::get&lt;atom::sdk::ByteBuffer&gt;(result);
+    // バイナリ結果の処理
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_singlenodeinputs_タイプ"><a class="anchor" href="#_singlenodeinputs_タイプ"></a>SingleNodeInputs タイプ</h3>
+<div class="paragraph">
+<p>単一ノード入力は 3 つのタイプをサポートします (variant で統一):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">using SingleNodeInput = std::variant&lt;JsonValue, ByteBuffer, std::filesystem::path&gt;;
+using SingleNodeInputs = std::unordered_map&lt;std::string, SingleNodeInput&gt;;</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_推奨される呼び出し順序"><a class="anchor" href="#_推奨される呼び出し順序"></a>推奨される呼び出し順序</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">load_graph(graph_name)           ← 設定されたグラフをロードする
+       ↓
+get_meta_info(graph_name)        ← グラフによって公開されるパラメータとバインディングを理解する（オプション）
+       ↓
+set_shared_params(graph_name)    ← マルチフレーム多重化の共有パラメータを設定する（オプション）
+       ↓
+  ┌────────────────────────────────────┐
+  │   フレームごとの推論ループ                       │
+  │                                    │
+  │   set_run_params(graph_name)       │  ← 各フレームの実行パラメータ（オプション）
+  │          ↓                         │
+  │   run_graph(graph_name, frame)     │  ← 推論を実行する
+  │          ↓                         │
+  │   get_binded_output_value /        │
+  │   get_binded_point_cloud           │  ← 読み取りバインディング出力
+  └────────────────────────────────────┘
+       ↓
+release_graph(graph_name)        ← リソースをリリースする</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_インターフェースの詳細説明"><a class="anchor" href="#_インターフェースの詳細説明"></a>インターフェースの詳細説明</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_load_graph"><a class="anchor" href="#_load_graph"></a>load_graph</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject load_graph(const std::string&amp; graph_name) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> 以降の <code>run_graph</code> の使用のために、サーバー上の既存のグラフをランタイムにロードします。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">パラメータ</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ロードするイメージの名前 (サーバー上に存在します)</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*戻り値: * <code>JsonObject</code>、ロードステータス情報が含まれます。</p>
+</div>
+<div class="paragraph">
+<p><strong>例:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+
+    auto result = client.runtime().load_graph("detection_graph");
+    std::cout &lt;&lt; "画像が正常にロードされました" &lt;&lt; std::endl;
+    std::cout &lt;&lt; "リクエストステータス：" &lt;&lt; result.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_list_graphs"><a class="anchor" href="#_list_graphs"></a>list_graphs</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonArray list_graphs() const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> サーバー上で現在表示されているすべての画像をリストします。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ:</strong> なし</p>
+</div>
+<div class="paragraph">
+<p>*戻り値: * <code>JsonArray</code>、各要素はグラフの基本情報オブジェクトです。</p>
+</div>
+<div class="paragraph">
+<p><strong>例:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+
+    auto graphs = client.runtime().list_graphs();
+    std::cout &lt;&lt; "利用可能な画像の数：" &lt;&lt; graphs.size() &lt;&lt; std::endl;
+
+    for (const auto&amp; g : graphs) {
+        std::string name = g.at("name").get&lt;std::string&gt;();
+        std::cout &lt;&lt; "  - " &lt;&lt; name &lt;&lt; std::endl;
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_all_nodes_info"><a class="anchor" href="#_get_all_nodes_info"></a>get_all_nodes_info</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject get_all_nodes_info() const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> サーバーに登録されているすべてのノード タイプ定義を読み取り、利用可能なノードを理解します。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ:</strong> なし</p>
+</div>
+<div class="paragraph">
+<p>*戻り値: * <code>JsonObject</code>、ノード タイプ名 key およびノー​​ド定義 value。</p>
+</div>
+<div class="paragraph">
+<p><strong>例:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+
+    auto info = client.runtime().get_all_nodes_info();
+    std::cout &lt;&lt; "登録されているノードタイプの数：" &lt;&lt; info.size() &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_release_graph"><a class="anchor" href="#_release_graph"></a>release_graph</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject release_graph(const std::string&amp; graph_name) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> ロードされたランタイム グラフ リソースを解放します。通常、推論が完了した後に呼び出されます。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">パラメータ</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>公開するイメージの名前</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*戻り値: * <code>JsonObject</code>、結果を解放します。</p>
+</div>
+<div class="paragraph">
+<p><strong>例:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+
+    auto loaded = client.runtime().load_graph("detection_graph");
+    std::cout &lt;&lt; "ロードリクエストステータス：" &lt;&lt; loaded.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    // ... 推論 ...
+
+    client.runtime().release_graph("detection_graph");
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_meta_info"><a class="anchor" href="#_get_meta_info"></a>get_meta_info</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject get_meta_info(const std::string&amp; graph_name) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> グラフによって公開される shared/runtime パラメーターのメタ情報 (パラメーター名、タイプ、デフォルト値の説明など) を読み取ります。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">パラメータ</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像名</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*戻り値: * <code>JsonObject</code>、パラメーターのメタ情報とバインディングの説明が含まれます。</p>
+</div>
+<div class="paragraph">
+<p><strong>例:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto loaded = client.runtime().load_graph("detection_graph");
+    std::cout &lt;&lt; "ロードリクエストステータス：" &lt;&lt; loaded.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    auto meta = client.runtime().get_meta_info("detection_graph");
+    std::cout &lt;&lt; "メタ情報リクエストのステータス：" &lt;&lt; meta.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    // グラフの構成可能なパラメータを表示する
+    if (meta.contains("shared_params")) {
+        const auto&amp; sp = meta.at("shared_params");
+        for (const auto&amp; [k, v] : sp) {
+            std::cout &lt;&lt; "共有パラメータ：" &lt;&lt; k &lt;&lt; std::endl;
+        }
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_binded_output_value"><a class="anchor" href="#_get_binded_output_value"></a>get_binded_output_value</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonValue get_binded_output_value(const BindingRef&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> バインド名 (JSON 形式) によってグラフの単一の出力値を読み取ります。通常は <code>run_graph</code> の後に呼び出されます。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">パラメータ</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>binding_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>出力バインディング名 (グラフ編集中に <code>set_binding_name</code> によって設定)</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*戻り値: * <code>JsonValue</code>、バインドされたポートの出力値。</p>
+</div>
+<div class="paragraph">
+<p><strong>戻り値からデータを読み取ります:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">atom::sdk::JsonValue output = client.runtime().get_binded_output_value(
+    {"detection_graph", "result"});
+
+// オブジェクトとして読み取る
+const auto&amp; obj = output;
+
+// 読み取り検出フレーム
+if (obj.contains("boxes")) {
+    const auto&amp; boxes = obj.at("boxes");
+    for (const auto&amp; box : boxes) {
+        const auto&amp; b = box;
+        double x1 = b.at("x1").get&lt;double&gt;();
+        double y1 = b.at("y1").get&lt;double&gt;();
+        double conf = b.at("confidence").get&lt;double&gt;();
+        // ...
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>例:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("detection_graph");
+
+    // 生の画像と点群からローカルで生成 EPICRAW；cam_to_base は回転ベクトル形式です [x, y, z, rx, ry, rz]
+    atom::sdk::RuntimePointData points{point_values, 640, 480, 3};
+    atom::sdk::RuntimeImageData image{image_bytes, 640, 480, 3, 1};
+    auto frame = atom::sdk::RuntimeFrame::from_data(
+        points,
+        image,
+        atom::sdk::json::parse("[0,0,0,0,0,0]"),
+        atom::sdk::json::parse(R"([[800,0,320],[0,800,240],[0,0,1]])"),
+        atom::sdk::json::parse("[0,0,0,0,0]"));
+
+    auto run_info = rs.run_graph({"detection_graph", {frame}});
+    std::cout &lt;&lt; "リクエストステータス：" &lt;&lt; run_info.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    // 読み取りバインディング出力
+    auto output = rs.get_binded_output_value({"detection_graph", "detection_result"});
+    const auto&amp; obj = output;
+
+    if (obj.contains("count")) {
+        std::cout &lt;&lt; "検出されたターゲットの数：" &lt;&lt; obj.at("count").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+    }
+
+    rs.release_graph("detection_graph");
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_binded_outputs_info"><a class="anchor" href="#_get_binded_outputs_info"></a>get_binded_outputs_info</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject get_binded_outputs_info(const std::string&amp; graph_name) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> グラフ内のすべての現在の出力バインディングの説明情報 (名前、タイプなど) を読み取り、利用可能な出力を動的に検出します。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">パラメータ</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像名</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="ulist">
+<ul>
+<li>
+<p>戻り値: * <code>JsonObject</code>、すべての出力バインディングの説明が含まれます。</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>例:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto loaded = client.runtime().load_graph("detection_graph");
+    std::cout &lt;&lt; "ロードリクエストステータス：" &lt;&lt; loaded.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    auto outputs_info = client.runtime().get_binded_outputs_info("detection_graph");
+
+    std::cout &lt;&lt; "バインド出力数量：" &lt;&lt; outputs_info.size() &lt;&lt; std::endl;
+    for (const auto&amp; [name, info] : outputs_info) {
+        std::cout &lt;&lt; "  出力バインディング名：" &lt;&lt; name &lt;&lt; std::endl;
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_binded_point_cloud_parsed"><a class="anchor" href="#_get_binded_point_cloud_parsed"></a>get_binded_point_cloud_parsed</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">std::vector&lt;ParsedPointCloud&gt; get_binded_point_cloud_parsed(
+    const std::string&amp; graph_name,
+    const std::string&amp; binding_name,
+    std::optional&lt;std::size_t&gt; point_dim = std::nullopt) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> ランタイム境界点群を直接読み取り、解析します。優先的に使用することをお勧めします。</p>
+</div>
+<div class="paragraph">
+<p><strong>例:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto clouds = rs.get_binded_point_cloud_parsed(
+    "lidar_graph",
+    "filtered_cloud",
+    3
+);</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_binded_point_cloud"><a class="anchor" href="#_get_binded_point_cloud"></a>get_binded_point_cloud</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">ByteBuffer get_binded_point_cloud(const BindingRef&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> バインディング名によって点群クラスによって出力された生のバイトを読み取ります。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">パラメータ</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>binding_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>点群出力のバインド名</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*戻り値: * <code>ByteBuffer</code> (<code>std::vector&lt;uint8_t&gt;</code>)、点群の生のバイナリ データ。
+注:
+* <code>Runtime/GetBindedPointCloud</code> のヘッダー情報には、点群のコピー数と要素の総数のみが含まれます。
+* ここには各点の次元がないため、<code>xyz</code> でなければならないと直接仮定することはできません。
+* 通常のシナリオでは、最初に上記の <code>get_binded_point_cloud_parsed(&#8230;&#8203;)</code> を使用することをお勧めします。</p>
+</div>
+<div class="paragraph">
+<p><strong>例:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;cstring&gt;
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("lidar_graph");
+
+    // cam_to_base サーバーは現在回転ベクトル形式のみをサポートしています：[x, y, z, rx, ry, rz]
+    auto frame = atom::sdk::RuntimeFrame::from_bytes(
+        epicraw_bytes,
+        atom::sdk::json::parse("[0,0,0,0,0,0]"));
+
+    auto run_info = rs.run_graph({"lidar_graph", {frame}});
+    std::cout &lt;&lt; "リクエストステータス：" &lt;&lt; run_info.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    // 点群バインディング出力を読み取る
+    atom::sdk::ByteBuffer pc_bytes = rs.get_binded_point_cloud(
+        {"lidar_graph", "filtered_cloud"});
+
+    std::cout &lt;&lt; "raw bytes: " &lt;&lt; pc_bytes.size() &lt;&lt; std::endl;
+
+    rs.release_graph("lidar_graph");
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_set_shared_params"><a class="anchor" href="#_set_shared_params"></a>set_shared_params</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonValue set_shared_params(const RuntimeParamsUpdate&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> 複数の実行で再利用可能で、マルチフレーム推論中に変更されない共有パラメーター (モデルのしきい値、カテゴリ リストなど) を書き込みます。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">パラメータ</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params_data</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>const JsonObject&amp;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>パラメーターのキーと値のペア、key はパラメーター名、value はパラメーター値です</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*戻り値: * <code>JsonValue</code>、演算結果。</p>
+</div>
+<div class="paragraph">
+<p><strong>例:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include "atom_sdk/core/json.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("detection_graph");
+
+    // 共有パラメータを設定する（セッション全体に有効）
+    atom::sdk::JsonObject shared;
+    shared["confidence_threshold"] = 0.5;
+    shared["nms_threshold"] = 0.4;
+
+    // カテゴリリストを設定する（JSON 配列）
+    atom::sdk::JsonArray classes;
+    classes.push_back("person");
+    classes.push_back("car");
+    classes.push_back("truck");
+    shared["class_names"] = classes;
+
+    rs.set_shared_params({"detection_graph", shared});
+
+    std::cout &lt;&lt; "共有パラメータ設定完了" &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_set_run_params"><a class="anchor" href="#_set_run_params"></a>set_run_params</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonValue set_run_params(const RuntimeParamsUpdate&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> この実行に使用される操作パラメータを書き込みます。これは、各 <code>run_graph</code> の前に必要に応じて調整できます。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">パラメータ</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params_data</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>const JsonObject&amp;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>この実行のパラメータのキーと値のペア</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*戻り値: * <code>JsonValue</code>、演算結果。</p>
+</div>
+<div class="paragraph">
+<p><strong>例:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("detection_graph");
+
+    // 実行パラメータは各推論の前に調整可能
+    atom::sdk::JsonObject run_params;
+    run_params["score_threshold"] = 0.6;
+    run_params["max_detections"] = 50;
+
+    rs.set_run_params({"detection_graph", run_params});
+
+    // そして推論を実行します...
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_run_graph_通常モードのシングルフレーム"><a class="anchor" href="#_run_graph_通常モードのシングルフレーム"></a>run_graph (通常モードのシングルフレーム)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject run_graph(const RuntimeRunParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> 最も一般的に使用される画像 + 点群推論インターフェイスであるノーマル モードのシングル フレーム入力実行グラフを使用します。パッシブ双眼モードの場合は、<code>RuntimeRunParams::passive_bino_from_file/bytes/images(&#8230;&#8203;)</code> を使用してください。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">パラメータ</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>フィギュア名 (<code>load_graph</code> 経由でロード)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>frame</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>const RuntimeFrame&amp;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>単一フレーム入力データ</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*戻り値: * <code>JsonObject</code>、実行ステータス情報が含まれます。通常、結果は <code>get_binded_output_value</code> 経由で読み取られます。</p>
+</div>
+<div class="paragraph">
+<p><strong>注:</strong>
+runtime.run_graph を使用する場合、現在のバージョンでは、グラフ内に <code>EpicPro输入</code> または <code>EpicPro输入(单组数据)</code> ノードと <code>EpicPro输出</code> ノードが必要です。そうしないと実行できず、エラーが報告されます。</p>
+</div>
+<div class="paragraph">
+<p><strong>例:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include "atom_sdk/core/json.hpp"
+
+// 仮説 load_image そして load_points ご自身で実装したデータロード機能です
+atom::sdk::ByteBuffer load_image(const std::string&amp; path);
+std::vector&lt;float&gt; load_points(const std::string&amp; path);
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("detection_graph");
+
+    // カメラの内部パラメータを構築する（3x3 マトリックス，行の優先順位）
+    auto intrinsic = atom::sdk::json::parse(
+        "[[800.0, 0.0, 320.0], [0.0, 800.0, 240.0], [0.0, 0.0, 1.0]]"
+    );
+    auto distortion = atom::sdk::json::parse("[0.0, 0.0, 0.0, 0.0, 0.0]");
+    // cam_to_base サーバーは現在回転ベクトル形式のみをサポートしています：[x, y, z, rx, ry, rz]
+    auto cam_to_base = atom::sdk::json::parse("[0,0,0,0,0,0]");
+
+    // ファクトリメソッドを使用して生の画像と点群からネイティブに生成 EPICRAW
+    atom::sdk::RuntimeImageData image{load_image("/data/frame_001.bin"), 640, 480, 3, 1};
+    atom::sdk::RuntimePointData points{load_points("/data/pc_001.bin"), 640, 480, 3};
+    auto frame = atom::sdk::RuntimeFrame::from_data(
+        points,
+        image,
+        cam_to_base,
+        intrinsic,
+        distortion
+    );
+
+    // 推論を実行する
+    auto run_info = rs.run_graph({"detection_graph", {frame}});
+    std::cout &lt;&lt; "リクエストステータス：" &lt;&lt; run_info.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    // 読み取りバインディング出力
+    auto result = rs.get_binded_output_value({"detection_graph", "detection_result"});
+    const auto&amp; obj = result;
+
+    if (obj.contains("detections")) {
+        const auto&amp; dets = obj.at("detections");
+        for (const auto&amp; det : dets) {
+            const auto&amp; d = det;
+            std::string label = d.at("label").get&lt;std::string&gt;();
+            double conf = d.at("confidence").get&lt;double&gt;();
+            // ...
+        }
+    }
+
+    rs.release_graph("detection_graph");
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_run_graph_通常モード_マルチフレーム"><a class="anchor" href="#_run_graph_通常モード_マルチフレーム"></a>run_graph (通常モード マルチフレーム)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject run_graph(const RuntimeRunParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> 通常モードを使用して、複数フレームのバッチ実行グラフを入力します。これは、マルチカメラまたはマルチフレーム フュージョン シナリオに適しています。 <code>passive_bino</code> モードでは 1 つの <code>RuntimePassiveBinoFrame</code> のみが渡されます。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">パラメータ</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>frames</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>const std::vector&lt;RuntimeFrame&gt;&amp;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>順番に配置された入力データの複数のフレーム</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*戻り値: * <code>JsonObject</code>、実行ステータス情報が含まれます。</p>
+</div>
+<div class="paragraph">
+<p><strong>注:</strong>
+runtime.run_graph を使用する場合、現在のバージョンでは、グラフ内に <code>EpicPro输入</code> または <code>EpicPro输入(单组数据)</code> ノードと <code>EpicPro输出</code> ノードが必要です。そうしないと実行できず、エラーが報告されます。</p>
+</div>
+<div class="paragraph">
+<p><strong>例:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include "atom_sdk/core/json.hpp"
+#include &lt;vector&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("multi_cam_graph");
+
+    // cam_to_base サーバーは現在回転ベクトル形式のみをサポートしています：[x, y, z, rx, ry, rz]
+    std::vector&lt;atom::sdk::JsonValue&gt; cam_to_base_per_camera = {
+        atom::sdk::json::parse("[0,0,0,0,0,0]"),
+        atom::sdk::json::parse("[100,0,0,0,0,0]"),
+    };
+
+    // 2 つの入力フレームを構築する（双眼カメラなど）。各カメラには独自の完全な機能があります EPICRAW bytes 一つに入れる RuntimeFrame。
+    std::vector&lt;atom::sdk::RuntimeFrame&gt; frames;
+
+    for (int i = 0; i &lt; 2; ++i) {
+        frames.push_back(atom::sdk::RuntimeFrame::from_bytes(
+            camera_epicraws.at(i),
+            cam_to_base_per_camera.at(i)));
+    }
+
+    auto run_info = rs.run_graph({"multi_cam_graph", frames});
+    std::cout &lt;&lt; "リクエストステータス：" &lt;&lt; run_info.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    auto result = rs.get_binded_output_value({"multi_cam_graph", "fused_result"});
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_set_graph_binding_data"><a class="anchor" href="#_set_graph_binding_data"></a>set_graph_binding_data</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonValue set_graph_binding_data(
+    const RuntimeBindingDataUpdate&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> 非画像/点群タイプの入力 (純粋な JSON データ ストリームなど) に適した、バインディング名に従ってグラフの入力データを直接書き込みます。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">パラメータ</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>binding_data</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>const JsonObject&amp;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>入力データ、key はバインディング名、value は JSON 値</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*戻り値: * <code>JsonValue</code>、演算結果。</p>
+</div>
+<div class="paragraph">
+<p><strong>例:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("pose_graph");
+
+    // バインディング入力データを直接書き込む
+    atom::sdk::JsonObject binding_data;
+    atom::sdk::JsonObject pose;
+    pose["x"] = 1.5;
+    pose["y"] = 2.3;
+    pose["theta"] = 0.45;
+    binding_data["robot_pose"] = pose;
+
+    rs.set_graph_binding_data({"pose_graph", binding_data});
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_node_params_info_with_strategy"><a class="anchor" href="#_get_node_params_info_with_strategy"></a>get_node_params_info_with_strategy</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject get_node_params_info_with_strategy(const NodeRef&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> パラメータ名、タイプ、値の範囲など、ポリシー パラメータをサポートするノードの説明情報を読み取ります。</p>
+</div>
+<div class="paragraph">
+<p><strong>サポート範囲:</strong> 現在、<code>PoseListFilter</code>、<code>PickPointFilter</code>、
+<code>PoseListSorterInXOY</code>、<code>PickPointSorterInXOY</code>、<code>PickPointSorterNew</code>、
+<code>PoseListSorter</code> ノードは次の 6 種類です。
+戻り値の <code>paramsData</code> は通常、<code>set_params_in_strategy(&#8230;&#8203;)</code> の入力テンプレートとして使用されます。
+まず調整が必要なフィールドを変更してから、完全な <code>paramsData</code> を返します。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">パラメータ</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ポリシー ノード ID</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*戻り値: * <code>JsonObject</code>、ポリシー ノードのパラメータ メタ情報が含まれます。</p>
+</div>
+<div class="paragraph">
+<p><strong>例:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("strategy_graph");
+
+    auto params_info = rs.get_node_params_info_with_strategy(
+        {"strategy_graph", "strategy_node_001"}
+    );
+
+    for (const auto&amp; [key, val] : params_info) {
+        std::cout &lt;&lt; "戦略パラメータ：" &lt;&lt; key &lt;&lt; std::endl;
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_set_params_in_strategy"><a class="anchor" href="#_set_params_in_strategy"></a>set_params_in_strategy</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonValue set_params_in_strategy(
+    const RuntimeStrategyParamsUpdate&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> ポリシー パラメーターをサポートするノードにパラメーターをバッチで書き込み、ノードの動作を調整します。</p>
+</div>
+<div class="paragraph">
+<p><strong>サポート範囲:</strong> 現在、<code>PoseListFilter</code>、<code>PickPointFilter</code>、
+<code>PoseListSorterInXOY</code>、<code>PickPointSorterInXOY</code>、<code>PickPointSorterNew</code>、
+<code>PoseListSorter</code> ノードは次の 6 種類です。その他のノードの場合は、共通パラメータインターフェースを使用してパラメータを設定してください。
+<code>RuntimeStrategyParamsUpdate.params_data</code> は通常、次の場所から来ます
+<code>get_node_params_info_with_strategy(&#8230;&#8203;).at("paramsData")</code>。小さなセクションだけを手書きしないでください
+パラメータ;サーバーから返された完全な構造を保持し、変更する必要があるフィールドのみを置き換えることをお勧めします。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">パラメータ</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ポリシー ノード ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params_data</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>const JsonObject&amp;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>サーバーから返された`paramsData`から変更された完全なパラメータ構造</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*戻り値: * <code>JsonValue</code>、演算結果。</p>
+</div>
+<div class="paragraph">
+<p><strong>例:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("strategy_graph");
+
+    auto params_info = rs.get_node_params_info_with_strategy(
+        {"strategy_graph", "strategy_node_001"}
+    );
+    atom::sdk::JsonObject params_data =
+        params_info.at("paramsData");
+
+    atom::sdk::JsonObject by_score_config;
+    by_score_config["order"] = "HIGHEST";
+    by_score_config["differenceThreshold"] = 1;
+    by_score_config["groupInterval"] = 0.75;
+
+    atom::sdk::JsonObject by_score;
+    by_score["BY_SCORE"] = by_score_config;
+
+    atom::sdk::JsonArray strategies;
+    strategies.emplace_back(by_score);
+
+    atom::sdk::JsonObject strategies_config;
+    strategies_config["value"] = strategies;
+    params_data["run_params"]["strategies_config"] = strategies_config;
+
+    rs.set_params_in_strategy(
+        {"strategy_graph", "strategy_node_001", params_data}
+    );
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_file_param_md5"><a class="anchor" href="#_get_file_param_md5"></a>get_file_param_md5</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject get_file_param_md5(const FileParamRef&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> サーバー側に記録されているファイル タイプ パラメーターの MD5 値をクエリします。この値は、ファイルを再アップロードする必要があるかどうかを判断するために使用されます (大きなモデル ファイルの繰り返し送信を避けるため)。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">パラメータ</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>param_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ファイルパラメータ名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>param_type</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>パラメータ カテゴリ、デフォルトは <code>"init_params"</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>戻り値:</strong> <code>JsonObject</code>、MD5 情報を含む:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>md5</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>サーバー記録ファイル MD5 の値</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>例:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("detection_graph");
+
+    // クエリモデルファイル MD5
+    auto md5_info = rs.get_file_param_md5(
+        "detection_graph",
+        "model_file",
+        "init_params"
+    );
+    std::cout &lt;&lt; "リクエストステータス：" &lt;&lt; md5_info.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    if (md5_info.contains("md5")) {
+        std::string server_md5 = md5_info.at("md5").get&lt;std::string&gt;();
+        std::cout &lt;&lt; "サーバーモデル MD5：" &lt;&lt; server_md5 &lt;&lt; std::endl;
+
+        // ローカルファイルの場合 MD5 コントラスト，再アップロードする必要があるかどうかを決定する
+        std::string local_md5 = "..."; // ローカルファイルを数える MD5
+        if (server_md5 == local_md5) {
+            std::cout &lt;&lt; "モデルは最新のものです，アップロードする必要はありません" &lt;&lt; std::endl;
+        }
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_run_single_node_no_graph_parsed_推奨"><a class="anchor" href="#_run_single_node_no_graph_parsed_推奨"></a>run_single_node_no_graph_parsed (推奨)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">SingleNodeParsedResult run_single_node_no_graph_parsed(
+    const SingleNodeParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> グラフに依存せず、単一ノードを直接実行し、<code>outputs</code> 内の点群と画像を直接使用可能なデータ構造に自動的に解析します。一般ユーザーは、最初にこのインターフェースを使用することをお勧めします。返された辞書 key はサーバー <code>outputs</code> key と一致しますが、点群と画像の値は解析されます。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">パラメータ</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>node_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ノードタイプ名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>inputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SingleNodeInputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>入力データ map、key はポート名、value は <code>JsonValue</code>/<code>ByteBuffer</code>/<code>filesystem::path</code> のいずれかです</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>run_params</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>動作パラメータ</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>init_params</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>初期化パラメータ</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>input_data_types</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>unordered_map&lt;string, string&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>オプション。入力ポートタイプのマッピング。通常は省略されます。SDK は必要に応じてノード名によって照会されます</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>input_point_dims</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>unordered_map&lt;string, size_t&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>オプション。点群入力寸法のヒント。多くの場合、ポートの種類から自動的に推測されます</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>output_data_types</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>unordered_map&lt;string, string&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>オプション。出力ポートタイプのマッピング。省略した場合、SDK はノード名でノード出力定義をクエリします。</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>output_point_dims</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>unordered_map&lt;string, size_t&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>オプション。点群寸法プロンプトを出力します。 <code>XYZPoints</code> のデフォルトは 3、<code>NormalPoints</code>/<code>RGBPoints</code> のデフォルトは 6</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>戻り値:</strong> <code>SingleNodeParsedResult</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">using SingleNodeParsedOutput =
+    std::variant&lt;JsonValue, std::vector&lt;ParsedPointCloud&gt;, std::vector&lt;ParsedImage&gt;&gt;;
+
+struct SingleNodeParsedResult {
+    JsonValue raw;  // サーバー側のオリジナル JSON；サーバーが戻った場合 raw bytes，それならそうです null
+    std::unordered_map&lt;std::string, SingleNodeParsedOutput&gt; outputs;
+};</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>解析ルール:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">出力ポートの種類</th>
+<th class="tableblock halign-left valign-top"><code>outputs[name]</code> のタイプ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Points</code> / <code>XYZPoints</code> / <code>NormalPoints</code> / <code>RGBPoints</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::vector&lt;ParsedPointCloud&gt;</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Image</code> / <code>MonoImage</code> / <code>ColorImage</code> / <code>BinaryImage</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::vector&lt;ParsedImage&gt;</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>その他のタイプ</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonValue</code>、元の JSON 値をサーバー上に保持します</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>障害処理:</strong> サーバーの最上位が <code>status=0</code> であるが、単一ノードの結果が <code>status_queue</code> である場合
+<code>success:false</code>、<code>activate failed</code>、<code>error</code>、または否定的なステータスが含まれている場合、SDK が解析されます
+<code>AtomApiError</code> は <code>outputs</code> の前にスローされます。例外メッセージにはノード名と <code>status_queue</code> が含まれます
+失敗の理由。</p>
+</div>
+<div class="paragraph">
+<p><strong>例:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;filesystem&gt;
+#include &lt;iostream&gt;
+#include &lt;variant&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    atom::sdk::SingleNodeParams params;
+    params.node_name = "EstimateNormal";
+    params.inputs["points"] = std::filesystem::path("/data/input.ply");
+
+    // 省略可能，させてください SDK ノード名に基づいた自動クエリ；明示的に入力すると、ノード情報クエリを 1 つ節約できます。。
+    params.output_data_types = {{"points", "XYZPoints"}};
+    params.output_point_dims = {{"points", 3}};
+
+    auto result = rs.run_single_node_no_graph_parsed(params);
+    const auto&amp; clouds = std::get&lt;std::vector&lt;atom::sdk::ParsedPointCloud&gt;&gt;(
+        result.outputs.at("points"));
+
+    std::cout &lt;&lt; "点群の数：" &lt;&lt; clouds.size() &lt;&lt; std::endl;
+    std::cout &lt;&lt; "最初の点群 shape: ";
+    for (auto dim : clouds.front().shape) {
+        std::cout &lt;&lt; dim &lt;&lt; " ";
+    }
+    std::cout &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>!!! tip 「output_data_types を明示的に入力する必要があるのはどのような場合ですか?」
+SDK が <code>node_name</code> を通じてノード出力定義をクエリできる場合は、入力する必要はありません。サーバーが raw bytes を返す場合、または 1 つの <code>get_all_nodes_info()</code> クエリを保存したい場合は、<code>output_data_types</code> を明示的に入力することをお勧めします。 raw bytes 結果を自動的に解析するには、唯一の点群出力ポートを決定する必要があります。</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_run_single_node_no_graph_オプション_生の戻り値"><a class="anchor" href="#_run_single_node_no_graph_オプション_生の戻り値"></a>run_single_node_no_graph (オプション: 生の戻り値)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">SingleNodeResult run_single_node_no_graph(
+    const SingleNodeParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的:</strong> グラフに依存せず、単一ノードを直接実行して元の結果を取得し、JSON またはバイナリ出力をサポートします。サーバーの元の JSON/raw bytes を自分で処理する必要がある場合にのみ使用してください。通常のシナリオでは、最初に <code>run_single_node_no_graph_parsed</code> を使用することをお勧めします。
+parsed インターフェイスと同様に、<code>status_queue</code> がノードの内部操作の失敗を示している場合、raw インターフェイスもスローします。
+<code>AtomApiError</code>、失敗時に通常の結果として空の <code>outputs</code> が返されることを回避します。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">パラメータ</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>node_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ノードタイプ名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>inputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SingleNodeInputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>入力データ map、key はポート名、value は <code>JsonValue</code>/<code>ByteBuffer</code>/<code>filesystem::path</code> のいずれかです</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>run_params</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>動作パラメータ</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>init_params</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>初期化パラメータ</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>input_data_types</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>unordered_map&lt;string, string&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>オプション。入力ポートタイプのマッピング。通常は省略されます。パスまたはバイト入力が見つかった場合、SDK はノード名によって照会されます。</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>input_point_dims</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>unordered_map&lt;string, size_t&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>オプション。点群入力寸法プロンプト。通常は、<code>XYZPoints</code>/<code>NormalPoints</code> などの型から自動的に推論されます。</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*戻り値: * <code>SingleNodeResult</code> (<code>std::variant&lt;JsonValue, ByteBuffer&gt;</code>)、<code>std::holds_alternative</code> を使用して型を決定し、<code>std::get</code> を使用して値を取得する必要があります。
+<code>inputs</code> は、ノード入力ポートのタイプごとに共通データを自動的に処理します。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">ポートの種類</th>
+<th class="tableblock halign-left valign-top">C++ 入力値</th>
+<th class="tableblock halign-left valign-top">SDK の動作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>File</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::filesystem::path</code> / UTF-8 <code>ByteBuffer</code> / JSON 文字列</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>はパス文字列として JSON に入れられ、ファイルの内容は読み取られません。</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Image</code> / <code>MonoImage</code> / <code>ColorImage</code> / <code>BinaryImage</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::filesystem::path</code> / <code>ByteBuffer</code> / base64 文字列</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>は <code>data:image/&#8230;&#8203;;base64,&#8230;&#8203;</code> 文字列リストに変換されます</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Points</code> / <code>XYZPoints</code> / <code>NormalPoints</code> / <code>RGBPoints</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>.ply</code> パス / エンコードされた <code>ByteBuffer</code> / JSON 数値配列</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>.ply</code> は Atom 点群バイナリに変換されます。エンコードされたバイトは変更されずにアップロードされます</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>その他のタイプ</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonValue</code> / <code>ByteBuffer</code> / <code>path</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>は古い動作を維持します: JSON から <code>inputs</code> へ、バイトまたはパスの内容はファイル フィールドによってアップロードされます</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>!!! note "PLY サポート範囲"
+C++ SDK は現在、単一ノードの直接操作で ASCII PLY の <code>vertex</code> 属性の読み取りをサポートしています。 <code>XYZPoints</code>/<code>Points</code> は <code>x,y,z</code> を読み取り、<code>NormalPoints</code> は <code>x,y,z,nx,ny,nz</code> を読み取り、<code>RGBPoints</code> は <code>x,y,z,red,green,blue</code> を読み取ります。</p>
+</div>
+<div class="paragraph">
+<p><strong>例:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;filesystem&gt;
+#include &lt;iostream&gt;
+#include &lt;variant&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    // 入力の構築：混ぜる JSON、バイナリ、ファイルパス
+    atom::sdk::SingleNodeInputs inputs;
+
+    // JSON タイプ入力
+    atom::sdk::JsonObject img_meta;
+    img_meta["width"] = 640;
+    img_meta["height"] = 480;
+    inputs["image_meta"] = atom::sdk::JsonValue(img_meta);
+
+    // バイナリ型入力（画像バイト）
+    atom::sdk::ByteBuffer image_bytes = /* 画像バイト */;
+    inputs["image"] = image_bytes;
+
+    // パス入力：SDK ノードのポートタイプに応じて自動的に処理されます。
+    // ポートが File，パス文字列のみを渡します；はいの場合 ColorImage，に変換されます base64 画像一覧；
+    // はいの場合 XYZPoints そしてそのパスは .ply，に変換されます Atom 点群バイナリ。
+    inputs["model_config"] = std::filesystem::path("/configs/yolo.yaml");
+
+    // 動作パラメータ
+    atom::sdk::JsonObject run_params;
+    run_params["score_threshold"] = 0.5;
+
+    // 初期化パラメータ
+    atom::sdk::JsonObject init_params;
+    init_params["device"] = "cuda:0";
+
+    // 単一ノードの実行，サーバーから元の戻り値を取得します
+    atom::sdk::SingleNodeParams params;
+    params.node_name = "YoloDetectionNode";
+    params.inputs = inputs;
+    params.run_params = run_params;
+    params.init_params = init_params;
+    atom::sdk::SingleNodeResult result = rs.run_single_node_no_graph(params);
+
+    // 元の戻り値の型を決定する
+    if (std::holds_alternative&lt;atom::sdk::JsonValue&gt;(result)) {
+        const auto&amp; json_out = std::get&lt;atom::sdk::JsonValue&gt;(result);
+        const auto&amp; obj = json_out;
+
+        if (obj.contains("detections")) {
+            const auto&amp; dets = obj.at("detections");
+            std::cout &lt;&lt; "検査結果の数：" &lt;&lt; dets.size() &lt;&lt; std::endl;
+
+            for (const auto&amp; det : dets) {
+                const auto&amp; d = det;
+                std::string label = d.at("label").get&lt;std::string&gt;();
+                double conf = d.at("confidence").get&lt;double&gt;();
+                std::cout &lt;&lt; "  " &lt;&lt; label &lt;&lt; "：" &lt;&lt; conf &lt;&lt; std::endl;
+            }
+        }
+    } else {
+        const auto&amp; bin_out = std::get&lt;atom::sdk::ByteBuffer&gt;(result);
+        std::cout &lt;&lt; "バイナリ結果のサイズ：" &lt;&lt; bin_out.size() &lt;&lt; " bytes" &lt;&lt; std::endl;
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_run_single_node_json"><a class="anchor" href="#_run_single_node_json"></a>run_single_node_json</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonValue run_single_node_json(const SingleNodeParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>*使用法: * JSON 出力の期待を強制し、ノードがバイナリを返す場合に例外をスローする <code>run_single_node_no_graph</code> の簡易バージョン。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">パラメータ</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>node_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ノードタイプ名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>inputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SingleNodeInputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>入力データ</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>run_params</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>動作パラメータ</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>init_params</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>初期化パラメータ</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*戻り値: * <code>JsonValue</code>、ノードのJSONの出力結果。</p>
+</div>
+<div class="paragraph">
+<p><strong>例:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    atom::sdk::JsonObject run_params;
+    run_params["threshold"] = 0.5;
+
+    atom::sdk::SingleNodeParams params;
+    params.node_name = "ClassificationNode";
+    params.run_params = run_params;
+
+    // 直接入手してください JSON 結果，必要ありません variant 裁判官
+    auto json_result = rs.run_single_node_json(params);
+
+    const auto&amp; obj = json_result;
+    if (obj.contains("top1")) {
+        std::string top1 = obj.at("top1").get&lt;std::string&gt;();
+        std::cout &lt;&lt; "分類結果：" &lt;&lt; top1 &lt;&lt; std::endl;
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_run_single_node_binary"><a class="anchor" href="#_run_single_node_binary"></a>run_single_node_binary</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">ByteBuffer run_single_node_binary(const SingleNodeParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>*使用: * <code>run_single_node_no_graph</code> の簡易バージョン。バイナリ出力 (点群、生の画像など) を期待するように強制され、ノードが JSON を返す場合は例外をスローします。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">パラメータ</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>node_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ノードタイプ名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>inputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SingleNodeInputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>入力データ</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>run_params</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>動作パラメータ</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>init_params</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>初期化パラメータ</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="ulist">
+<ul>
+<li>
+<p>戻り値: * <code>ByteBuffer</code> (<code>std::vector&lt;uint8_t&gt;</code>)、ノードのバイナリ出力データ。</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>例:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;cstring&gt;
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    atom::sdk::SingleNodeInputs inputs;
+    inputs["raw_cloud"] = atom::sdk::ByteBuffer(/* 生の点群バイト */);
+
+    atom::sdk::SingleNodeParams params;
+    params.node_name = "PointCloudFilterNode";
+    params.inputs = inputs;
+
+    // バイナリ結果を直接取得する
+    atom::sdk::ByteBuffer filtered = rs.run_single_node_binary(params);
+
+    auto clouds = atom::sdk::decode_point_cloud_payload(filtered, false, 3);
+    std::cout &lt;&lt; "フィルタリングされた点群 shape: ";
+    for (const auto dim : clouds.front().shape) {
+        std::cout &lt;&lt; dim &lt;&lt; " ";
+    }
+    std::cout &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_完全な例"><a class="anchor" href="#_完全な例"></a>完全な例</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>以下は、グラフのロード、パラメータの設定、ループ推論、出力の読み取り、リソースの解放という、完全な運用レベルの推論ループを示しています。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include "atom_sdk/core/json.hpp"
+#include &lt;cstring&gt;
+#include &lt;filesystem&gt;
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+// データロードをシミュレートする（実際のプロジェクトでの実際の実装に置き換えます）
+atom::sdk::ByteBuffer capture_image() {
+    // カメラから画像を収集する，生のピクセルバイトを返します
+    return atom::sdk::ByteBuffer(640 * 480 * 3, 0);
+}
+
+std::vector&lt;float&gt; capture_point_cloud() {
+    // LIDAR から点群を収集する
+    return std::vector&lt;float&gt;(640 * 480 * 3, 0.0F);
+}
+
+int main() {
+    try {
+        atom::sdk::AtomClient client("http://127.0.0.1:10026");
+        auto&amp; rs = client.runtime();
+
+        // ─── 1. 荷重グラフ ──────────────────────────────────────
+        auto loaded = rs.load_graph("robot_perception");
+        std::cout &lt;&lt; "画像の読み込みが完了しました，リクエストステータス：" &lt;&lt; loaded.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+        // ─── 2. グラフパラメータのメタ情報をクエリする ────────────────────────────
+        auto meta = rs.get_meta_info("robot_perception");
+        std::cout &lt;&lt; "プリミティブ情報フィールドの数：" &lt;&lt; meta.size()
+                  &lt;&lt; "，リクエストステータス：" &lt;&lt; meta.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+        // ─── 3. 共有パラメータを設定する（セッション全体に有効）────────────────
+        atom::sdk::JsonObject shared_params;
+        shared_params["confidence_threshold"] = 0.5;
+        shared_params["nms_threshold"] = 0.45;
+
+        atom::sdk::JsonArray class_names;
+        class_names.push_back("person");
+        class_names.push_back("car");
+        shared_params["class_names"] = class_names;
+
+        rs.set_shared_params({"robot_perception", shared_params});
+
+        // ─── 4. カメラパラメータを準備する ────────────────────────────────
+        auto intrinsic = atom::sdk::json::parse(
+            "[[800.0, 0.0, 320.0], [0.0, 800.0, 240.0], [0.0, 0.0, 1.0]]"
+        );
+        auto distortion = atom::sdk::json::parse(
+            "[-0.1, 0.05, 0.001, 0.001, -0.02]"
+        );
+        // cam_to_base サーバーは現在回転ベクトル形式のみをサポートしています：[x, y, z, rx, ry, rz]
+        auto cam_to_base = atom::sdk::json::parse("[0.15, 0.0, 0.5, 0.012, 0.049, -0.045]");
+
+        // ─── 5. 推論メインループ ──────────────────────────────────
+        for (int frame_idx = 0; frame_idx &lt; 10; ++frame_idx) {
+            std::cout &lt;&lt; "\n─── フレーム " &lt;&lt; frame_idx &lt;&lt; " ───" &lt;&lt; std::endl;
+
+            // 5.1 このフレームの実行パラメータを設定します（オプション，フレームごとに調整）
+            atom::sdk::JsonObject run_params;
+            run_params["frame_id"] = frame_idx;
+            rs.set_run_params({"robot_perception", run_params});
+
+            // 5.2 入力フレームの構築：生の画像と点群からローカルで生成 EPICRAW
+            atom::sdk::RuntimeImageData image{capture_image(), 640, 480, 3, 1};
+            atom::sdk::RuntimePointData points{capture_point_cloud(), 640, 480, 3};
+            auto frame = atom::sdk::RuntimeFrame::from_data(
+                points,
+                image,
+                cam_to_base,
+                intrinsic,
+                distortion
+            );
+
+            // 5.3 単一フレーム推論を実行する
+            auto run_info = rs.run_graph({"robot_perception", {frame}});
+            std::cout &lt;&lt; "リクエストステータス：" &lt;&lt; run_info.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+            // 5.4 読む JSON バインド出力
+            auto det_result = rs.get_binded_output_value(
+                {"robot_perception", "detection_result"});
+            const auto&amp; det_obj = det_result;
+
+            if (det_obj.contains("detections")) {
+                const auto&amp; dets = det_obj.at("detections");
+                std::cout &lt;&lt; "検出されました " &lt;&lt; dets.size() &lt;&lt; " 目標" &lt;&lt; std::endl;
+
+                for (const auto&amp; det : dets) {
+                    const auto&amp; d = det;
+                    if (d.contains("label") &amp;&amp; d.contains("confidence")) {
+                        std::string label = d.at("label").get&lt;std::string&gt;();
+                        double conf = d.at("confidence").get&lt;double&gt;();
+                        std::cout &lt;&lt; "  [" &lt;&lt; label &lt;&lt; "] 自信=" &lt;&lt; conf &lt;&lt; std::endl;
+                    }
+                }
+            }
+
+            // 5.5 点群バインディング出力を読み取る（そうであれば）
+            try {
+                auto pc_bytes = rs.get_binded_point_cloud(
+                    {"robot_perception", "filtered_cloud"});
+                std::size_t n = pc_bytes.size() / sizeof(float);
+                std::cout &lt;&lt; "フィルタリング後の点群点：" &lt;&lt; n / 3 &lt;&lt; std::endl;
+            } catch (const atom::sdk::AtomError&amp;) {
+                // グラフには点群バインディング出力がない可能性があります，無視する
+            }
+        }
+
+        // ─── 6. グラフリソースをリリースする ───────────────────────────────────
+        rs.release_graph("robot_perception");
+        std::cout &lt;&lt; "\nグラフィックリソースを公開しました，推論完了" &lt;&lt; std::endl;
+
+    } catch (const atom::sdk::AtomError&amp; e) {
+        std::cerr &lt;&lt; "SDK エラー：" &lt;&lt; e.what() &lt;&lt; std::endl;
+        return 1;
+    } catch (const std::exception&amp; e) {
+        std::cerr &lt;&lt; "異常：" &lt;&lt; e.what() &lt;&lt; std::endl;
+        return 1;
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="graph_node.html">GraphNodeService（C++）</a></span>
+  <span class="next"><a href="../csharp/overview.html">Atom SDK — C# バージョン</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

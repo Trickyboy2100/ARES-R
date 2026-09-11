@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>C++ — 数据类型与字段 :: Epic Eye SDK 开发手册</title>
+    <link rel="prev" href="alignment.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+         <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" /> 
+         <span class="navbar-title">在线产品文档</span>
+      </a>
+
+      
+
+
+    </div>
+
+      <div id="topbar-nav" class="navbar-menu">
+        <div class="navbar-end">
+
+          
+            <div class="navbar-item search hide-for-print">
+              <div id="search-field" class="field has-filter">
+                <input id="search-input" type="text" placeholder="输入关键词搜索" >
+                <label class="filter checkbox">
+                  <input type="checkbox" data-facet-filter="component:epic-eye-sdk">仅本手册
+                </label>
+              </div>
+            </div>
+          
+          <button class="navbar-burger" data-target="topbar-nav">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">切换手册</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Epic Eye SDK 开发手册</a>
+          </div>
+        </div>
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">下载中心</a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">官网</a>
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+            <a class="navbar-link" href="#"><span class="globe-icon">🌐</span>简体中文</a>
+            <div class="navbar-dropdown">
+                <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+                <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+                <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+            </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-logo {
+  height: 32px;
+  margin-right: 8px;
+}
+
+.navbar-title {
+  font-size: 18px;
+  color: #333;
+}
+
+.globe-icon {
+  margin-right: 5px;
+}
+
+.navbar-item {
+  color: #000 !important;
+}
+
+.navbar-item:hover {
+  background-color: #3273dc !important;
+  color: #fff !important;
+}
+
+.navbar-item a {
+  color: #000 !important;
+}
+
+.navbar-item a:hover {
+  color: #fff !important;
+}
+
+.navbar-dropdown .navbar-item {
+  color: #000 !important;
+}
+
+.navbar-dropdown .navbar-item:hover {
+  background-color: #3273dc !important;
+  color: #fff !important;
+}
+
+.navbar-link:hover {
+  background-color: #3273dc !important;
+  color: #fff !important;
+}
+
+.navbar-link a {
+  color: #000 !important;
+}
+
+.navbar-link a:hover {
+  color: #fff !important;
+}
+
+.language-selector .navbar-link {
+  display: flex;
+  align-items: center;
+  color: #000 !important;
+}
+
+.navbar-link {
+  color: #000 !important;
+}
+
+/* 添加这个新规则，使下拉菜单激活时保持链接的蓝色背景 */
+.navbar-item.has-dropdown.is-active .navbar-link,
+.navbar-item.has-dropdown:focus .navbar-link,
+.navbar-item.has-dropdown:focus-within .navbar-link {
+  background-color: #3273dc !important;
+  color: #fff !important;
+}
+
+/* 添加这个规则，确保鼠标悬停在下拉菜单项上时父级链接保持蓝色背景 */
+.navbar-item.has-dropdown:hover .navbar-link {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* 添加这个特定的样式规则，确保搜索框区域在悬停时背景不变 */
+.navbar-item.search.hide-for-print:hover {
+  background-color: transparent !important;  /* 使背景透明，保持原来的背景色 */
+}
+
+/* 确保搜索框内的输入框在悬停时也不改变背景 */
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input {
+  background-color: inherit !important;
+}
+</style> <div class="body">
+<div class="nav-container" data-component="epic-eye-sdk" data-version="4.0.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Epic Eye SDK 开发手册</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">欢迎</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">快速开始</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">快速开始</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/examples.html">示例</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">使用指南</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/discovery.html">相机发现与连接</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/capture.html">拍摄与 EpicRaw 解码</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/config.html">相机配置与参数</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/intrinsic-calibration.html">内参标定</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/hand-eye-calibration.html">手眼标定</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/line-scan.html">线扫采集</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/stream2d.html">Stream2D 实时视频</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API 参考</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API 参考总览</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">C# — 概览与集成</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/device.html">C# — 设备与网络</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/capture.html">C# — 拍摄与数据获取</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/epicraw.html">C# — EpicRaw 解析</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/camera-config.html">C# — 相机配置</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/intrinsics.html">C# — 内参与去畸变 LUT</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/intrinsic-calibration.html">C# — 内参标定</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/hand-eye-calibration.html">C# — 手眼标定</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/line-scan.html">C# — 线扫</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/stream2d.html">C# — Stream2D</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/alignment.html">C# — 纹理对齐</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/data-models.html">C# — 数据类型与字段</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python — 概览与安装</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">Python — 请求运行配置</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/device.html">Python — 设备与网络</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/capture.html">Python — 拍摄与数据获取</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/epicraw.html">Python — EpicRaw 解析</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/camera-config.html">Python — 相机配置</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/intrinsics.html">Python — 内参与去畸变 LUT</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/intrinsic-calibration.html">Python — 内参标定</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/hand-eye-calibration.html">Python — 手眼标定</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/line-scan.html">Python — 线扫</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/stream2d.html">Python — Stream2D</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/alignment.html">Python — 纹理对齐</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/data-models.html">Python — 数据类型与字段</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="overview.html">C++ — 概览与集成</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="device.html">C++ — 设备与网络</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="capture.html">C++ — 拍摄与数据获取</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="epicraw.html">C++ — EpicRaw 解析</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="camera-config.html">C++ — 相机配置</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="intrinsics.html">C++ — 内参与去畸变 LUT</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="intrinsic-calibration.html">C++ — 内参标定</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="hand-eye-calibration.html">C++ — 手眼标定</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="line-scan.html">C++ — 线扫</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="stream2d.html">C++ — Stream2D</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="alignment.html">C++ — 纹理对齐与补全</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="data-models.html">C++ — 数据类型与字段</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Epic Eye SDK 开发手册</span>
+    <span class="version">4.0.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Epic Eye SDK 开发手册</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">4.0.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Epic Eye SDK 开发手册</a></li>
+    <li>API 参考</li>
+    <li>C++ SDK</li>
+    <li><a href="data-models.html">C++ — 数据类型与字段</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="本页内容"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside><article class="doc">
+<h1 class="page">C++ — 数据类型与字段</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>本页说明 <code>TFTech</code> 命名空间中的公开结构体、枚举与 JSON 契约。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="epiceye-info"><a class="anchor" href="#epiceye-info"></a><code>EpicEyeInfo</code></h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 66.6668%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Version</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">相机服务端版本。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SN</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">相机序列号。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IP</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">相机访问地址。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>model</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">相机型号名称。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>alias</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">相机别名。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>width</code> / <code>height</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>uint32_t</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">默认图像宽高，单位像素。</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="reconstructor-type"><a class="anchor" href="#reconstructor-type"></a><code>ReconstructorType</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>Mono=0</code> 表示单深度源；<code>BinoWithoutColor=1</code> 表示双深度源且无独立彩色源；<code>BinoWithColor=2</code> 表示双深度源并带独立彩色源；<code>Unknown=999</code> 表示未识别。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="simple-camera-parameter"><a class="anchor" href="#simple-camera-parameter"></a><code>SimpleCameraParameter</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>getParameterList</code> 通过 <code>std::vector&lt;SimpleCameraParameter&gt;&amp;</code> 返回参数预设。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 66.6668%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">非空参数预设唯一标识，可直接传给 <code>setParameter</code>。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">参数预设名称。</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>完整当前配置通过 <code>getConfig</code> 获取。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="ip-config"><a class="anchor" href="#ip-config"></a><code>EpicEyeIPConfig</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>ip</code> 为手动模式的新 IPv4；<code>netMask</code> 为子网掩码，默认 <code>255.255.255.0</code>；<code>type</code> 为 <code>"DHCP"</code> 或 <code>"Manual"</code>；<code>sn</code> 必须与目标相机当前序列号一致，用于防止误改其他设备。目标相机当前 IP 通过 <code>setEpicEyeIPConfig</code> 的 <code>destinationIP</code> 参数传入；<code>CameraIPConfig</code> 示例会从搜索结果或 <code>getInfo</code> 自动填充 SN，命令行无需传入。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="temperature-info"><a class="anchor" href="#temperature-info"></a>温度 JSON</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>timestamp_ms</code> 为采样时间戳；<code>cpu_celsius</code>、<code>gpu_celsius</code>、<code>npu_celsius</code> 为摄氏温度或 JSON <code>null</code>。传感器、激光器、电源和腔体测点随机型以额外键出现。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="camera-config-params"><a class="anchor" href="#camera-config-params"></a>相机配置 JSON</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>配置对象至少包含 <code>id</code>、<code>name</code>、<code>selected</code>、<code>profileType</code>、<code>captureMode</code>，以及 <code>structuredLightParams</code>、<code>swingLineScanParams</code>、<code>passiveBinocularParams</code>、<code>videoStreamParams</code> 中与当前模式相关的分组。<code>captureMode</code>：<code>0</code> 视频流、<code>1</code> 结构光、<code>2</code> 被动双目、<code>3</code> 摆动线扫、<code>4</code> 固定线扫。</p>
+</div>
+<div class="paragraph">
+<p>公共配置字段：深度/彩色源 2D 曝光时间（ms）和增益（dB）、曝光模式（0 手动/1 自动）、<code>paramsBatch3D</code> 多曝光参数、<code>textureSource</code>（0 无/1 深度源/2 彩色源）、补光、2D/3D 分辨率模式、平滑和滤波等级。结构光字段还包含曝光分区、投影模式、投影亮度、孔洞填充和 3D ROI；线扫字段包含 Z 范围（mm）、起止光平面角度（度）、点云密度、激光亮度；视频流字段包含三路图源开关。</p>
+</div>
+<div class="paragraph">
+<p>参数样式 JSON 按 <code>common</code>、<code>structuredLight</code>、<code>swingLineScan</code>、<code>passiveBinocular</code>、<code>videoStream</code> 分组；每个参数描述包含 <code>displayText</code>、<code>dataType</code>、<code>bounds</code>、<code>step</code>、<code>default</code>、<code>priority</code>、<code>componentType</code>。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="epicraw-types"><a class="anchor" href="#epicraw-types"></a>EpicRaw 类型</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>EpicRaw3DataType</code>：<code>DepthSrcImg1=0</code>、<code>DepthSrcImg2=1</code>、<code>TextureBGR=2</code>、<code>Depth=3</code>、<code>PointCloud=4</code>、<code>PointCloudNormal=5</code>。</p>
+</div>
+<div class="paragraph">
+<p><code>EpicRawDocument</code>：<code>fileType</code> 指示格式；<code>raw1/raw2/raw3</code> 保存各格式内容；<code>hasRaw1/hasRaw2/hasRaw3</code> 中恰有一个为 <code>true</code>。</p>
+</div>
+<div class="paragraph">
+<p><code>EpicRawImage</code> 包含 <code>dataType</code>、<code>width</code>、<code>height</code>、OpenCV <code>matType</code> 和 <code>std::string_view data</code>。<code>data</code> 引用输入的 EpicRaw 数据，因此使用图像期间必须保留原始数据。</p>
+</div>
+<div class="paragraph">
+<p><code>EpicRaw3</code>：<code>headerLength</code>、<code>elementsCount</code>、<code>elementLengths</code>、<code>headerMetaLength</code>、<code>headerMeta</code>、<code>elements</code>。每个 <code>EpicRaw3Element</code> 包含 <code>headerLength</code>、<code>dataType</code>、<code>dataLength</code>、<code>width</code>、<code>height</code>、<code>matType</code>、<code>metaLength</code>、<code>meta</code>、<code>data</code>。</p>
+</div>
+<div class="paragraph">
+<p><code>EpicRaw2</code>：宽高、数据类型、各段长度、<code>cameraMatrix</code>、<code>distortion</code>、<code>configData</code>、<code>depthData</code>、<code>imageData</code>。<code>EpicRaw1</code>：宽高、<code>cameraMatrix[9]</code>、<code>distortion[5]</code>、<code>cameraConfig</code>、数据类型、数据长度及深度/图像数据。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="line-scan-types"><a class="anchor" href="#line-scan-types"></a><code>LineScanStatus</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>该枚举与相机端返回的阶段字符串一一对应：</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 28.5714%;">
+<col style="width: 71.4286%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">枚举值</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Idle</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">服务空闲，尚未开始线扫且没有最近一次结果。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Starting</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">正在校验配置并启动扫描设备。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>WaitingForConnection</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">设备已启动，等待 SDK 建立线扫 WebSocket。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Streaming</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">WebSocket 已连接，正在采集并传输数据。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Finalizing</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">采集已结束，正在整理本次线扫数据。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Saving</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">正在合并条带并生成、发布 EpicRaw。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Completed</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">线扫及 EpicRaw 处理均已成功完成。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Stopping</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">正在响应主动停止请求。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Stopped</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">已被主动停止，未自然完成。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Failed</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">启动、传输、收尾或保存阶段失败。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Unknown</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SDK 收到了当前版本尚未识别的状态名称。</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>stopLineScan</code> 的 <code>statusHex</code> 出参为服务端停止状态码的十六进制字符串。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="stream2d-types"><a class="anchor" href="#stream2d-types"></a>Stream2D 类型</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 66.6668%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">类型/字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Stream2DStatus.isStreaming</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bool</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">是否存在活动流。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>peerCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">活动 peer 数量。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cameraCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">参与推流的图源数。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Stream2DWebRtcOfferResult.peerId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">相机分配的 peer ID。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>answerSdp</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">WebRTC Answer SDP。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Stream2DRtcSessionOptions.fps</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">请求帧率，默认 60。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cameraIndex</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">图源索引，默认 0。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Stream2DRtcFrame.frameIndex</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">从 1 开始的帧序号。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>timestamp</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>uint32_t</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RTP 时间戳。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>payloadType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RTP payload type。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>codec</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">编码名称，Stream2D 为 H264。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>sample</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::vector&lt;uint8_t&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">相机输出的 H264 Annex-B 编码数据，不解码、不重新编码。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Stream2DRtcSession::frameCount()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">当前已交付给回调的帧数。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Stream2DRtcSession::peerId()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">本会话的 peer ID。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Stream2DRtcSession::isRunning()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bool</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">本地 RTC 会话是否仍在运行。</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="intrinsic-calibration-types"><a class="anchor" href="#intrinsic-calibration-types"></a>内参标定 JSON</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>IntrinsicIdentifyBoardResult</code>：<code>boardType</code>、<code>boardHint</code>、<code>previewImages</code>。<code>previewImages</code> 中每个对象包含 <code>dataUri: string</code>（可直接作为图片 <code>src</code> 的 Data URI 或相对 URL）、<code>name: string</code>（图像来源标识）、<code>width: int</code> 和 <code>height: int</code>（像素尺寸）。</p>
+</div>
+<div class="paragraph">
+<p><code>IntrinsicAddCalibImageResult</code>：<code>detectSuccess</code>、<code>pairIndex</code>、<code>pairCount</code>、<code>boardPose=[tx,ty,tz,qx,qy,qz,qw]</code>（相机坐标系，平移单位 mm，估计失败时为 <code>null</code>）、<code>boardTiltAngle</code>（度）、<code>boardTiltWarning</code>、<code>previewImages</code>。<code>IntrinsicRemoveCalibImageResult</code>：<code>removedIndex</code>、<code>pairCount</code>。</p>
+</div>
+<div class="paragraph">
+<p><code>IntrinsicCalculateResult</code> 包含：</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>cameraParameters</code>、<code>parameterErrors</code>：<code>DepthSrc1 → DepthSrc2</code> 的扁平算法结果和误差。</p>
+</li>
+<li>
+<p><code>colorCameraParameters</code>、<code>colorParameterErrors</code>：<code>BinoWithColor</code> 的 <code>DepthSrc1 → TextureSrc</code> 扁平算法结果和误差，其他机型为 <code>null</code>。</p>
+</li>
+<li>
+<p><code>cameraParametersConfig</code>：与 <code>CameraParameters.json</code> 对应的完整配置，是唯一允许传给 <code>setCameraIntrinsicParameters</code> 的计算结果。</p>
+</li>
+<li>
+<p><code>stereoRms</code>、<code>colorStereoRms</code>、<code>shouldWarnRms</code>：深度 RMS、可选彩色 RMS，以及任一 RMS 是否超过安全阈值。</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><code>cameraParameters</code> 包含图像宽高，当前、主、从相机的 3×3 相机矩阵和 5 个畸变系数，以及 3×3 本质矩阵 <code>E</code>、3×3 基础矩阵 <code>F</code>、主相机到从相机的 3×3 旋转矩阵 <code>R</code> 和三维平移向量 <code>T</code>（mm）。<code>parameterErrors</code> 包含总体主/从/立体误差和每个姿态的主/从误差。</p>
+</div>
+<div class="sect2">
+<h3 id="camera-parameters-config"><a class="anchor" href="#camera-parameters-config"></a><code>CameraParametersConfig</code></h3>
+<div class="paragraph">
+<p><code>cameraParametersConfig</code> JSON 通过 <code>json.get&lt;TFTech::CameraParametersConfig&gt;()</code> 转为 SDK 强类型对象。写入接口只接受该类型，不接受 <code>nlohmann::json</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 22.2222%;">
+<col style="width: 22.2222%;">
+<col style="width: 55.5556%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>reconstructorType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ReconstructorType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Mono</code>、<code>BinoWithoutColor</code>、<code>BinoWithColor</code> 或 <code>Unknown</code>。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>transformationReference</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TransformationReference</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">外参参考源：<code>DepthSrc1</code>、<code>DepthSrc2</code> 或 <code>TextureSrc</code>。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depthSrc1</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IntrinsicParams</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">第一台深度相机，始终存在。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depthSrc2</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::optional&lt;IntrinsicParams&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">第二台深度相机或当前重建器所需的第二路参数；所有受支持的重建类型在写入时都必须存在。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureSrc</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::optional&lt;IntrinsicParams&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">独立彩色相机；<code>BinoWithColor</code> 必须存在。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>swingLineScanLightPlaneParams</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::optional&lt;SwingLineScanLightPlaneParams&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">摆动线扫光平面参数；写入内参时保持该值不变。</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>IntrinsicParams</code> 使用 <code>width</code>、<code>height</code>、3×3 相机矩阵 <code>cameraMatrix</code>、5 个畸变系数 <code>distortion</code>、3×3 旋转矩阵 <code>rotation</code> 和三维平移向量 <code>translation</code>。数组按行存储，旋转采用列向量右乘；平移单位为 mm。<code>SwingLineScanLightPlaneParams</code> 包含 <code>startAngle</code>、<code>endAngle</code> 和 <code>lightPlaneParams</code>。</p>
+</div>
+<div class="paragraph">
+<p>Laser M V3 的 <code>depthSrc1/depthSrc2</code> 分别来自 <code>cameraParameters</code> 的主/从相机，<code>textureSrc</code> 来自 <code>colorCameraParameters</code> 的从相机。</p>
+</div>
+<div id="intrinsic-accuracy" class="paragraph">
+<p><code>IntrinsicAccuracyCheckResult</code> 包含结构化预览图 <code>previewImages</code>、<code>boardTypeDetected</code>、<code>boardHint</code>、<code>boardPose=[tx,ty,tz,qx,qy,qz,qw]</code>（相机坐标系，mm）、<code>boardPositionValid</code>、深度/彩色标定板尺寸比、平均/最大像素误差、对应通过标志、<code>stereoMetricsValid</code>、<code>boardTiltAngle</code>、<code>boardTiltWarning</code>。</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="hand-eye-types"><a class="anchor" href="#hand-eye-types"></a>手眼标定类型</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>boardPoseArray</code> 固定为 <code>[x,y,z,qx,qy,qz,qw]</code>，位置单位 mm。<code>robotPose</code> 由 <code>RobotParameters</code> 决定：欧拉角、固定角和旋转向量使用 <code>[x,y,z,rx,ry,rz]</code>，四元数使用 <code>[x,y,z,qx,qy,qz,qw]</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 22.2222%;">
+<col style="width: 22.2222%;">
+<col style="width: 55.5556%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">主要字段</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RobotInfo</code> / <code>RobotLibrary</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">品牌到型号列表的映射</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">机器人库完整型号信息；<code>RobotInfo</code> 继承 <code>RobotParameters</code>，并包含 ID、图片、创建时间、姿态字段反转标志、IK 类型、负载和臂展。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RobotParameters</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>brand</code>、<code>model</code>、<code>rotationType</code>、<code>eulerType</code>、<code>angleUnit</code>、<code>axisNumber</code>、<code>marks</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">机器人位姿表达规则；必须先通过 <code>configureHandEyeCalibration</code> 写入相机。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HandEyeInstallationType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>EyeToHand</code>、<code>EyeInHand</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">相机固定在外部或安装在机器人末端。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HandEyePoint</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code>、<code>boardPoseArray</code>、<code>robotPose</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">同一采集时刻的一组配对位姿。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HandEyeSpecialParams</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>offset</code>、<code>boardPosition</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3/4 轴机器人计算所需补充参数。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HandEyeCalculationRequest</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>installationType</code>、<code>handEyePoints</code>、<code>specialParams</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">手眼标定计算请求。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CalibrationBoardPose</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>boardPoseArray</code>、<code>cameraInternalAccuracy</code>、<code>gridSize</code>、图像与点云 Base64</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">一次标定板检测结果。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HandEyeCalibrationResult</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>success</code>、<code>pose</code>、<code>matrix4x4</code>、<code>hecError</code>、<code>hecWarnData</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>hecError</code> 为 <code>rotMean/rotMax/transMean/transMax</code>，分别对应旋转和位移的平均/最大误差。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HandEyeCalibrationData</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>installationType</code>、<code>robotParams</code>、历史点、补充参数、计算结果</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">相机当前保存的手眼上下文，仅用于查询状态。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RobotAccuracyRequest</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>directionPoseData</code>、<code>direction</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">起点/终点均包含配对位姿和相机内部精度；方向为 <code>x/y/z</code>。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RobotAccuracyResult</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">距离、位置精度、三轴姿态精度</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">机器人移动精度结果。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HandEyeAccuracyRequest</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>boardPoseArray</code>、<code>robotPose</code>、<code>gridSize</code>、<code>directionZ</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">使用已保存手眼结果的验证请求。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HandEyeAccuracyResult</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">转换位姿、相机/机器人矩阵及平面诊断坐标</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">标定板在机器人坐标系中的转换与验证结果。</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="alignment.html">C++ — 纹理对齐与补全</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

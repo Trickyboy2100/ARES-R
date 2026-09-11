@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>图、节点、子图 :: Atom SDK 开发手册</title>
+    <link rel="prev" href="what-is-atom-sdk.html">
+    <link rel="next" href="graph-vs-runtime.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          在线产品文档        </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="输入关键词搜索"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              仅本手册
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            切换手册
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK 开发手册</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          下载中心
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          官网
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            简体中文
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK 开发手册</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">欢迎</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">快速开始</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">快速开始</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">示例样本</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">入门使用</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK 入门使用</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService 入门使用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService 入门使用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService 入门使用</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">使用指南</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">选择合适的 Service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">图与节点操作</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">错误处理与排查</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">常见问题解答</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">基础概念</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="what-is-atom-sdk.html">什么是 Atom SDK</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="graph-node-subgraph.html">图、节点、子图</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="graph-vs-runtime.html">Graph 与 Runtime 的区别</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="timestamp.html">Timestamp 是什么</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="runtime-frame.html">运行时输入帧（RuntimeFrame / RuntimePassiveBinoFrame）</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="point-cloud-protocol.html">点云类型输入输出的二进制协议</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="param-binding.html">参数类型与绑定名</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API 参考</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API 参考总览</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python 概览与安装</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/params.html">Python 参数对象</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/public_api.html">Python 公共工具 API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ 版 — 使用指南</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ 参数对象</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">Atom SDK — C# 版本</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/params.html">C# 参数对象</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK 开发手册</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK 开发手册</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK 开发手册</a></li>
+    <li>基础概念</li>
+    <li><a href="graph-node-subgraph.html">图、节点、子图</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="本页内容"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">图、节点、子图</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>理解这三个概念是使用 ATOM SDK 的基础。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_图graph"><a class="anchor" href="#_图graph"></a>图（Graph）</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>图是 ATOM 的核心组织单位。一张图由若干*节点*和它们之间的*连线*组成，描述了一套数据处理流程。</p>
+</div>
+<div class="paragraph">
+<p>你可以把图理解为一张"处理流程图"：数据从某些节点进入，经过一系列计算节点处理，最终从输出节点流出。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>[输入节点] ──→ [处理节点 A] ──→ [处理节点 B] ──→ [输出节点]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>图有一个唯一的名称（<code>graph_name</code>），SDK 的大多数操作都需要指定图名称。</p>
+</div>
+<div class="paragraph">
+<p>图的状态：</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>未打开</strong>：图存在于服务端但未加载到内存，不能编辑</p>
+</li>
+<li>
+<p><strong>已打开（编辑态）</strong>：调用 <code>open_graph</code> 后进入，可以增删节点和修改参数</p>
+</li>
+<li>
+<p><strong>运行时态</strong>：调用 <code>runtime.run_graph</code> 或 <code>graph.run_graph</code> 后进入，专用于执行，不用于编辑</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_节点node"><a class="anchor" href="#_节点node"></a>节点（Node）</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>节点是图中的计算单元。每个节点：</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>有一个*节点类型*（node_name/node_type），决定它能做什么计算</p>
+</li>
+<li>
+<p>有*输入端口*（inputs）：接收上游节点的数据</p>
+</li>
+<li>
+<p>有*输出端口*（outputs）：向下游节点发送数据</p>
+</li>
+<li>
+<p>有*初始化参数*（init_params）：加载模型等一次性配置</p>
+</li>
+<li>
+<p>有*运行参数*（run_params）：每次运行时可以变化的配置</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>节点通过 ID（<code>node_id</code>）唯一标识，这个 ID 是服务端在创建节点时分配的。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>             ┌──────────────┐
+输入端口 ──▶ │     节点     │ ──▶ 输出端口
+             │ (FilterNode) │
+             │ init_params  │
+             │  run_params  │
+             └──────────────┘</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_子图节点graphnode"><a class="anchor" href="#_子图节点graphnode"></a>子图节点（GraphNode）</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>主图里有一种特殊节点叫做*子图节点*（GraphNode）。从主图的角度来看，它是一个普通节点；但它的内部包含了一张完整的子图，有自己的节点和连线。</p>
+</div>
+<div class="paragraph">
+<p>这种嵌套结构用于封装可复用的处理逻辑。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>主图
+├── 普通节点 A
+├── 普通节点 B
+└── 子图节点 C ← 这个节点内部有一张子图
+    └── 子图内部
+        ├── 子图节点 c1
+        └── 子图节点 c2</pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_两种节点_id_的区分"><a class="anchor" href="#_两种节点_id_的区分"></a>两种节点 ID 的区分</h3>
+<div class="paragraph">
+<p>在操作子图节点时，有两层 ID 需要区分：</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 40%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">ID</th>
+<th class="tableblock halign-left valign-top">含义</th>
+<th class="tableblock halign-left valign-top">来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">主图中"子图节点 C"自身的 ID</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>client.node.create_node(CreateNodeParams(&#8230;&#8203;))</code> 或 <code>open_graph()</code> 的节点列表</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">子图*内部*某个节点（c1/c2）的 ID</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>client.graph_node.create_node(SubGraphCreateNodeParams(&#8230;&#8203;))</code> 返回</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>传错 ID 不一定报错，但会操作到错误的节点，因此务必区分好。</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_三个_service_的操作范围"><a class="anchor" href="#_三个_service_的操作范围"></a>三个 Service 的操作范围</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 33.3333%;">
+<col style="width: 50.0001%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Service</th>
+<th class="tableblock halign-left valign-top">操作范围</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GraphService</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">主图层面</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">创建/删除/打开/导出/运行整张图</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeService</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">主图中的节点</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">增删节点、连线、设参、读数据</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GraphNodeService</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">子图节点内部</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">与 NodeService 类似，但多一个 <code>graph_node_id</code> 参数</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>如果你不确定用哪个 Service，参考 <a href="../guides/how-to-choose-service.html" class="xref page">选择合适的 Service</a>。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_连线edge"><a class="anchor" href="#_连线edge"></a>连线（Edge）</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>连线描述了两个节点之间的数据流向：从"源节点的输出端口"流向"目标节点的输入端口"。</p>
+</div>
+<div class="paragraph">
+<p>连线用端口名而不是 ID 来指定端口：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeConnectionParams
+
+# 连接：节点 A 的 "output_image" 输出 → 节点 B 的 "input_image" 输入
+client.node.connect_nodes(
+    NodeConnectionParams(
+        "my_graph",
+        output_node_id=node_a_id,       # 发送数据的节点
+        output_port_name="output_image",
+        input_node_id=node_b_id,        # 接收数据的节点
+        input_port_name="input_image",
+    )
+)</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><code>input_node_id</code> 是接收数据的节点（数据流入），<code>output_node_id</code> 是发送数据的节点（数据流出）。字面意思可能与直觉相反，请仔细确认。</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_在_sdk_里怎么判断"><a class="anchor" href="#_在_sdk_里怎么判断"></a>在 SDK 里怎么判断</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>如果你正在做的是：</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>新建一张图</p>
+</li>
+<li>
+<p>往主图里放节点</p>
+</li>
+<li>
+<p>连接主图里的节点</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>那就先用 <code>graph</code>、<code>node</code>。</p>
+</div>
+<div class="paragraph">
+<p>如果你正在做的是：</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>打开某个 graph node 的内部</p>
+</li>
+<li>
+<p>在子图里建节点</p>
+</li>
+<li>
+<p>在子图里连线</p>
+</li>
+<li>
+<p>运行子图</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>那就用 <code>graph_node</code>。</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="what-is-atom-sdk.html">什么是 Atom SDK</a></span>
+  <span class="next"><a href="graph-vs-runtime.html">Graph 与 Runtime 的区别</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

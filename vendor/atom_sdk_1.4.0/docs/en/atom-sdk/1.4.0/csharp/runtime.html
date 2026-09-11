@@ -1,0 +1,2973 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>RuntimeService（C#） :: Atom SDK Developer Guide</title>
+    <link rel="prev" href="graph_node.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          Online Product Documentation
+                  </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="Search documentation"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              This manual only
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            Switch manual
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK Developer Guide</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          Download Center
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          Official Website
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            English
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK Developer Guide</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">welcome</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">quick start</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">quick start</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">sample sample</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Getting Started</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK Getting Started</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService Getting Started</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService Getting Started</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService Getting Started</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">User Guide</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">Select the appropriate Service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">Graph and node operations</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">Error handling and troubleshooting</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">FAQ</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">basic concepts</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/what-is-atom-sdk.html">What is Atom SDK</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-node-subgraph.html">graph, node, subgraph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-vs-runtime.html">The difference between Graph and Runtime</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/timestamp.html">What is Timestamp</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/runtime-frame.html">Runtime input frames (RuntimeFrame / RuntimePassiveBinoFrame)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/point-cloud-protocol.html">Binary protocol for point cloud type input and output</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/param-binding.html">Parameter types and binding names</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API Reference</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API Reference Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python Overview and Installation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/params.html">Python parameter object</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/public_api.html">Python Public Utility API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ version — User Guide</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ parameter object</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="overview.html">Atom SDK — C# Version</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="params.html">C# Parameter object</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK Developer Guide</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK Developer Guide</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK Developer Guide</a></li>
+    <li>API Reference</li>
+    <li>C# SDK</li>
+    <li><a href="runtime.html">RuntimeService（C#）</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="On this page"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">RuntimeService（C#）</h1>
+<div class="sect1">
+<h2 id="_service_introduction"><a class="anchor" href="#_service_introduction"></a>Service introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>RuntimeService</code> is a service for the inference engine (Runtime) phase* in Atom SDK. Different from the editor stage (GraphService / NodeService), the graph in the Runtime stage has been compiled and optimized, and no node-by-node editing is required - the caller directly submits ordinary frame data (image + point cloud) or passive binocular EPICRAW3 data to the graph, and can also set shared parameters and obtain binding output results. The service also supports running a single node (no graph building required), which is suitable for fast inference and batch processing scenarios. All methods are asynchronous.</p>
+</div>
+<div class="paragraph">
+<p><strong>namespace</strong>: <code>AtomSdk.Services</code></p>
+</div>
+<div class="paragraph">
+<p><strong>Entrance</strong>: <code>client.Runtime</code></p>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_applicable_scenarios"><a class="anchor" href="#_applicable_scenarios"></a>Applicable scenarios</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Load the graph configured in the editor stage into the Runtime environment and run it;</p>
+</li>
+<li>
+<p>Submit ordinary camera data (image + point cloud + camera internal and external parameters) or passive binocular EPICRAW3 data to the graph for inference;</p>
+</li>
+<li>
+<p>Read inference results by binding name (JSON value or point cloud binary);</p>
+</li>
+<li>
+<p>Dynamically adjust shared parameters (<code>SetSharedParamsAsync</code>) or operating parameters (<code>SetRunParamsAsync</code>);</p>
+</li>
+<li>
+<p>Run a single node directly without building a graph, and give priority to <code>RunSingleNodeNoGraphParsedAsync</code> that automatically parses the output;</p>
+</li>
+<li>
+<p>Obtain node parameter policy information and finely control reasoning behavior in the Runtime stage.</p>
+</li>
+</ul>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_recommended_calling_order"><a class="anchor" href="#_recommended_calling_order"></a>Recommended calling order</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">LoadGraphAsync(graphName)          (Load image to Runtime)
+        ↓
+GetMetaInfoAsync(graphName)        (Optional:Obtain the element information to confirm that the loading is successful)
+        ↓
+SetSharedParamsAsync(...)          (Optional:Set shared parameters)
+SetRunParamsAsync(...)             (Optional:Set operating parameters)
+        ↓
+RunGraphAsync(RuntimeRunParams)    (Submit input data and run)
+        ↓
+GetBindedOutputValueAsync(...)     (read JSON output)
+GetBindedPointCloudParsedAsync(...)(Recommended:Read and parse point cloud output)
+GetBindedPointCloudAsync(...)      (Optional:Read point cloud binary output)
+        ↓
+ReleaseGraphAsync(graphName)       (release Runtime Graphic resources)</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_run_graph_two_input_modes"><a class="anchor" href="#_run_graph_two_input_modes"></a>run_graph Two input modes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>RunGraphAsync</code> selects the input structure based on <code>RuntimeRunParams</code>:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">mode</th>
+<th class="tableblock halign-left valign-top">Construction method</th>
+<th class="tableblock halign-left valign-top">Input content</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Normal mode</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>new RuntimeRunParams(graphName, frames)</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>One or more <code>RuntimeFrame</code>, each frame contains the complete EPICRAW + <code>Cam2Base</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Passive binocular mode</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Recommended <code>RuntimeRunParams.PassiveBinoFromFile/Bytes/Images(&#8230;&#8203;)</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>a <code>RuntimePassiveBinoFrame</code>, containing the complete EPICRAW3 + <code>Cam2Base</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Do not mix the two modes. Normal mode can encapsulate EPICRAW2 or standard layout EPICRAW3; passive binocular mode must use <code>RuntimePassiveBinoFrame</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_normal_mode_runtimeframe_model"><a class="anchor" href="#_normal_mode_runtimeframe_model"></a>Normal mode: RuntimeFrame model</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In normal mode, <code>RunGraphAsync</code> accepts <code>IReadOnlyList&lt;RuntimeFrame&gt;</code>. When EPICRAW bytes or files already exist:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using AtomSdk.Models;
+
+var bytesFrame = RuntimeFrame.FromBytes(epicRawBytes, cam2BaseJson, roi);
+var fileFrame = RuntimeFrame.FromFile("frame.epicraw", cam2BaseJson, roi);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Generate from original array:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var points = new RuntimePointData(pointValues, width, height);
+var image = new RuntimeImageData(imageBytes, width, height);
+var frame = RuntimeFrame.FromData(points, image, cam2BaseJson, intrinsic, distortion);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When the version is not specified, ordinary internal parameters/distortions generate EPICRAW2; when <code>cameraParams</code> contains <code>TextureSrc</code>, <code>DepthSrc1</code> or <code>DepthSrc2</code>, EPICRAW3 is generated. The standard EPICRAW3 only writes <code>Depth + TextureBGR</code>, not the full PointCloud.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_passive_binocular_mode_runtimepassivebinoframe"><a class="anchor" href="#_passive_binocular_mode_runtimepassivebinoframe"></a>Passive binocular mode: RuntimePassiveBinoFrame</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If the <code>EpicProInput</code> node in the diagram is configured as <code>passive_bino</code>, please submit a complete copy of the EPICRAW3 original bytes. The server will parse three images, internal parameters, distortion and <code>passive_bino_params</code> from EPICRAW3.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var result = await client.Runtime.RunGraphAsync(
+    RuntimeRunParams.PassiveBinoFromFile(
+        "detection_graph",
+        "/data/passive_bino.epicraw",
+        cam2BaseJson));</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If the business layer has obtained EPICRAW3 bytes, <code>RuntimeRunParams.PassiveBinoFromBytes(&#8230;&#8203;)</code> can be used. If the business layer gets three original pictures, it can use <code>RuntimeRunParams.PassiveBinoFromImages(&#8230;&#8203;)</code>, and the picture is represented by <code>new RuntimePassiveBinoImage(data, width, height, matType)</code>; <code>matType</code> is OpenCV Mat type encoding, such as <code>CV_8UC1=0</code>, <code>CV_16UC1=2</code>, <code>CV_8UC3=16</code>.
+<code>passiveBinoParams</code> of <code>PassiveBinoFromImages(&#8230;&#8203;)</code> needs to contain <code>DepthSrc1</code>, <code>DepthSrc2</code>, <code>TextureSrc</code> and metadata, each of which must contain the following four fields:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var cameraParams = new Dictionary&lt;string, object?&gt;
+{
+    ["CameraMatrix"] = new[]
+    {
+        2113.997971632298, 0, 1956.222038925553,
+        0, 2113.7299751270057, 1505.0473199581195,
+        0, 0, 1,
+    },
+    ["CameraDistortion"] = new[]
+    {
+        0.049901632334, -0.037810281265, -0.00048319461,
+        -0.000276258172, -0.026886293015,
+    },
+    ["CameraRotation"] = new[]
+    {
+        0.9995132330503337, -0.005059159488191983, -0.030784766728731865,
+        0.004951704878090689, 0.9999813828533568, -0.003565748937897527,
+        0.030802233296787017, 0.003411576169582241, 0.999519676430619,
+    },
+    ["CameraTranslation"] = new[]
+    {
+        -25.837377992238334, -0.6852264771262435, -4.372034519324568,
+    },
+};
+
+var passiveBinoParams = new Dictionary&lt;string, object?&gt;
+{
+    ["DepthSrc1"] = cameraParams,
+    ["DepthSrc2"] = cameraParams,
+    ["TextureSrc"] = cameraParams,
+};</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_interface_detailed_explanation"><a class="anchor" href="#_interface_detailed_explanation"></a>Interface detailed explanation</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_loadgraphasync"><a class="anchor" href="#_loadgraphasync"></a>LoadGraphAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; LoadGraphAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; LoadGraphAsync&lt;T&gt;(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// Strongly typed convenience version
+Task&lt;RuntimeGraphReference&gt; LoadGraphInfoAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Load the specified graph into the Runtime inference environment (convert from editor graph to executable state).</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameters</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The name of the image to be loaded</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Cancellation token, optional</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Return value</strong>: <code>Task&lt;JsonElement&gt;</code>, key fields:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">field</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Figure unique ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Picture name</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+// Load image to Runtime
+var graphRef = await client.Runtime.LoadGraphInfoAsync("detection_graph");
+Console.WriteLine($"Figure has been loaded into Runtime,ID: {graphRef.GraphId}");
+Console.WriteLine($"Request status: {graphRef.Status}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_listgraphsasync"><a class="anchor" href="#_listgraphsasync"></a>ListGraphsAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; ListGraphsAsync(
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; ListGraphsAsync&lt;T&gt;(
+    CancellationToken cancellationToken = default)
+
+// Strongly typed convenience version
+Task&lt;RuntimeGraphSummary[]&gt; ListGraphSummariesAsync(
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>PURPOSE</strong>: List summary information for all loaded graphs in the Runtime environment.</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameters</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Cancellation token, optional</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Return value</strong>: <code>Task&lt;JsonElement&gt;</code>, array of loaded graphs.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+var summaries = await client.Runtime.ListGraphSummariesAsync();
+Console.WriteLine($"Runtime CCP {summaries.Length} pictures");
+foreach (var s in summaries)
+{
+    Console.WriteLine($"  - {s.GraphName}");
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getallnodesinfoasync"><a class="anchor" href="#_getallnodesinfoasync"></a>GetAllNodesInfoAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; GetAllNodesInfoAsync(
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; GetAllNodesInfoAsync&lt;T&gt;(
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Get the description information (node ​​name, port definition, etc.) of all available node types in the Runtime environment.</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameters</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Cancellation token, optional</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Return value</strong>: <code>Task&lt;JsonElement&gt;</code>, node type definition array.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+var nodes = await client.Runtime.GetAllNodesInfoAsync();
+foreach (var node in nodes.EnumerateArray())
+{
+    Console.WriteLine(node.GetProperty("nodeName").GetString());
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_releasegraphasync"><a class="anchor" href="#_releasegraphasync"></a>ReleaseGraphAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; ReleaseGraphAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; ReleaseGraphAsync&lt;T&gt;(
+    string graphName,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Unload the graph from the Runtime environment and release related resources (model, memory, etc.).</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameters</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Picture name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Cancellation token, optional</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Return value</strong>: <code>Task&lt;JsonElement&gt;</code>, operation status information.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Runtime.ReleaseGraphAsync("detection_graph");
+Console.WriteLine("Picture has been taken from Runtime Uninstall");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getmetainfoasync"><a class="anchor" href="#_getmetainfoasync"></a>GetMetaInfoAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; GetMetaInfoAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; GetMetaInfoAsync&lt;T&gt;(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// Strongly typed convenience version
+Task&lt;RuntimeMetaInfo&gt; GetMetaInfoModelAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Get the meta-information of the Runtime graph (input port configuration, output binding configuration, graph structure description, etc.).</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameters</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Picture name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Cancellation token, optional</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Return value</strong>: <code>Task&lt;JsonElement&gt;</code>, primitive information.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+var meta = await client.Runtime.GetMetaInfoModelAsync("detection_graph");
+Console.WriteLine($"Graph element information: {meta}");
+Console.WriteLine($"Request status: {meta.Status}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getbindedoutputvalueasync"><a class="anchor" href="#_getbindedoutputvalueasync"></a>GetBindedOutputValueAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; GetBindedOutputValueAsync(
+    BindingRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; GetBindedOutputValueAsync&lt;T&gt;(
+    BindingRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Read the current JSON value of an output port of the graph through the binding name (called after <code>RunGraphAsync</code>).</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameters</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Picture name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>bindingName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Binding name of the output port (set in the editor phase via <code>SetBindingNameAsync</code>)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Cancellation token, optional</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Return value</strong>: <code>Task&lt;JsonElement&gt;</code>, the current value of this binding output.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+// Read named "result" binding output
+var value = await client.Runtime.GetBindedOutputValueAsync(new BindingRef("detection_graph", "result"));
+Console.WriteLine($"Test results: {value}");
+
+// Generic version:Automatically deserialize to custom type
+// var detection = await client.Runtime.GetBindedOutputValueAsync&lt;DetectionResult&gt;(
+//     new BindingRef("detection_graph", "result"));</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getbindedoutputsinfoasync"><a class="anchor" href="#_getbindedoutputsinfoasync"></a>GetBindedOutputsInfoAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; GetBindedOutputsInfoAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; GetBindedOutputsInfoAsync&lt;T&gt;(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// Strongly typed convenience version
+Task&lt;RuntimeBindedOutputsInfo&gt; GetBindedOutputsInfoModelAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Get the information list (port name, binding name, data type, etc.) of all bound output ports in the graph, usually used to automatically discover the output structure.</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameters</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Picture name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Cancellation token, optional</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Return value</strong>: <code>Task&lt;JsonElement&gt;</code>, binding output information list.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+var outputsInfo = await client.Runtime.GetBindedOutputsInfoModelAsync("detection_graph");
+Console.WriteLine($"Bind output quantity: {outputsInfo.Outputs?.Length ?? 0}");
+foreach (var output in outputsInfo.Outputs ?? Array.Empty&lt;object&gt;())
+{
+    Console.WriteLine($"  - {output}");
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getbindedpointcloudparsedasync"><a class="anchor" href="#_getbindedpointcloudparsedasync"></a>GetBindedPointCloudParsedAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">Task&lt;IReadOnlyList&lt;ParsedPointCloud&gt;&gt; GetBindedPointCloudParsedAsync(
+    PointCloudRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Directly read and parse runtime-bound point clouds. It is recommended to use it first.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var clouds = await client.Runtime.GetBindedPointCloudParsedAsync(
+    new PointCloudRef("detection_graph", "pointcloud_output", pointDim: 3));
+Console.WriteLine($"point cloud shape: {string.Join(" x ", clouds[0].Shape)}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getbindedpointcloudasync"><a class="anchor" href="#_getbindedpointcloudasync"></a>GetBindedPointCloudAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">Task&lt;byte[]&gt; GetBindedPointCloudAsync(
+    BindingRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Read the point cloud binary data of a certain output port of the graph through the binding name, and return the original <code>byte[]</code> (suitable for point cloud result output).</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameters</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Picture name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>bindingName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Binding name of the point cloud output port</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Cancellation token, optional</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Return value</strong>: <code>Task&lt;byte[]&gt;</code>, point cloud raw binary data.
+Note:
+* <code>GetBindedPointCloudAsync(&#8230;&#8203;)</code> returns the original <code>byte[]</code> on the server side
+* The header information of <code>Runtime/GetBindedPointCloud</code> does not contain the dimensions of each point.
+* In ordinary scenarios, it is recommended to use the above <code>GetBindedPointCloudParsedAsync(new PointCloudRef(&#8230;&#8203;, pointDim: 3))</code> first.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.IO;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+byte[] pcdBytes = await client.Runtime.GetBindedPointCloudAsync(
+    new BindingRef("detection_graph", "pointcloud_output"));
+Console.WriteLine($"raw bytes: {pcdBytes.Length}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_setsharedparamsasync"><a class="anchor" href="#_setsharedparamsasync"></a>SetSharedParamsAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; SetSharedParamsAsync(
+    RuntimeParamsUpdate paramsData,
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; SetSharedParamsAsync&lt;T&gt;(
+    RuntimeParamsUpdate paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Set the shared parameters of the graph (global parameters accessible to all nodes) in the Runtime stage, usually called after <code>LoadGraphAsync</code> and before <code>RunGraphAsync</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameters</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Picture name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>object</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Shared parameter object (anonymous object, dictionary or custom class can be used)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Cancellation token, optional</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Return value</strong>: <code>Task&lt;JsonElement&gt;</code>, operation status information.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Runtime.SetSharedParamsAsync(new RuntimeParamsUpdate("detection_graph", new
+{
+    confidence_threshold = 0.5,
+    nms_threshold = 0.45,
+    max_detections = 100
+}));
+
+Console.WriteLine("Shared parameters have been set");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_setrunparamsasync"><a class="anchor" href="#_setrunparamsasync"></a>SetRunParamsAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; SetRunParamsAsync(
+    RuntimeParamsUpdate paramsData,
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; SetRunParamsAsync&lt;T&gt;(
+    RuntimeParamsUpdate paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Dynamically update the operating parameters of the graph in the Runtime stage (can be modified before each <code>RunGraphAsync</code>, overwriting the default configuration).</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameters</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.GraphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Picture name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.ParamsData</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>object</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Run parameter object</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Cancellation token, optional</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Return value</strong>: <code>Task&lt;JsonElement&gt;</code>, operation status information.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+// Dynamically modify operating parameters(No need to reload graph)
+await client.Runtime.SetRunParamsAsync(new RuntimeParamsUpdate("detection_graph", new
+{
+    batch_size = 4,
+    use_fp16 = true
+}));
+
+Console.WriteLine("Operating parameters have been updated");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_rungraphasync"><a class="anchor" href="#_rungraphasync"></a>RunGraphAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; RunGraphAsync(
+    RuntimeRunParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; RunGraphAsync&lt;T&gt;(
+    RuntimeRunParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// Strongly typed convenience version
+Task&lt;RuntimeRunGraphResult&gt; RunGraphResultAsync(
+    RuntimeRunParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Submit input data to the graph and trigger inference. This is the core interface in Runtime mode. Normal mode submits image + point cloud + camera parameters, and passive binocular mode submits complete EPICRAW3. Data is transferred efficiently in a binary protocol (<code>application/octet-stream</code>).</p>
+</div>
+<div class="paragraph">
+<p><strong>Note</strong>:
+When using runtime.run_graph, the current version requires that there are <code>EpicPro输入</code> or <code>EpicPro输入(单组数据)</code> nodes and <code>EpicPro输出</code> nodes in the graph. Otherwise, it cannot run and an error will be reported.</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameters</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.GraphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Picture name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.Frames</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyList&lt;RuntimeFrame&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Normal mode input; each frame contains image, point cloud and camera parameters</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.RunMode</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Normal mode is <code>"others"</code>; Passive binocular mode is <code>"passive_bino"</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.PassiveBinoFrame</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>RuntimePassiveBinoFrame?</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Passive binocular mode input; no need to transmit in normal mode</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Cancellation token, used by the caller to actively cancel</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Mode selection</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">mode</th>
+<th class="tableblock halign-left valign-top">Construction method</th>
+<th class="tableblock halign-left valign-top">Required data</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Normal mode</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>new RuntimeRunParams(graphName, frames)</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Frames</code> contains at least one <code>RuntimeFrame</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Passive binocular mode</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>RuntimeRunParams.PassiveBinoFromFile/Bytes/Images(&#8230;&#8203;)</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PassiveBinoFrame.EpicRaw3</code> and <code>PassiveBinoFrame.Cam2Base</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Normal mode RuntimeFrame field description</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">field</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Is it required?</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>EpicRaw</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>byte[]</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Required (cannot be empty)</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Full EPICRAW raw bytes</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Cam2Base</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>object?</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Required</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Camera to base coordinate system transformation, rotation vector form, <code>[x, y, z, rx, ry, rz]</code> with length 6 (translation + Rodrigues rotation vector); the server currently only supports this form, and does not support matrices. If the length is incorrect, <code>ArgumentException</code> will be thrown</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Roi</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>object?</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Optional</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>region of interest; <code>cam2ROIFrame</code> also only supports rotation vector form with length 6</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>If there are EPICRAW bytes/ files, use <code>RuntimeFrame.FromBytes(&#8230;&#8203;)</code> / <code>FromFile(&#8230;&#8203;)</code>; if there are only original images and point clouds, use <code>RuntimeFrame.FromData(&#8230;&#8203;)</code> to encode locally and receive <code>RuntimePointData</code>, <code>RuntimeImageData</code>, camera intrinsic parameters/distortion (optional <code>cameraParams</code> extended parameters).</p>
+</div>
+<div class="paragraph">
+<p><strong>Passive binocular mode RuntimePassiveBinoFrame field description</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">field</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Is it required?</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>EpicRaw3</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>byte[]</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Required (cannot be empty)</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Full EPICRAW3 raw bytes</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Cam2Base</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>object?</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Required</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Camera to base coordinate system transformation, rotation vector form, <code>[x, y, z, rx, ry, rz]</code> with length 6 (translation + Rodrigues rotation vector); the server currently only supports this form, and does not support matrices</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Roi</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>object?</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Optional</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Area of Interest</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>When using <code>PassiveBinoFromImages(&#8230;&#8203;)</code>, each image is represented by <code>RuntimePassiveBinoImage</code>:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">field</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Data</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>byte[]</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Raw pixel bytes</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Width</code> / <code>Height</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>int</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Image width and height</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>MatType</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>int</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>OpenCV Mat type, such as <code>CV_8UC1=0</code>, <code>CV_16UC1=2</code>, <code>CV_8UC3=16</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Return value</strong>: <code>Task&lt;JsonElement&gt;</code>, the summary result after the inference is completed (the specific fields are determined by the graph structure).</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+// Already complete EPICRAW File/bytes time,direct encapsulation:
+byte[] epicRawBytes = await File.ReadAllBytesAsync("/data/camera/frame_001.epicraw");
+
+var frames = new List&lt;RuntimeFrame&gt;
+{
+    // cam2Base The server currently only supports rotation vector form:[x, y, z, rx, ry, rz](Pan + Rodrigues rotation vector)
+    RuntimeFrame.FromBytes(epicRawBytes, cam2Base: new[] { 0.0, 0.0, 0.5, 0.0, 0.0, 0.0 })
+};
+
+// Run chart(20seconds timeout)
+using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(20));
+var result = await client.Runtime.RunGraphResultAsync(
+    new RuntimeRunParams("detection_graph", frames), cts.Token);
+Console.WriteLine($"Reasoning completed,Request status: {result.Status}");
+
+// Read binding output
+var detections = await client.Runtime.GetBindedOutputValueAsync(new BindingRef("detection_graph", "result"));
+Console.WriteLine($"Test results: {detections}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_setgraphbindingdataasync"><a class="anchor" href="#_setgraphbindingdataasync"></a>SetGraphBindingDataAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; SetGraphBindingDataAsync(
+    RuntimeBindingDataUpdate paramsData,
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; SetGraphBindingDataAsync&lt;T&gt;(
+    RuntimeBindingDataUpdate paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Set the binding input data of the graph in batches (through binding name mapping), which is used to inject data into the input port of the graph.</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameters</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.GraphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Picture name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.BindingData</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, object?&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Binding name to data mapping dictionary</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Cancellation token, optional</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Return value</strong>: <code>Task&lt;JsonElement&gt;</code>, operation status information.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Runtime.SetGraphBindingDataAsync(new RuntimeBindingDataUpdate("detection_graph",
+    new Dictionary&lt;string, object?&gt;
+    {
+        ["input_width"] = 640,
+        ["input_height"] = 480,
+        ["class_filter"] = "person",
+    }));
+
+Console.WriteLine("Binding input data is set");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getnodeparamsinfowithstrategyasync"><a class="anchor" href="#_getnodeparamsinfowithstrategyasync"></a>GetNodeParamsInfoWithStrategyAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; GetNodeParamsInfoWithStrategyAsync(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; GetNodeParamsInfoWithStrategyAsync&lt;T&gt;(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// Strongly typed convenience version
+Task&lt;RuntimeNodeParamsInfoWithStrategy&gt; GetNodeParamsInfoWithStrategyModelAsync(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Obtain node information that supports policy parameters in the Runtime diagram and its policy configuration (including parameter value range, default value, adjustable policy, etc.).</p>
+</div>
+<div class="paragraph">
+<p><strong>Support scope</strong>: Currently only supports <code>PoseListFilter</code>, <code>PickPointFilter</code>,
+<code>PoseListSorterInXOY</code>、<code>PickPointSorterInXOY</code>、<code>PickPointSorterNew</code>、
+<code>PoseListSorter</code> These 6 types of nodes.
+<code>paramsData</code> in the return value is usually used as the input template of <code>SetParamsInStrategyAsync(&#8230;&#8203;)</code>:
+First modify the fields that need to be adjusted, and then return the complete <code>paramsData</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameters</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.GraphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Picture name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.NodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Node ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Cancellation token, optional</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Return value</strong>: <code>Task&lt;JsonElement&gt;</code>, node parameter policy information.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+var strategyInfo = await client.Runtime.GetNodeParamsInfoWithStrategyModelAsync(
+    new NodeRef("detection_graph", "detect-node-001"));
+Console.WriteLine($"Parameter strategy information: {strategyInfo}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_setparamsinstrategyasync"><a class="anchor" href="#_setparamsinstrategyasync"></a>SetParamsInStrategyAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; SetParamsInStrategyAsync(
+    RuntimeStrategyParamsUpdate paramsData,
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; SetParamsInStrategyAsync&lt;T&gt;(
+    RuntimeStrategyParamsUpdate paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Modify node parameters that support strategy parameters in the Runtime stage according to the strategy (used with <code>GetNodeParamsInfoWithStrategyAsync</code>).</p>
+</div>
+<div class="paragraph">
+<p><strong>Support scope</strong>: Currently only supports <code>PoseListFilter</code>, <code>PickPointFilter</code>,
+<code>PoseListSorterInXOY</code>、<code>PickPointSorterInXOY</code>、<code>PickPointSorterNew</code>、
+<code>PoseListSorter</code> These 6 types of nodes. For other nodes, please use the common parameter interface to set parameters.
+<code>RuntimeStrategyParamsUpdate.ParamsData</code> usually comes from
+<code>GetNodeParamsInfoWithStrategyAsync(&#8230;&#8203;)</code> returns <code>paramsData</code> in the value. Don’t just handwrite a short paragraph
+Local parameters; it is recommended to retain the complete structure returned by the server and only replace the fields that need to be modified.</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameters</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.GraphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Picture name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.NodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Node ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.ParamsData</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>object</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The complete parameter structure modified from <code>paramsData</code> returned from the server</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Cancellation token, optional</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Return value</strong>: <code>Task&lt;JsonElement&gt;</code>, operation status information.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Text.Json.Nodes;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+var strategyInfo = await client.Runtime.GetNodeParamsInfoWithStrategyAsync(
+    new NodeRef("detection_graph", "detect-node-001"));
+var paramsData = JsonNode.Parse(
+    strategyInfo.GetProperty("paramsData").GetRawText())!.AsObject();
+
+paramsData["run_params"]!.AsObject()["strategies_config"] = new JsonObject
+{
+    ["value"] = new JsonArray
+    {
+        new JsonObject
+        {
+            ["BY_SCORE"] = new JsonObject
+            {
+                ["order"] = "HIGHEST",
+                ["differenceThreshold"] = 1,
+                ["groupInterval"] = 0.75,
+            },
+        },
+    },
+};
+
+await client.Runtime.SetParamsInStrategyAsync(
+    new RuntimeStrategyParamsUpdate(
+        "detection_graph",
+        "detect-node-001",
+        paramsData));
+
+Console.WriteLine("Strategy parameters updated");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getfileparammd5async"><a class="anchor" href="#_getfileparammd5async"></a>GetFileParamMd5Async(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// original JsonElement version
+Task&lt;JsonElement&gt; GetFileParamMd5Async(
+    FileParamRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// Generic version
+Task&lt;T&gt; GetFileParamMd5Async&lt;T&gt;(
+    FileParamRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// Strongly typed convenience version
+Task&lt;RuntimeFileParamMd5Info&gt; GetFileParamMd5InfoAsync(
+    FileParamRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Get the MD5 check value of a file parameter (such as a model file) in the picture, which is used to determine whether the file already exists and needs to be updated before uploading.</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameters</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.GraphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Picture name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.ParamName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>File parameter mapping name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.ParamType</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>parameter type, default is <code>"init_params"</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Cancellation token, optional</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Return value</strong>: <code>Task&lt;JsonElement&gt;</code>, containing <code>md5</code> fields.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Security.Cryptography;
+using System.IO;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+// Get the server file MD5
+var md5Info = await client.Runtime.GetFileParamMd5InfoAsync(
+    new FileParamRef("detection_graph", "model_file"));
+string serverMd5 = md5Info.Md5;
+Console.WriteLine($"MD5 Request status: {md5Info.Status}");
+
+// Calculate local files MD5
+byte[] localBytes = await File.ReadAllBytesAsync("/models/detector.onnx");
+string localMd5 = Convert.ToHexString(MD5.HashData(localBytes)).ToLowerInvariant();
+
+if (serverMd5 == localMd5)
+{
+    Console.WriteLine("The model file is consistent with the server,No update required");
+}
+else
+{
+    Console.WriteLine("Model file has changed,Need to re-upload");
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_runsinglenodenographparsedasync_recommended"><a class="anchor" href="#_runsinglenodenographparsedasync_recommended"></a>RunSingleNodeNoGraphParsedAsync(&#8230;&#8203;) (recommended)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">Task&lt;SingleNodeParsedResult&gt; RunSingleNodeNoGraphParsedAsync(
+    SingleNodeParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Does not rely on graph structure, directly runs a single node, and automatically parses the point clouds and images in <code>outputs</code> into directly usable data structures. Ordinary users are recommended to use this interface first; the returned dictionary key will be consistent with the server <code>outputs</code> key, but the point cloud and image values ​​will be parsed.</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameters</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.NodeName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Node type name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.Inputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, object?&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>input port data dictionary; <code>FileInfo</code>/<code>byte[]</code> will be automatically processed according to the node port type</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.RunParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, object?&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Run parameter dictionary</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.InitParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, object?&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Initialize parameter dictionary</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.InputDataTypes</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, string&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Optional. Input port type mapping; usually omitted, SDK will automatically query when needed</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.InputPointDims</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, int&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Optional. Point cloud input dimension hints; often automatically inferred from port type</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.OutputDataTypes</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, string&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Optional. Output port type mapping; when omitted, SDK will query the node output definition by node name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.OutputPointDims</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, int&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Optional. Output point cloud dimension prompt; <code>XYZPoints</code> defaults to 3, <code>NormalPoints</code>/<code>RGBPoints</code> defaults to 6</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Cancellation token, optional</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Return value</strong>: <code>Task&lt;SingleNodeParsedResult&gt;</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">public sealed class SingleNodeParsedResult
+{
+    public JsonElement? RawJsonData { get; init; }
+    public byte[]? RawBinaryData { get; init; }
+    public IReadOnlyDictionary&lt;string, object?&gt; Outputs { get; init; }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Parsing rules:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Output port type
+Type of</th>
+<th class="tableblock halign-left valign-top"><code>Outputs[name]</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Points</code> / <code>XYZPoints</code> / <code>NormalPoints</code> / <code>RGBPoints</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyList&lt;ParsedPointCloud&gt;</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Image</code> / <code>MonoImage</code> / <code>ColorImage</code> / <code>BinaryImage</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyList&lt;ParsedImage&gt;</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Other types</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonElement</code>, keep the original JSON value on the server</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Failure handling</strong>: If the top level of the server is <code>status=0</code>, but the single node result is <code>status_queue</code>
+Contains <code>success:false</code>, <code>activate failed</code>, <code>error</code> or negative status, SDK will be parsed
+Throws <code>AtomApiException</code> before <code>Outputs</code>. Exceptionally <code>Payload</code> retains the original result intact,
+<code>status_queue</code>, <code>outputs</code>, and <code>status</code> can still be viewed there.</p>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+var result = await client.Runtime.RunSingleNodeNoGraphParsedAsync(
+    new SingleNodeParams(
+        "EstimateNormal",
+        inputs: new Dictionary&lt;string, object?&gt;
+        {
+            ["points"] = new FileInfo("/data/input.ply"),
+        },
+        outputDataTypes: new Dictionary&lt;string, string&gt;
+        {
+            ["points"] = "XYZPoints",
+        },
+        outputPointDims: new Dictionary&lt;string, int&gt;
+        {
+            ["points"] = 3,
+        }));
+
+var clouds = (IReadOnlyList&lt;ParsedPointCloud&gt;)result.Outputs["points"]!;
+Console.WriteLine($"Number of point clouds: {clouds.Count}");
+Console.WriteLine($"The first point cloud shape: {string.Join(" x ", clouds[0].Shape)}");</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If SDK can query the node output definition through <code>NodeName</code>, you don&#8217;t need to fill in <code>OutputDataTypes</code>; if the server returns raw bytes, or you want to save one node information query, it is recommended to fill it in explicitly. raw bytes In order for the results to be automatically parsed, the only point cloud output port must be determined.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_runsinglenodenographasync_optional_raw_return"><a class="anchor" href="#_runsinglenodenographasync_optional_raw_return"></a>RunSingleNodeNoGraphAsync(&#8230;&#8203;) (optional: raw return)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// Return SingleNodeResult(contains JSON or binary)
+Task&lt;SingleNodeResult&gt; RunSingleNodeNoGraphAsync(
+    SingleNodeParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// Return the specified type(JSON output)
+Task&lt;T&gt; RunSingleNodeNoGraphJsonAsync&lt;T&gt;(
+    SingleNodeParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Without relying on the graph structure, directly run a single node and obtain the original results of the server. Only use it when you need to handle JSON/raw bytes yourself; in normal scenarios, it is recommended to use <code>RunSingleNodeNoGraphParsedAsync</code> first.
+Like the parsed interface, if <code>status_queue</code> indicates that the internal operation of the node fails, the raw interface will also throw
+<code>AtomApiException</code>, and place the complete raw result in the exception&#8217;s <code>Payload</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameters</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.NodeName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Node type name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.Inputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, object?&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>input port data dictionary; <code>FileInfo</code>/<code>byte[]</code> will be automatically processed according to the node port type</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.RunParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, object?&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Run parameter dictionary</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.InitParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, object?&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Initialize parameter dictionary</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.InputDataTypes</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, string&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Optional. Input port type mapping; usually omitted, SDK will automatically query</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.InputPointDims</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, int&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Optional. Point cloud input dimension hints; often automatically inferred from input type</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Cancellation token, optional</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Return value</strong>: <code>Task&lt;SingleNodeResult&gt;</code>, the JSON result can be read through <code>.JsonData</code> / <code>.DeserializeJson&lt;T&gt;()</code>, or the binary result can be obtained through <code>.BinaryData</code>.
+Common inputs are automatically processed by port type:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Port type</th>
+<th class="tableblock halign-left valign-top">C# Input value</th>
+<th class="tableblock halign-left valign-top">SDK behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>File</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>FileInfo</code> / UTF-8 <code>byte[]</code> / <code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>is put into JSON as a path string, and the file content is not read.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Image</code> / <code>MonoImage</code> / <code>ColorImage</code> / <code>BinaryImage</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>FileInfo</code> / <code>byte[]</code> / base64 string</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>is converted into <code>data:image/&#8230;&#8203;;base64,&#8230;&#8203;</code> string list</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Points</code> / <code>XYZPoints</code> / <code>NormalPoints</code> / <code>RGBPoints</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>.ply</code> of <code>FileInfo</code> / encoded <code>byte[]</code> / array of numbers</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>.ply</code> will be converted to Atom point cloud binary; the encoded bytes will be uploaded unchanged</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Other types</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>any JSON value / <code>byte[]</code> / <code>FileInfo</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>maintains old behavior: JSON into <code>inputs</code>, bytes or file contents are uploaded by file fields</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>C# SDK currently supports <code>vertex</code> attribute reading of ASCII PLY in single-node direct operation; <code>XYZPoints</code>/<code>Points</code> reads <code>x,y,z</code>, <code>NormalPoints</code> reads <code>x,y,z,nx,ny,nz</code>, <code>RGBPoints</code> reads <code>x,y,z,red,green,blue</code>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><strong>example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+// Example 1:incoming byte[].If the port is ColorImage,SDK will be converted into base64 Picture list;
+// If the port is XYZPoints,SDK You will think that this is already encoded Atom point cloud binary.
+byte[] imageBytes = await File.ReadAllBytesAsync("/data/test.jpg");
+var result1 = await client.Runtime.RunSingleNodeNoGraphAsync(
+    new SingleNodeParams(
+        "ResizeImage",
+        new Dictionary&lt;string, object?&gt;
+        {
+            ["image"] = imageBytes
+        },
+        new Dictionary&lt;string, object?&gt;
+        {
+            ["scale_factor"] = 0.5
+        }));
+
+// Deserialization JSON result
+// var typed = result1.DeserializeJson&lt;MyOutputType&gt;();
+Console.WriteLine($"Single node operation completed");
+
+// Example 2:Use FileInfo Pass in local file.SDK Will be judged by port type:
+// File The port only transmits the path string,ColorImage port transfer base64,XYZPoints of .ply Path to point cloud payload.
+var result2 = await client.Runtime.RunSingleNodeNoGraphAsync(
+    new SingleNodeParams(
+        "ModelInferenceNode",
+        new Dictionary&lt;string, object?&gt;
+        {
+            ["input_image"] = new FileInfo("/data/test.jpg"),
+        },
+        initParams: new Dictionary&lt;string, object?&gt;
+        {
+            ["model_path"] = "/models/detector.onnx"
+        }));
+Console.WriteLine("File input single node operation completed");
+
+// Example 3:The generic version deserializes the result directly
+// var typedResult = await client.Runtime.RunSingleNodeNoGraphJsonAsync&lt;MyResult&gt;(
+//     new SingleNodeParams("ResizeImage", inputs: ..., runParams: ...));</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_complete_reasoning_process_example"><a class="anchor" href="#_complete_reasoning_process_example"></a>Complete reasoning process example</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following example shows the complete Runtime workflow from graph loading to inference result reading:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Core;
+using AtomSdk.Models;
+
+class RuntimeWorkflowExample
+{
+    static async Task Main()
+    {
+        var client = new AtomClient("http://localhost:8080");
+        const string graphName = "detection_graph";
+
+        try
+        {
+            // 1. Load image to Runtime
+            var graphRef = await client.Runtime.LoadGraphInfoAsync(graphName);
+            Console.WriteLine($"[1] Image loaded,ID: {graphRef.GraphId}, Request status: {graphRef.Status}");
+
+            // 2. Get primitive information(Confirm configuration)
+            var meta = await client.Runtime.GetMetaInfoModelAsync(graphName);
+            Console.WriteLine($"[2] Graph element information obtained successfully,Request status: {meta.Status}");
+
+            // 3. Set shared parameters
+            await client.Runtime.SetSharedParamsAsync(
+                new RuntimeParamsUpdate(graphName, new
+                {
+                    confidence_threshold = 0.5,
+                    nms_threshold = 0.45,
+                }));
+            Console.WriteLine("[3] Shared parameters have been set");
+
+            // 4. Check file parameters MD5(Avoid uploading models repeatedly)
+            var md5Info = await client.Runtime.GetFileParamMd5InfoAsync(
+                new FileParamRef(graphName, "model_file"));
+            Console.WriteLine($"[4] Server model MD5: {md5Info.Md5}, Request status: {md5Info.Status}");
+
+            // 5. Prepare frame data:Already complete EPICRAW Encapsulate the file directly
+            byte[] epicRawBytes = await File.ReadAllBytesAsync("/data/frame.epicraw");
+
+            var frames = new List&lt;RuntimeFrame&gt;
+            {
+                // cam2Base The server currently only supports rotation vector form:[x, y, z, rx, ry, rz](Pan + Rodrigues rotation vector)
+                RuntimeFrame.FromBytes(epicRawBytes, cam2Base: new[] { 0.0, 0.0, 0.5, 0.0, 0.0, 0.0 })
+            };
+
+            // 6. Run chart,The caller waits at most 30 Cancel automatically after seconds
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+            var runResult = await client.Runtime.RunGraphResultAsync(
+                new RuntimeRunParams(graphName, frames), cts.Token);
+            Console.WriteLine($"[6] Reasoning completed,Request status: {runResult.Status}");
+
+            // 7. read JSON output(by binding name)
+            var jsonOutput = await client.Runtime.GetBindedOutputValueAsync(
+                new BindingRef(graphName, "result"));
+            Console.WriteLine($"[7] Test results: {jsonOutput}");
+
+            // 8. Read point cloud output(If any)
+            // var pointClouds = await client.Runtime.GetBindedPointCloudParsedAsync(
+            //     new PointCloudRef(graphName, "pointcloud_result", pointDim: 3));
+
+            // 9. Get information about all binding outputs
+            var outputsInfo = await client.Runtime.GetBindedOutputsInfoModelAsync(graphName);
+            Console.WriteLine($"[9] Number of output ports: {outputsInfo.Outputs?.Length ?? 0}");
+
+            // 10. release Runtime Graphic resources
+            await client.Runtime.ReleaseGraphAsync(graphName);
+            Console.WriteLine("[10] Runtime Image has been released");
+        }
+        catch (AtomApiException ex)
+        {
+            Console.WriteLine($"Server error {ex.Status}: {ex.Message}");
+        }
+        catch (AtomHttpException ex)
+        {
+            Console.WriteLine($"HTTP Error {ex.StatusCode}: {ex.Message}");
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_exception_description"><a class="anchor" href="#_exception_description"></a>Exception description</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Exception type</th>
+<th class="tableblock halign-left valign-top">trigger condition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>AtomApiException</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The server returns a business error (the picture is not loaded, the parameters are illegal)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>AtomHttpException</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>HTTP layer error (connection failed, timeout, 4xx/5xx status code)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>AtomProtocolException</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Response format parsing failed</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>ArgumentException</code>
+Thrown when</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>RuntimeFrame.Image</code> or <code>PointCloud</code> is an empty byte array</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="graph_node.html">GraphNodeService（C#）</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

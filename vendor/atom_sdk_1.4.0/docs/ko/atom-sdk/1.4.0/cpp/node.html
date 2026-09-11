@@ -1,0 +1,2282 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>NodeService（C++） :: Atom SDK 개발자 가이드</title>
+    <link rel="prev" href="graph.html">
+    <link rel="next" href="graph_node.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          온라인 제품 문서
+                  </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="문서 검색"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              이 매뉴얼만
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            매뉴얼 전환
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK 개발자 가이드</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          다운로드 센터
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          공식 웹사이트
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            한국어
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK 개발자 가이드</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">환영합니다</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">빠른 시작</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">빠른 시작</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">샘플 샘플</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">입문 사용</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK 입문 사용</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">사용자 가이드</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">적절한 Service을 선택합니다.</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">그래프 및 노드 작업</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">오류 처리 및 문제 해결</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">FAQ</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">기본 개념</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/what-is-atom-sdk.html">Atom SDK 란 무엇입니까?</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-node-subgraph.html">그래프, 노드, 하위 그래프</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-vs-runtime.html">Graph과 Runtime의 차이점</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/timestamp.html">Timestamp이 무엇인가요?</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/runtime-frame.html">런타임 입력 프레임(RuntimeFrame / RuntimePassiveBinoFrame)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/point-cloud-protocol.html">포인트 클라우드 유형 입출력을 위한 바이너리 프로토콜</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/param-binding.html">매개변수 유형 및 바인딩 이름</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API 참조</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API 참조 개요</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python 개요 및 설치</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/params.html">Python 매개변수 객체</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/public_api.html">Python 공용 유틸리티 API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="overview.html">Atom SDK C++ 버전 — 사용자 가이드</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="params.html">C++ 매개변수 객체</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">Atom SDK — C# 버전</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/params.html">C# 매개변수 객체</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK 개발자 가이드</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK 개발자 가이드</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK 개발자 가이드</a></li>
+    <li>API 참조</li>
+    <li>C++ SDK</li>
+    <li><a href="node.html">NodeService（C++）</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="이 페이지의 내용"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">NodeService（C++）</h1>
+<div class="sect1">
+<h2 id="_서비스_소개"><a class="anchor" href="#_서비스_소개"></a>서비스 소개</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>NodeService`은 Atom SDK입니다. 메인 그래프의 노드 운영을 위한 전용 서비스로, 노드 추가 및 삭제, 포트 연결, 파라미터 읽기 및 쓰기, 포트 데이터 읽기 등의 기능을 제공합니다. 모든 작업은 `GraphNodeService</code> 작업의 하위 그래프 노드 내부에 있는 하위 그래프와 달리 기본 그래프(최상위 그래프)에서 작동합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>헤더 파일:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+// 또는 개별적으로 인용（패스 client.hpp 자동으로 포함됨）
+#include "atom_sdk/services/node.hpp"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>입구:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">atom::sdk::AtomClient client("http://127.0.0.1:10026");
+atom::sdk::NodeService&amp; ns = client.node();</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_적용_가능한_시나리오"><a class="anchor" href="#_적용_가능한_시나리오"></a>적용 가능한 시나리오</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>열린 메인 그래프에서 노드를 동적으로 추가 및 삭제합니다.</p>
+</li>
+<li>
+<p>노드 간 포트 연결 편집 및 데이터 흐름 구축</p>
+</li>
+<li>
+<p>노드에 대한 JSON 매개변수를 쓰거나 모델 파일을 매개변수로 업로드하세요.</p>
+</li>
+<li>
+<p>노드 포트 출력 데이터 읽기(이미지, 포인트 클라우드, JSON)</p>
+</li>
+</ul>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_권장_호출_순서"><a class="anchor" href="#_권장_호출_순서"></a>권장 호출 순서</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">client.graph().open_graph(graph_name)
+           ↓
+     create_node           ← 그래프에 노드 추가
+           ↓
+  set_node_param_data      ← 노드 매개변수 쓰기（여러 번）
+           ↓_nodes         ← 노드 포트 연결（여러 번）
+           ↓
+     initia↓
+          ↓
+     activate_node         ← 노드 활성화
+           ↓
+   client.graph().run_graph(graph_name)
+           |
+           ↓port_data      ← 출력 읽기</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_인터페이스_상세_설명"><a class="anchor" href="#_인터페이스_상세_설명"></a>인터페이스 상세 설명</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_create_node"><a class="anchor" href="#_create_node"></a>create_node</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject create_node(const CreateNodeParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 기본 그래프에 지정된 유형의 새 노드를 만듭니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">매개변수</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>대상 맵 이름(열려 있어야 함)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.node_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>노드 유형 이름(`get_all_nodes_info`에서 반환된 유형 목록에 있어야 함)</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*반환 값: * <code>JsonObject</code>, 새 노드 정보 포함:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>새 노드의 고유한 ID입니다. 후속 작업에 이 ID를 사용해야 합니다.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>노드 유형 이름</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+
+    // 먼저 사진을 열어보세요
+    client.graph().open_graph("my_graph");
+
+    // 노드 생성
+    auto result = client.node().create_node(
+        {"my_graph", "YoloDetectionNode"});
+
+    std::string node_id = result.at("nodeId").get&lt;std::string&gt;();
+    std::cout &lt;&lt; "노드 생성 ID：" &lt;&lt; node_id &lt;&lt; std::endl;
+    std::cout &lt;&lt; "요청 상태：" &lt;&lt; result.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_create_dynamic_io_node"><a class="anchor" href="#_create_dynamic_io_node"></a>create_dynamic_io_node</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject create_dynamic_io_node(const CreateDynamicNodeParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 기본 그래프에서 동적 입력 및 출력 정의를 사용하여 노드를 만듭니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto dynamic_node = client.node().create_dynamic_io_node({
+    "demo_graph",
+    "DynamicNode",
+    atom::sdk::json::parse(R"({"inputs":[{"name":"image_in"}]})")
+});</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_change_node_io"><a class="anchor" href="#_change_node_io"></a>change_node_io</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject change_node_io(const ChangeNodeIOParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 동적 노드의 입력 및 출력 구조를 수정합니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">client.node().change_node_io({
+    "demo_graph",
+    atom::sdk::json::value_to&lt;std::string&gt;(dynamic_node.at("nodeId")),
+    atom::sdk::json::parse(R"({"outputs":[{"name":"mask_out"}]})")
+});</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_create_node_by_copy"><a class="anchor" href="#_create_node_by_copy"></a>create_node_by_copy</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject create_node_by_copy(const CopyNodeParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 그래프의 기존 노드를 템플릿으로 사용하여 동일한 유형의 새 노드를 복사하고 복사된 노드의 매개변수 구성을 유지합니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">매개변수</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.node_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>노드 유형 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code>
+복사된 노드의</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ID</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*반환값: * <code>JsonObject</code>, 새로운 노드 정보를 포함하며 구조는 `create_node`과 동일합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    client.graph().open_graph("my_graph");
+
+    // 먼저 소스 노드를 가져옵니다. ID（알려진 것으로 가정）
+    std::string source_node_id = "node_abc123";
+
+    auto result = client.node().create_node_by_copy(
+        {"my_graph", "YoloDetectionNode", source_node_id});
+
+    std::string new_id = result.at("nodeId").get&lt;std::string&gt;();
+    std::cout &lt;&lt; "복사하여 새 노드 가져오기 ID：" &lt;&lt; new_id &lt;&lt; std::endl;
+    std::cout &lt;&lt; "요청 상태：" &lt;&lt; result.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_create_graph_node"><a class="anchor" href="#_create_graph_node"></a>create_graph_node</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject create_graph_node(const CreateGraphNodeParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>사용:</strong> 기존 하위 그래프를 기반으로 graph node을 만듭니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto graph_node = client.node().create_graph_node(
+    {"demo_graph", "SubFlow", "sub_graph_alpha"});</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_generate_graph_node_by_nodes"><a class="anchor" href="#_generate_graph_node_by_nodes"></a>generate_graph_node_by_nodes</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject generate_graph_node_by_nodes(
+    const GenerateGraphNodeByNodesParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 여러 노드를 압축하여 graph node을 생성합니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto packed = client.node().generate_graph_node_by_nodes(
+    {"demo_graph", "PackedNode", {"node-a", "node-b"}});</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_delete_node"><a class="anchor" href="#_delete_node"></a>delete_node</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject delete_node(const NodeRef&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 메인 그래프에서 지정된 노드를 삭제하고 해당 노드에 대한 모든 연결을 제거합니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">매개변수</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>삭제할 노드 ID</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*반환 값: * <code>JsonObject</code>, 연산 결과.</p>
+</div>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    client.graph().open_graph("my_graph");
+
+    client.node().delete_node({"my_graph", "node_abc123"});
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_connect_nodes"><a class="anchor" href="#_connect_nodes"></a>connect_nodes</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject connect_nodes(const NodeConnectionParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 한 노드의 출력 포트를 다른 노드의 입력 포트에 연결하여 데이터 흐름 에지를 설정합니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">매개변수</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.output_node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>데이터를 출력하는 노드(업스트림 노드) ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.output_port_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>업스트림 노드의 출력 포트 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.input_node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>데이터를 수신하는 노드(다운스트림 노드)ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.input_port_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>다운스트림 노드의 입력 포트 이름</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*반환값: * <code>JsonObject</code>, 연결 결과 정보 포함.</p>
+</div>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    client.graph().open_graph("my_graph");
+
+    // 노드를 전처리합니다. "image_out" 감지 노드에 연결된 포트 "image_in" 항구
+    auto result = client.node().connect_nodes(
+        {"my_graph", "preprocess_node_id", "image_out", "detect_node_id", "image_in"});
+
+    std::cout &lt;&lt; "연결 성공" &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_disconnect_nodes"><a class="anchor" href="#_disconnect_nodes"></a>disconnect_nodes</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject disconnect_nodes(const NodeConnectionParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 두 노드 포트 사이의 기존 연결을 끊습니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">매개변수</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.output_node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>업스트림 노드 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.output_port_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>업스트림 노드 출력 포트 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.input_node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>다운스트림 노드 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.input_port_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>다운스트림 노드 입력 포트 이름</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*반환 값: * <code>JsonObject</code>, 연산 결과.</p>
+</div>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    client.graph().open_graph("my_graph");
+
+    client.node().disconnect_nodes(
+        {"my_graph", "preprocess_node_id", "image_out", "detect_node_id", "image_in"});
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_node_params"><a class="anchor" href="#_get_node_params"></a>get_node_params</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject get_node_params(const NodeRef&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 노드의 현재 매개변수 스냅샷을 읽어 매개변수 구성이 올바른지 확인합니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">매개변수</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>노드 ID</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*반환 값: * <code>JsonObject</code>, 노드의 모든 매개변수의 현재 값을 포함합니다. 특정 필드는 노드 유형에 따라 다릅니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    client.graph().open_graph("my_graph");
+
+    auto params = client.node().get_node_params({"my_graph", "node_abc123"});
+
+    // 모든 매개변수를 탐색하고 인쇄합니다.
+    for (const auto&amp; [key, val] : params) {
+        std::cout &lt;&lt; "매개변수 " &lt;&lt; key &lt;&lt; std::endl;
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_node_info_in_graph"><a class="anchor" href="#_get_node_info_in_graph"></a>get_node_info_in_graph</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject get_node_info_in_graph(const NodeRef&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 포트 목록, 연결 관계 및 매개변수 정의를 포함하여 메인 그래프에서 노드의 전체 정보를 읽습니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">매개변수</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>노드 ID</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*반환 값: * <code>JsonObject</code>, 완전한 노드 정보를 포함합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    client.graph().open_graph("my_graph");
+
+    auto info = client.node().get_node_info_in_graph({"my_graph", "node_abc123"});
+
+    if (info.contains("name")) {
+        std::string name = info.at("name").get&lt;std::string&gt;();
+        std::cout &lt;&lt; "노드 이름：" &lt;&lt; name &lt;&lt; std::endl;
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_node_port_data"><a class="anchor" href="#_get_node_port_data"></a>get_node_port_data</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">PortDataResult get_node_port_data(const PortRef&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 첨부 파일(예: 이미지 바이트)을 전달하는 동안 노드의 지정된 포트(JSON 형식)의 출력 데이터를 읽습니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">매개변수</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>노드 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.port_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>포트 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.io_type</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>포트 유형, 일반적으로 <code>"outputs"</code> 또는 <code>"inputs"</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환 값:</strong> <code>PortDataResult</code> 구조:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>data</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>포트에서 JSON 데이터 출력</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>attachments</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::unordered_map&lt;std::string, ByteBuffer&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>첨부 파일 map, key는 첨부 파일 이름이고, value는 원본 바이트입니다.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+
+    // 그래프가 완료된 후 포트 데이터 읽기
+    auto run_result = client.graph().run_graph("detection_graph");
+    std::cout &lt;&lt; "요청 상태：" &lt;&lt; run_result.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    atom::sdk::PortDataResult port_data = client.node().get_node_port_data(
+        {"detection_graph", "detect_node_id", "detection_result", "outputs"});
+
+    // 읽다 JSON 데이터
+    const auto&amp; data = port_data.data;
+    if (data.contains("detections")) {
+        const auto&amp; dets = data.at("detections");
+        std::cout &lt;&lt; "테스트 결과 수：" &lt;&lt; dets.size() &lt;&lt; std::endl;
+
+        for (const auto&amp; det : dets) {
+            const auto&amp; obj = det;
+            double confidence = obj.at("confidence").get&lt;double&gt;();
+            std::cout &lt;&lt; "  자신감：" &lt;&lt; confidence &lt;&lt; std::endl;
+        }
+    }
+
+    // 첨부파일 읽기（시각적 이미지와 같은）
+    if (port_data.attachments.count("vis_image") &gt; 0) {
+        const auto&amp; img_bytes = port_data.attachments.at("vis_image");
+        std::cout &lt;&lt; "시각화 이미지 크기：" &lt;&lt; img_bytes.size() &lt;&lt; " bytes" &lt;&lt; std::endl;
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_download_data"><a class="anchor" href="#_download_data"></a>download_data</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject download_data(const PortRef&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 노드 포트 데이터에 대한 다운로드 링크를 생성합니다. 포트 출력이 크고 링크에 따라 다운로드할 프런트 엔드나 다른 도구에 넘겨주려는 시나리오에 적합합니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">매개변수</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>노드 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.port_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>포트 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.io_type</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>포트 유형, 일반적으로 <code>"outputs"</code> 또는 <code>"inputs"</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*반환값: * <code>JsonObject</code>, 서버에서 반환한 다운로드 정보 포함.</p>
+</div>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto download = client.node().download_data(
+    {"detection_graph", "detect_node_id", "detection_result", "outputs"});</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_points_data_parsed"><a class="anchor" href="#_get_points_data_parsed"></a>get_points_data_parsed</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">std::vector&lt;ParsedPointCloud&gt; get_points_data_parsed(
+    const PortRef&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 노드 포인트 클라우드를 직접 읽고 구문 분석하므로 먼저 사용하는 것이 좋습니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto clouds = client.node().get_points_data_parsed(
+    {"lidar_graph", "point_cloud_node_id", "pc_out", "outputs"});</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_points_data"><a class="anchor" href="#_get_points_data"></a>get_points_data</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">ByteBuffer get_points_data(const PortRef&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 노드 포인트 클라우드 클래스 포트의 원시 바이트 스트림을 읽습니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">매개변수</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>노드 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.port_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>점군 출력 포트 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.io_type</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>포트 유형, 일반적으로 <code>"outputs"</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*반환 값: * <code>ByteBuffer</code> (<code>std::vector&lt;uint8_t&gt;</code>), 서버 원시 바이너리 데이터.
+참고:
+* 여기에 반환되는 것은 "순수점 좌표 배열"이 아닙니다.
+* `Node/GetPointsData`의 바이트 앞에는 Atom 고유의 포인트 클라우드 헤더 정보가 옵니다.
+* 일반적인 시나리오에서는 위의 `get_points_data_parsed()`을 먼저 사용하는 것이 좋습니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;cstring&gt;
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto run_result = client.graph().run_graph("lidar_graph");
+    std::cout &lt;&lt; "요청 상태：" &lt;&lt; run_result.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    atom::sdk::ByteBuffer raw = client.node().get_points_data(
+        {"lidar_graph", "point_cloud_node_id", "pc_out", "outputs"});
+
+    std::cout &lt;&lt; "raw bytes: " &lt;&lt; raw.size() &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_set_node_param_data"><a class="anchor" href="#_set_node_param_data"></a>set_node_param_data</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject set_node_param_data(const NodeParamUpdate&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 노드의 지정된 매개변수에 JSON 값을 씁니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">매개변수</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>노드 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.param_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>파라미터 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.param_type</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>매개변수 범주, 일반적으로 <code>"init_params"</code> 또는 <code>"run_params"</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.value</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonValue</code> / <code>std::filesystem::path</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>JSON 값 또는 쓸 파일 경로</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*반환 값: * <code>JsonObject</code>, 연산 결과.</p>
+</div>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include "atom_sdk/core/json.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    client.graph().open_graph("my_graph");
+
+    std::string node_id = "detect_node_id";
+
+    // 숫자 매개변수 쓰기（신뢰 임계값）
+    atom::sdk::JsonValue threshold = 0.6;
+    client.node().set_node_param_data(
+        {"my_graph", node_id, "confidence_threshold", "init_params", threshold});
+
+    // 문자열 매개변수 쓰기
+    atom::sdk::JsonValue model_type = "yolov8n";
+    client.node().set_node_param_data(
+        {"my_graph", node_id, "model_type", "init_params", model_type});
+
+    // 쓰다 JSON 객체 매개변수
+    atom::sdk::JsonObject config;
+    config["nms_threshold"] = 0.4;
+    config["max_detections"] = 100;
+    atom::sdk::JsonValue config_val(config);
+    client.node().set_node_param_data(
+        {"my_graph", node_id, "nms_config", "init_params", config_val});
+
+    std::cout &lt;&lt; "매개변수 설정 완료" &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_set_node_param_data_파일_경로_값"><a class="anchor" href="#_set_node_param_data_파일_경로_값"></a>set_node_param_data (파일 경로 값)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject set_node_param_data(const NodeParamUpdate&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 로컬 파일(예: 모델 가중치`.onnx`, 구성 파일 등)의 내용을 노드 매개변수에 자동으로 업로드하고 씁니다. SDK은 내부적으로 자동으로 파일 읽기 및 업로드를 처리합니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">매개변수</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>노드 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.param_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>파라미터 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.param_type</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>매개변수 범주, 일반적으로 <code>"init_params"</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.value</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::filesystem::path</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>로컬 파일 경로, SDK은 자동으로 파일 콘텐츠를 읽고 업로드합니다.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*반환 값: * <code>JsonObject</code>, 연산 결과.</p>
+</div>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;filesystem&gt;
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    client.graph().open_graph("my_graph");
+
+    std::string node_id = "detect_node_id";
+    std::filesystem::path model_path = "/models/yolov8n.onnx";
+
+    // 업로드 ONNX 노드 매개변수로서의 모델 파일
+    auto result = client.node().set_node_param_data(
+        {"my_graph", node_id, "model_file", "init_params", model_path});
+
+    std::cout &lt;&lt; "모델 파일 업로드 완료" &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_set_binding_name"><a class="anchor" href="#_set_binding_name"></a>set_binding_name</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject set_binding_name(const NodeBindingUpdate&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> <code>RuntimeService</code> 바인딩 인터페이스를 통해 접근할 수 있도록 노드의 매개변수나 포트에 대해 외부에 노출되는 바인딩 이름을 설정합니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">매개변수</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>노드 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.binding_type</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>바인딩 유형(예: <code>"outputs"</code> 또는 <code>"init_params"</code> 등)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.origin_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>포트 또는 매개변수의 원래 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.binding_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>바인딩 별칭 노출됨</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*반환 값: * <code>JsonObject</code>, 연산 결과.</p>
+</div>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    client.graph().open_graph("my_graph");
+
+    // 노드를 감지합니다 "detection_result" 출력 바인딩은 외부에서 볼 수 있습니다. "result"
+    auto result = client.node().set_binding_name(
+        {"my_graph", "detect_node_id", "outputs", "detection_result", "result"});
+
+    std::cout &lt;&lt; "바인딩 이름이 성공적으로 설정되었습니다." &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_edit_node_comment"><a class="anchor" href="#_edit_node_comment"></a>edit_node_comment</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject edit_node_comment(const EditNodeCommentParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 메인 다이어그램에서 지정된 노드의 설명을 수정합니다. SDK은 현재 그래프의 `timestamp`을 자동으로 전달하고 서버가 반환된 후 새 타임스탬프를 동기화합니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">매개변수</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>노드 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.comment</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>새 노트 콘텐츠</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*반환 값: * <code>JsonObject</code>, 연산 결과.</p>
+</div>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">client.node().edit_node_comment(
+    {"my_graph", "detect_node_id", "출력 감지 상자 및 신뢰도"});</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_activate_node"><a class="anchor" href="#_activate_node"></a>activate_node</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject activate_node(
+    const NodeRef&amp; params,
+    std::optional&lt;double&gt; timeout_seconds = 30.0) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 일반적으로 초기화가 완료된 후 호출되는 노드를 활성화하여 노드를 준비 상태로 만들고 출력 확인을 트리거합니다. SDK은 `finish`이 `true`이거나 `timeout_seconds`을 초과할 때까지 응답을 위해 서버를 폴링합니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">매개변수</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>노드 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>timeout_seconds</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::optional&lt;double&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>폴링 대기 시간 초과, 기본값은 `30.0`초입니다. `std::nullopt`를 전달하는 것은 완료될 때까지 기다리거나 서버가 오류를 보고한다는 의미입니다.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*반환값: * <code>JsonObject</code>, 활성화 결과 정보가 포함됩니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    client.graph().open_graph("my_graph");
+
+    // 초기화 후 노드 활성화
+    client.node().initial_node({"my_graph", "detect_node_id"});
+    client.node().activate_node({"my_graph", "detect_node_id"}, 60.0);
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_initial_node"><a class="anchor" href="#_initial_node"></a>initial_node</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject initial_node(const NodeRef&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 노드를 초기화하고, 노드 로딩 모델을 트리거하고, 리소스 및 기타 초기화 로직을 할당합니다. 모든 매개변수를 설정한 후 호출해야 합니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">매개변수</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>노드 ID</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*반환값: * <code>JsonObject</code>, 초기화 결과 정보를 담고 있습니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;filesystem&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    client.graph().open_graph("my_graph");
+
+    std::string node_id = "detect_node_id";
+
+    // 매개변수를 먼저 설정하세요.
+    client.node().set_node_param_data(
+        {"my_graph", node_id, "model_file", "init_params",
+         std::filesystem::path("/models/yolov8n.onnx")});
+
+    // 다시 초기화（트리거 모델 로딩）
+    auto result = client.node().initial_node({"my_graph", node_id});
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_update_node"><a class="anchor" href="#_update_node"></a>update_node</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject update_node(const NodeRef&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 노드 구성을 업데이트하고 재계산을 트리거합니다. 일반적으로 런타임에 매개변수를 동적으로 수정한 후에 호출됩니다. 이 인터페이스는 <code>UpdateNode</code> 서버에서 정의한 대로 하나의 요청만 시작하고 `finish`을 폴링하지 않습니다. 서버가 `finish=false`를 반환하면 SDK도 이 응답을 호출자에게 직접 반환합니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">매개변수</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params.node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>노드 ID</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*반환 값: * <code>JsonObject</code>, 업데이트 결과.</p>
+</div>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    client.graph().open_graph("my_graph");
+
+    // 매개변수 수정 후 업데이트 트리거
+    atom::sdk::JsonValue new_threshold = 0.7;
+    client.node().set_node_param_data(
+        {"my_graph", "detect_node_id", "confidence_threshold", "run_params", new_threshold});
+    client.node().update_node({"my_graph", "detect_node_id"});
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_완전한_예"><a class="anchor" href="#_완전한_예"></a>완전한 예</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>다음은 전체 기본 그래프 노드 편집 및 실행 프로세스를 보여줍니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;filesystem&gt;
+#include &lt;iostream&gt;
+
+int main() {
+    try {
+        atom::sdk::AtomClient client("http://127.0.0.1:10026");
+        auto&amp; gs = client.graph();
+        auto&amp; ns = client.node();
+
+        // 1. 다이어그램 만들기 및 열기
+        gs.create_graph({"pipeline_graph", "테스트 파이프라인"});
+        gs.open_graph("pipeline_graph");
+
+        // 2. 전처리 노드 생성
+        auto preproc = ns.create_node({"pipeline_graph", "ImagePreprocessNode", "이미지 전처리"});
+        std::string preproc_id = preproc.at("nodeId").get&lt;std::string&gt;();
+
+        // 3. 탐지 노드 생성
+        auto detect = ns.create_node({"pipeline_graph", "YoloDetectionNode", "표적 탐지"});
+        std::string detect_id = detect.at("nodeId").get&lt;std::string&gt;();
+
+        // 4. 감지 노드 매개변수 설정：모델 파일 업로드
+        ns.set_node_param_data(
+            {"pipeline_graph", detect_id, "model_file", "init_params",
+             std::filesystem::path("/models/yolov8n.onnx")});
+
+        // 5. 작동 매개변수 설정（JSON 가치）
+        atom::sdk::JsonValue threshold = 0.5;
+        ns.set_node_param_data(
+            {"pipeline_graph", detect_id, "confidence_threshold", "run_params", threshold});
+
+        // 6. 두 노드 연결
+        ns.connect_nodes(
+            {"pipeline_graph", preproc_id, "image_out", detect_id, "image_in"});
+
+        // 7. 노드 초기화 및 활성화
+        ns.initial_node({"pipeline_graph", detect_id});
+        ns.activate_node({"pipeline_graph", detect_id});
+
+        // 8. 전체 그래프 실행
+        auto run_result = gs.run_graph("pipeline_graph");
+        std::cout &lt;&lt; "[8] 요청 상태：" &lt;&lt; run_result.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+        // 9. 감지 노드 출력 읽기
+        auto port_data = ns.get_node_port_data(
+            {"pipeline_graph", detect_id, "detection_result", "outputs"});
+
+        const auto&amp; data = port_data.data;
+        std::cout &lt;&lt; "포트 데이터 필드 수：" &lt;&lt; data.size() &lt;&lt; std::endl;
+
+        // 10. 첨부파일 읽기（시각화 이미지）
+        if (port_data.attachments.count("vis_image") &gt; 0) {
+            const auto&amp; img = port_data.attachments.at("vis_image");
+            std::cout &lt;&lt; "시각화 이미지 바이트：" &lt;&lt; img.size() &lt;&lt; std::endl;
+        }
+
+        // 11. 청소하다
+        gs.clear_graph("pipeline_graph");
+        gs.release_graph("pipeline_graph");
+
+    } catch (const atom::sdk::AtomError&amp; e) {
+        std::cerr &lt;&lt; "SDK 오류：" &lt;&lt; e.what() &lt;&lt; std::endl;
+        return 1;
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="graph.html">GraphService（C++）</a></span>
+  <span class="next"><a href="graph_node.html">GraphNodeService（C++）</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

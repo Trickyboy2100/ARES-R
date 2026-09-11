@@ -1,0 +1,2972 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>RuntimeService（C#） :: Atom SDK 開発者ガイド</title>
+    <link rel="prev" href="graph_node.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          オンライン製品ドキュメント
+                  </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="ドキュメントを検索"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              このマニュアルのみ
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            マニュアルを切り替え
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK 開発者ガイド</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          ダウンロードセンター
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          公式サイト
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            日本語
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK 開発者ガイド</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">ようこそ</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">クイックスタート</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">クイックスタート</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">サンプルサンプル</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">入門利用</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK 入門利用</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">ユーザーガイド</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">適切な Service を選択します</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">グラフとノードの操作</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">エラー処理とトラブルシューティング</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">よくある質問</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">基本的な概念</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/what-is-atom-sdk.html">Atom SDK とは</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-node-subgraph.html">グラフ、ノード、サブグラフ</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-vs-runtime.html">Graph と Runtime の違い</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/timestamp.html">Timestampとは何ですか</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/runtime-frame.html">ランタイム入力フレーム (RuntimeFrame / RuntimePassiveBinoFrame)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/point-cloud-protocol.html">点群タイプの入出力用のバイナリ プロトコル</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/param-binding.html">パラメータのタイプとバインディング名</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API リファレンス</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API リファレンスの概要</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python の概要とインストール</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/params.html">Python パラメータ オブジェクト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/public_api.html">Python パブリック ユーティリティ API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ バージョン — ユーザーガイド</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ パラメータ オブジェクト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="overview.html">Atom SDK — C# バージョン</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="params.html">C# パラメータオブジェクト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK 開発者ガイド</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK 開発者ガイド</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK 開発者ガイド</a></li>
+    <li>API リファレンス</li>
+    <li>C# SDK</li>
+    <li><a href="runtime.html">RuntimeService（C#）</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="このページの内容"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">RuntimeService（C#）</h1>
+<div class="sect1">
+<h2 id="_サービス紹介"><a class="anchor" href="#_サービス紹介"></a>サービス紹介</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>RuntimeService</code> は、Atom SDK の推論エンジン (Runtime) フェーズ* 用のサービスです。エディター ステージ (GraphService / NodeService) とは異なり、Runtime ステージのグラフはコンパイルおよび最適化されており、ノードごとの編集は必要ありません。呼び出し元は通常のフレーム データ (画像 + 点群) またはパッシブ両眼 EPICRAW3 データをグラフに直接送信し、共有パラメーターを設定してバインディング出力結果を取得することもできます。このサービスは、単一ノードの実行もサポートしています (グラフ構築は必要ありません)。これは、高速推論やバッチ処理のシナリオに適しています。すべてのメソッドは非同期です。</p>
+</div>
+<div class="paragraph">
+<p><strong>名前空間</strong>: <code>AtomSdk.Services</code></p>
+</div>
+<div class="paragraph">
+<p><strong>入口</strong>: <code>client.Runtime</code></p>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_該当するシナリオ"><a class="anchor" href="#_該当するシナリオ"></a>該当するシナリオ</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>エディター段階で設定したグラフを Runtime 環境にロードして実行します。</p>
+</li>
+<li>
+<p>通常のカメラ データ (画像 + 点群 + カメラの内部および外部パラメーター) またはパッシブ両眼 EPICRAW3 データを推論のためにグラフに送信します。</p>
+</li>
+<li>
+<p>バインディング名 (JSON 値または点群バイナリ) によって推論結果を読み取ります。</p>
+</li>
+<li>
+<p>共有パラメータ (<code>SetSharedParamsAsync</code>) または操作パラメータ (<code>SetRunParamsAsync</code>) を動的に調整します。</p>
+</li>
+<li>
+<p>グラフを構築せずに単一ノードを直接実行し、出力を自動的に解析する <code>RunSingleNodeNoGraphParsedAsync</code> を優先します。</p>
+</li>
+<li>
+<p>ノード パラメーター ポリシー情報を取得し、Runtime ステージでの推論動作を細かく制御します。</p>
+</li>
+</ul>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_推奨される呼び出し順序"><a class="anchor" href="#_推奨される呼び出し順序"></a>推奨される呼び出し順序</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">LoadGraphAsync(graphName)          （画像をロードする Runtime）
+        ↓
+GetMetaInfoAsync(graphName)        （オプション：要素情報を取得して読み込みが成功したことを確認する）
+        ↓
+SetSharedParamsAsync(...)          （オプション：共有パラメータを設定する）
+SetRunParamsAsync(...)             （オプション：動作パラメータを設定する）
+        ↓
+RunGraphAsync(RuntimeRunParams)    （入力データを送信して実行する）
+        ↓
+GetBindedOutputValueAsync(...)     （読む JSON 出力）
+GetBindedPointCloudParsedAsync(...)（おすすめ：点群出力の読み取りと解析）
+GetBindedPointCloudAsync(...)      （オプション：点群バイナリ出力の読み取り）
+        ↓
+ReleaseGraphAsync(graphName)       （リリース Runtime グラフィックリソース）</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_run_graph_2つの入力モード"><a class="anchor" href="#_run_graph_2つの入力モード"></a>run_graph 2つの入力モード</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>RunGraphAsync</code> は、<code>RuntimeRunParams</code> に基づいて入力構造を選択します。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">モード</th>
+<th class="tableblock halign-left valign-top">構築方法</th>
+<th class="tableblock halign-left valign-top">入力内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>通常モード</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>new RuntimeRunParams(graphName, frames)</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>1 つ以上の <code>RuntimeFrame</code>、各フレームには完全な EPICRAW + <code>Cam2Base</code> が含まれます</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>パッシブ双眼モード</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>推奨 <code>RuntimeRunParams.PassiveBinoFromFile/Bytes/Images(&#8230;&#8203;)</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>、<code>RuntimePassiveBinoFrame</code>、完全な EPICRAW3 + <code>Cam2Base</code> を含む</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>2 つのモードを混合しないでください。通常モードでは EPICRAW2 または標準レイアウト EPICRAW3 をカプセル化できます。パッシブ双眼モードでは <code>RuntimePassiveBinoFrame</code> を使用する必要があります。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_通常モードruntimeframeモデル"><a class="anchor" href="#_通常モードruntimeframeモデル"></a>通常モード：RuntimeFrameモデル</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>通常モードでは、<code>RunGraphAsync</code> は <code>IReadOnlyList&lt;RuntimeFrame&gt;</code> を受け入れます。 EPICRAW bytes またはファイルが既に存在する場合:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using AtomSdk.Models;
+
+var bytesFrame = RuntimeFrame.FromBytes(epicRawBytes, cam2BaseJson, roi);
+var fileFrame = RuntimeFrame.FromFile("frame.epicraw", cam2BaseJson, roi);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>元の配列から生成:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var points = new RuntimePointData(pointValues, width, height);
+var image = new RuntimeImageData(imageBytes, width, height);
+var frame = RuntimeFrame.FromData(points, image, cam2BaseJson, intrinsic, distortion);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>バージョンが指定されていない場合、通常の内部パラメータ/歪みは EPICRAW2 を生成します。 <code>cameraParams</code> に <code>TextureSrc</code>、<code>DepthSrc1</code>、または <code>DepthSrc2</code> が含まれる場合、EPICRAW3 が生成されます。標準の EPICRAW3 は <code>Depth + TextureBGR</code> のみを書き込み、完全な PointCloud は書き込みません。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_パッシブ双眼モード_runtimepassivebinoframe"><a class="anchor" href="#_パッシブ双眼モード_runtimepassivebinoframe"></a>パッシブ双眼モード: RuntimePassiveBinoFrame</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>図の <code>EpicProInput</code> ノードが <code>passive_bino</code> として構成されている場合は、EPICRAW3 元のバイトの完全なコピーを送信してください。サーバーは 3 つの画像、内部パラメータ、歪み、および EPICRAW3 からの <code>passive_bino_params</code> を解析します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var result = await client.Runtime.RunGraphAsync(
+    RuntimeRunParams.PassiveBinoFromFile(
+        "detection_graph",
+        "/data/passive_bino.epicraw",
+        cam2BaseJson));</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>ビジネス層がEPICRAW3bytesを取得している場合は、<code>RuntimeRunParams.PassiveBinoFromBytes(&#8230;&#8203;)`を使用できます。ビジネス層が 3 つの元の画像を取得した場合、`RuntimeRunParams.PassiveBinoFromImages(&#8230;&#8203;)</code> を使用でき、その画像は <code>new RuntimePassiveBinoImage(data, width, height, matType)</code> で表されます。 <code>matType</code> は、<code>CV_8UC1=0</code>、<code>CV_16UC1=2</code>、<code>CV_8UC3=16</code> などの OpenCV Mat type エンコーディングです。
+<code>PassiveBinoFromImages(&#8230;&#8203;)</code> の <code>passiveBinoParams</code> には、<code>DepthSrc1</code>、<code>DepthSrc2</code>、<code>TextureSrc</code>、metadata が含まれている必要があり、それぞれに次の 4 つのフィールドが含まれている必要があります。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var cameraParams = new Dictionary&lt;string, object?&gt;
+{
+    ["CameraMatrix"] = new[]
+    {
+        2113.997971632298, 0, 1956.222038925553,
+        0, 2113.7299751270057, 1505.0473199581195,
+        0, 0, 1,
+    },
+    ["CameraDistortion"] = new[]
+    {
+        0.049901632334, -0.037810281265, -0.00048319461,
+        -0.000276258172, -0.026886293015,
+    },
+    ["CameraRotation"] = new[]
+    {
+        0.9995132330503337, -0.005059159488191983, -0.030784766728731865,
+        0.004951704878090689, 0.9999813828533568, -0.003565748937897527,
+        0.030802233296787017, 0.003411576169582241, 0.999519676430619,
+    },
+    ["CameraTranslation"] = new[]
+    {
+        -25.837377992238334, -0.6852264771262435, -4.372034519324568,
+    },
+};
+
+var passiveBinoParams = new Dictionary&lt;string, object?&gt;
+{
+    ["DepthSrc1"] = cameraParams,
+    ["DepthSrc2"] = cameraParams,
+    ["TextureSrc"] = cameraParams,
+};</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_インターフェースの詳細説明"><a class="anchor" href="#_インターフェースの詳細説明"></a>インターフェースの詳細説明</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_loadgraphasync"><a class="anchor" href="#_loadgraphasync"></a>LoadGraphAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// オリジナル JsonElement バージョン
+Task&lt;JsonElement&gt; LoadGraphAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// ジェネリック版
+Task&lt;T&gt; LoadGraphAsync&lt;T&gt;(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 強く型付けされた便利なバージョン
+Task&lt;RuntimeGraphReference&gt; LoadGraphInfoAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的</strong>: 指定されたグラフを Runtime 推論環境にロードします (エディター グラフから実行可能な状態に変換します)。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名前</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ロードするイメージの名前</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>キャンセルトークン、オプション</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>戻り値</strong>: <code>Task&lt;JsonElement&gt;</code>、キーフィールド:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ユニークなフィギュアID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像名</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+// 画像をロードする Runtime
+var graphRef = await client.Runtime.LoadGraphInfoAsync("detection_graph");
+Console.WriteLine($"図がロードされました Runtime，ID: {graphRef.GraphId}");
+Console.WriteLine($"リクエストステータス: {graphRef.Status}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_listgraphsasync"><a class="anchor" href="#_listgraphsasync"></a>ListGraphsAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// オリジナル JsonElement バージョン
+Task&lt;JsonElement&gt; ListGraphsAsync(
+    CancellationToken cancellationToken = default)
+
+// ジェネリック版
+Task&lt;T&gt; ListGraphsAsync&lt;T&gt;(
+    CancellationToken cancellationToken = default)
+
+// 強く型付けされた便利なバージョン
+Task&lt;RuntimeGraphSummary[]&gt; ListGraphSummariesAsync(
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的</strong>: Runtime 環境にロードされたすべてのグラフの概要情報をリストします。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名前</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>キャンセルトークン、オプション</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>戻り値</strong>: <code>Task&lt;JsonElement&gt;</code>、ロードされたグラフの配列。</p>
+</div>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+var summaries = await client.Runtime.ListGraphSummariesAsync();
+Console.WriteLine($"Runtime 中国共産党 {summaries.Length} 写真");
+foreach (var s in summaries)
+{
+    Console.WriteLine($"  - {s.GraphName}");
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getallnodesinfoasync"><a class="anchor" href="#_getallnodesinfoasync"></a>GetAllNodesInfoAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// オリジナル JsonElement バージョン
+Task&lt;JsonElement&gt; GetAllNodesInfoAsync(
+    CancellationToken cancellationToken = default)
+
+// ジェネリック版
+Task&lt;T&gt; GetAllNodesInfoAsync&lt;T&gt;(
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的</strong>: Runtime 環境で利用可能なすべてのノード タイプの説明情報 (ノード名、ポート定義など) を取得します。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名前</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>キャンセルトークン、オプション</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>戻り値</strong>: <code>Task&lt;JsonElement&gt;</code>、ノードタイプ定義配列。</p>
+</div>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+var nodes = await client.Runtime.GetAllNodesInfoAsync();
+foreach (var node in nodes.EnumerateArray())
+{
+    Console.WriteLine(node.GetProperty("nodeName").GetString());
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_releasegraphasync"><a class="anchor" href="#_releasegraphasync"></a>ReleaseGraphAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// オリジナル JsonElement バージョン
+Task&lt;JsonElement&gt; ReleaseGraphAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// ジェネリック版
+Task&lt;T&gt; ReleaseGraphAsync&lt;T&gt;(
+    string graphName,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的</strong>: Runtime 環境からグラフをアンロードし、関連リソース (モデル、メモリなど) を解放します。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名前</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>キャンセルトークン、オプション</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>戻り値</strong>: <code>Task&lt;JsonElement&gt;</code>、動作ステータス情報。</p>
+</div>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Runtime.ReleaseGraphAsync("detection_graph");
+Console.WriteLine("写真はから取られました Runtime アンインストール");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getmetainfoasync"><a class="anchor" href="#_getmetainfoasync"></a>GetMetaInfoAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// オリジナル JsonElement バージョン
+Task&lt;JsonElement&gt; GetMetaInfoAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// ジェネリック版
+Task&lt;T&gt; GetMetaInfoAsync&lt;T&gt;(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 強く型付けされた便利なバージョン
+Task&lt;RuntimeMetaInfo&gt; GetMetaInfoModelAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的</strong>: Runtime グラフのメタ情報 (入力ポート構成、出力バインディング構成、グラフ構造の説明など) を取得します。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名前</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>キャンセルトークン、オプション</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>戻り値</strong>: <code>Task&lt;JsonElement&gt;</code>、プリミティブ情報。</p>
+</div>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+var meta = await client.Runtime.GetMetaInfoModelAsync("detection_graph");
+Console.WriteLine($"グラフ要素情報: {meta}");
+Console.WriteLine($"リクエストステータス: {meta.Status}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getbindedoutputvalueasync"><a class="anchor" href="#_getbindedoutputvalueasync"></a>GetBindedOutputValueAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// オリジナル JsonElement バージョン
+Task&lt;JsonElement&gt; GetBindedOutputValueAsync(
+    BindingRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// ジェネリック版
+Task&lt;T&gt; GetBindedOutputValueAsync&lt;T&gt;(
+    BindingRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的</strong>: バインディング名 (<code>RunGraphAsync</code> の後に呼び出されます) を通じて、グラフの出力ポートの現在の JSON 値を読み取ります。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名前</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>bindingName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>出力ポートのバインディング名 (<code>SetBindingNameAsync</code> を介してエディターフェーズで設定)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>キャンセルトークン、オプション</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>戻り値</strong>: <code>Task&lt;JsonElement&gt;</code>、このバインディング出力の現在の値。</p>
+</div>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+// 名前付きの読み取り "result" バインディング出力
+var value = await client.Runtime.GetBindedOutputValueAsync(new BindingRef("detection_graph", "result"));
+Console.WriteLine($"試験結果: {value}");
+
+// ジェネリック版：カスタム型に自動的に逆シリアル化する
+// var detection = await client.Runtime.GetBindedOutputValueAsync&lt;DetectionResult&gt;(
+//     new BindingRef("detection_graph", "result"));</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getbindedoutputsinfoasync"><a class="anchor" href="#_getbindedoutputsinfoasync"></a>GetBindedOutputsInfoAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// オリジナル JsonElement バージョン
+Task&lt;JsonElement&gt; GetBindedOutputsInfoAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// ジェネリック版
+Task&lt;T&gt; GetBindedOutputsInfoAsync&lt;T&gt;(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 強く型付けされた便利なバージョン
+Task&lt;RuntimeBindedOutputsInfo&gt; GetBindedOutputsInfoModelAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的</strong>: グラフ内のすべてのバインドされた出力ポートの情報リスト (ポート名、バインディング名、データ型など) を取得します。通常、出力構造を自動的に検出するために使用されます。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名前</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>キャンセルトークン、オプション</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>戻り値</strong>: <code>Task&lt;JsonElement&gt;</code>、バインディング出力情報リスト。</p>
+</div>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+var outputsInfo = await client.Runtime.GetBindedOutputsInfoModelAsync("detection_graph");
+Console.WriteLine($"バインド出力数量: {outputsInfo.Outputs?.Length ?? 0}");
+foreach (var output in outputsInfo.Outputs ?? Array.Empty&lt;object&gt;())
+{
+    Console.WriteLine($"  - {output}");
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getbindedpointcloudparsedasync"><a class="anchor" href="#_getbindedpointcloudparsedasync"></a>GetBindedPointCloudParsedAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">Task&lt;IReadOnlyList&lt;ParsedPointCloud&gt;&gt; GetBindedPointCloudParsedAsync(
+    PointCloudRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的</strong>: ランタイムにバインドされた点群を直接読み取り、解析します。最初に使用することをお勧めします。</p>
+</div>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var clouds = await client.Runtime.GetBindedPointCloudParsedAsync(
+    new PointCloudRef("detection_graph", "pointcloud_output", pointDim: 3));
+Console.WriteLine($"点群 shape: {string.Join(" x ", clouds[0].Shape)}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getbindedpointcloudasync"><a class="anchor" href="#_getbindedpointcloudasync"></a>GetBindedPointCloudAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">Task&lt;byte[]&gt; GetBindedPointCloudAsync(
+    BindingRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的</strong>: バインディング名を通じてグラフの特定の出力ポートの点群バイナリ データを読み取り、元の <code>byte[]</code> (点群結果の出力に適しています) を返します。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名前</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>bindingName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>点群出力ポートのバインド名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>キャンセルトークン、オプション</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>戻り値</strong>: <code>Task&lt;byte[]&gt;</code>、点群の生のバイナリ データ。
+注:
+* <code>GetBindedPointCloudAsync(&#8230;&#8203;)</code> はサーバー側の元の <code>byte[]</code> を返します
+* <code>Runtime/GetBindedPointCloud</code> のヘッダー情報には各点の寸法は含まれません。
+* 通常のシナリオでは、最初に上記の <code>GetBindedPointCloudParsedAsync(new PointCloudRef(&#8230;&#8203;, pointDim: 3))</code> を使用することをお勧めします。</p>
+</div>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.IO;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+byte[] pcdBytes = await client.Runtime.GetBindedPointCloudAsync(
+    new BindingRef("detection_graph", "pointcloud_output"));
+Console.WriteLine($"raw bytes: {pcdBytes.Length}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_setsharedparamsasync"><a class="anchor" href="#_setsharedparamsasync"></a>SetSharedParamsAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// オリジナル JsonElement バージョン
+Task&lt;JsonElement&gt; SetSharedParamsAsync(
+    RuntimeParamsUpdate paramsData,
+    CancellationToken cancellationToken = default)
+
+// ジェネリック版
+Task&lt;T&gt; SetSharedParamsAsync&lt;T&gt;(
+    RuntimeParamsUpdate paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的</strong>: Runtime ステージでグラフの共有パラメーター (すべてのノードにアクセスできるグローバル パラメーター) を設定します。通常は <code>LoadGraphAsync</code> の後、<code>RunGraphAsync</code> の前に呼び出されます。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名前</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>object</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>共有パラメータ オブジェクト (匿名オブジェクト、辞書、またはカスタム クラスを使用可能)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>キャンセルトークン、オプション</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>戻り値</strong>: <code>Task&lt;JsonElement&gt;</code>、動作ステータス情報。</p>
+</div>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Runtime.SetSharedParamsAsync(new RuntimeParamsUpdate("detection_graph", new
+{
+    confidence_threshold = 0.5,
+    nms_threshold = 0.45,
+    max_detections = 100
+}));
+
+Console.WriteLine("共有パラメータが設定されました");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_setrunparamsasync"><a class="anchor" href="#_setrunparamsasync"></a>SetRunParamsAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// オリジナル JsonElement バージョン
+Task&lt;JsonElement&gt; SetRunParamsAsync(
+    RuntimeParamsUpdate paramsData,
+    CancellationToken cancellationToken = default)
+
+// ジェネリック版
+Task&lt;T&gt; SetRunParamsAsync&lt;T&gt;(
+    RuntimeParamsUpdate paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的</strong>: Runtime ステージでグラフの動作パラメータを動的に更新します (各 <code>RunGraphAsync</code> の前に変更でき、デフォルト設定を上書きできます)。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名前</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.GraphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.ParamsData</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>object</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>実行パラメータオブジェクト</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>キャンセルトークン、オプション</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>戻り値</strong>: <code>Task&lt;JsonElement&gt;</code>、動作ステータス情報。</p>
+</div>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+// 動作パラメータを動的に変更する（グラフをリロードする必要はありません）
+await client.Runtime.SetRunParamsAsync(new RuntimeParamsUpdate("detection_graph", new
+{
+    batch_size = 4,
+    use_fp16 = true
+}));
+
+Console.WriteLine("動作パラメータが更新されました");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_rungraphasync"><a class="anchor" href="#_rungraphasync"></a>RunGraphAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// オリジナル JsonElement バージョン
+Task&lt;JsonElement&gt; RunGraphAsync(
+    RuntimeRunParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// ジェネリック版
+Task&lt;T&gt; RunGraphAsync&lt;T&gt;(
+    RuntimeRunParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 強く型付けされた便利なバージョン
+Task&lt;RuntimeRunGraphResult&gt; RunGraphResultAsync(
+    RuntimeRunParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的</strong>: 入力データをグラフに送信し、推論をトリガーします。これは、Runtime モードのコア インターフェイスです。通常モードは画像 + 点群 + カメラ パラメータを送信し、パッシブ双眼モードは完全な EPICRAW3 を送信します。データはバイナリ プロトコル (<code>application/octet-stream</code>) で効率的に転送されます。</p>
+</div>
+<div class="paragraph">
+<p><strong>注意</strong>:
+runtime.run_graph を使用する場合、現在のバージョンでは、グラフ内に <code>EpicPro输入</code> または <code>EpicPro输入(单组数据)</code> ノードと <code>EpicPro输出</code> ノードが必要です。そうしないと実行できず、エラーが報告されます。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名前</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.GraphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.Frames</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyList&lt;RuntimeFrame&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>通常モード入力。各フレームには画像、点群、カメラのパラメータが含まれています</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.RunMode</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>通常モードは <code>"others"</code> です。パッシブ双眼モードは`"passive_bino"`です</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.PassiveBinoFrame</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>RuntimePassiveBinoFrame?</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>パッシブ双眼モード入力。通常モードで送信する必要はありません</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>キャンセル トークン。呼び出し元がアクティブにキャンセルするために使用します。</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>モード選択</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">モード</th>
+<th class="tableblock halign-left valign-top">構築方法</th>
+<th class="tableblock halign-left valign-top">必須データ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>通常モード</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>new RuntimeRunParams(graphName, frames)</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Frames</code> には少なくとも 1 つの <code>RuntimeFrame</code> が含まれています</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>パッシブ双眼モード</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>RuntimeRunParams.PassiveBinoFromFile/Bytes/Images(&#8230;&#8203;)</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PassiveBinoFrame.EpicRaw3`および`PassiveBinoFrame.Cam2Base</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>通常モード RuntimeFrame フィールドの説明</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">必須ですか?</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>EpicRaw</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>byte[]</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>必須 (空にすることはできません)</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>完全なEPICRAW生バイト</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Cam2Base</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>object?</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>必須</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>カメラからベース座標系への変換、回転ベクトル形式、長さ 6 の <code>[x, y, z, rx, ry, rz]</code> (平行移動 + Rodrigues 回転ベクトル);サーバーは現在この形式のみをサポートしており、行列はサポートしていません。長さが正しくない場合は、<code>ArgumentException</code> がスローされます</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Roi</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>object?</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>オプション</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>関心領域。 <code>cam2ROIFrame</code> も長さ 6 の回転ベクトル形式のみをサポートします</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>EPICRAW bytes/ ファイルがある場合は、<code>RuntimeFrame.FromBytes(&#8230;&#8203;)</code> / <code>FromFile(&#8230;&#8203;)</code> を使用します。元の画像と点群のみがある場合は、<code>RuntimeFrame.FromData(&#8230;&#8203;)</code> を使用してローカルでエンコードし、<code>RuntimePointData</code>、<code>RuntimeImageData</code>、カメラ固有パラメータ/歪み (オプションの <code>cameraParams</code> 拡張パラメータ) を受け取ります。</p>
+</div>
+<div class="paragraph">
+<p><strong>パッシブ双眼モード RuntimePassiveBinoFrame フィールドの説明</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">必須ですか?</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>EpicRaw3</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>byte[]</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>必須 (空にすることはできません)</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>完全なEPICRAW3生バイト</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Cam2Base</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>object?</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>必須</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>カメラからベース座標系への変換、回転ベクトル形式、長さ 6 の <code>[x, y, z, rx, ry, rz]</code> (平行移動 + Rodrigues 回転ベクトル)。サーバーは現在この形式のみをサポートしており、行列はサポートしていません</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Roi</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>object?</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>オプション</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>興味のある分野</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>PassiveBinoFromImages(&#8230;&#8203;)</code> を使用する場合、各イメージは <code>RuntimePassiveBinoImage</code> で表されます。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Data</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>byte[]</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>生のピクセルバイト数</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Width</code> / <code>Height</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>int</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像の幅と高さ</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>MatType</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>int</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>OpenCV Mat type、<code>CV_8UC1=0</code>、<code>CV_16UC1=2</code>、<code>CV_8UC3=16</code> など</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>戻り値</strong>: <code>Task&lt;JsonElement&gt;</code>、推論完了後の集計結果 (特定のフィールドはグラフ構造によって決定されます)。</p>
+</div>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+// すでに完了しています EPICRAW ファイル/bytes 時間，直接カプセル化：
+byte[] epicRawBytes = await File.ReadAllBytesAsync("/data/camera/frame_001.epicraw");
+
+var frames = new List&lt;RuntimeFrame&gt;
+{
+    // cam2Base サーバーは現在回転ベクトル形式のみをサポートしています：[x, y, z, rx, ry, rz]（パン + Rodrigues 回転ベクトル）
+    RuntimeFrame.FromBytes(epicRawBytes, cam2Base: new[] { 0.0, 0.0, 0.5, 0.0, 0.0, 0.0 })
+};
+
+// ランチャート（20秒のタイムアウト）
+using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(20));
+var result = await client.Runtime.RunGraphResultAsync(
+    new RuntimeRunParams("detection_graph", frames), cts.Token);
+Console.WriteLine($"推論完了，リクエストステータス: {result.Status}");
+
+// 読み取りバインディング出力
+var detections = await client.Runtime.GetBindedOutputValueAsync(new BindingRef("detection_graph", "result"));
+Console.WriteLine($"試験結果: {detections}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_setgraphbindingdataasync"><a class="anchor" href="#_setgraphbindingdataasync"></a>SetGraphBindingDataAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// オリジナル JsonElement バージョン
+Task&lt;JsonElement&gt; SetGraphBindingDataAsync(
+    RuntimeBindingDataUpdate paramsData,
+    CancellationToken cancellationToken = default)
+
+// ジェネリック版
+Task&lt;T&gt; SetGraphBindingDataAsync&lt;T&gt;(
+    RuntimeBindingDataUpdate paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的</strong>: グラフのバインディング入力データをバッチで設定します (バインディング名マッピングを通じて)。これは、グラフの入力ポートにデータを注入するために使用されます。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名前</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.GraphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.BindingData</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, object?&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>データ マッピング ディクショナリへのバインド名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>キャンセルトークン、オプション</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>戻り値</strong>: <code>Task&lt;JsonElement&gt;</code>、動作ステータス情報。</p>
+</div>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Runtime.SetGraphBindingDataAsync(new RuntimeBindingDataUpdate("detection_graph",
+    new Dictionary&lt;string, object?&gt;
+    {
+        ["input_width"] = 640,
+        ["input_height"] = 480,
+        ["class_filter"] = "person",
+    }));
+
+Console.WriteLine("バインディング入力データが設定されています");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getnodeparamsinfowithstrategyasync"><a class="anchor" href="#_getnodeparamsinfowithstrategyasync"></a>GetNodeParamsInfoWithStrategyAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// オリジナル JsonElement バージョン
+Task&lt;JsonElement&gt; GetNodeParamsInfoWithStrategyAsync(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// ジェネリック版
+Task&lt;T&gt; GetNodeParamsInfoWithStrategyAsync&lt;T&gt;(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// 強く型付けされた便利なバージョン
+Task&lt;RuntimeNodeParamsInfoWithStrategy&gt; GetNodeParamsInfoWithStrategyModelAsync(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的</strong>: Runtime ダイアグラム内のポリシー パラメーターとそのポリシー構成 (パラメーター値の範囲、デフォルト値、調整可能なポリシーなどを含む) をサポートするノード情報を取得します。</p>
+</div>
+<div class="paragraph">
+<p><strong>サポート範囲</strong>: 現在、<code>PoseListFilter</code>、<code>PickPointFilter</code>、
+<code>PoseListSorterInXOY</code>、<code>PickPointSorterInXOY</code>、<code>PickPointSorterNew</code>、
+<code>PoseListSorter</code> ノードは次の 6 種類です。
+戻り値の <code>paramsData</code> は通常、<code>SetParamsInStrategyAsync(&#8230;&#8203;)</code> の入力テンプレートとして使用されます。
+まず調整が必要なフィールドを変更してから、完全な <code>paramsData</code> を返します。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名前</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.GraphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.NodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ノードID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>キャンセルトークン、オプション</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>戻り値</strong>: <code>Task&lt;JsonElement&gt;</code>、ノードパラメータポリシー情報。</p>
+</div>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+var strategyInfo = await client.Runtime.GetNodeParamsInfoWithStrategyModelAsync(
+    new NodeRef("detection_graph", "detect-node-001"));
+Console.WriteLine($"パラメータ攻略情報: {strategyInfo}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_setparamsinstrategyasync"><a class="anchor" href="#_setparamsinstrategyasync"></a>SetParamsInStrategyAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// オリジナル JsonElement バージョン
+Task&lt;JsonElement&gt; SetParamsInStrategyAsync(
+    RuntimeStrategyParamsUpdate paramsData,
+    CancellationToken cancellationToken = default)
+
+// ジェネリック版
+Task&lt;T&gt; SetParamsInStrategyAsync&lt;T&gt;(
+    RuntimeStrategyParamsUpdate paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的</strong>: Runtime ステージのストラテジ パラメーターをサポートするノード パラメーターを、ストラテジ (<code>GetNodeParamsInfoWithStrategyAsync</code> で使用) に従って変更します。</p>
+</div>
+<div class="paragraph">
+<p><strong>サポート範囲</strong>: 現在、<code>PoseListFilter</code>、<code>PickPointFilter</code>、
+<code>PoseListSorterInXOY</code>、<code>PickPointSorterInXOY</code>、<code>PickPointSorterNew</code>、
+<code>PoseListSorter</code> ノードは次の 6 種類です。その他のノードの場合は、共通パラメータインターフェースを使用してパラメータを設定してください。
+<code>RuntimeStrategyParamsUpdate.ParamsData</code> は通常、次の場所から来ます
+<code>GetNodeParamsInfoWithStrategyAsync(&#8230;&#8203;)</code> は値に <code>paramsData</code> を返します。短い文章だけを手書きしないでください
+ローカルパラメータ。サーバーから返された完全な構造を保持し、変更する必要があるフィールドのみを置き換えることをお勧めします。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名前</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.GraphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.NodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ノードID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.ParamsData</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>object</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>サーバーから返された`paramsData`から変更された完全なパラメータ構造</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>キャンセルトークン、オプション</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>戻り値</strong>: <code>Task&lt;JsonElement&gt;</code>、動作ステータス情報。</p>
+</div>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Text.Json.Nodes;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+var strategyInfo = await client.Runtime.GetNodeParamsInfoWithStrategyAsync(
+    new NodeRef("detection_graph", "detect-node-001"));
+var paramsData = JsonNode.Parse(
+    strategyInfo.GetProperty("paramsData").GetRawText())!.AsObject();
+
+paramsData["run_params"]!.AsObject()["strategies_config"] = new JsonObject
+{
+    ["value"] = new JsonArray
+    {
+        new JsonObject
+        {
+            ["BY_SCORE"] = new JsonObject
+            {
+                ["order"] = "HIGHEST",
+                ["differenceThreshold"] = 1,
+                ["groupInterval"] = 0.75,
+            },
+        },
+    },
+};
+
+await client.Runtime.SetParamsInStrategyAsync(
+    new RuntimeStrategyParamsUpdate(
+        "detection_graph",
+        "detect-node-001",
+        paramsData));
+
+Console.WriteLine("戦略パラメータが更新されました");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getfileparammd5async"><a class="anchor" href="#_getfileparammd5async"></a>GetFileParamMd5Async(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// オリジナル JsonElement バージョン
+Task&lt;JsonElement&gt; GetFileParamMd5Async(
+    FileParamRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// ジェネリック版
+Task&lt;T&gt; GetFileParamMd5Async&lt;T&gt;(
+    FileParamRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// 強く型付けされた便利なバージョン
+Task&lt;RuntimeFileParamMd5Info&gt; GetFileParamMd5InfoAsync(
+    FileParamRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的</strong>: 画像内のファイル パラメーター (モデル ファイルなど) の MD5 チェック値を取得します。この値は、ファイルが既に存在し、アップロードする前に更新する必要があるかどうかを判断するために使用されます。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名前</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.GraphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.ParamName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ファイルパラメータマッピング名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.ParamType</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>パラメータのタイプ、デフォルトは <code>"init_params"</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>キャンセルトークン、オプション</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>戻り値</strong>: <code>Task&lt;JsonElement&gt;</code>、<code>md5</code> フィールドを含む。</p>
+</div>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Security.Cryptography;
+using System.IO;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+// サーバーファイルを取得する MD5
+var md5Info = await client.Runtime.GetFileParamMd5InfoAsync(
+    new FileParamRef("detection_graph", "model_file"));
+string serverMd5 = md5Info.Md5;
+Console.WriteLine($"MD5 リクエストステータス: {md5Info.Status}");
+
+// ローカルファイルを計算する MD5
+byte[] localBytes = await File.ReadAllBytesAsync("/models/detector.onnx");
+string localMd5 = Convert.ToHexString(MD5.HashData(localBytes)).ToLowerInvariant();
+
+if (serverMd5 == localMd5)
+{
+    Console.WriteLine("モデルファイルはサーバーと一致しています，アップデートは必要ありません");
+}
+else
+{
+    Console.WriteLine("モデルファイルが変更されました，再アップロードする必要がある");
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_runsinglenodenographparsedasync_推奨"><a class="anchor" href="#_runsinglenodenographparsedasync_推奨"></a>RunSingleNodeNoGraphParsedAsync(&#8230;&#8203;) (推奨)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">Task&lt;SingleNodeParsedResult&gt; RunSingleNodeNoGraphParsedAsync(
+    SingleNodeParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的</strong>: グラフ構造に依存せず、単一ノードを直接実行し、<code>outputs</code> 内の点群と画像を直接使用可能なデータ構造に自動的に解析します。一般ユーザーは、最初にこのインターフェースを使用することをお勧めします。返された辞書 key はサーバー <code>outputs</code> key と一致しますが、点群と画像の値は解析されます。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名前</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.NodeName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ノードタイプ名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.Inputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, object?&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>入力ポート データ ディクショナリ; <code>FileInfo</code>/`byte[]`はノードのポートタイプに応じて自動処理されます</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.RunParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, object?&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>実行パラメータ辞書</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.InitParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, object?&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>パラメータ辞書の初期化</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.InputDataTypes</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, string&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>オプション。入力ポートタイプのマッピング。通常は省略されますが、SDK は必要に応じて自動的にクエリを実行します</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.InputPointDims</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, int&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>オプション。点群入力寸法のヒント。多くの場合、ポートの種類から自動的に推測されます</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.OutputDataTypes</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, string&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>オプション。出力ポートタイプのマッピング。省略した場合、SDK はノード名でノード出力定義をクエリします。</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.OutputPointDims</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, int&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>オプション。点群寸法プロンプトを出力します。 <code>XYZPoints</code> のデフォルトは 3、<code>NormalPoints</code>/<code>RGBPoints</code> のデフォルトは 6</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>キャンセルトークン、オプション</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>戻り値</strong>: <code>Task&lt;SingleNodeParsedResult&gt;</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">public sealed class SingleNodeParsedResult
+{
+    public JsonElement? RawJsonData { get; init; }
+    public byte[]? RawBinaryData { get; init; }
+    public IReadOnlyDictionary&lt;string, object?&gt; Outputs { get; init; }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>解析ルール:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">出力ポートの種類</th>
+<th class="tableblock halign-left valign-top"><code>Outputs[name]</code> のタイプ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Points</code> / <code>XYZPoints</code> / <code>NormalPoints</code> / <code>RGBPoints</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyList&lt;ParsedPointCloud&gt;</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Image</code> / <code>MonoImage</code> / <code>ColorImage</code> / <code>BinaryImage</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyList&lt;ParsedImage&gt;</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>その他のタイプ</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonElement</code>、元の JSON 値をサーバー上に保持します</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>障害処理</strong>: サーバーの最上位が <code>status=0</code> であるが、単一ノードの結果が <code>status_queue</code> である場合
+<code>success:false</code>、<code>activate failed</code>、<code>error</code>、または否定的なステータスが含まれている場合、SDK が解析されます
+<code>Outputs</code> の前に <code>AtomApiException</code> をスローします。例外的に、<code>Payload</code> は元の結果をそのまま保持します。
+<code>status_queue</code>、<code>outputs</code>、および <code>status</code> は引き続きそこで表示できます。</p>
+</div>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+var result = await client.Runtime.RunSingleNodeNoGraphParsedAsync(
+    new SingleNodeParams(
+        "EstimateNormal",
+        inputs: new Dictionary&lt;string, object?&gt;
+        {
+            ["points"] = new FileInfo("/data/input.ply"),
+        },
+        outputDataTypes: new Dictionary&lt;string, string&gt;
+        {
+            ["points"] = "XYZPoints",
+        },
+        outputPointDims: new Dictionary&lt;string, int&gt;
+        {
+            ["points"] = 3,
+        }));
+
+var clouds = (IReadOnlyList&lt;ParsedPointCloud&gt;)result.Outputs["points"]!;
+Console.WriteLine($"点群の数: {clouds.Count}");
+Console.WriteLine($"最初の点群 shape: {string.Join(" x ", clouds[0].Shape)}");</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>SDK が <code>NodeName</code> を通じてノード出力定義をクエリできる場合は、<code>OutputDataTypes</code> を入力する必要はありません。サーバーが raw bytes を返す場合、または 1 つのノード情報クエリを保存したい場合は、明示的に入力することをお勧めします。 raw bytes 結果が自動的に解析されるようにするには、唯一の点群出力ポートを決定する必要があります。</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_runsinglenodenographasync_オプション_生の戻り値"><a class="anchor" href="#_runsinglenodenographasync_オプション_生の戻り値"></a>RunSingleNodeNoGraphAsync(&#8230;&#8203;) (オプション: 生の戻り値)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 戻る SingleNodeResult（含まれています JSON またはバイナリ）
+Task&lt;SingleNodeResult&gt; RunSingleNodeNoGraphAsync(
+    SingleNodeParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 指定された型を返します（JSON 出力）
+Task&lt;T&gt; RunSingleNodeNoGraphJsonAsync&lt;T&gt;(
+    SingleNodeParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>目的</strong>: グラフ構造に依存せず、単一ノードを直接実行し、サーバー本来の結果を取得します。 JSON/raw bytes を自分で処理する必要がある場合にのみ使用してください。通常のシナリオでは、最初に <code>RunSingleNodeNoGraphParsedAsync</code> を使用することをお勧めします。
+parsed インターフェイスと同様に、<code>status_queue</code> がノードの内部操作の失敗を示している場合、raw インターフェイスもスローします。
+<code>AtomApiException</code>、完全な生の結果を例外の <code>Payload</code> に配置します。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名前</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.NodeName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ノードタイプ名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.Inputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, object?&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>入力ポート データ ディクショナリ; <code>FileInfo</code>/`byte[]`はノードのポートタイプに応じて自動処理されます</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.RunParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, object?&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>実行パラメータ辞書</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.InitParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, object?&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>パラメータ辞書の初期化</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.InputDataTypes</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, string&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>オプション。入力ポートタイプのマッピング。通常は省略されます。SDK は自動的にクエリを実行します</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.InputPointDims</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, int&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>オプション。点群入力寸法のヒント。多くの場合、入力タイプから自動的に推測されます</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>キャンセルトークン、オプション</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>戻り値</strong>: <code>Task&lt;SingleNodeResult&gt;</code>、JSON の結果は <code>.JsonData</code> / <code>.DeserializeJson&lt;T&gt;()</code> を通じて読み取ることができ、バイナリの結果は <code>.BinaryData</code> を通じて取得できます。
+一般的な入力はポート タイプごとに自動的に処理されます。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">ポートの種類</th>
+<th class="tableblock halign-left valign-top">C# 入力値</th>
+<th class="tableblock halign-left valign-top">SDK の動作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>File</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>FileInfo</code> / UTF-8 <code>byte[]</code> / <code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>はパス文字列として JSON に入れられ、ファイルの内容は読み取られません。</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Image</code> / <code>MonoImage</code> / <code>ColorImage</code> / <code>BinaryImage</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>FileInfo</code> / <code>byte[]</code> / base64 文字列</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>は <code>data:image/&#8230;&#8203;;base64,&#8230;&#8203;</code> 文字列リストに変換されます</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Points</code> / <code>XYZPoints</code> / <code>NormalPoints</code> / <code>RGBPoints</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>.ply</code>/<code>FileInfo</code> / エンコードされた <code>byte[]</code> / 数値の配列</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>.ply</code> は Atom 点群バイナリに変換されます。エンコードされたバイトは変更されずにアップロードされます</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>その他のタイプ</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>任意の JSON 値 / <code>byte[]</code> / <code>FileInfo</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>は古い動作を維持します: JSON から <code>inputs</code> へ、バイトまたはファイルの内容はファイル フィールドによってアップロードされます</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>C# SDK は現在、単一ノードの直接操作で ASCII PLY の <code>vertex</code> 属性の読み取りをサポートしています。 <code>XYZPoints</code>/<code>Points</code> は <code>x,y,z</code> を読み取り、<code>NormalPoints</code> は <code>x,y,z,nx,ny,nz</code> を読み取り、<code>RGBPoints</code> は <code>x,y,z,red,green,blue</code> を読み取ります。</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><strong>例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+// 例 1：入ってくる byte[]。ポートが ColorImage，SDK に変換されます base64 画像一覧；
+// ポートが XYZPoints，SDK これはすでにエンコードされていると思うでしょう Atom 点群バイナリ。
+byte[] imageBytes = await File.ReadAllBytesAsync("/data/test.jpg");
+var result1 = await client.Runtime.RunSingleNodeNoGraphAsync(
+    new SingleNodeParams(
+        "ResizeImage",
+        new Dictionary&lt;string, object?&gt;
+        {
+            ["image"] = imageBytes
+        },
+        new Dictionary&lt;string, object?&gt;
+        {
+            ["scale_factor"] = 0.5
+        }));
+
+// 逆シリアル化 JSON 結果
+// var typed = result1.DeserializeJson&lt;MyOutputType&gt;();
+Console.WriteLine($"単一ノードの操作が完了しました");
+
+// 例 2：使用する FileInfo ローカルファイルを渡す。SDK ポートの種類によって判断されます：
+// File ポートはパス文字列のみを送信します，ColorImage ポート転送 base64，XYZPoints の .ply 点群へのパス payload。
+var result2 = await client.Runtime.RunSingleNodeNoGraphAsync(
+    new SingleNodeParams(
+        "ModelInferenceNode",
+        new Dictionary&lt;string, object?&gt;
+        {
+            ["input_image"] = new FileInfo("/data/test.jpg"),
+        },
+        initParams: new Dictionary&lt;string, object?&gt;
+        {
+            ["model_path"] = "/models/detector.onnx"
+        }));
+Console.WriteLine("ファイル入力単一ノード操作が完了しました");
+
+// 例 3：汎用バージョンは結果を直接逆シリアル化します。
+// var typedResult = await client.Runtime.RunSingleNodeNoGraphJsonAsync&lt;MyResult&gt;(
+//     new SingleNodeParams("ResizeImage", inputs: ..., runParams: ...));</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_完全な推論プロセスの例"><a class="anchor" href="#_完全な推論プロセスの例"></a>完全な推論プロセスの例</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>次の例は、グラフの読み込みから推論結果の読み取りまでの完全な Runtime ワークフローを示しています。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Core;
+using AtomSdk.Models;
+
+class RuntimeWorkflowExample
+{
+    static async Task Main()
+    {
+        var client = new AtomClient("http://localhost:8080");
+        const string graphName = "detection_graph";
+
+        try
+        {
+            // 1. 画像をロードする Runtime
+            var graphRef = await client.Runtime.LoadGraphInfoAsync(graphName);
+            Console.WriteLine($"[1] 画像が読み込まれました，ID: {graphRef.GraphId}, リクエストステータス: {graphRef.Status}");
+
+            // 2. 初歩的な情報を入手する（構成を確認する）
+            var meta = await client.Runtime.GetMetaInfoModelAsync(graphName);
+            Console.WriteLine($"[2] グラフ要素情報が正常に取得されました，リクエストステータス: {meta.Status}");
+
+            // 3. 共有パラメータを設定する
+            await client.Runtime.SetSharedParamsAsync(
+                new RuntimeParamsUpdate(graphName, new
+                {
+                    confidence_threshold = 0.5,
+                    nms_threshold = 0.45,
+                }));
+            Console.WriteLine("[3] 共有パラメータが設定されました");
+
+            // 4. ファイルパラメータを確認してください MD5（モデルを繰り返しアップロードしないようにする）
+            var md5Info = await client.Runtime.GetFileParamMd5InfoAsync(
+                new FileParamRef(graphName, "model_file"));
+            Console.WriteLine($"[4] サーバーモデル MD5: {md5Info.Md5}, リクエストステータス: {md5Info.Status}");
+
+            // 5. フレームデータを用意する：すでに完了しています EPICRAW ファイルを直接カプセル化する
+            byte[] epicRawBytes = await File.ReadAllBytesAsync("/data/frame.epicraw");
+
+            var frames = new List&lt;RuntimeFrame&gt;
+            {
+                // cam2Base サーバーは現在回転ベクトル形式のみをサポートしています：[x, y, z, rx, ry, rz]（パン + Rodrigues 回転ベクトル）
+                RuntimeFrame.FromBytes(epicRawBytes, cam2Base: new[] { 0.0, 0.0, 0.5, 0.0, 0.0, 0.0 })
+            };
+
+            // 6. ランチャート，発信者は最大でも待機します 30 数秒後に自動的にキャンセル
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+            var runResult = await client.Runtime.RunGraphResultAsync(
+                new RuntimeRunParams(graphName, frames), cts.Token);
+            Console.WriteLine($"[6] 推論完了，リクエストステータス: {runResult.Status}");
+
+            // 7. 読む JSON 出力（バインディング名による）
+            var jsonOutput = await client.Runtime.GetBindedOutputValueAsync(
+                new BindingRef(graphName, "result"));
+            Console.WriteLine($"[7] 試験結果: {jsonOutput}");
+
+            // 8. 点群出力の読み取り（もしあれば）
+            // var pointClouds = await client.Runtime.GetBindedPointCloudParsedAsync(
+            //     new PointCloudRef(graphName, "pointcloud_result", pointDim: 3));
+
+            // 9. すべてのバインディング出力に関する情報を取得する
+            var outputsInfo = await client.Runtime.GetBindedOutputsInfoModelAsync(graphName);
+            Console.WriteLine($"[9] 出力ポート数: {outputsInfo.Outputs?.Length ?? 0}");
+
+            // 10. リリース Runtime グラフィックリソース
+            await client.Runtime.ReleaseGraphAsync(graphName);
+            Console.WriteLine("[10] Runtime 画像が公開されました");
+        }
+        catch (AtomApiException ex)
+        {
+            Console.WriteLine($"サーバーエラー {ex.Status}: {ex.Message}");
+        }
+        catch (AtomHttpException ex)
+        {
+            Console.WriteLine($"HTTP エラー {ex.StatusCode}: {ex.Message}");
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_例外の説明"><a class="anchor" href="#_例外の説明"></a>例外の説明</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">例外の種類</th>
+<th class="tableblock halign-left valign-top">トリガー条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>AtomApiException</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>サーバーがビジネス エラーを返します (画像がロードされていない、パラメータが不正です)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>AtomHttpException</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>HTTP レイヤー エラー (接続失敗、タイムアウト、4xx/5xx ステータス コード)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>AtomProtocolException</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>応答フォーマットの解析に失敗しました</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>ArgumentException</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>RuntimeFrame.Image</code> または <code>PointCloud</code> が空のバイト配列の場合にスローされます</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="graph_node.html">GraphNodeService（C#）</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

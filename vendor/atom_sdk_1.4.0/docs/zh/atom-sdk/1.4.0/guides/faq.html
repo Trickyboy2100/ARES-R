@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>常见问题解答 :: Atom SDK 开发手册</title>
+    <link rel="prev" href="error-handling.html">
+    <link rel="next" href="../concepts/what-is-atom-sdk.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          在线产品文档        </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="输入关键词搜索"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              仅本手册
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            切换手册
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK 开发手册</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          下载中心
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          官网
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            简体中文
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK 开发手册</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">欢迎</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">快速开始</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">快速开始</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">示例样本</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">入门使用</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK 入门使用</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService 入门使用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService 入门使用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService 入门使用</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">使用指南</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="how-to-choose-service.html">选择合适的 Service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="graph-and-node.html">图与节点操作</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="error-handling.html">错误处理与排查</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="faq.html">常见问题解答</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">基础概念</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/what-is-atom-sdk.html">什么是 Atom SDK</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-node-subgraph.html">图、节点、子图</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-vs-runtime.html">Graph 与 Runtime 的区别</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/timestamp.html">Timestamp 是什么</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/runtime-frame.html">运行时输入帧（RuntimeFrame / RuntimePassiveBinoFrame）</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/point-cloud-protocol.html">点云类型输入输出的二进制协议</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/param-binding.html">参数类型与绑定名</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API 参考</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API 参考总览</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python 概览与安装</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/params.html">Python 参数对象</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/public_api.html">Python 公共工具 API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ 版 — 使用指南</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ 参数对象</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">Atom SDK — C# 版本</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/params.html">C# 参数对象</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK 开发手册</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK 开发手册</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK 开发手册</a></li>
+    <li>使用指南</li>
+    <li><a href="faq.html">常见问题解答</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="本页内容"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">常见问题解答</h1>
+<div class="sect1">
+<h2 id="_连接与安装问题"><a class="anchor" href="#_连接与安装问题"></a>连接与安装问题</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_连接被拒绝connection_refused"><a class="anchor" href="#_连接被拒绝connection_refused"></a>连接被拒绝（Connection refused）</h3>
+<div class="paragraph">
+<p><strong>现象</strong>：调用任何接口都报 <code>ConnectionError</code> 或 <code>Connection refused</code>。</p>
+</div>
+<div class="paragraph">
+<p><strong>原因</strong>：<code>atom_vp_interface</code> 服务未运行，或 <code>base_url</code> 配置错误。</p>
+</div>
+<div class="paragraph">
+<p><strong>解决步骤</strong>：</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>确认服务是否在运行：</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl http://127.0.0.1:10026/Graph/GetAllGraphsNoThumbnail</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>如果服务在其他端口，修改 <code>base_url</code>：</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">client = AtomClient(base_url="http://127.0.0.1:你的端口号")</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>如果服务在其他机器，替换 IP：</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">client = AtomClient(base_url="http://192.168.1.100:10026")</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_找不到_python_安装包"><a class="anchor" href="#_找不到_python_安装包"></a>找不到 Python 安装包</h3>
+<div class="paragraph">
+<p><strong>现象</strong>：执行安装命令时提示找不到 <code>atom_sdk</code> 或 wheel 文件。</p>
+</div>
+<div class="paragraph">
+<p><strong>解决</strong>：从 <a href="https://docs.transfertech.cn/app/#/downloadCenter">下载中心</a> 下载并解压 SDK 压缩包，然后安装本地 wheel：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">python -m pip install &lt;SDK_DIR&gt;/python/atom_sdk-&lt;版本&gt;-*.whl</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>确认 wheel 与当前 Python 版本和操作系统匹配；如果使用虚拟环境，请先激活该环境。</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_timestamp_相关"><a class="anchor" href="#_timestamp_相关"></a>Timestamp 相关</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_数据已修改需要同步请重新获取图"><a class="anchor" href="#_数据已修改需要同步请重新获取图"></a>数据已修改，需要同步，请重新获取图</h3>
+<div class="paragraph">
+<p><strong>现象</strong>：调用 <code>create_node</code>、<code>set_node_param_data</code> 等编辑接口时报错，错误信息包含"数据已修改"或"需要同步"。</p>
+</div>
+<div class="paragraph">
+<p><strong>原因</strong>：你持有的图版本（timestamp）已过期。另一个操作（可能是前端编辑、另一个脚本、或你之前的某次操作）修改了图，导致版本不匹配。</p>
+</div>
+<div class="paragraph">
+<p><strong>解决步骤</strong>：</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>主图操作：重新调用 <code>open_graph()</code> 刷新 timestamp</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">client.graph.open_graph("my_graph")
+# 然后重试你的操作</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>子图操作：重新调用 <code>graph_node.open_graph()</code></p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SubGraphRef
+
+client.graph_node.open_graph(SubGraphRef("my_graph", graph_node_id))</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>常见触发场景</strong>：</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>同时在 Atom 前端界面和脚本里修改同一张图</p>
+</li>
+<li>
+<p>多个脚本并发修改同一张图</p>
+</li>
+<li>
+<p>脚本打开图后等待很长时间才继续操作</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_每次操作都要传_timestamp_吗"><a class="anchor" href="#_每次操作都要传_timestamp_吗"></a>每次操作都要传 timestamp 吗？</h3>
+<div class="paragraph">
+<p>不需要。SDK 在 <code>open_graph()</code>、<code>create_node()</code> 等操作成功后自动缓存 timestamp，后续操作自动携带，不需要手动传。</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_service_与接口选择"><a class="anchor" href="#_service_与接口选择"></a>Service 与接口选择</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_nodeservice_和_graphnodeservice_什么区别"><a class="anchor" href="#_nodeservice_和_graphnodeservice_什么区别"></a>NodeService 和 GraphNodeService 什么区别？</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><code>NodeService</code>（<code>client.node</code>）：操作*主图*中的节点</p>
+</li>
+<li>
+<p><code>GraphNodeService</code>（<code>client.graph_node</code>）：操作*子图节点内部*的节点</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>子图节点是主图里一种特殊的节点，内部包含一张完整子图。<code>GraphNodeService</code> 的所有方法比 <code>NodeService</code> 多一个 <code>graph_node_id</code> 参数，用于指定进入哪个子图。</p>
+</div>
+<div class="paragraph">
+<p>如果你不确定用哪个，先用 <code>open_graph</code> 拿到节点列表，判断节点的类型。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_graph_node_id_和_node_id_的区别"><a class="anchor" href="#_graph_node_id_和_node_id_的区别"></a>graph_node_id 和 node_id 的区别</h3>
+<div class="paragraph">
+<p>在 <code>GraphNodeService</code> 中，方法通常有两个 ID 参数：</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>graph_node_id</code>：主图中子图节点本身的 ID（用 <code>client.node.create_node</code> 创建的那个）</p>
+</li>
+<li>
+<p><code>node_id</code>：子图*内部*某个节点的 ID（用 <code>client.graph_node.create_node</code> 创建的那个）</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>传错不一定报错，但会操作到错误的节点。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_什么时候用_graphservice_run_graph什么时候用_runtimeservice_run_graph"><a class="anchor" href="#_什么时候用_graphservice_run_graph什么时候用_runtimeservice_run_graph"></a>什么时候用 GraphService.run_graph，什么时候用 RuntimeService.run_graph？</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 40%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top"></th>
+<th class="tableblock halign-left valign-top"><code>GraphService.run_graph</code></th>
+<th class="tableblock halign-left valign-top"><code>RuntimeService.run_graph</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">适用场景</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">编辑调试阶段</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">生产执行阶段</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">是否需要 open_graph</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">是</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">否（需要 load_graph）</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">输入数据</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">无（节点已有数据）</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">普通模式：<code>RuntimeFrame</code>；被动双目：EPICRAW3</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">返回结果</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">节点激活状态</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">推理结果（检测框等）</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_参数设置问题"><a class="anchor" href="#_参数设置问题"></a>参数设置问题</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_设置参数后运行结果没变化"><a class="anchor" href="#_设置参数后运行结果没变化"></a>设置参数后运行结果没变化</h3>
+<div class="paragraph">
+<p><strong>可能原因</strong>：</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>param_type 写错</strong>：<code>init_params</code> 和 <code>run_params</code> 是不同的。查看节点定义确认：</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeRef
+
+info = client.node.get_node_info_in_graph(NodeRef("my_graph", node_id))
+print([p["name"] for p in info["nodeInfo"].get("initParams", [])])
+print([p["name"] for p in info["nodeInfo"].get("runParams", [])])</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p><strong>设置了 init_params 但没有 initial_node</strong>：修改 init_params 后需要重新初始化：</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeRef
+
+client.node.initial_node(NodeRef("my_graph", node_id))</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p><strong>param_name 大小写错误</strong>：参数名区分大小写，以 <code>get_node_info_in_graph</code> 返回的名称为准。</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_如何上传文件参数"><a class="anchor" href="#_如何上传文件参数"></a>如何上传文件参数</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python"># Python：传 pathlib.Path 对象，SDK 自动上传
+from pathlib import Path
+from atom_sdk import NodeParamUpdate
+
+client.node.set_node_param_data(
+    NodeParamUpdate(
+        "my_graph", node_id,
+        "model", "init_params",
+        Path("/absolute/path/to/model.bin")  # Path 对象
+    )
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>传字符串路径不会触发文件上传，会被当成普通字符串参数写入。</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_runtimeframe_相关"><a class="anchor" href="#_runtimeframe_相关"></a>RuntimeFrame 相关</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>RuntimeService.run_graph</code> 先看输入模式：普通模式使用封装完整 EPICRAW 的 <code>RuntimeFrame</code>，被动双目 <code>passive_bino</code> 模式使用 <code>RuntimePassiveBinoFrame</code>。</p>
+</div>
+<div class="sect2">
+<h3 id="_run_graph_报_frame_缺少_epicraw"><a class="anchor" href="#_run_graph_报_frame_缺少_epicraw"></a>run_graph 报 frame 缺少 EPICRAW</h3>
+<div class="paragraph">
+<p><strong>现象</strong>：<code>ValueError: runtime frame is missing EPICRAW bytes</code></p>
+</div>
+<div class="paragraph">
+<p><strong>原因</strong>：普通模式的每个 <code>RuntimeFrame</code> 都必须包含一份非空 EPICRAW。</p>
+</div>
+<div class="paragraph">
+<p><strong>正确格式</strong>：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import RuntimeFrame, RuntimeRunParams
+
+frame = RuntimeFrame.from_file("frame.epicraw", cam2_base=[x, y, z, rx, ry, rz], roi=None)
+result = client.runtime.run_graph(RuntimeRunParams("my_graph", [frame]))
+print("运行请求状态：", result["status"])</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>如果图里的 <code>EpicProInput</code> 配置为 <code>passive_bino</code>，不要按这个格式补 <code>image</code> 或 <code>point_cloud</code>。Python 请使用 <code>RuntimeRunParams.passive_bino_from_file(&#8230;&#8203;)</code> 或 <code>passive_bino_from_images(&#8230;&#8203;)</code>；C++ 请使用 <code>RuntimeRunParams::passive_bino_from_file/bytes/images(&#8230;&#8203;)</code>；C# 请使用 <code>RuntimeRunParams.PassiveBinoFromFile/Bytes/Images(&#8230;&#8203;)</code>。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_image_和_point_cloud_应该传什么格式"><a class="anchor" href="#_image_和_point_cloud_应该传什么格式"></a>image 和 point_cloud 应该传什么格式</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><code>image</code>：原始未压缩像素字节，不是 JPEG/PNG。用 <code>numpy_array.tobytes()</code> 转换：</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import numpy as np
+image_bytes = np.zeros((480, 640, 3), dtype=np.uint8).tobytes()</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p><code>point_cloud</code>：float32 原始字节，shape 为 [H, W, 3]：</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">pc_bytes = np.zeros((480, 640, 3), dtype=np.float32).tobytes()</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_points_类型点云相关"><a class="anchor" href="#_points_类型点云相关"></a>Points 类型点云相关</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_run_single_node_no_graph_报_buffer_size_must_be_a_multiple_of_element_size"><a class="anchor" href="#_run_single_node_no_graph_报_buffer_size_must_be_a_multiple_of_element_size"></a>run_single_node_no_graph 报 buffer size must be a multiple of element size</h3>
+<div class="paragraph">
+<p><strong>现象</strong>：<code>AtomApiError: buffer size must be a multiple of element size</code></p>
+</div>
+<div class="paragraph">
+<p><strong>原因</strong>：<code>Points</code>/<code>XYZPoints</code>/<code>NormalPoints</code>/<code>RGBPoints</code> 类型的输入端口要求传入服务端自定义协议格式的二进制数据（<code>[点云个数, 每份长度, 数据&#8230;&#8203;]</code>），不是普通文件。新版 SDK 会按节点输入端口类型自动把 <code>.ply</code> 路径编码成这段二进制；如果你使用的是旧版本 SDK、SDK 查不到节点输入类型，或自己传了缺少协议头的原始 xyz 字节，服务端按 <code>float32</code> 解析时就可能报这个错。</p>
+</div>
+<div class="paragraph">
+<p><strong>解决步骤</strong>：</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>优先直接传 <code>.ply</code> 路径，让 SDK 按节点端口类型自动处理。</p>
+</li>
+<li>
+<p>如果节点类型自动查询不到，给 <code>SingleNodeParams</code> 显式补 <code>input_data_types={"points": "XYZPoints"}</code>。</p>
+</li>
+<li>
+<p>如果你想手动控制点维度，可用 <code>load_ply_points</code> + <code>encode_point_cloud_payload</code> 生成协议要求的 <code>bytes</code>。</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>直接传 <code>.ply</code> 路径：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SingleNodeParams
+
+result = client.runtime.run_single_node_no_graph(
+    SingleNodeParams("EstimateNormal", inputs={"points": "/data/scan.ply"})
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>手动编码：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SingleNodeParams, encode_point_cloud_payload, load_ply_points
+
+points = load_ply_points("/data/scan.ply")
+payload = encode_point_cloud_payload(points, point_dim=3)
+
+result = client.runtime.run_single_node_no_graph(
+    SingleNodeParams("EstimateNormal", inputs={"points": payload})
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>常见触发场景</strong>：</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>旧 SDK 里直接写 <code>inputs={"points": "/data/scan.ply"}</code></p>
+</li>
+<li>
+<p>自动查询不到节点类型，又没有手动补 <code>input_data_types</code></p>
+</li>
+<li>
+<p>自己拼了 xyz 的原始 float32 字节，但漏掉了协议要求的 <code>[点云个数, 长度]</code> 头信息</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>详细协议格式见 <a href="../concepts/point-cloud-protocol.html" class="xref page">点云类型输入输出的二进制协议</a>。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_run_single_node_no_graph_返回的是_bytes不是预期的_dict"><a class="anchor" href="#_run_single_node_no_graph_返回的是_bytes不是预期的_dict"></a>run_single_node_no_graph 返回的是 bytes，不是预期的 dict</h3>
+<div class="paragraph">
+<p><strong>现象</strong>：调用 <code>run_single_node_no_graph</code> 后 <code>type(result)</code> 是 <code>bytes</code>，对它做 <code>result["xxx"]</code> 会报 <code>TypeError: byte indices must be integers</code>。</p>
+</div>
+<div class="paragraph">
+<p><strong>原因</strong>：<code>CalculateEdge</code>、<code>CalculateEdgeNew</code>、<code>EstimateNormal</code>、<code>DownSample</code>、<code>DownSampleWithNormal</code>、<code>FilterByNormal</code> 这几个节点，服务端直接返回未封装的原始点云字节（<code>content-type: application/octet-stream</code>，但不是 SDK 常规二进制协议里"JSON 头 + 具名附件"的格式）。SDK 尝试用常规方式解码会失败，于是按设计回退成直接返回原始 <code>bytes</code>。</p>
+</div>
+<div class="paragraph">
+<p><strong>解决步骤</strong>：</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>调用前确认节点名是否在上面这份特殊列表里，提前预期拿到的是 <code>bytes</code>。</p>
+</li>
+<li>
+<p>用 <code>decode_point_cloud_payload</code> 解析，<code>has_dim_in_header</code> 固定传 <code>False</code>，<code>point_dim</code> 按节点输出端口的实际类型选（<code>XYZPoints</code>/<code>Points</code> 传 <code>3</code>，<code>NormalPoints</code>/<code>RGBPoints</code> 传 <code>6</code>）：</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import decode_point_cloud_payload
+
+result = client.runtime.run_single_node_no_graph(
+    SingleNodeParams("EstimateNormal", inputs={"points": payload})
+)
+clouds = decode_point_cloud_payload(result, has_dim_in_header=False, point_dim=6)
+print(clouds[0].shape)          # (点数, 6) -&gt; [x, y, z, nx, ny, nz]</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>常见触发场景</strong>：</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>把 <code>run_single_node_no_graph</code> 当成普通节点调用，直接对返回值取字典字段</p>
+</li>
+<li>
+<p><code>point_dim</code> 传错，导致 <code>reshape</code> 后数据错位</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_c_相关"><a class="anchor" href="#_c_相关"></a>C++ 相关</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_c_如何读取_atomsdkjsonvalue_返回值"><a class="anchor" href="#_c_如何读取_atomsdkjsonvalue_返回值"></a>C++ 如何读取 atom::sdk::JsonValue 返回值</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto result = client.graph().create_graph({"my_graph"});
+std::cout &lt;&lt; "请求状态：" &lt;&lt; result.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+// 读取字符串
+std::string graph_id = result.at("graphId").get&lt;std::string&gt;();
+
+// 读取数字
+double ts = result.at("timestamp").get&lt;double&gt;();
+
+// 判断字段是否存在
+if (result.contains("optional_field")) {
+    // ...
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_set_node_param_data_如何选择_value_类型"><a class="anchor" href="#_set_node_param_data_如何选择_value_类型"></a>set_node_param_data 如何选择 value 类型</h3>
+<div class="paragraph">
+<p>C++ 使用 <code>NodeParamUpdate</code> 传入完整参数，<code>value</code> 可以是 JSON 值或文件路径：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">// 传 JSON 值（阈值、配置等）
+client.node().set_node_param_data(
+    {"my_graph", node_id, "threshold", "run_params",
+     atom::sdk::JsonValue(0.7)}
+);
+
+// 传文件路径（模型文件等，自动上传）
+client.node().set_node_param_data(
+    {"my_graph", node_id, "model", "init_params",
+     std::filesystem::path("/path/to/model.bin")}
+);</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_c_相关_2"><a class="anchor" href="#_c_相关_2"></a>C# 相关</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_c_sdk_有同步方法吗"><a class="anchor" href="#_c_sdk_有同步方法吗"></a>C# SDK 有同步方法吗？</h3>
+<div class="paragraph">
+<p>C# SDK 全部是 async 方法。在不支持 async 的场景（如控制台同步代码），可以：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 方式1：.GetAwaiter().GetResult()（阻塞当前线程）
+var result = client.Graph.CreateGraphAsync(new CreateGraphParams("my_graph")).GetAwaiter().GetResult();
+
+// 方式2：Task.Run（在线程池运行）
+var result = Task.Run(() =&gt; client.Graph.CreateGraphAsync(new CreateGraphParams("my_graph"))).Result;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>在 ASP.NET 或其他异步框架中，始终用 <code>await</code>，不要用上面的同步写法（可能导致死锁）。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_c_jsonelement_怎么读取字段"><a class="anchor" href="#_c_jsonelement_怎么读取字段"></a>C# JsonElement 怎么读取字段</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var result = await client.Graph.CreateGraphAsync(new CreateGraphParams("my_graph"));
+
+// 读取字符串
+string graphId = result.GetProperty("graphId").GetString()!;
+
+// 读取数字
+double timestamp = result.GetProperty("timestamp").GetDouble();
+
+// 读取请求状态
+int status = result.GetProperty("status").GetInt32();
+
+// 安全读取（字段可能不存在）
+if (result.TryGetProperty("optional", out var field))
+{
+    string val = field.GetString()!;
+}
+
+// 遍历数组
+foreach (var item in result.GetProperty("nodes").EnumerateArray())
+{
+    Console.WriteLine(item.GetProperty("nodeId").GetString());
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="error-handling.html">错误处理与排查</a></span>
+  <span class="next"><a href="../concepts/what-is-atom-sdk.html">什么是 Atom SDK</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

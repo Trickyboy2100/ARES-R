@@ -1,0 +1,2044 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>C# — 데이터 유형 및 필드 :: Epic Eye SDK 개발자 가이드</title>
+    <link rel="prev" href="alignment.html">
+    <link rel="next" href="../python/overview.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+         <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" /> 
+         <span class="navbar-title">온라인 제품 문서</span>
+      </a>
+
+      
+
+
+    </div>
+
+      <div id="topbar-nav" class="navbar-menu">
+        <div class="navbar-end">
+
+          
+            <div class="navbar-item search hide-for-print">
+              <div id="search-field" class="field has-filter">
+                <input id="search-input" type="text" placeholder="검색할 키워드를 입력하세요" >
+                <label class="filter checkbox">
+                  <input type="checkbox" data-facet-filter="component:epic-eye-sdk">현재 매뉴얼만</label>
+              </div>
+            </div>
+          
+          <button class="navbar-burger" data-target="topbar-nav">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">매뉴얼 전환</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Epic Eye SDK 개발자 가이드</a>
+          </div>
+        </div>
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">다운로드 센터</a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">공식 웹사이트</a>
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+            <a class="navbar-link" href="#"><span class="globe-icon">🌐</span>한국어</a>
+            <div class="navbar-dropdown">
+                <a class="navbar-item" href="http://docs.qianyi.ai/zh/index.html">简体中文</a>
+                <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+                <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-logo {
+  height: 32px;
+  margin-right: 8px;
+}
+
+.navbar-title {
+  font-size: 18px;
+  color: #333;
+}
+
+.globe-icon {
+  margin-right: 5px;
+}
+
+.navbar-item {
+  color: #000 !important;
+}
+
+.navbar-item:hover {
+  background-color: #3273dc !important;
+  color: #fff !important;
+}
+
+.navbar-item a {
+  color: #000 !important;
+}
+
+.navbar-item a:hover {
+  color: #fff !important;
+}
+
+.navbar-dropdown .navbar-item {
+  color: #000 !important;
+}
+
+.navbar-dropdown .navbar-item:hover {
+  background-color: #3273dc !important;
+  color: #fff !important;
+}
+
+.navbar-link:hover {
+  background-color: #3273dc !important;
+  color: #fff !important;
+}
+
+.navbar-link a {
+  color: #000 !important;
+}
+
+.navbar-link a:hover {
+  color: #fff !important;
+}
+
+.language-selector .navbar-link {
+  display: flex;
+  align-items: center;
+  color: #000 !important;
+}
+
+.navbar-link {
+  color: #000 !important;
+}
+
+/* 添加这个新规则，使下拉菜单激活时保持链接的蓝色背景 */
+.navbar-item.has-dropdown.is-active .navbar-link,
+.navbar-item.has-dropdown:focus .navbar-link,
+.navbar-item.has-dropdown:focus-within .navbar-link {
+  background-color: #3273dc !important;
+  color: #fff !important;
+}
+
+/* 添加这个规则，确保鼠标悬停在下拉菜单项上时父级链接保持蓝色背景 */
+.navbar-item.has-dropdown:hover .navbar-link {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* 添加这个特定的样式规则，确保搜索框区域在悬停时背景不变 */
+.navbar-item.search.hide-for-print:hover {
+  background-color: transparent !important;  /* 使背景透明，保持原来的背景色 */
+}
+
+/* 确保搜索框内的输入框在悬停时也不改变背景 */
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input {
+  background-color: inherit !important;
+}
+</style> 
+<div class="body">
+<div class="nav-container" data-component="epic-eye-sdk" data-version="4.0.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Epic Eye SDK 개발자 가이드</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">환영합니다</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">빠른 시작</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">빠른 시작</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/examples.html">예제</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">사용자 가이드</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/discovery.html">카메라 발견 및 연결</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/capture.html">촬영 및 촬영 EpicRaw 디코딩</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/config.html">사진기 윤곽 &amp; 모수</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/intrinsic-calibration.html">뚱 베어</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/hand-eye-calibration.html">손 눈 표제.</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/line-scan.html">철사 sweeping</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/stream2d.html">Stream2D 라이브 동영상</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API 참조</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API - 연혁</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="overview.html">C# — 개요 및 통합</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="device.html">C# — 장치 및 네트워크</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="capture.html">C# — 사진 및 데이터 수집</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="epicraw.html">C# — EpicRaw 파싱</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="camera-config.html">C# — 카메라 구성</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="intrinsics.html">C# — 변형의 내부 참여 LUT</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="intrinsic-calibration.html">C# — 뚱 베어</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="hand-eye-calibration.html">C# — 손 눈 표제.</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="line-scan.html">C# — 와이어 스윕</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="stream2d.html">C# — Stream2D</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="alignment.html">C# — 텍스트 정렬</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="data-models.html">C# — 데이터 유형 및 필드</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python — 개요 및 설치</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">Python — 설정 실행하기</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/device.html">Python — 장치 및 네트워크</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/capture.html">Python — 사진 및 데이터 수집</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/epicraw.html">Python — EpicRaw 파싱</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/camera-config.html">Python — 카메라 구성</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/intrinsics.html">Python — 변형의 내부 참여 LUT</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/intrinsic-calibration.html">Python — 뚱 베어</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/hand-eye-calibration.html">Python — 손 눈 표제.</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/line-scan.html">Python — 와이어 스윕</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/stream2d.html">Python — Stream2D</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/alignment.html">Python — 텍스트 정렬</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/data-models.html">Python — 데이터 유형 및 필드</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">C++ — 개요 및 통합</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/device.html">C++ — 장치 및 네트워크</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/capture.html">C++ — 사진 및 데이터 수집</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/epicraw.html">C++ — EpicRaw 파싱</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/camera-config.html">C++ — 카메라 구성</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/intrinsics.html">C++ — 변형의 내부 참여 LUT</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/intrinsic-calibration.html">C++ — 뚱 베어</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/hand-eye-calibration.html">C++ — 손 눈 표제.</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/line-scan.html">C++ — 와이어 스윕</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/stream2d.html">C++ — Stream2D</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/alignment.html">C++ — Texture 정렬 및 완료</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/data-models.html">C++ — 데이터 유형 및 필드</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Epic Eye SDK 개발자 가이드</span>
+    <span class="version">4.0.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Epic Eye SDK 개발자 가이드</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">4.0.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Epic Eye SDK 개발자 가이드</a></li>
+    <li>API 참조</li>
+    <li>C# SDK</li>
+    <li><a href="data-models.html">C# — 데이터 유형 및 필드</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Content"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside><article class="doc">
+<h1 class="page">C# — 데이터 유형 및 필드</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>이 페이지의 초점 C# SDK 뚱 베어 API 사용 된 복잡한 유형.API 페이지의 유형 이름은 해당 정의로 클릭 할 수 있습니다.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="api-response"><a class="anchor" href="#api-response"></a><code>ApiResponse&lt;T&gt;</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>카메라 온라인 인터페이스에 대한 균일 한 결과. 첫 번째 판단 <code>Status</code>, 성공 후에 읽으십시오 <code>Data</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 66.6668%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">- 연혁</th>
+<th class="tableblock halign-left valign-top">제품정보</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Status</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>0</code> 이 게시물은 우리의 특별한 적용 Global Voices 2011의 일부입니다.<code>1</code> 실패를 표현하십시오.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>T?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">성공적인 자료; 일반적으로 실패할 때 <code>null</code> 또는 타입의 기본 값.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ErrorMessage</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">실패를 위한 이유; 성공에 빈 끈.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="epiceye-info"><a class="anchor" href="#epiceye-info"></a><code>EpicEyeInfo</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>카메라 정체성, 네트워크 및 이미지 기능 정보. 카메라가 기본 유형을 제공하지 않는 옵션 필드.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 66.6668%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">- 연혁</th>
+<th class="tableblock halign-left valign-top">제품정보</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Version</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Camera service-end 소프트웨어 버전.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SN</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사진기 일련 번호.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>FirmwareVersion</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">패키지의 단단한 버전.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HardwareVersion</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">하드웨어 버전.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IP</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">카메라 액세스 주소; 결과를 찾는 것은 일반적으로 같은 포트를 포함 <code>192.168.1.10:5000</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Ipv4SubnetMask</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IPv4 서브넷 마스크.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IPv6</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IPv6 주소; 형성하지 않을 때 빈.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Model</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">카메라 유형은 이름을 표시합니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CameraModel</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#camera-model"><code>CameraModel</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사진기 유형 조사.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Alias</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">이 장치는 사용자가 카메라 인터페이스에서 구성합니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Width</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">과태 깊이/픽셀의 이미지 폭.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Height</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">과태 깊이/이미지 높이, 픽셀.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IsDhcpEnabled</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bool</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">지원하다 DHCP.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>UID</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">카메라만 표시되어 있습니다.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="camera-model"><a class="anchor" href="#camera-model"></a><code>CameraModel</code></h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">공급 능력</th>
+<th class="tableblock halign-left valign-top">주요 특징</th>
+<th class="tableblock halign-left valign-top">모형:</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>LaserL</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>0</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Laser L</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SS</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>1</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SS</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SM</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>2</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SM</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SMAir</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>3</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SM Air</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DL</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>4</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">DL</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>PixelMiniMonochrome</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>5</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pixel Mini Mono</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>X</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>6</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">X</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>PixelProMonochrome</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>7</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pixel Pro Mono</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>LaserLV2S</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>8</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Laser L V2S</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>LaserLV3</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>9</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Laser L V3</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>PixelWeld</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>10</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pixel Welding</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>PixelMiniColor</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>11</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pixel Mini Color</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>PixelProColor</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>12</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pixel Pro Color</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>LogL</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>13</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Log L</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>PixelMiniMonochromeV2</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>14</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pixel Mini Mono V2</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>LaserLV3Lite</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>15</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Laser L V3 Lite</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>LaserMV3</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>16</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Laser M V3</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>LaserMV3Lite</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>17</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Laser M V3 Lite</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="reconstructor-type"><a class="anchor" href="#reconstructor-type"></a><code>ReconstructorType</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>카메라의 재입력 및 질감 기능을 설명합니다. 이중 용도 소스 맵의 수를 결정하고 질감이 독립적 인 컬러 카메라에서 나온지 여부를 결정합니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 66.6668%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">공급 능력</th>
+<th class="tableblock halign-left valign-top">주요 특징</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Mono</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>0</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">단일 깊이 소스 재건축.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>BinoWithoutColor</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>1</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Double-deep 소스는 독립적인 색깔 근원 없이 재구성했습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>BinoWithColor</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>2</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Double-deep 소스는 독립적 인 색상 질감 소스로 재구성되었습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Unknown</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>999</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">식별 또는 현재 카메라는 재건축자의 유형을보고하지 않습니다.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="epiceye-ip-config"><a class="anchor" href="#epiceye-ip-config"></a><code>EpicEyeIPConfig</code></h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 66.6668%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">- 연혁</th>
+<th class="tableblock halign-left valign-top">제품정보</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DestinationIP</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">대상 카메라 전류 IPv4 수정을 필요로 하는 장비의 위치.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IP</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Type="Manual"</code> 새로운 쓰기 IPv4 주소;DHCP 본은 비어있을 수 있습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NetMask</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">새로운 서브넷 마스크, 기본값 <code>255.255.255.0</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">주소 모드, 전용 <code>"DHCP"</code> 또는 <code>"Manual"</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SN</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">다른 장치를 위한 표적 일련 번호의 miscalculation를 방지하기 위하여 사용된 사진기 끝은, 표적 사진기로 현재이어야 합니다 SN 엄숙하게.<code>CameraIPConfig</code> 예시는 검색 결과 또는 <code>GetInfo</code> 자동 채우기, 명령줄은 수입할 필요가 없습니다.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="temperature-info"><a class="anchor" href="#temperature-info"></a><code>IReadOnlyDictionary&lt;string, object?&gt;</code> 온도 정보</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 66.6668%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">주요 특징</th>
+<th class="tableblock halign-left valign-top">제품정보</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>timestamp_ms</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">팟캐스트</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">카메라 엔드 샘플링 시간 스탬프, 밀리 초.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cpu_celsius</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">가치 또는 <code>null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CPU 온도, 단위 °C.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>gpu_celsius</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">가치 또는 <code>null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GPU 온도, 단위 °C.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>npu_celsius</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">가치 또는 <code>null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">NPU 온도, 단위 °C.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">다른 열쇠</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">가치 또는 <code>null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">감지기, 레이저, 힘 또는 구멍 온도; 유일한 대응 기계 유형이 유효할 때.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="camera-config-params"><a class="anchor" href="#camera-config-params"></a><code>Hashtable</code> Camera Configuration 개체</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>현재 촬영 모드에서 그룹에 개체를 구성합니다.<code>GetConfig</code> 개체는 직접 얻을 수 있으며 전송할 수 있습니다. <code>SetConfig</code>; 현재 유형의 항공기와 관련된 필드를 삭제하지 마십시오 그러나 사업은 수정되지 않았습니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 66.6668%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">주요 특징</th>
+<th class="tableblock halign-left valign-top">제품정보</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">프리셋 정보</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string</code> / <code>bool</code> / <code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">프리셋 ID, 이름, 선택 상태 및 유형입니다. `GetConfig`가 반환하고 `GetConfigStyle`이 설명하는 필드를 사용합니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">촬영 모드</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">현재 촬영 모드: <code>0</code> 비디오 스트림, <code>1</code> 구조광, <code>2</code> 패시브 스테레오, <code>3</code> 스윙 라인 스캔, <code>4</code> 고정 라인 스캔. 반환 객체에 존재하는 필드를 사용합니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>structuredLightParams</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&#8230;&#8203;.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">구조상 가벼운 모수; 노출, 이익, 투상, 짜임새 근원, 해결책 및 포함 ROI 시작하다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>swingLineScanParams</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">목표 또는 <code>null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">스윙 어/조정 선 청소 모수;containing Z 범위, 가벼운 비행기 각, 구름 조밀도 및 레이저 광도, 등.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>passiveBinocularParams</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">목표 또는 <code>null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수동적인 두 배 구조, 이익, 짜임새 근원 및 해결책 모수.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>videoStreamParams</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">목표 또는 <code>null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">비디오 스트림 노출, 이득, 해상도 및 그래픽 소스 스위치.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="sect2">
+<h3 id="_그룹_필드_구성"><a class="anchor" href="#_그룹_필드_구성"></a>그룹 필드 구성</h3>
+<div class="paragraph">
+<p>다음 필드는 함수에 의해 그룹화됩니다. 사용 가능한 필드에 의해 <code>GetConfigStyle</code> 지원되지 않은 옵션 필드는 현재 유형에 표시되지 않습니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 22.2222%;">
+<col style="width: 22.2222%;">
+<col style="width: 55.5556%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">- 연혁</th>
+<th class="tableblock halign-left valign-top">제품정보</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depthSrcExpTime2D</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>float</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">관련 제품 2D 노출 시간, 단위 ms.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depthSrcGain2D</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>float</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">관련 제품 2D - 연혁/디지털 이득, 단위 dB.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depthSrcExposureMode</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">깊이 근원 노출 형태:`0` 수동으로.<code>1</code> 자동.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>colorSrcExpTime2D</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>float?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">색깔 근원 2D 노출 시간, 단위 ms.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>colorSrcGain2D</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>float?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">색상 소스 이득, 단위 dB.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>colorSrcExposureMode</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">색깔 근원 노출 형태:`0` 수동으로.<code>1</code> 자동.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>paramsBatch3D</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">강좌 목록</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">더 많은 노출. 3D 모수; 포함되는 각 <code>depthSrcExpTime3D</code>(ms으로 <code>depthSrcGain3D</code>(dB).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureSource</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">공급 능력:`0` 질감 없음, 짜임새 없음.<code>1</code> Depth source 지도,<code>2</code> 컬러 소스 맵.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>flashLightOn</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bool?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">점화 스위치.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depthSrcResolutionMode2D</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">관련 제품 2D 해결책 형태.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>colorSrcResolutionMode2D</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">색깔 근원 2D 해결책 형태.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depthSrcResolutionMode3D</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">깊이 산출 해결책 형태.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>smoothLevel</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">깊이 매끄럽게 하는 수준.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>filterLevel</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">빛 구름./깊이 필터 레벨.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>exposurePartitions</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">구조 빛 노출 분할.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>patternMode</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">구조 빛 투상 본.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>projectorBrightness</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">구조상 빛 영사기 광도.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>fillHoleLevel</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">구멍 채우는 수준.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>roi3DOn</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bool?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3D ROI 스위치.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>roi3D</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">목표 또는 <code>null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>min[3]</code>, <code>max[3]</code> 제품 설명 ROI 국경,<code>transform[6]</code> 제품 설명 ROI 3-D 수평 오프셋 및 회전 매개 변수입니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>minZ</code> / <code>maxZ</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>float</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정리 범위, 단위. mm.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>startLightPlaneAngle</code> / <code>endLightPlaneAngle</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>float</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">스윙 라인 정지 빛 레벨 각도, 단위.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pointCloudDensity</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>float</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">작은 구름 조밀도./샘플 설정.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>laserBrightness</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">용접 레이저 광도.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depthSrc1On</code> / <code>depthSrc2On</code> / <code>colorSrcOn</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bool?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">비디오 스트림에 3 대의지도 소스 스위치.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="simple-camera-parameter"><a class="anchor" href="#simple-camera-parameter"></a>모수 미리 설치</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>GetParameterList</code> 기타 제품 <code>IReadOnlyList&lt;SimpleCameraParameter&gt;</code>:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 66.6668%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">- 연혁</th>
+<th class="tableblock halign-left valign-top">제품정보</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Non-empty 매개 변수 preset 고유 식별자, 이는 직접 전달할 수 있습니다 <code>SetParameter</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">매개변수 preset 이름.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>풀 현재 윤곽 Passed <code>GetConfig</code> 제품정보</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="camera-config-style"><a class="anchor" href="#camera-config-style"></a>Style 개체 구성</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>스타일 구성 <code>common</code>, <code>structuredLight</code>, <code>swingLineScan</code>, <code>passiveBinocular</code>, <code>videoStream</code> 그룹화; 각 윤곽 열쇠는 뒤에 오는 묘사에 대응합니다:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 66.6668%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">- 연혁</th>
+<th class="tableblock halign-left valign-top">제품정보</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>displayText</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사용자의 매개 변수 이름.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dataType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">모수 자료 유형.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bounds</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>object[]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">조립할 수 있는 범위 또는 선택값을 허용하십시오.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>step</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>object?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">numerically 조정 단계는 긴입니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>default</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>object?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">기본 값.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>priority</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">표시 또는 프로세스 우선 순위.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>componentType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">제안된 통제:`Input`, <code>Select</code>, <code>Switch</code>, <code>Tab</code>, <code>Slider</code> 또는 <code>Object</code>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="matrix3x3"><a class="anchor" href="#matrix3x3"></a><code>Matrix3x3</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>라인 우선 순위 <code>3×3</code> 매트릭스.<code>M00/M11</code> 보통. <code>fx/fy</code>, <code>M02/M12</code> 보통. <code>cx/cy</code>; 동일한 분야 배치를 가진 교체 모체.<code>ToDoubleArray()</code> 기타 제품 <code>[M00,M01,M02,M10,&#8230;&#8203;,M22]</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="distortion"><a class="anchor" href="#distortion"></a><code>Distortion</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Brown-Conrady teratogenic 요인, 순서에 있는 분야 <code>K1</code>, <code>K2</code>, <code>P1</code>, <code>P2</code>, <code>K3</code>.<code>ToDoubleArray()</code> 기타 제품 <code>[k1,k2,p1,p2,k3]</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="epicraw-data-type"><a class="anchor" href="#epicraw-data-type"></a><code>EpicRawDataType</code></h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 66.6668%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">공급 능력</th>
+<th class="tableblock halign-left valign-top">주요 특징</th>
+<th class="tableblock halign-left valign-top">성분 내용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DepthSrcImg1</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>0</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">첫번째 도로의 본래 깊이.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DepthSrcImg2</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>1</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">두 번째 깊이의 원래지도.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TextureBGR</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>2</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BGR 본문내용</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Depth</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>3</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">깊이, 단위 mm.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>PointCloud</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>4</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">빛 구름. XYZ, 단위 mm.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>PointCloudNormal</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>5</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">빛 구름 벡터.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="epicraw-document"><a class="anchor" href="#epicraw-document"></a><code>EpicRawDocument</code></h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 66.6668%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">- 연혁</th>
+<th class="tableblock halign-left valign-top">제품정보</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>FileType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>EPICRAW1</code>, <code>EPICRAW2</code> 또는 <code>EPICRAW3</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Raw1</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>EpicRaw1?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Raw1 문서;만 <code>FileType=EPICRAW1</code> 시간은 비어 있지 않습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Raw2</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>EpicRaw2?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Raw2 문서;만 <code>FileType=EPICRAW2</code> 시간은 비어 있지 않습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Raw3</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>EpicRaw3?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Raw3 문서;만 <code>FileType=EPICRAW3</code> 시간은 비어 있지 않습니다.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="epicraw-image"><a class="anchor" href="#epicraw-image"></a><code>EpicRawImage</code></h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 66.6668%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">- 연혁</th>
+<th class="tableblock halign-left valign-top">제품정보</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DataType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#epicraw-data-type"><code>EpicRawDataType</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">요소 문법.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Width</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">이미지 폭, 화소.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Height</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">이미지 높이, 픽셀.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>MatType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OpenCV Mat 유형 부호, 예를 들면 <code>16=CV_8UC3</code>, <code>18=CV_16UC3</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ReadOnlyMemory&lt;byte&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">원시 읽기 전용 데이터; 비트 깊이, 채널 번호 <code>MatType</code> 결정.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="epicraw3"><a class="anchor" href="#epicraw3"></a><code>EpicRaw3</code> 학회소개</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>EpicRaw3.Header</code> 회사연혁 <code>HeaderLength</code>, <code>ElementsCount</code>, <code>ElementLengths</code>, <code>MetaDataStrLength</code>, <code>MetaDataStr</code>; <code>Elements</code> 예. <code>EpicRaw3Element</code> 목록. 각 요소의 목록 <code>Header</code> 회사연혁 <code>HeaderLength</code>, <code>DataType</code>, <code>DataLength</code>, <code>Width</code>, <code>Height</code>, <code>MatType</code>, <code>MetaDataLength</code>, <code>MetaDataStr</code>, <code>Data</code> 해당 요소의 읽기 전용 바이트 뷰입니다.</p>
+</div>
+<div class="sect2">
+<h3 id="_epicraw1"><a class="anchor" href="#_epicraw1"></a><code>EpicRaw1</code></h3>
+<div class="paragraph">
+<p><code>Header.Width/Height</code> (a) 크기;`CameraMatrix`, <code>Distortion</code> 으로 <code>EpicEye_Configure</code> (a) 분리적으로 인 합성, 변형 및 촬영 구성을 저장;`DataType` 깊이 자료 기호의 묘사;`DepthDataLength/ColorDataLength` 세그먼트의 길이입니다.<code>DepthData</code> 으로 <code>ImageData</code> 해당 데이터 섹션을 저장합니다.Raw1 슈팅 구성 필드 As <code>ProjectorBrightness</code>, <code>ExpTime2D</code>, <code>ExpTime3D</code>, <code>UseHDR</code>, <code>ExpTimeHDR</code>, <code>UsePF</code>, <code>UseSF</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_epicraw2"><a class="anchor" href="#_epicraw2"></a><code>EpicRaw2</code></h3>
+<div class="paragraph">
+<p><code>Header.Width/Height/DataType</code> 묘사 구조;`CameraMatrixLength`, <code>DistortionLength</code>, <code>ConfigStrLength</code>, <code>DepthDataLength</code>, <code>ImageDataLength</code> 단락의 길이입니다.<code>CameraMatrix</code>, <code>DistortionData</code>, <code>ConfigData</code>, <code>DepthData</code>, <code>ImageData</code> 해당 텍스트를 파싱했습니다.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="line-scan-types"><a class="anchor" href="#line-scan-types"></a>Sweep 유형</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 66.6668%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">제품정보/- 연혁</th>
+<th class="tableblock halign-left valign-top">제품정보</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>LineScanStartResult.FrameId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">이 시간, 구조. ID;완료 후 다운로드 EpicRaw.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>LineScanStopResult.Status</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">서비스 종료 정지 상태 코드 hexadecimal 문자열.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>LineScanStatus.Idle</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">공급 능력</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">이 서비스는 아직 선을 지우기 시작되지 않았고 최근 결과를 생성하지 않았습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>LineScanStatus.Starting</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">공급 능력</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">구성 및 스캔 장치를 검사.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>LineScanStatus.WaitingForConnection</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">공급 능력</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">장치 활성화, 대기 SDK 라인 스윕 만들기 WebSocket.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>LineScanStatus.Streaming</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">공급 능력</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">WebSocket 연결, 데이터 수집 및 전송됩니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>LineScanStatus.Finalizing</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">공급 능력</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">이름 * EOT, 이 선 청소를 위한 자료를 공동으로 하는 과정에서 입니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>LineScanStatus.Saving</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">공급 능력</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">스트립과 생성 및 출판 EpicRaw.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>LineScanStatus.Completed</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">공급 능력</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">와이어 스윕 EpicRaw 처리가 성공적으로 완료되었습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>LineScanStatus.Stopping</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">공급 능력</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">자발적 의무에 대한 요청에 응답.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>LineScanStatus.Stopped</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">공급 능력</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">그것은 자신의 이니셔티브에 멈추고 자연적으로 수행되지 않았습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>LineScanStatus.Failed</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">공급 능력</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">시작, 전송, 닫히는 또는 저장에 실패.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="stream2d-types"><a class="anchor" href="#stream2d-types"></a>Stream2D 제품정보</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 66.6668%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">제품정보/- 연혁</th>
+<th class="tableblock halign-left valign-top">제품정보</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Stream2DStatus.IsStreaming</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bool</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">활동적인 비디오 스트림이 없습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Stream2DStatus.PeerCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">현재 위치 WebRTC peer 이름 *</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Stream2DStatus.CameraCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">현재 푸시 스트림에 관련 된 카메라의 수.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Stream2DStatus.TotalCameraCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">카메라에 사용할 수있는 그래픽 소스의 총 수.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>WebRtcOfferResult.PeerId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">이 세션에 할당된 카메라 peer ID.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>WebRtcOfferResult.AnswerSdp</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">카메라 반환 WebRTC Answer SDP.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Stream2DRtcSession.FrameCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">스트림 프레임의 현재 수는 반환됩니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Stream2DRtcSession.PeerId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">이 세션의 사용 peer ID.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Stream2DRtcSession.Completion</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Task</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">- 한국어 RTC cameraend로 peer 모든 것이 명확하고 완료됩니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Stream2DFrameData.FrameIndex</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">으로 1 일련 번호를 받기 시작.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Stream2DFrameData.Timestamp</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>uint</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RTP 타임 스탬프.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Stream2DFrameData.PayloadType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RTP payload type.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Stream2DFrameData.Codec</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">이름 인코딩,Stream2D 예. <code>H264</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Stream2DFrameData.Payload</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>byte[]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RTP 재편화 H264 기호화;SDK 암호를 해독하지 마십시오.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="intrinsic-calibration-types"><a class="anchor" href="#intrinsic-calibration-types"></a>내부 참조 유형</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_calibrationboardidentifyresponse"><a class="anchor" href="#_calibrationboardidentifyresponse"></a><code>CalibrationBoardIdentifyResponse</code></h3>
+<div class="paragraph">
+<p><code>BoardType</code> 판의 유형을 확인하기 위하여,<code>-1</code> (a) 인식되지 않은 표시;`BoardHint` (a) 도금 된 힌트;`PreviewImages: IReadOnlyList&lt;ImageInfoData&gt;` 시험표의 구조적인 미리보기.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="image-info-data"><a class="anchor" href="#image-info-data"></a><code>ImageInfoData</code></h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 22.2222%;">
+<col style="width: 22.2222%;">
+<col style="width: 55.5556%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">- 연혁</th>
+<th class="tableblock halign-left valign-top">제품정보</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DataUri</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">직접적인 그림으로 사용될 수 있었습니다 <code>src</code> &#8230;&#8203;. Data URI 또는 상대 URL.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">이미지 소스 식별, 예를 들어 <code>texture</code>, <code>depthSrc1</code>, <code>depthSrc2</code> 또는 <code>colorSrc</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Width</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">폭의 미리보기, 픽셀.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Height</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">미리보기 차트 높이, 단위 픽셀.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_intrinsicaddcalibimageresponse"><a class="anchor" href="#_intrinsicaddcalibimageresponse"></a><code>IntrinsicAddCalibImageResponse</code></h3>
+<div class="paragraph">
+<p><code>DetectSuccess</code> 테스트가 성공했는지 나타냅니다.<code>PairIndex</code>/<code>PairCount</code> 새로운 인물에 대한 지수 및 합계;`BoardPose=[tx,ty,tz,qx,qy,qz,qw]` 카메라 좌표계의 판의 위치를 가로로 맵으로합니다. mm위치는 실패 할 것으로 예상된다. <code>null</code>; <code>BoardTiltAngle</code> (b) 단위에서 inclination의 정도;`BoardTiltWarning` (b) 결심을 나타내는 조정을 위한 필요;`PreviewImages` 예. <a href="#image-info-data"><code>ImageInfoData</code></a> 이름 *</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_intrinsicremovecalibpairresponse"><a class="anchor" href="#_intrinsicremovecalibpairresponse"></a><code>IntrinsicRemoveCalibPairResponse</code></h3>
+<div class="paragraph">
+<p><code>RemovedIndex</code> 이미지-to-index를 제거하려면,<code>PairCount</code> 탈레 후 나머지 그림의 통나무입니다.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_intrinsiccalculateresponse"><a class="anchor" href="#_intrinsiccalculateresponse"></a><code>IntrinsicCalculateResponse</code></h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 22.2222%;">
+<col style="width: 22.2222%;">
+<col style="width: 55.5556%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">- 연혁</th>
+<th class="tableblock halign-left valign-top">제품정보</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CameraParameters</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Hashtable?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DepthSrc1 → DepthSrc2</code> 계산 세부 사항을 확인하고 카메라에 기록 할 수 없습니다만 사용하는 경우.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ParameterErrors</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Hashtable?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">일반 오류와 태도로 초상화 오류는 두 가지 대상입니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ColorCameraParameters</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Hashtable?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>BinoWithColor</code> &#8230;&#8203;. <code>DepthSrc1 → TextureSrc</code> flattened 알고리즘의 결과; 다른 유형은 <code>null</code>, 카메라에 쓸 수 없습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ColorParameterErrors</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Hashtable?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">컬러 카메라 표시 오류; 다른 유형은 <code>null</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CameraParametersConfig</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#camera-parameters-config"><code>CameraParametersConfig?</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">서비스가 병합 된 후 전체 구성은 전송을위한 허용 된 유일한 것입니다. <code>SetCameraIntrinsicParameters</code> &#8230;&#8203;</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>StereoRms</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>double</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2개의 깊이 세트. RMS.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ColorStereoRms</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>double?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">주요 깊이 사진기-색깔 사진기 표 RMS;만 <code>BinoWithColor</code> 그것은 가치가있다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ShouldWarnRms</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bool</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">이름 * RMS 보안 임계값이 초과될 때 보안 임계값을 결정하는 데 사용됩니다. <code>true</code>; Example 쓰기를 실행하지 마십시오.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>CameraParameters</code> 분야:`Image_Width/Image_Height`; <code>CameraIntri[9]</code>, <code>CameraDist[5]</code>; <code>CameraMasterIntri[9]</code>, <code>CameraMasterDist[5]</code>; <code>CameraSlaveIntri[9]</code>, <code>CameraSlaveDist[5]</code>;substantial 모체 <code>E[9]`기본 matrix `F[9]</code>; 주요 사진기는 사진기에서 자전합니다 <code>R[9]</code> 평화 이동. <code>T[3]</code>(mm).</p>
+</div>
+<div class="paragraph">
+<p><code>ParameterErrors</code> 분야:`MasterError`, <code>SlaveError</code>, <code>StereoError</code> (a) 전반적인 오류입니다;`AllPoseErrorM`, <code>AllPoseErrorS</code> 각 주의 자세를 위해./카메라 오류 배열에서.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="camera-parameters-config"><a class="anchor" href="#camera-parameters-config"></a><code>CameraParametersConfig</code></h3>
+<div class="paragraph">
+<p>카메라를 가진 유형. <code>CameraParameters.json</code> 상단 구조는 대응합니다. 모든 유형의 재건축은이 완전한 구조로 작성되어야하며 단일 구조를 만들 수 없습니다. native <code>CameraParameters</code> 설정으로 사용하십시오.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 22.2222%;">
+<col style="width: 22.2222%;">
+<col style="width: 55.5556%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">- 연혁</th>
+<th class="tableblock halign-left valign-top">제품정보</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ReconstructorType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#reconstructor-type"><code>ReconstructorType</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">카메라는 현재 빌더 유형입니다. 서버는 또한 문서의 시간에 실제 기계 유형으로 확인할 것입니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TransformationReference</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TransformationReference</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">외부 참고 근원:`DepthSrc1`, <code>DepthSrc2</code> 또는 <code>TextureSrc</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DepthSrc1</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IntrinsicParams</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">첫번째 깊이 사진기; 참고 협조 체계로 봉사할 경우 <code>R</code> 팀을 형성하기 위해.<code>T</code> 제로.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DepthSrc2</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IntrinsicParams?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">현재 빌더에 필요한 두 번째 깊이 카메라 또는 이차 매개 변수; 모든 지원 재건축 유형은 쓰기의 시간에 존재해야합니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TextureSrc</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IntrinsicParams?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(b) 독립적인 색깔 짜임새 사진기 모수;`BinoWithColor` 그것은 존재한다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SwingLineScanLightPlaneParams</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SwingLineScanLightPlaneParams?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">그네 선은 비행기 매개 변수를 청소합니다. 인라인 계산은 필드를 재 계산하지 않으며 전체 구성은 원래 값을 유지합니다.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>SwingLineScanLightPlaneParams`에는 시작 각도 `StartAngle</code>, 종료 각도 <code>EndAngle</code>, 각 각도의 광평면 계수 `LightPlaneParams`가 포함됩니다. 이 객체는 스윙 라인 스캔 내부 파라미터 설정에만 존재합니다.</p>
+</div>
+<div class="paragraph">
+<p><code>IntrinsicParams</code> 회사연혁 <code>Width</code>, <code>Height</code>, <code>CameraMatrix[9]</code>, <code>Distortion[5]`이름 * `DepthSrc1</code> 라인-Prefered 교체 매트릭스 <code>R[9]</code> 평화 이동. <code>T[3]</code>(mm. 각 경로는 그것의 자신의 해결책을 저장합니다, 그래서 제대로 표현될 수 있습니다 Laser M V3 &#8230;&#8203;. <code>2840×2840</code> 깊이 카메라 및 <code>8000×6000</code> 색깔 사진기.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="intrinsic-accuracy-check-result"><a class="anchor" href="#intrinsic-accuracy-check-result"></a><code>IntrinsicAccuracyCheckResult</code></h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 66.6668%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">- 연혁</th>
+<th class="tableblock halign-left valign-top">제품정보</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>PreviewImages</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IReadOnlyList&lt;ImageInfoData&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">테스트 결과와 구조 미리보기; 필드를 참조 <a href="#image-info-data"><code>ImageInfoData</code></a>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>BoardTypeDetected</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(a) 인식 판;`-1` 이것은 인식되지 않는 것을 나타냅니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>BoardHint</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">슬레이트 또는 settips.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>BoardPose</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>float[]?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Camera 좌표 위치 <code>[tx,ty,tz,qx,qy,qz,qw]</code>, 단위 선택 mm.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>BoardPositionValid</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bool</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">판 거리 및 위치가 검사에 적합 여부.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CalibrationBoardSizeRatio</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>float</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">심도 소스는 이미지의 비율로 판 지역을 이깁니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CameraAccuracyPass</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bool</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">깊이 소스 단 하나 사진기 정확도는 통과했습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ColorCalibrationBoardSizeRatio</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>float</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">컬러 소스 판 크기로 이미지의 백분율.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ColorCameraAccuracyPass</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bool</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">색상 소스 단일 카메라 정확도가 전달되는지 여부.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>StereoAveragePixelError</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>float</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">깊이 2 눈 평균 픽셀 정렬 오류.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>StereoMaxPixelError</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>float</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">최대 픽셀 정렬 오차는 깊이에 두 개의 눈입니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ColorStereoAveragePixelError</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>float</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Depth source는 오류가 있는 색상 소스 평균 픽셀과 일치합니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ColorStereoMaxPixelError</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>float</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">깊이 소스는 색상 소스의 최대 픽셀에 해당합니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>StereoAveragePass</code> / <code>StereoMaxPass</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bool</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">깊이 2 눈 평균/최대 오류가 전달되는지 여부.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ColorStereoAveragePass</code> / <code>ColorStereoMaxPass</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bool</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">색상 정렬 평균/최대 오류가 전달되는지 여부.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>StereoMetricsValid</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bool</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">이때 사용할 수 있는 stereoinform 오류 표시기가 유효하지 않습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>BoardTiltAngle</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>float</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">플라즈마 틸트, 단위.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>BoardTiltWarning</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bool</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">팔레트의 팁을 조정해야합니다.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="hand-eye-types"><a class="anchor" href="#hand-eye-types"></a>Hand-eye-marked 유형</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>BoardPoseArray</code> 제품 정보 <code>[x,y,z,qx,qy,qz,qw]`위치 단위 mm, 4 자리 순서는 입니다 `x,y,z,w</code>.<code>RobotPose</code> 카메라에서 구성 된 로봇 회전 유형과 일관성이 있습니다.<code>EulerPose</code>, <code>FixedPose</code>, <code>RotationVector</code> 제품 정보 6 가격 값 <code>[x,y,z,rx,ry,rz]</code>, <code>Quaternion</code> 제품 정보 7 가격 값 `[x,y,z,qx,qy,qz,qw]`아니, 아니, 아니. 6 성분 위치를 채우기 후에 영. 7 보내지는 요소.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 66.6668%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">제품정보/- 연혁</th>
+<th class="tableblock halign-left valign-top">제품정보</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HandEyeInstallationType.ETH</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>0</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Eye-to-Hand카메라는 로봇의 외부에 붙어 있습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HandEyeInstallationType.EIH</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>1</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Eye-in-Hand카메라는 로봇의 끝에 설치되었습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RobotInfo</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RobotParameters</code> 수업을 설명합니다.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">로봇 상점 모델입니다. 그것은 단지 위치 규칙이 아닙니다. <code>Id</code>, <code>Downloaded</code>, <code>ImgUrl</code>, <code>CreateTime</code>, <code>MasksOrderReverse</code>, <code>IkSolverType</code>, <code>Payload</code>, <code>Reach</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RobotParameters.Brand</code> / <code>Model</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">로봇 상표와 모형.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RobotParameters.RotationType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RobotRotationType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>EulerPose</code>, <code>FixedPose</code>, <code>Quaternion</code> 또는 <code>RotationVector</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RobotParameters.EulerType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RobotEulerType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Ori의 축선; 비 Oral 표식은 로봇식 공기통의 본래 가치에 아직도 저장됩니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RobotParameters.AngleUnit</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RobotAngleUnit</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">회전량 단위:`Degree` 또는 <code>Radian</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RobotParameters.IsCustomRobot</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bool</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사용자 정의 로봇 파라미터인지 여부입니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RobotParameters.AxisNumber</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">로봇식 축의 수;3/4 축선 조사 필요조건 <code>SpecialParams</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RobotParameters.Marks</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Position field sequence, 예를 들어 <code>X,Y,Z,EZ,EY,EX</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ConfigureHandEyeCalibrationParams</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">자주 묻는 질문</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>InstallationType</code>, <code>RobotParams</code>; <code>UpdateFields</code> Default 쓰기 <code>installationType</code> 으로 <code>robotParams</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HandEyeCalibrationData.InstallationType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HandEyeInstallationType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">현재 손-눈 설치 방식입니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HandEyeCalibrationData.CalibrationPointDict</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Dictionary&lt;int, HandEyeCalibrationPoint&gt;?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">샘플 ID별로 저장된 캘리브레이션 데이터입니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HandEyeCalibrationData.SpecialParams</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SpecialParams?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">로봇 축 수 또는 설치 방식에 필요한 추가 파라미터입니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HandEyeCalibrationData.CalibrationResult</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CalibrationResult?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">저장된 손-눈 캘리브레이션 결과입니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HandEyeCalibrationData.RobotParams</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RobotParameters?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">현재 사용 중인 로봇 자세 표현 규칙입니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HandEyeCalibrationPoint.BoardPoseArray</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>float[7]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">샘플링 시 카메라 좌표계에서의 보드 자세입니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HandEyeCalibrationPoint.RobotPose</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>float[]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">보드 자세와 같은 시점의 로봇 자세입니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HandEyeCalibrationPoint.CameraInternalAccuracy</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>float</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">해당 샘플의 카메라 내부 정확도입니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HandEyeCalibrationPoint.IsCalc</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bool</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">해당 샘플을 손-눈 계산에 사용할지 여부입니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HandEyePointData.RobotPose</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>float[]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">샘플링의 로봇 위치; 카메라에서 구성 된 로봇 교체 유형에 의해 결정 된 길이, Cape Ori/고정 각도/회전 벡터는 6, 4 자리 번호는 입니다 7.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HandEyePointData.BoardPoseArray</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>float[7]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">동일한 Sampled 판 사진기 협조 위치.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HandEyePointData.Id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">표본 점 수.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SpecialParams.Offset</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>float[3]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">설치 또는 도구 오프셋, 단위 mm.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SpecialParams.BoardPosition</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>float[3]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">정제 참고 위치, 단위 mm.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CalculateHandEyeCalibrationResultParams.InstallationType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HandEyeInstallationType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">설치 모드.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CalculateHandEyeCalibrationResultParams.HandEyePoints</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>List&lt;HandEyePointData&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">biting 위치 계산에 참여.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CalculateHandEyeCalibrationResultParams.SpecialParams</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SpecialParams?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">특정 설치 모드에 필요한 추가 매개 변수.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CalibrationResult.Success</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bool</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">계산은 성공했다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CalibrationResult.RigidTransform</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RigidTransformData</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">그리고 마지막으로, 손의 눈은 변화합니다. <code>Rotation</code> 네돌라와 <code>Translation</code> 벡터 정렬.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CalibrationResult.Pose</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>float[6]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">회전 위치의 end-of-hand-eye 이동. <code>[x,y,z,rx,ry,rz]</code>, 단위 선택 mm, 교체 단위 rad.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CalibrationResult.Matrix4x4</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>System.Numerics.Matrix4x4</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">그리고 마지막으로, 내 손과 눈이 바뀌었습니다. 4×4 _기타 Organiser <code>M11</code> 으로 <code>M44</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CalibrationResult.HecError</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HecError</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">표시 오류:`RotMean`, <code>RotMax</code> (주)/최대 교체 과실, 단위;`TransMean`, <code>TransMax</code> (주)/최대 상쇄 오류, 단위 mm.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CalibrationResult.HecWarnData</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HecWarnData</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>WarnType</code> 예. <code>Normal</code>, <code>MotionConflict</code> 또는 <code>RotationInsufficient</code>; <code>WarnPairs</code> 각 점은 동등합니다 <code>HecWarnPair</code>, 포함 <code>Item1</code>, <code>Item2</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RigidTransformData.Rotation</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>System.Numerics.Quaternion</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4자리 영역의 회전 <code>X</code>, <code>Y</code>, <code>Z</code>, <code>W</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RigidTransformData.Translation</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>System.Numerics.Vector3</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Shift 벡터, 필드는 <code>X</code>, <code>Y</code>, <code>Z</code>, 단위 mm.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CalibrationBoardPoseData.Board</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RigidTransformData</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">팔레트는 카메라 좌표 아래에서 transposed.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CalibrationBoardPoseData.BoardPoseArray</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>float[7]?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">우리는 페달 위치를 검출했습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CalibrationBoardPoseData.PointCloudBytes</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>byte[]?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">이 테스트에 대한 것입니다. XYZ 작은 구름 바이트.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CalibrationBoardPoseData.CameraInternalAccuracy</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>float</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사진기 내부 정밀도 지시자.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CalibrationBoardPoseData.ImgBase64</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">시험 미리보기 Base64/Data URI 이름 *</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CalibrationBoardPoseData.GridSize</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">검출되는 점의 수/격자 크기.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CalibrationBoardPoseData.ImageWidth</code> / <code>ImageHeight</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">이미지 폭과 고도를 검출해서, 화소에서; 유효하지 않음 <code>0</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CalibrationBoardPoseData.ImageBytes</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>byte[]?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">이미지 바이트를 검출하십시오; 유효하지 않는 경우에 <code>null</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CalibrationBoardPoseData.EpicRawBytes</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>byte[]?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">이것은 시험입니다. EpicRaw; 제공되지 않는 경우 <code>null</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CalibrationBoardPoseData.EyeInfo</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>EpicEyeInfo?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">이 시험을 위한 사진기 정보; 유효하지 않음 <code>null</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CalibrationBoardPoseData.Status</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HecResponseStatus?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">취득 및 식별 단계의 상태; 사용할 수 없을 때 외부 층 <code>ApiResponse.Status</code> 예.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CalculateRobotAccuracyParams</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">로봇 정밀 요청</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DirectionPoseData</code> 회사연혁 <code>StartPoint</code>, <code>EndPoint</code>; <code>Direction</code> 예. <code>x</code>, <code>y</code> 또는 <code>z</code>. 각 점은 쌍을 포함합니다 <code>BoardPoseArray</code>, <code>RobotPose</code>, <code>CameraInternalAccuracy</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RobotAccuracyResult</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">로봇의 정밀도의 결과.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>BoardDistance</code>, <code>RobotDistance</code>, <code>MoveDistance</code>, <code>PositionPrecision</code> 그리고 3개의 axes. <code>OrientationPrecision</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CalculateHandEyeAccuracyParams</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Hand-eye 정밀도 요구</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">새로운 컬렉션. <code>BoardPoseArray</code>, Eye-in-Hand 그것은 시간입니다. <code>RobotPose</code>, <code>GridSize</code> 그리고 널. Z (주)디지오 <code>DirectionZ</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HandEyeAccuracyResult.EyeWidth</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">손-눈 정확도 계산에 사용하는 영상 폭이며, 서비스에서 제공하지 않으면 `0`입니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HandEyeAccuracyResult</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">손-눈 정확도 결과</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>BoardPoseArray</code>, <code>Matrix4x4</code>, <code>RobotMatrix4x4</code>, 평면 진단 좌표 `X/Y/X1/Y1/X2/Y2`를 포함합니다.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>HecResponseStatus</code>: <code>CaptureImageFailed=0</code>, <code>GetPointCloudFailed=1</code>, <code>GetImageFailed=2</code>, <code>GetEpicRawFailed=3</code>, <code>GetEpicEyeInfoFailed=4</code>, <code>DetectCirclesGridFailed=5</code>, <code>EstimateCircleGridPoseFailed=6</code>, <code>Success=7</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="exception-event-args"><a class="anchor" href="#exception-event-args"></a><code>EpicEyeSDKExceptionEventArgs</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>SourceMethod</code> 아노마ly. SDK 방법의 이름;`Exception` (a) 본래 anomaly입니다;`IsTimeout` 시간이 초과되는지 나타냅니다. 객체는 <code>EpicEye.ExceptionOccurred</code> 이벤트가 전송됩니다.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="alignment.html">C# — 텍스트 정렬</a></span>
+  <span class="next"><a href="../python/overview.html">Python — 개요 및 설치</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

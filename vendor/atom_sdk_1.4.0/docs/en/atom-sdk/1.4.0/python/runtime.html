@@ -1,0 +1,1545 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>RuntimeService（Python） :: Atom SDK Developer Guide</title>
+    <link rel="prev" href="graph_node.html">
+    <link rel="next" href="../cpp/overview.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          Online Product Documentation
+                  </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="Search documentation"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              This manual only
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            Switch manual
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK Developer Guide</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          Download Center
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          Official Website
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            English
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK Developer Guide</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">welcome</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">quick start</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">quick start</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">sample sample</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Getting Started</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK Getting Started</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService Getting Started</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService Getting Started</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService Getting Started</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">User Guide</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">Select the appropriate Service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">Graph and node operations</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">Error handling and troubleshooting</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">FAQ</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">basic concepts</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/what-is-atom-sdk.html">What is Atom SDK</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-node-subgraph.html">graph, node, subgraph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-vs-runtime.html">The difference between Graph and Runtime</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/timestamp.html">What is Timestamp</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/runtime-frame.html">Runtime input frames (RuntimeFrame / RuntimePassiveBinoFrame)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/point-cloud-protocol.html">Binary protocol for point cloud type input and output</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/param-binding.html">Parameter types and binding names</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API Reference</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API Reference Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="overview.html">Python Overview and Installation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="params.html">Python parameter object</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="public_api.html">Python Public Utility API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ version — User Guide</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ parameter object</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">Atom SDK — C# Version</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/params.html">C# Parameter object</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK Developer Guide</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK Developer Guide</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK Developer Guide</a></li>
+    <li>API Reference</li>
+    <li>Python SDK</li>
+    <li><a href="runtime.html">RuntimeService（Python）</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="On this page"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">RuntimeService（Python）</h1>
+<div class="sect1">
+<h2 id="_new_parameter_format"><a class="anchor" href="#_new_parameter_format"></a>New parameter format</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The runtime interface now wraps complex input parameters into parameter objects:
+See: <a href="params.html" class="xref page">Python 参数对象</a> for complete field descriptions.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import (
+    BindingRef,
+    FileParamRef,
+    NodeRef,
+    PointCloudRef,
+    RuntimeFrame,
+    RuntimePassiveBinoFrame,
+    RuntimeRunParams,
+    RuntimeBindingDataUpdate,
+    RuntimeParamsUpdate,
+    RuntimeStrategyParamsUpdate,
+    SingleNodeParams,
+)</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">method</th>
+<th class="tableblock halign-left valign-top">Input parameter format</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>load_graph</code> / <code>release_graph</code> / <code>get_meta_info</code> / <code>get_binded_outputs_info</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Directly transfer <code>graph_name</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>list_graphs</code> / <code>get_all_nodes_info</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>requires no parameters</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>set_shared_params</code> / <code>set_run_params</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>RuntimeParamsUpdate</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>run_graph</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>RuntimeRunParams</code>, in normal mode <code>frames</code> is <code>list[RuntimeFrame]</code>; in <code>passive_bino</code> mode, one <code>RuntimePassiveBinoFrame</code> is transmitted</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>get_binded_output_value</code> / <code>get_binded_point_cloud</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>BindingRef</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>get_binded_point_cloud_parsed</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PointCloudRef</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>set_graph_binding_data</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>RuntimeBindingDataUpdate</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>get_node_params_info_with_strategy</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>NodeRef</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>set_params_in_strategy</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>RuntimeStrategyParamsUpdate</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>get_file_param_md5</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>FileParamRef</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>run_single_node_no_graph</code> / <code>run_single_node_no_graph_parsed</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SingleNodeParams</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_recommended_calling_order"><a class="anchor" href="#_recommended_calling_order"></a>Recommended calling order</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">runtime.load_graph(graph_name)
+        |
+runtime.get_meta_info(graph_name)
+        |
+runtime.set_shared_params(RuntimeParamsUpdate(...))
+runtime.set_run_params(RuntimeParamsUpdate(...))
+        |
+runtime.run_graph(RuntimeRunParams(...))
+        |
+runtime.get_binded_output_value(BindingRef(...))
+runtime.get_binded_point_cloud_parsed(PointCloudRef(...))
+        |
+runtime.release_graph(graph_name)</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_interface_detailed_explanation"><a class="anchor" href="#_interface_detailed_explanation"></a>Interface detailed explanation</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_load_graphgraph_name"><a class="anchor" href="#_load_graphgraph_name"></a><code>load_graph(graph_name)</code></h3>
+<div class="paragraph">
+<p>Load the graph at runtime.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">result = client.runtime.load_graph("my_pipeline")
+print("Request status:", result["status"])
+print("Image loaded:", result.get("GraphName"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_release_graphgraph_name"><a class="anchor" href="#_release_graphgraph_name"></a><code>release_graph(graph_name)</code></h3>
+<div class="paragraph">
+<p>Release the graph at runtime.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">client.runtime.release_graph("my_pipeline")</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_list_graphs"><a class="anchor" href="#_list_graphs"></a><code>list_graphs()</code></h3>
+<div class="paragraph">
+<p>Get the list of graphs visible at runtime.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">graphs = client.runtime.list_graphs()
+print("Number of pictures:", len(graphs))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_all_nodes_info"><a class="anchor" href="#_get_all_nodes_info"></a><code>get_all_nodes_info()</code></h3>
+<div class="paragraph">
+<p>Get all node definitions visible at runtime.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">nodes_info = client.runtime.get_all_nodes_info()
+print("Number of node types:", len(nodes_info))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_meta_infograph_name"><a class="anchor" href="#_get_meta_infograph_name"></a><code>get_meta_info(graph_name)</code></h3>
+<div class="paragraph">
+<p>Gets the graph&#8217;s runtime configurable binding parameters. It is recommended to call this interface first, and then set the parameters according to the returned <code>bindingName</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">meta = client.runtime.get_meta_info("my_pipeline")
+print("Request status:", meta["status"])
+print("Shared parameters:", meta.get("sharedParams"))
+print("Operating parameters:", meta.get("runtimeParams"))</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The return value usually contains:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">field</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>sharedParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>shared parameters, that is, <code>init_params</code> type binding</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>runtimeParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>running parameters, that is, <code>run_params</code> type binding</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_set_shared_paramsparams"><a class="anchor" href="#_set_shared_paramsparams"></a><code>set_shared_params(params)</code></h3>
+<div class="paragraph">
+<p>Set shared parameters, usually parameters that are reused for multiple runs such as model path and camera ID.</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameter Object</strong>:<br>
+<code>RuntimeParamsUpdate</code></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">field</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Picture name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params_data</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>dict[str, Any]</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>to bind the parameter dictionary named key</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import RuntimeParamsUpdate
+
+client.runtime.set_shared_params(
+    RuntimeParamsUpdate(
+        "my_pipeline",
+        {
+            "model_path": "/models/yolov8n.onnx",
+            "camera_id": "cam-01",
+        },
+    )
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_set_run_paramsparams"><a class="anchor" href="#_set_run_paramsparams"></a><code>set_run_params(params)</code></h3>
+<div class="paragraph">
+<p>Set running parameters, usually thresholds, quantity limits, etc. that may change for each run.</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameter Object</strong>:<br>
+<code>RuntimeParamsUpdate</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import RuntimeParamsUpdate
+
+client.runtime.set_run_params(
+    RuntimeParamsUpdate("my_pipeline", {"confidence": 0.7, "max_detections": 100})
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_run_graphparams"><a class="anchor" href="#_run_graphparams"></a><code>run_graph(params)</code></h3>
+<div class="paragraph">
+<p>Submit one or more sets of input frames and execute the graph.
+<strong>Note</strong>:
+When using runtime.run_graph, the current version requires that there are <code>EpicPro输入</code> or <code>EpicPro输入(单组数据)</code> nodes and <code>EpicPro输出</code> nodes in the graph. Otherwise, it cannot run and an error will be reported.</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameter Object</strong>:<br>
+<code>RuntimeRunParams</code></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">field</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Picture name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>frames</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>list[RuntimeFrame]</code> or <code>list[RuntimePassiveBinoFrame]</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Input frame list</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>run_mode</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>default <code>"others"</code>; passive binocular transmission <code>"passive_bino"</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="sect3">
+<h4 id="_how_to_choose_between_two_input_modes"><a class="anchor" href="#_how_to_choose_between_two_input_modes"></a>How to choose between two input modes</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">mode</th>
+<th class="tableblock halign-left valign-top"><code>run_mode</code></th>
+<th class="tableblock halign-left valign-top"><code>frames</code> What should be passed</th>
+<th class="tableblock halign-left valign-top">Binary content</th>
+<th class="tableblock halign-left valign-top">Applicable scenarios</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Normal mode</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>"others"</code> or do not pass</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>One or more <code>RuntimeFrame</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>A complete copy of each frame EPICRAW bytes</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Picture <code>EpicProInput</code> Run according to normal input</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Passive binocular mode</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>"passive_bino"</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>a <code>RuntimePassiveBinoFrame</code>, it is recommended to use <code>RuntimeRunParams.passive_bino_from_file(&#8230;&#8203;)</code> / <code>passive_bino_from_images(&#8230;&#8203;)</code> structure</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>A complete copy EPICRAW3 bytes</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Figure <code>EpicProInput</code> is configured as <code>passive_bino</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Do not mix these two modes:
+* Normal mode uses <code>RuntimeFrame</code>, which can encapsulate either EPICRAW2 or ordinary standard layout EPICRAW3.
+* Use standalone <code>RuntimePassiveBinoFrame</code> for passive binocular mode, do not mix with normal <code>RuntimeFrame</code>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_normal_mode_run_modeothers"><a class="anchor" href="#_normal_mode_run_modeothers"></a>Normal mode (<code>run_mode="others"</code>)</h4>
+<div class="paragraph">
+<p>Normal mode uses <code>RuntimeFrame</code>, which has three current entries:
+* <code>RuntimeFrame.from_file(&#8230;&#8203;)</code>: Read the existing EPICRAW file.
+* <code>RuntimeFrame.from_bytes(&#8230;&#8203;)</code>: Receive existing EPICRAW bytes.
+* <code>RuntimeFrame.from_data(&#8230;&#8203;)</code>: Generates EPICRAW from NumPy images, point clouds, and camera parameters.
+The version rules for <code>from_data(&#8230;&#8203;)</code> are as follows:
+* When only normal <code>intrinsic</code> / <code>distortion</code> is transmitted, EPICRAW2 is automatically generated.
+* When <code>camera_params</code> contains extended camera parameters such as <code>TextureSrc</code>, <code>DepthSrc1</code> or <code>DepthSrc2</code>, EPICRAW3 is automatically generated.
+* Explicitly passing <code>version=2</code> or <code>version=3</code> can override the automatic selection.
+* EPICRAW3 Standard mode contains only <code>Depth + TextureBGR</code>. Depth is generated from the point cloud Z values ​​and does not contain the full PointCloud.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import numpy as np
+from atom_sdk import RuntimeFrame, RuntimeRunParams
+
+height, width = 2, 3
+image = np.zeros((height, width, 3), dtype=np.uint8)
+points = np.zeros((height, width, 3), dtype=np.float32)
+points[:, :, 2] = 1.0
+
+frame = RuntimeFrame.from_data(
+    points=points,
+    image=image,
+    intrinsic=[
+        [600.0, 0.0, width / 2],
+        [0.0, 600.0, height / 2],
+        [0.0, 0.0, 1.0],
+    ],
+    distortion=[0.0, 0.0, 0.0, 0.0, 0.0],
+    camera_params={
+        "TextureSrc": {
+            "CameraMatrix": [600.0, 0.0, 320.0, 0.0, 600.0, 240.0, 0.0, 0.0, 1.0],
+            "CameraDistortion": [0.0, 0.0, 0.0, 0.0, 0.0],
+            "CameraRotation": [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0],
+            "CameraTranslation": [0.0, 0.0, 0.0],
+        }
+    },
+    cam2_base=[0.0, 0.0, 0.5, 0.0, 0.0, 0.0],  # Rotate vector form:[x, y, z, rx, ry, rz]
+    roi={
+        "min": {"x": -0.5, "y": -0.5, "z": 0.1},
+        "max": {"x": 0.5, "y": 0.5, "z": 1.0},
+        "cam2ROIFrame": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    },
+)
+
+result = client.runtime.run_graph(
+    RuntimeRunParams("my_pipeline", frames=[frame])
+)
+print("Request status:", result["status"])
+print("Number of instances:", len(result.get("instanceList", [])))</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When there is already a file or bytes, there is no need to repeat the encoding:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from pathlib import Path
+
+cam2_base = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]  # Rotate vector form:[x, y, z, rx, ry, rz]
+roi = None
+epicraw_bytes = Path("frame.epicraw").read_bytes()
+
+file_frame = RuntimeFrame.from_file("frame.epicraw", cam2_base=cam2_base, roi=roi)
+bytes_frame = RuntimeFrame.from_bytes(epicraw_bytes, cam2_base=cam2_base, roi=roi)</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Each <code>RuntimeFrame</code> represents a copy of normal mode EPICRAW. When inputting multiple cameras or multiple frames, put multiple <code>RuntimeFrame</code> into the <code>frames</code> list.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_passive_binocular_mode_run_modepassive_bino"><a class="anchor" href="#_passive_binocular_mode_run_modepassive_bino"></a>Passive binocular mode (<code>run_mode="passive_bino"</code>)</h4>
+<div class="paragraph">
+<p>Passive binocular mode uses <code>RuntimePassiveBinoFrame</code>. Only a complete copy of EPICRAW3 bytes and <code>cam2_base</code> is required in the request; the server will parse the three images, internal parameters, distortion and <code>passive_bino_params</code> from EPICRAW3.
+<strong>RuntimePassiveBinoFrame field</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">field</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Is it required?</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>epicraw3</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>bytes</code> or an object convertible to <code>bytes</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Required</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Full EPICRAW3 raw bytes</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cam2_base</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Any</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Required</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Camera to base coordinate system transformation, rotation vector form, length 6 <code>[x, y, z, rx, ry, rz]</code> (translation + Rodrigues rotation vector); the server currently only supports this form and does not support matrices; SDK will be packaged into server fields <code>cam2Base</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The most stable way is to directly transfer the camera or capture the complete EPICRAW3 file generated by SDK:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import RuntimeRunParams
+
+params = RuntimeRunParams.passive_bino_from_file(
+    "my_pipeline",
+    "/data/passive_bino.epicraw",
+    cam2_base=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+)
+
+result = client.runtime.run_graph(params)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If your business layer has obtained three passive binocular images, you can also let SDK generate EPICRAW3 locally:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">camera_params = {
+    "CameraMatrix": [2113.997971632298, 0.0, 1956.222038925553, 0.0, 2113.7299751270057, 1505.0473199581195, 0.0, 0.0, 1.0],
+    "CameraDistortion": [0.049901632334, -0.037810281265, -0.00048319461, -0.000276258172, -0.026886293015],
+    "CameraRotation": [0.9995132330503337, -0.005059159488191983, -0.030784766728731865, 0.004951704878090689, 0.9999813828533568, -0.003565748937897527, 0.030802233296787017, 0.003411576169582241, 0.999519676430619],
+    "CameraTranslation": [-25.837377992238334, -0.6852264771262435, -4.372034519324568],
+}
+
+params = RuntimeRunParams.passive_bino_from_images(
+    "my_pipeline",
+    image_list=[depth_src1, depth_src2, texture_bgr],
+    params={
+        "DepthSrc1": camera_params,
+        "DepthSrc2": camera_params,
+        "TextureSrc": camera_params,
+    },
+    cam2_base=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The order of <code>image_list</code> is fixed to <code>DepthSrc1</code>, <code>DepthSrc2</code>, <code>TextureSrc</code>. Each path metadata should contain <code>CameraMatrix</code>, <code>CameraDistortion</code>, <code>CameraRotation</code>, and <code>CameraTranslation</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_binded_output_valueparams"><a class="anchor" href="#_get_binded_output_valueparams"></a><code>get_binded_output_value(params)</code></h3>
+<div class="paragraph">
+<p>Read the current value of an output binding.</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameter Object</strong>:<br>
+<code>BindingRef</code></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">field</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Picture name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>binding_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Output binding name</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import BindingRef
+
+value = client.runtime.get_binded_output_value(
+    BindingRef("my_pipeline", "detect_result")
+)
+print(value)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_binded_outputs_infograph_name"><a class="anchor" href="#_get_binded_outputs_infograph_name"></a><code>get_binded_outputs_info(graph_name)</code></h3>
+<div class="paragraph">
+<p>Get description information for all output bindings on the graph.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">info = client.runtime.get_binded_outputs_info("my_pipeline")
+for output in info.get("outputs", []):
+    print(output.get("bindingName"), output.get("type"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_binded_point_cloud_parsedparams"><a class="anchor" href="#_get_binded_point_cloud_parsedparams"></a><code>get_binded_point_cloud_parsed(params)</code></h3>
+<div class="paragraph">
+<p>Read and parse runtime bound point clouds. Ordinary users give priority to using this interface.</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameter Object</strong>:<br>
+<code>PointCloudRef</code></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">field</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Picture name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>binding_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Point cloud output binding name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>point_dim</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>int | None</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Dimensions of each point, common values are <code>3</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The point cloud response header at runtime does not necessarily contain the dimensions of each point, so it is recommended to explicitly pass <code>point_dim=3</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import PointCloudRef
+
+clouds = client.runtime.get_binded_point_cloud_parsed(
+    PointCloudRef("my_pipeline", "cloud_output", point_dim=3)
+)
+print(clouds[0].shape)
+print(clouds[0].tolist()[:2])</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_binded_point_cloudparams"><a class="anchor" href="#_get_binded_point_cloudparams"></a><code>get_binded_point_cloud(params)</code></h3>
+<div class="paragraph">
+<p>Read the raw point cloud byte stream of an output binding.</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameter Object</strong>:<br>
+<code>BindingRef</code>
+<strong>Return value</strong>: <code>bytes</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import BindingRef
+
+raw = client.runtime.get_binded_point_cloud(
+    BindingRef("my_pipeline", "cloud_output")
+)
+print(len(raw))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_set_graph_binding_dataparams"><a class="anchor" href="#_set_graph_binding_dataparams"></a><code>set_graph_binding_data(params)</code></h3>
+<div class="paragraph">
+<p>Directly set the binding data on the graph in batches according to the binding name.</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameter Object</strong>:<br>
+<code>RuntimeBindingDataUpdate</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import RuntimeBindingDataUpdate
+
+client.runtime.set_graph_binding_data(
+    RuntimeBindingDataUpdate(
+        "my_pipeline",
+        {
+            "input_image_path": "/data/test.jpg",
+            "confidence": 0.8,
+        },
+    )
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_node_params_info_with_strategyparams"><a class="anchor" href="#_get_node_params_info_with_strategyparams"></a><code>get_node_params_info_with_strategy(params)</code></h3>
+<div class="paragraph">
+<p>Get node parameter information and policy parameter description.
+<strong>Support scope</strong>: Currently only supports <code>PoseListFilter</code>, <code>PickPointFilter</code>,
+<code>PoseListSorterInXOY</code>、<code>PickPointSorterInXOY</code>、<code>PickPointSorterNew</code>、
+<code>PoseListSorter</code> These 6 types of nodes.
+<code>paramsData</code> in the return value is usually used as the input template of <code>set_params_in_strategy(&#8230;&#8203;)</code>:
+First modify the fields that need to be adjusted, and then return the complete <code>paramsData</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameter Object</strong>:<br>
+<code>NodeRef</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeRef
+
+info = client.runtime.get_node_params_info_with_strategy(
+    NodeRef("my_pipeline", "node_id")
+)
+print(info.get("strategy"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_set_params_in_strategyparams"><a class="anchor" href="#_set_params_in_strategyparams"></a><code>set_params_in_strategy(params)</code></h3>
+<div class="paragraph">
+<p>Set parameter values ​​in the node policy.
+<strong>Support scope</strong>: Currently only supports <code>PoseListFilter</code>, <code>PickPointFilter</code>,
+<code>PoseListSorterInXOY</code>、<code>PickPointSorterInXOY</code>、<code>PickPointSorterNew</code>、
+<code>PoseListSorter</code> These 6 types of nodes. For other nodes, please use the common parameter interface to set parameters.
+<code>RuntimeStrategyParamsUpdate.params_data</code> usually comes from
+<code>get_node_params_info_with_strategy(&#8230;&#8203;).get("paramsData")</code>. Don’t just handwrite a small section
+Parameters; it is recommended to retain the complete structure returned by the server and only replace the fields that need to be modified.</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameter Object</strong>:<br>
+<code>RuntimeStrategyParamsUpdate</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeRef, RuntimeStrategyParamsUpdate
+
+strategy = client.runtime.get_node_params_info_with_strategy(
+    NodeRef("my_pipeline", "node_id")
+)
+params_data = strategy["paramsData"]
+params_data["run_params"]["strategies_config"] = {
+    "value": [
+        {
+            "BY_SCORE": {
+                "order": "HIGHEST",
+                "differenceThreshold": 1,
+                "groupInterval": 0.75,
+            }
+        }
+    ]
+}
+
+client.runtime.set_params_in_strategy(
+    RuntimeStrategyParamsUpdate(
+        "my_pipeline",
+        "node_id",
+        params_data,
+    )
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_file_param_md5params"><a class="anchor" href="#_get_file_param_md5params"></a><code>get_file_param_md5(params)</code></h3>
+<div class="paragraph">
+<p>Get md5 of the file currently referenced by the file-type binding parameter. This node is mainly used to determine whether the file data of the node has been updated. If it is updated, set the parameters and initialize it to avoid unnecessary time consumption.</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameter Object</strong>:<br>
+<code>FileParamRef</code></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">field</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Picture name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>param_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Parameter mapping name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>param_type</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>parameter type, default <code>"init_params"</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import FileParamRef
+
+result = client.runtime.get_file_param_md5(
+    FileParamRef("my_pipeline", "model_path")
+)
+print("Request status:", result["status"])
+print(result.get("md5"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_run_single_node_no_graph_parsedparams_recommended"><a class="anchor" href="#_run_single_node_no_graph_parsedparams_recommended"></a><code>run_single_node_no_graph_parsed(params)</code> (recommended)</h3>
+<div class="paragraph">
+<p>Without creating a graph, a single node is directly executed in runtime mode, and the point clouds and images in <code>outputs</code> are automatically parsed from the transport format into structured objects.</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameter Object</strong>:<br>
+<code>SingleNodeParams</code>
+<strong>Why use this interface first</strong>:
+* The returned structure is still aligned with the server <code>outputs</code>, and the output key remains unchanged.
+* The point cloud output will be parsed into <code>list[ParsedPointCloud]</code>, which can be viewed directly <code>shape</code> or called <code>tolist()</code>.
+* The image output will be parsed into <code>list[ParsedImage]</code>, and the image bytes and format can be obtained directly.
+* Ordinary numbers, strings, detection results, etc. JSON values ​​will be retained as they are.
+* Some point cloud nodes that directly return raw bytes will also be restored to <code>{"outputs": {&#8230;&#8203;}}</code> according to the output port type as much as possible.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from pathlib import Path
+from atom_sdk import AtomClient, SingleNodeParams
+
+client = AtomClient("http://127.0.0.1:10026")
+
+result = client.runtime.run_single_node_no_graph_parsed(
+    SingleNodeParams(
+        node_name="EstimateNormal",
+        inputs={"points": Path("/data/scan.ply")},
+    )
+)
+
+clouds = result["outputs"]["points"]
+print(clouds[0].shape)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Input is also automatically handled by node input port type:
+* <code>File</code>: Reserved as a path string, the file content is not read.
+* <code>ColorImage</code> / <code>Image</code>: The local image path or image bytes will be converted into a base64 image list that can be parsed by the server.
+* <code>Points</code> / <code>XYZPoints</code> / <code>NormalPoints</code> / <code>RGBPoints</code>: Local <code>.ply</code> paths are encoded into Atom point cloud binaries.
+* The point cloud bytes prepared by the user will be uploaded as a point cloud input as it is without secondary encoding.
+<strong>Failure handling</strong>: If the top level of the server is <code>status=0</code>, but the single node result is <code>status_queue</code>
+Contains <code>success: false</code>, <code>activate failed</code>, <code>error</code> or negative status, SDK will be parsed
+Throws <code>AtomApiError</code> before <code>outputs</code>. Exceptionally <code>payload</code> will retain the complete original result, which still contains
+See <code>status_queue</code>, <code>outputs</code>, and <code>status</code>.
+If the user has prepared the point cloud payload by himself, he can also directly upload it:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SingleNodeParams, encode_point_cloud_payload, load_ply_points
+
+payload = encode_point_cloud_payload(
+    load_ply_points("/data/scan.ply"),
+    point_dim=3,
+)
+
+result = client.runtime.run_single_node_no_graph_parsed(
+    SingleNodeParams(
+        node_name="EstimateNormal",
+        inputs={"points": payload},
+    )
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When the node information cannot be queried automatically, you can manually fill in the input/output type:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SingleNodeParams
+
+result = client.runtime.run_single_node_no_graph_parsed(
+    SingleNodeParams(
+        node_name="EstimateNormal",
+        inputs={"points": payload},
+        input_data_types={"points": "XYZPoints"},
+        output_data_types={"points": "NormalPoints"},
+        output_point_dims={"points": 6},
+    )
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_run_single_node_no_graphparams_optional_raw_interface"><a class="anchor" href="#_run_single_node_no_graphparams_optional_raw_interface"></a><code>run_single_node_no_graph(params)</code> (optional raw interface)</h3>
+<div class="paragraph">
+<p>Without creating a graph, execute a single node directly in runtime mode and retain the original return value of the server.
+<strong>When to use it</strong>:
+* You need to debug the actual return content of the server.
+* You clearly want to control the output parsing logic yourself.
+* Instead of the <code>outputs</code> dictionary, the node returns the special primitive bytes.
+Like the parsed interface, if <code>status_queue</code> indicates that the internal operation of the node fails, the raw interface will also throw
+<code>AtomApiError</code>, and place the complete raw result in the exception&#8217;s <code>payload</code>.
+Server-side normal JSON output usually comes from:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">outputs_dict = {
+    output_name: convertResponse(port.data_type, port.get_val())
+    for output_name, port in node.outputs_map.items()
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Therefore, <code>result["outputs"]</code> key in the raw interface is still the node output port name, but value has not been resolved by SDK.
+If you want to manually parse the raw result into a structure similar to the parsed interface, you can write like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from pathlib import Path
+from atom_sdk import SingleNodeParams, parse_single_node_result
+from atom_sdk.core.single_node import get_node_info_output_types
+
+node_name = "EstimateNormal"
+raw_result = client.runtime.run_single_node_no_graph(
+    SingleNodeParams(node_name, inputs={"points": Path("/data/scan.ply")})
+)
+
+node_info = client.runtime.get_all_nodes_info().get(node_name, {})
+output_data_types, point_dims = get_node_info_output_types(node_info)
+parsed_result = parse_single_node_result(
+    raw_result,
+    output_data_types=output_data_types,
+    point_dims=point_dims,
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>It is also possible to parse only a single output value:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import parse_single_node_output
+
+clouds = parse_single_node_output("XYZPoints", raw_result["outputs"]["cloud"])
+images = parse_single_node_output("ColorImage", raw_result["outputs"]["preview"])</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>!!! warning "The raw interface of some nodes returns bytes"
+<code>CalculateEdge</code>, <code>CalculateEdgeNew</code>, <code>EstimateNormal</code>, <code>DownSample</code>, <code>DownSampleWithNormal</code>, <code>FilterByNormal</code>, these nodes may directly return unencapsulated original point cloud bytes under <code>run_single_node_no_graph(&#8230;&#8203;)</code>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_complete_example"><a class="anchor" href="#_complete_example"></a>Complete example</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import numpy as np
+from atom_sdk import AtomClient, RuntimeFrame, RuntimeRunParams, RuntimeParamsUpdate
+from atom_sdk.core.errors import AtomApiError, AtomHttpError
+
+client = AtomClient(base_url="http://127.0.0.1:10026")
+GRAPH_NAME = "detect_pipeline"
+
+try:
+    load_result = client.runtime.load_graph(GRAPH_NAME)
+    print("Load request status:", load_result["status"])
+
+    meta = client.runtime.get_meta_info(GRAPH_NAME)
+    print("Meta information request status:", meta["status"])
+    print("Shared parameters:", [p.get("bindingName") for p in meta.get("sharedParams", [])])
+
+    client.runtime.set_shared_params(
+        RuntimeParamsUpdate(GRAPH_NAME, {"model_path": "/models/yolov8n.onnx"})
+    )
+    client.runtime.set_run_params(
+        RuntimeParamsUpdate(GRAPH_NAME, {"confidence": 0.6})
+    )
+
+    height, width = 2, 3
+    image = np.zeros((height, width, 3), dtype=np.uint8)
+    points = np.zeros((height, width, 3), dtype=np.float32)
+    points[:, :, 2] = 1.0
+    frame = RuntimeFrame.from_data(
+        points=points,
+        image=image,
+        intrinsic=[[600.0, 0.0, 320.0], [0.0, 600.0, 240.0], [0.0, 0.0, 1.0]],
+        distortion=[0.0, 0.0, 0.0, 0.0, 0.0],
+        cam2_base=[0.0, 0.0, 0.5, 0.0, 0.0, 0.0],  # Rotate vector form:[x, y, z, rx, ry, rz]
+    )
+
+    result = client.runtime.run_graph(
+        RuntimeRunParams(GRAPH_NAME, frames=[frame])
+    )
+    print("Run request status:", result["status"])
+    print("Number of detection instances:", len(result.get("instanceList", [])))
+
+except AtomHttpError as exc:
+    print("network error:", exc)
+except AtomApiError as exc:
+    print("Server error:", exc)
+finally:
+    client.runtime.release_graph(GRAPH_NAME)</code></pre>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="graph_node.html">GraphNodeService（Python）</a></span>
+  <span class="next"><a href="../cpp/overview.html">Atom SDK C++ version — User Guide</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

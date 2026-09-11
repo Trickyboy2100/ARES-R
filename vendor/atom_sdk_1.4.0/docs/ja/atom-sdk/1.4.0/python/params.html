@@ -1,0 +1,2776 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Python パラメータ オブジェクト :: Atom SDK 開発者ガイド</title>
+    <link rel="prev" href="overview.html">
+    <link rel="next" href="public_api.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          オンライン製品ドキュメント
+                  </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="ドキュメントを検索"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              このマニュアルのみ
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            マニュアルを切り替え
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK 開発者ガイド</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          ダウンロードセンター
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          公式サイト
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            日本語
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK 開発者ガイド</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">ようこそ</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">クイックスタート</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">クイックスタート</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">サンプルサンプル</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">入門利用</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK 入門利用</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">ユーザーガイド</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">適切な Service を選択します</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">グラフとノードの操作</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">エラー処理とトラブルシューティング</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">よくある質問</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">基本的な概念</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/what-is-atom-sdk.html">Atom SDK とは</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-node-subgraph.html">グラフ、ノード、サブグラフ</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-vs-runtime.html">Graph と Runtime の違い</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/timestamp.html">Timestampとは何ですか</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/runtime-frame.html">ランタイム入力フレーム (RuntimeFrame / RuntimePassiveBinoFrame)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/point-cloud-protocol.html">点群タイプの入出力用のバイナリ プロトコル</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/param-binding.html">パラメータのタイプとバインディング名</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API リファレンス</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API リファレンスの概要</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="overview.html">Python の概要とインストール</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="params.html">Python パラメータ オブジェクト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="public_api.html">Python パブリック ユーティリティ API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ バージョン — ユーザーガイド</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ パラメータ オブジェクト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">Atom SDK — C# バージョン</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/params.html">C# パラメータオブジェクト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK 開発者ガイド</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK 開発者ガイド</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK 開発者ガイド</a></li>
+    <li>API リファレンス</li>
+    <li>Python SDK</li>
+    <li><a href="params.html">Python パラメータ オブジェクト</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="このページの内容"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Python パラメータ オブジェクト</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Python SDK の多くのメソッドは、位置パラメーターの長いリストを直接受け取ることはなくなりましたが、<code>CreateNodeParams(&#8230;&#8203;)</code>、<code>NodeConnectionParams(&#8230;&#8203;)</code>、<code>RuntimeRunParams(&#8230;&#8203;)</code> などのパラメーター オブジェクトを受け取ります。</p>
+</div>
+<div class="paragraph">
+<p>この設計は、特にノード接続、サブグラフ操作、ランタイム フレーム データなどのパラメーターが多く、順序が逆転しやすく、ケースが間違って記述されやすいシナリオで、呼び出しコードを明確にすることを目的としています。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_輸入方法"><a class="anchor" href="#_輸入方法"></a>輸入方法</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>すべてのパブリック パラメーター オブジェクトは <code>atom_sdk</code> から直接インポートできます。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import (
+    BindingRef,
+    ChangeNodeIOParams,
+    ChangeSubGraphNodeIOParams,
+    CopyGraphParams,
+    CopyNodeParams,
+    CreateNodeParams,
+    CreateDynamicNodeParams,
+    CreateDynamicSubGraphNodeParams,
+    CreateGraphParams,
+    CreateGraphNodeParams,
+    EditGraphCommentParams,
+    EditGraphNameParams,
+    EditNodeCommentParams,
+    EditSubGraphNameParams,
+    EditSubGraphNodeCommentParams,
+    ExportGraphParams,
+    ExportSubGraphParams,
+    FileParamRef,
+    GenerateGraphNodeByNodesParams,
+    ImportExtensionNodesByPathParams,
+    LoadGraphParams,
+    NodeConnectionParams,
+    NodeBindingUpdate,
+    NodeParamUpdate,
+    NodeRef,
+    PointCloudRef,
+    PortRef,
+    RuntimeBindingDataUpdate,
+    RuntimeFrame,
+    RuntimePassiveBinoFrame,
+    RuntimeParamsUpdate,
+    RuntimeRunParams,
+    RuntimeStrategyParamsUpdate,
+    SetSubgraphAsCustomSubgraphParams,
+    SingleNodeParams,
+    SubGraphBindingUpdate,
+    SubGraphConnectionParams,
+    SubGraphCopyNodeParams,
+    SubGraphCreateNodeParams,
+    SubGraphNodeParamUpdate,
+    SubGraphNodeRef,
+    SubGraphPortRef,
+    SubGraphRef,
+)</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_命名規則"><a class="anchor" href="#_命名規則"></a>命名規則</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>パラメータ オブジェクトは、インターフェイス動詞ではなく、その目的に応じて名前が付けられます。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 33.3333%;">
+<col style="width: 50.0001%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">サフィックス</th>
+<th class="tableblock halign-left valign-top">意味</th>
+<th class="tableblock halign-left valign-top">の例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Ref</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">は既存のオブジェクトを参照し、リソースの検索のみを行います。</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeRef</code>、<code>PortRef</code>、<code>BindingRef</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Params</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">インターフェイス呼び出しに必要な完全な入力パラメータ</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CreateNodeParams</code>、<code>RuntimeRunParams</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Update</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">既存の構成またはランタイム データを変更します</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeParamUpdate</code>、<code>NodeBindingUpdate</code>、<code>RuntimeParamsUpdate</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>したがって、<code>NodeRef</code> のようなクラス名は「ノードへのポイント」を意味し、<code>NodeBindingUpdate</code> は「ノード バインディングの更新」を意味し、<code>RuntimeParamsUpdate</code> は「ランタイム パラメーターの更新」を意味します。 <code>Set&#8230;&#8203;Data</code> などの古いアクション名はパブリック クラス名として使用されなくなりました。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_パラメーター_オブジェクトを使用する場合"><a class="anchor" href="#_パラメーター_オブジェクトを使用する場合"></a>パラメーター オブジェクトを使用する場合</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 40%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">シナリオ</th>
+<th class="tableblock halign-left valign-top">推奨記述方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">メソッドには、<code>graph_name</code> などの単純な値のみが含まれます。</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">文字列を直接渡します (例: <code>client.graph.open_graph("demo")</code>)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">メソッドには複数のビジネス フィールドが必要です</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">パラメーター オブジェクトを渡します (例: <code>client.node.create_node(CreateNodeParams(&#8230;&#8203;))</code>)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">パラメータの順序は、配線、サブグラフの位置、実行時フレームなど、混乱しやすいものです。</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">は最初にパラメータ オブジェクトを使用する必要があります</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>メソッドに必要なパラメータがわからない場合は、まず対応する Service ページを参照してください。</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="graph.html" class="xref page">GraphService</a></p>
+</li>
+<li>
+<p><a href="node.html" class="xref page">NodeService</a></p>
+</li>
+<li>
+<p><a href="graph_node.html" class="xref page">GraphNodeService</a></p>
+</li>
+<li>
+<p><a href="runtime.html" class="xref page">RuntimeService</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_graphservice_パラメータ"><a class="anchor" href="#_graphservice_パラメータ"></a>GraphService パラメータ</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_creategraphparams"><a class="anchor" href="#_creategraphparams"></a><code>CreateGraphParams</code></h3>
+<div class="paragraph">
+<p>`client.graph.create_graph(&#8230;&#8203;)`の場合。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">新しいイメージ名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">画像のコメント、オプション</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import CreateGraphParams
+
+result = client.graph.create_graph(CreateGraphParams("demo_graph", description="デモ図"))
+print("リクエストステータス：", result["status"])</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_copygraphparams"><a class="anchor" href="#_copygraphparams"></a><code>CopyGraphParams</code></h3>
+<div class="paragraph">
+<p>`client.graph.copy_graph(&#8230;&#8203;)`の場合。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ソースイメージ名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>new_graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">コピー後の新しいイメージの名前</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import CopyGraphParams
+
+client.graph.copy_graph(CopyGraphParams("demo_graph", "demo_graph_backup"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_loadgraphparams"><a class="anchor" href="#_loadgraphparams"></a><code>LoadGraphParams</code></h3>
+<div class="paragraph">
+<p>`client.graph.load_graph(&#8230;&#8203;)`の場合。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">インポート後に Atom で使用される図名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>file_path</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str | pathlib.Path</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ローカル <code>.atom</code> イメージ ファイル パス</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from pathlib import Path
+from atom_sdk import LoadGraphParams
+
+result = client.graph.load_graph(LoadGraphParams("imported_graph", Path("/data/demo.atom")))
+print("リクエストステータス：", result["status"])</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_importextensionnodesbypathparams"><a class="anchor" href="#_importextensionnodesbypathparams"></a><code>ImportExtensionNodesByPathParams</code></h3>
+<div class="paragraph">
+<p><code>client.graph.import_extension_nodes_by_path(&#8230;&#8203;)`の場合。このパラメータは通常、次のものから取得されます。
+`client.graph.load_graph(&#8230;&#8203;)</code> 値の <code>extensionNodes</code> フィールドを返します。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>extension_nodes</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>load_graph</code> 戻り値の <code>extensionNodes</code> フィールド</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import ImportExtensionNodesByPathParams
+
+load_result = client.graph.load_graph(LoadGraphParams("imported_graph", Path("/data/demo.atom")))
+extension_nodes = load_result.get("extensionNodes") or {}
+if extension_nodes:
+    client.graph.import_extension_nodes_by_path(
+        ImportExtensionNodesByPathParams(extension_nodes)
+    )</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_exportgraphparams"><a class="anchor" href="#_exportgraphparams"></a><code>ExportGraphParams</code></h3>
+<div class="paragraph">
+<p>`client.graph.export_graph(&#8230;&#8203;)`の場合。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">エクスポートするグラフの名前</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dl_models_info</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">エクスポート時にパッケージ化する必要があるモデル情報 (オプション)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>custom_nodes</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">エクスポート時にパッケージ化する必要があるカスタム ノード情報 (オプション)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import ExportGraphParams
+
+client.graph.export_graph(ExportGraphParams("demo_graph"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_editgraphnameparams"><a class="anchor" href="#_editgraphnameparams"></a><code>EditGraphNameParams</code></h3>
+<div class="paragraph">
+<p>`client.graph.edit_graph_name(&#8230;&#8203;)`の場合。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">現在のイメージ名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>new_graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">画像名を変更しました</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_editgraphcommentparams"><a class="anchor" href="#_editgraphcommentparams"></a><code>EditGraphCommentParams</code></h3>
+<div class="paragraph">
+<p>`client.graph.edit_graph_comment(&#8230;&#8203;)`の場合。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">画像名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>comment</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">新しいメモのコンテンツ</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_nodeservice_パラメータ"><a class="anchor" href="#_nodeservice_パラメータ"></a>NodeService パラメータ</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_noderef"><a class="anchor" href="#_noderef"></a><code>NodeRef</code></h3>
+<div class="paragraph">
+<p>メイン グラフ ノード参照。「特定のグラフ内の特定のノード」を見つけるために使用されます。</p>
+</div>
+<div class="paragraph">
+<p>用途:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>client.node.delete_node(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.node.get_node_params(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.node.get_node_info_in_graph(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.node.activate_node(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.node.initial_node(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.node.update_node(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.runtime.get_node_params_info_with_strategy(&#8230;&#8203;)</code></p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">画像名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ノードID</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeRef
+
+client.node.activate_node(NodeRef("demo_graph", "node-001"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_createnodeparams"><a class="anchor" href="#_createnodeparams"></a><code>CreateNodeParams</code></h3>
+<div class="paragraph">
+<p>`client.node.create_node(&#8230;&#8203;)`の場合。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">メイン画像名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">サーバーが認識するノードクラス名またはノード名</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import CreateNodeParams
+
+result = client.node.create_node(
+    CreateNodeParams("demo_graph", "DetectAndSegment")
+)
+print("リクエストステータス：", result["status"])
+node_id = result["nodeId"]</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_createdynamicnodeparams"><a class="anchor" href="#_createdynamicnodeparams"></a><code>CreateDynamicNodeParams</code></h3>
+<div class="paragraph">
+<p>`client.node.create_dynamic_io_node(&#8230;&#8203;)`の場合。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">メイン画像名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ノードクラス名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">動的入出力定義</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_changenodeioparams"><a class="anchor" href="#_changenodeioparams"></a><code>ChangeNodeIOParams</code></h3>
+<div class="paragraph">
+<p>`client.node.change_node_io(&#8230;&#8203;)`の場合。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">画像名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">変更するノード ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">動的入力および出力定義を更新しました</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_creategraphnodeparams"><a class="anchor" href="#_creategraphnodeparams"></a><code>CreateGraphNodeParams</code></h3>
+<div class="paragraph">
+<p>`client.node.create_graph_node(&#8230;&#8203;)`の場合。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">親イメージ名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">新しいgraphnodeの名前</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>sub_graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ラップされるサブグラフの名前</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_generategraphnodebynodesparams"><a class="anchor" href="#_generategraphnodebynodesparams"></a><code>GenerateGraphNodeByNodesParams</code></h3>
+<div class="paragraph">
+<p>`client.node.generate_graph_node_by_nodes(&#8230;&#8203;)`の場合。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">親イメージ名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">新しいgraphnodeの名前</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_ids</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>list[str]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">サブグラフにパックされるノードのリスト ID</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_copynodeparams"><a class="anchor" href="#_copynodeparams"></a><code>CopyNodeParams</code></h3>
+<div class="paragraph">
+<p>`client.node.create_node_by_copy(&#8230;&#8203;)`の場合。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">メイン画像名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">コピー後の新しいノード名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">コピー対象のノード ID</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_nodeconnectionparams"><a class="anchor" href="#_nodeconnectionparams"></a><code>NodeConnectionParams</code></h3>
+<div class="paragraph">
+<p><code>client.node.connect_nodes(&#8230;&#8203;)</code> および <code>client.node.disconnect_nodes(&#8230;&#8203;)</code> に使用されます。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">画像名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>output_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ソース ノード。データを生成するノードです。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>output_port_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">送信元ノードの出力ポート名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>input_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ターゲット ノード。データを受信するノードです。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>input_port_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ターゲットノードの入力ポート名</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>1 つのルールを覚えておいてください。データ フローは <code>output &#8594; input</code> です。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeConnectionParams
+
+client.node.connect_nodes(
+    NodeConnectionParams(
+        graph_name="demo_graph",
+        output_node_id="source_node",
+        output_port_name="image_out",
+        input_node_id="detect_node",
+        input_port_name="image",
+    )
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_portref"><a class="anchor" href="#_portref"></a><code>PortRef</code></h3>
+<div class="paragraph">
+<p>メイン グラフ ノードのポート参照。ノードの入力ポートまたは出力ポートを読み取るために使用されます。</p>
+</div>
+<div class="paragraph">
+<p>用途:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>client.node.get_node_port_data(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.node.get_points_data(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.node.get_points_data_parsed(&#8230;&#8203;)</code></p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">画像名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ノードID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>port_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ポート名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>io_type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ポート方向、通常は <code>"inputs"</code> または <code>"outputs"</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import PortRef
+
+port = PortRef("demo_graph", "detect_node", "results", "outputs")
+data = client.node.get_node_port_data(port)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_nodeparamupdate"><a class="anchor" href="#_nodeparamupdate"></a><code>NodeParamUpdate</code></h3>
+<div class="paragraph">
+<p>`client.node.set_node_param_data(&#8230;&#8203;)`の場合。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">画像名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ノードID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>param_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">パラメータ名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>param_type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">パラメータのタイプ、通常は <code>"init_params"</code> または <code>"run_params"</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">パラメータ値; <code>PathLike</code> の場合、SDK は自動的にファイルとしてアップロードされます</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from pathlib import Path
+from atom_sdk import NodeParamUpdate
+
+client.node.set_node_param_data(
+    NodeParamUpdate("demo_graph", "detect_node", "threshold", "run_params", 0.5)
+)
+
+client.node.set_node_param_data(
+    NodeParamUpdate("demo_graph", "detect_node", "model", "init_params", Path("/models/model.onnx"))
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_nodebindingupdate"><a class="anchor" href="#_nodebindingupdate"></a><code>NodeBindingUpdate</code></h3>
+<div class="paragraph">
+<p>`client.node.set_binding_name(&#8230;&#8203;)`の場合。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">画像名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ノードID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>binding_type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">バインディング タイプ (<code>"inputs"</code>、<code>"outputs"</code>、<code>"init_params"</code>、<code>"run_params"</code> など)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>origin_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">元のポート名またはパラメータ名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>binding_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">新しいバインディング名。空の文字列を渡すことは通常、バインドをキャンセルすることを意味します</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeBindingUpdate
+
+client.node.set_binding_name(
+    NodeBindingUpdate("demo_graph", "detect_node", "outputs", "results", "detect_result")
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_editnodecommentparams"><a class="anchor" href="#_editnodecommentparams"></a><code>EditNodeCommentParams</code></h3>
+<div class="paragraph">
+<p>`client.node.edit_node_comment(&#8230;&#8203;)`の場合。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">画像名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ノードID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>comment</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">新しいメモのコンテンツ</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_singlenodeparams"><a class="anchor" href="#_singlenodeparams"></a><code>SingleNodeParams</code></h3>
+<div class="paragraph">
+<p><code>client.runtime.run_single_node_no_graph(&#8230;&#8203;)</code> 用
+そして`client.runtime.run_single_node_no_graph_parsed(&#8230;&#8203;)`。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ノードクラス名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>inputs</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ポートの値を入力します。一般的なパス、画像、PLY 点群、数値、辞書は、ノードの入力ポートのタイプに従って自動的に処理されます。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>run_params</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">動作パラメータ</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>init_params</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">初期化パラメータ</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>output_data_types</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, str] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">出力名 value で解析する <code>run_single_node_no_graph_parsed(&#8230;&#8203;)</code> の出力ポート タイプ マッピング</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>output_point_dims</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, int] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">点群出力寸法プロンプト;通常 <code>convertResponse</code> 出力には独自の次元が付属しており、次元ヘッダーのない点群バイトのみが必要です</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>input_data_types</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, str] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">入力ポート タイプのマッピング。通常は省略できます。SDK はパスまたは bytes 入力が見つかったときにノード名によってクエリを実行します。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>input_point_dims</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, int] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">点群入力寸法のヒント;通常は入力タイプから自動的に推測されます</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>RuntimeService は、ノードのポート タイプに基づいて入力を自動的に処理しようとします。たとえば、<code>File</code> 入力はパス文字列として保持され、<code>ColorImage</code> パスは base64 イメージ リストに変換され、<code>XYZPoints</code> の <code>.ply</code> パスは Atom 点群バイナリに変換されます。</p>
+</div>
+<div class="paragraph">
+<p>最初に <code>run_single_node_no_graph_parsed(&#8230;&#8203;)</code> を使用することをお勧めします。これにより、<code>outputs</code> と key は変更されず、点群や画像などの送信形式のみが構造化オブジェクトに解析されます。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from pathlib import Path
+from atom_sdk import SingleNodeParams
+
+result = client.runtime.run_single_node_no_graph_parsed(
+    SingleNodeParams(
+        node_name="EstimateNormal",
+        inputs={"points": Path("/data/scan.ply")},
+    )
+)
+
+clouds = result["outputs"]["points"]
+print(clouds[0].shape)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>サーバーからの元の戻り値を確認する必要がある場合は、<code>run_single_node_no_graph(&#8230;&#8203;)</code> を使用します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SingleNodeParams
+
+raw_result = client.runtime.run_single_node_no_graph(
+    SingleNodeParams(
+        node_name="MathAddNode",
+        inputs={"a": 1.0, "b": 2.0},
+        run_params={"threshold": 0.5},
+        init_params={},
+    )
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>ノード情報を自動的にクエリできない場合は、<code>input_data_types</code> または <code>output_data_types</code> を手がかりとして手動で渡すこともできます。</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_graphnodeservice_パラメータ"><a class="anchor" href="#_graphnodeservice_パラメータ"></a>GraphNodeService パラメータ</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>GraphNodeService</code> は graph node 内のサブグラフを操作するため、このパラメーター オブジェクトのセットには通常、もう 1 つ <code>graph_node_id</code> があります。</p>
+</div>
+<div class="sect2">
+<h3 id="_subgraphref"><a class="anchor" href="#_subgraphref"></a><code>SubGraphRef</code></h3>
+<div class="paragraph">
+<p>サブピクチャ参照。「特定の親ピクチャ内の graph node 内部サブピクチャ」を見つけるために使用されます。</p>
+</div>
+<div class="paragraph">
+<p>用途:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>client.graph_node.open_graph(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.graph_node.run_graph(&#8230;&#8203;)</code></p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">親イメージ名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">親グラフ graph node の  ノード ID</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_subgraphcreatenodeparams"><a class="anchor" href="#_subgraphcreatenodeparams"></a><code>SubGraphCreateNodeParams</code></h3>
+<div class="paragraph">
+<p>`client.graph_node.create_node(&#8230;&#8203;)`の場合。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">親イメージ名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node ノード ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">作成するノードクラス名</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_createdynamicsubgraphnodeparams"><a class="anchor" href="#_createdynamicsubgraphnodeparams"></a><code>CreateDynamicSubGraphNodeParams</code></h3>
+<div class="paragraph">
+<p>`client.graph_node.create_dynamic_io_node(&#8230;&#8203;)`の場合。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">親イメージ名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node ノード ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">作成するノードクラス名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">動的入出力定義</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_subgraphcopynodeparams"><a class="anchor" href="#_subgraphcopynodeparams"></a><code>SubGraphCopyNodeParams</code></h3>
+<div class="paragraph">
+<p>`client.graph_node.create_node_by_copy(&#8230;&#8203;)`の場合。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">親イメージ名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node ノード ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">コピー後の新しいノード名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">コピー対象のノード ID</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_changesubgraphnodeioparams"><a class="anchor" href="#_changesubgraphnodeioparams"></a><code>ChangeSubGraphNodeIOParams</code></h3>
+<div class="paragraph">
+<p>`client.graph_node.change_node_io(&#8230;&#8203;)`の場合。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">親イメージ名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node ノード ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code>
+サブグラフの</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ノード ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">動的入力および出力定義を更新しました</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_subgraphnoderef"><a class="anchor" href="#_subgraphnoderef"></a><code>SubGraphNodeRef</code></h3>
+<div class="paragraph">
+<p>サブグラフ内のノード参照。「graph node 内部サブグラフ内のノード」を見つけるために使用されます。</p>
+</div>
+<div class="paragraph">
+<p>用途:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>client.graph_node.delete_node(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.graph_node.get_node_params(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.graph_node.get_node_info_in_graph(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.graph_node.activate_node(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.graph_node.initial_node(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.graph_node.update_node(&#8230;&#8203;)</code></p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">親イメージ名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node ノード ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code>
+サブグラフの</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ノード ID</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_subgraphconnectionparams"><a class="anchor" href="#_subgraphconnectionparams"></a><code>SubGraphConnectionParams</code></h3>
+<div class="paragraph">
+<p><code>client.graph_node.connect_nodes(&#8230;&#8203;)</code> および <code>client.graph_node.disconnect_nodes(&#8230;&#8203;)</code> に使用されます。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">親イメージ名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node ノード ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>output_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">サブグラフの内部ソース ノードは、データを生成するノードです。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>output_port_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">送信元ノードの出力ポート名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>input_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">サブグラフ内のターゲット ノードはデータを受け取るノードです</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>input_port_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ターゲットノードの入力ポート名</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SubGraphConnectionParams
+
+client.graph_node.connect_nodes(
+    SubGraphConnectionParams(
+        "demo_graph",
+        "graph_node_id",
+        "source_sub_node",
+        "image_out",
+        "target_sub_node",
+        "image_in",
+    )
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_subgraphportref"><a class="anchor" href="#_subgraphportref"></a><code>SubGraphPortRef</code></h3>
+<div class="paragraph">
+<p>サブグラフ内のノードポート参照。</p>
+</div>
+<div class="paragraph">
+<p>用途:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>client.graph_node.get_node_port_data(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.graph_node.get_points_data(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.graph_node.get_points_data_parsed(&#8230;&#8203;)</code></p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">親イメージ名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node ノード ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code>
+サブグラフの</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ノード ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>port_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ポート名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>io_type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ポート方向、通常は <code>"inputs"</code> または <code>"outputs"</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_subgraphnodeparamupdate"><a class="anchor" href="#_subgraphnodeparamupdate"></a><code>SubGraphNodeParamUpdate</code></h3>
+<div class="paragraph">
+<p>`client.graph_node.set_node_param_data(&#8230;&#8203;)`の場合。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">親イメージ名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node ノード ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code>
+サブグラフの</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ノード ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>param_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">パラメータ名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>param_type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">パラメータのタイプ、通常は <code>"init_params"</code> または <code>"run_params"</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">パラメータ値; <code>PathLike</code> の場合、SDK は自動的にファイルとしてアップロードされます</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_subgraphbindingupdate"><a class="anchor" href="#_subgraphbindingupdate"></a><code>SubGraphBindingUpdate</code></h3>
+<div class="paragraph">
+<p>`client.graph_node.set_binding_name(&#8230;&#8203;)`の場合。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">親イメージ名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node ノード ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code>
+サブグラフの</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ノード ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>binding_type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">バインドタイプ</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>origin_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">元のポート名またはパラメータ名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>binding_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">新しいバインディング名。空の文字列を渡すことは通常、バインドをキャンセルすることを意味します</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_editsubgraphnameparams"><a class="anchor" href="#_editsubgraphnameparams"></a><code>EditSubGraphNameParams</code></h3>
+<div class="paragraph">
+<p>`client.graph_node.edit_graph_name(&#8230;&#8203;)`の場合。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">親イメージ名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node ノード ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>new_sub_graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">サブピクチャ名を変更しました</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_exportsubgraphparams"><a class="anchor" href="#_exportsubgraphparams"></a><code>ExportSubGraphParams</code></h3>
+<div class="paragraph">
+<p>`client.graph_node.export_graph(&#8230;&#8203;)`の場合。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">親イメージ名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node ノード ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dl_models_info</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">オプション、パッケージ化する必要があるモデル情報</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>custom_nodes</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">パッケージ化する必要があるオプションのカスタム ノード情報</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_setsubgraphascustomsubgraphparams"><a class="anchor" href="#_setsubgraphascustomsubgraphparams"></a><code>SetSubgraphAsCustomSubgraphParams</code></h3>
+<div class="paragraph">
+<p>`client.graph_node.set_subgraph_as_custom_subgraph(&#8230;&#8203;)`の場合。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">親イメージ名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node ノード ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>custom_subgraph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">エクスポートされたカスタム サブグラフ テンプレート名</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_editsubgraphnodecommentparams"><a class="anchor" href="#_editsubgraphnodecommentparams"></a><code>EditSubGraphNodeCommentParams</code></h3>
+<div class="paragraph">
+<p>`client.graph_node.edit_node_comment(&#8230;&#8203;)`の場合。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">親イメージ名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node ノード ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code>
+サブグラフの</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ノード ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>comment</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">新しいメモのコンテンツ</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_runtimeservice_パラメータ"><a class="anchor" href="#_runtimeservice_パラメータ"></a>RuntimeService パラメータ</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_runtimeparamsupdate"><a class="anchor" href="#_runtimeparamsupdate"></a><code>RuntimeParamsUpdate</code></h3>
+<div class="paragraph">
+<p><code>client.runtime.set_shared_params(&#8230;&#8203;)</code> および <code>client.runtime.set_run_params(&#8230;&#8203;)</code> に使用されます。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">画像名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>params_data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">は key という名前のパラメータ ディクショナリをバインドします</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import RuntimeParamsUpdate
+
+client.runtime.set_run_params(
+    RuntimeParamsUpdate("demo_graph", {"threshold": 0.5})
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_rungraph_2つの入力モード"><a class="anchor" href="#_rungraph_2つの入力モード"></a>RunGraph 2つの入力モード</h3>
+<div class="paragraph">
+<p><code>RuntimeRunParams</code> は、写真の <code>EpicProInput</code> の構成に応じて 2 つのモードに分かれています。 2 つのモードの入力構造は異なるため、混合することはできません。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 42.8571%;">
+<col style="width: 28.5715%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">モード</th>
+<th class="tableblock halign-left valign-top"><code>run_mode</code></th>
+<th class="tableblock halign-left valign-top">送信すべき内容</th>
+<th class="tableblock halign-left valign-top">シナリオに適したもの</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">通常モード</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"others"</code> またはパスしません</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1 つ以上の <code>RuntimeFrame</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">画像は通常の画像 + 点群入力として実行されます</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">パッシブ双眼モード</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"passive_bino"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">または <code>RuntimePassiveBinoFrame</code>、<code>RuntimeRunParams.passive_bino_from_file(&#8230;&#8203;)</code> または <code>passive_bino_from_images(&#8230;&#8203;)</code> 構成を使用することをお勧めします</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">画像の <code>EpicProInput</code> は <code>passive_bino</code> として構成されており、入力は EPICRAW3 のコピーです</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>通常モードは、EPICRAW と <code>cam2_base</code> のエンコードされたコピーを渡します。これらは、SDK によって画像、点群、カメラ パラメーターから生成することもできます。パッシブ双眼モードでは EPICRAW3 と <code>cam2_base</code> のみが通過します。 3 つのイメージ、内部パラメータ、歪み、および <code>passive_bino_params</code> は EPICRAW3 から解析されます。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_runtimeframe"><a class="anchor" href="#_runtimeframe"></a><code>RuntimeFrame</code></h3>
+<div class="paragraph">
+<p>通常モードでの実行時の単一フレーム入力。<code>run_mode="others"</code> または <code>run_mode</code> が省略された場合にのみ使用されます。 3つの工場入口をご利用ください。</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>RuntimeFrame.from_file(&#8230;&#8203;)</code>: 既存の EPICRAW ファイルを読み取ります。</p>
+</li>
+<li>
+<p><code>RuntimeFrame.from_bytes(&#8230;&#8203;)</code>: 既存の EPICRAW bytes を受信します。</p>
+</li>
+<li>
+<p><code>RuntimeFrame.from_data(&#8230;&#8203;)</code>: NumPy の画像、点群、カメラ パラメーターから EPICRAW を生成します。</p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>epicraw</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">完全なEPICRAW生バイト、または`bytes()`で変換可能なオブジェクト</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cam2_base</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">カメラからベース座標系への変換、回転ベクトル形式、長さ 6 の <code>[x, y, z, rx, ry, rz]</code> (平行移動 + Rodrigues 回転ベクトル)。サーバーは現在この形式のみをサポートしており、行列はサポートしていません</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>roi</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">関心領域、オプション。その中で <code>cam2ROIFrame</code> も長さ 6 の回転ベクトル形式のみをサポートします</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>from_data(&#8230;&#8203;)</code> に通常の <code>intrinsic</code> / <code>distortion</code> しかない場合は、EPICRAW2 が自動的に選択されます。 <code>camera_params</code> に <code>TextureSrc</code>、<code>DepthSrc1</code>、<code>DepthSrc2</code> などの拡張パラメータが含まれる場合、EPICRAW3 が自動的に選択されます。 <code>version=2</code> または <code>version=3</code> を明示的に渡すと、自動選択をオーバーライドできます。通常モードの EPICRAW3 標準レイアウトには <code>Depth + TextureBGR</code> のみが含まれます。 Depth は点群 Z の値から生成され、完全な PointCloud は含まれません。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import numpy as np
+from atom_sdk import RuntimeFrame
+
+image = np.zeros((2, 3, 3), dtype=np.uint8)
+points = np.zeros((2, 3, 3), dtype=np.float32)
+points[:, :, 2] = 1.0
+
+frame = RuntimeFrame.from_data(
+    points=points,
+    image=image,
+    intrinsic=[[600.0, 0.0, 320.0], [0.0, 600.0, 240.0], [0.0, 0.0, 1.0]],
+    distortion=[0.0, 0.0, 0.0, 0.0, 0.0],
+    cam2_base=[0.0, 0.0, 0.5, 0.0, 0.0, 0.0],  # ベクトル形式を回転：[x, y, z, rx, ry, rz]
+    roi={"min": {"x": -0.5, "y": -0.5, "z": 0.1}, "max": {"x": 0.5, "y": 0.5, "z": 2.0}},
+    camera_params={
+        "TextureSrc": {
+            "CameraMatrix": [600.0, 0.0, 320.0, 0.0, 600.0, 240.0, 0.0, 0.0, 1.0],
+            "CameraDistortion": [0.0, 0.0, 0.0, 0.0, 0.0],
+            "CameraRotation": [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0],
+            "CameraTranslation": [0.0, 0.0, 0.0],
+        }
+    },
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_runtimepassivebinoframe"><a class="anchor" href="#_runtimepassivebinoframe"></a><code>RuntimePassiveBinoFrame</code></h3>
+<div class="paragraph">
+<p><code>run_mode="passive_bino"</code> のみ、パッシブ双眼モードでの単一フレーム入力。サーバーは 3 つの画像、内部パラメータ、歪み、および EPICRAW3 からの <code>passive_bino_params</code> を解析します。 SDK は追加で <code>cam2_base</code> のみを渡します。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>epicraw3</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">完全なEPICRAW3生バイト、または`bytes()`で変換可能なオブジェクト</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cam2_base</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">カメラからベース座標系への変換、回転ベクトル形式、長さ 6 の <code>[x, y, z, rx, ry, rz]</code> (平行移動 + Rodrigues 回転ベクトル)。サーバーは現在この形式のみをサポートしており、行列はサポートしていません</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import RuntimePassiveBinoFrame
+
+frame = RuntimePassiveBinoFrame.from_file(
+    "/data/passive_bino.epicraw",
+    cam2_base=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>既存の bytes または 3 つの写真から構築することもできます。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">frame = RuntimePassiveBinoFrame.from_bytes(
+    epicraw3_bytes,
+    cam2_base=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+)
+
+camera_params = {
+    "CameraMatrix": [2113.997971632298, 0.0, 1956.222038925553, 0.0, 2113.7299751270057, 1505.0473199581195, 0.0, 0.0, 1.0],
+    "CameraDistortion": [0.049901632334, -0.037810281265, -0.00048319461, -0.000276258172, -0.026886293015],
+    "CameraRotation": [0.9995132330503337, -0.005059159488191983, -0.030784766728731865, 0.004951704878090689, 0.9999813828533568, -0.003565748937897527, 0.030802233296787017, 0.003411576169582241, 0.999519676430619],
+    "CameraTranslation": [-25.837377992238334, -0.6852264771262435, -4.372034519324568],
+}
+
+frame = RuntimePassiveBinoFrame.from_images(
+    image_list=[depth_src1, depth_src2, texture_bgr],
+    params={
+        "DepthSrc1": camera_params,
+        "DepthSrc2": camera_params,
+        "TextureSrc": camera_params,
+    },
+    cam2_base=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_runtimerunparams"><a class="anchor" href="#_runtimerunparams"></a><code>RuntimeRunParams</code></h3>
+<div class="paragraph">
+<p>`client.runtime.run_graph(&#8230;&#8203;)`の場合。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">画像名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>frames</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>list[RuntimeFrame]</code> または <code>list[RuntimePassiveBinoFrame]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">入力フレームリスト</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>run_mode</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">デフォルト <code>"others"</code>;パッシブ両眼透過`"passive_bino"`</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>RuntimeRunParams</code> は <code>frames</code> の要素タイプをチェックします。通常モードでは <code>RuntimeFrame</code> を渡す必要があります。 <code>passive_bino</code> モードでは、<code>RuntimePassiveBinoFrame</code> を 1 つだけ渡す必要があります。通常の <code>dict</code> が渡された場合は、 <code>TypeError</code> が直接スローされるため、パラメータ形式のエラーをできるだけ早く発見できます。</p>
+</div>
+<div class="paragraph">
+<p>通常モードの例:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import RuntimeRunParams
+
+result = client.runtime.run_graph(
+    RuntimeRunParams("demo_graph", frames=[frame])
+)
+print("リクエストステータス：", result["status"])</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>passive_bino</code> は、<code>run_mode</code> を忘れないようにファクトリ メソッドを使用することを推奨します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">params = RuntimeRunParams.passive_bino_from_file(
+    "demo_graph",
+    "/data/passive_bino.epicraw",
+    cam2_base=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+)
+
+params = RuntimeRunParams.passive_bino_from_images(
+    "demo_graph",
+    image_list=[depth_src1, depth_src2, texture_bgr],
+    params=passive_bino_params,
+    cam2_base=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>passive_bino_from_image(&#8230;&#8203;)</code> は <code>passive_bino_from_images(&#8230;&#8203;)</code> と同じパラメーターと戻り値を持つ互換エイリアスです。新しいコードでは複数形を使用してください。</p>
+</div>
+<div class="paragraph">
+<p>パッシブ双眼モードには通常の <code>RuntimeFrame</code> を使用しないでください。 <code>RuntimePassiveBinoFrame</code> または <code>RuntimeRunParams.passive_bino_*</code> の工場出荷時のエントリを使用してください。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_bindingref"><a class="anchor" href="#_bindingref"></a><code>BindingRef</code></h3>
+<div class="paragraph">
+<p>実行時にバインディング参照を出力します。</p>
+</div>
+<div class="paragraph">
+<p>用途:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>client.runtime.get_binded_output_value(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.runtime.get_binded_point_cloud(&#8230;&#8203;)</code></p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">画像名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>binding_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">出力バインディング名</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_pointcloudref"><a class="anchor" href="#_pointcloudref"></a><code>PointCloudRef</code></h3>
+<div class="paragraph">
+<p>ランタイム点群出力バインディング リファレンス。</p>
+</div>
+<div class="paragraph">
+<p>`client.runtime.get_binded_point_cloud_parsed(&#8230;&#8203;)`の場合。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">画像名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>binding_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">出力バインディング名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>point_dim</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">各点の寸法、共通の値は <code>3</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>実行時の点群応答ヘッダーには、各点の寸法が含まれている必要はありません。 2次元ポイントテーブルを直接取得したい場合は`point_dim=3`を渡すことを推奨します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import PointCloudRef
+
+clouds = client.runtime.get_binded_point_cloud_parsed(
+    PointCloudRef("demo_graph", "cloud_output", point_dim=3)
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_runtimebindingdataupdate"><a class="anchor" href="#_runtimebindingdataupdate"></a><code>RuntimeBindingDataUpdate</code></h3>
+<div class="paragraph">
+<p>`client.runtime.set_graph_binding_data(&#8230;&#8203;)`の場合。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">画像名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>binding_data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">バインディング名 key のバインディング データ ディクショナリへ</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_runtimestrategyparamsupdate"><a class="anchor" href="#_runtimestrategyparamsupdate"></a><code>RuntimeStrategyParamsUpdate</code></h3>
+<div class="paragraph">
+<p>`client.runtime.set_params_in_strategy(&#8230;&#8203;)`の場合。</p>
+</div>
+<div class="paragraph">
+<p>現在、<code>PoseListFilter</code>、<code>PickPointFilter</code>、<code>PoseListSorterInXOY</code> でのみ利用可能です。
+ノードには <code>PickPointSorterInXOY</code>、<code>PickPointSorterNew</code>、<code>PoseListSorter</code> の 6 種類があります。</p>
+</div>
+<div class="paragraph">
+<p><code>params_data</code> は通常 <code>client.runtime.get_node_params_info_with_strategy(&#8230;&#8203;)</code> から始まります
+戻り値から <code>paramsData</code> を取り出し、更新が必要なフィールドを変更して、それらをまとめて返します。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">画像名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ノードID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>params_data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">サーバーから返された`paramsData`から変更された完全なパラメータ構造</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_fileparamref"><a class="anchor" href="#_fileparamref"></a><code>FileParamRef</code></h3>
+<div class="paragraph">
+<p>`client.runtime.get_file_param_md5(&#8230;&#8203;)`の場合。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">画像名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>param_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">パラメータ バインディング名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>param_type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">パラメータ タイプ、デフォルト <code>"init_params"</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_間違いが最も起こりやすい場所"><a class="anchor" href="#_間違いが最も起こりやすい場所"></a>間違いが最も起こりやすい場所</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_接続方向"><a class="anchor" href="#_接続方向"></a>接続方向</h3>
+<div class="paragraph">
+<p>メインピクチャとサブピクチャの接続は同じ方向に従います。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">output_node.output_port -&gt; input_node.input_port</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>つまり、次のようになります。</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>output_node_id</code> / <code>output_port_name</code> はデータ ソースです</p>
+</li>
+<li>
+<p><code>input_node_id</code> / <code>input_port_name</code> はデータ受信者です</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_メイングラフノードとサブグラフノードを混合しないでください"><a class="anchor" href="#_メイングラフノードとサブグラフノードを混合しないでください"></a>メイングラフノードとサブグラフノードを混合しないでください</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">メインピクチャパラメータオブジェクト</th>
+<th class="tableblock halign-left valign-top">サブピクチャパラメータオブジェクト</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeRef</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SubGraphNodeRef</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeConnectionParams</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SubGraphConnectionParams</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>PortRef</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SubGraphPortRef</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeParamUpdate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SubGraphNodeParamUpdate</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeBindingUpdate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SubGraphBindingUpdate</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>メソッドエントリが <code>client.graph_node</code> の場合、通常は <code>SubGraph*</code> パラメータ オブジェクトが使用されます。</p>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="overview.html">Python の概要とインストール</a></span>
+  <span class="next"><a href="public_api.html">Python パブリック ユーティリティ API</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>런타임 입력 프레임(RuntimeFrame / RuntimePassiveBinoFrame) :: Atom SDK 개발자 가이드</title>
+    <link rel="prev" href="timestamp.html">
+    <link rel="next" href="point-cloud-protocol.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          온라인 제품 문서
+                  </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="문서 검색"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              이 매뉴얼만
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            매뉴얼 전환
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK 개발자 가이드</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          다운로드 센터
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          공식 웹사이트
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            한국어
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK 개발자 가이드</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">환영합니다</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">빠른 시작</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">빠른 시작</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">샘플 샘플</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">입문 사용</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK 입문 사용</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">사용자 가이드</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">적절한 Service을 선택합니다.</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">그래프 및 노드 작업</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">오류 처리 및 문제 해결</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">FAQ</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">기본 개념</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="what-is-atom-sdk.html">Atom SDK 란 무엇입니까?</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="graph-node-subgraph.html">그래프, 노드, 하위 그래프</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="graph-vs-runtime.html">Graph과 Runtime의 차이점</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="timestamp.html">Timestamp이 무엇인가요?</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="runtime-frame.html">런타임 입력 프레임(RuntimeFrame / RuntimePassiveBinoFrame)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="point-cloud-protocol.html">포인트 클라우드 유형 입출력을 위한 바이너리 프로토콜</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="param-binding.html">매개변수 유형 및 바인딩 이름</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API 참조</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API 참조 개요</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python 개요 및 설치</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/params.html">Python 매개변수 객체</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/public_api.html">Python 공용 유틸리티 API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ 버전 — 사용자 가이드</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ 매개변수 객체</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">Atom SDK — C# 버전</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/params.html">C# 매개변수 객체</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK 개발자 가이드</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK 개발자 가이드</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK 개발자 가이드</a></li>
+    <li>기본 개념</li>
+    <li><a href="runtime-frame.html">런타임 입력 프레임(RuntimeFrame / RuntimePassiveBinoFrame)</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="이 페이지의 내용"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">런타임 입력 프레임(RuntimeFrame / RuntimePassiveBinoFrame)</h1>
+<div class="sect1">
+<h2 id="_두_가지_런타임_입력_모드"><a class="anchor" href="#_두_가지_런타임_입력_모드"></a>두 가지 런타임 입력 모드</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>RuntimeService.run_graph`에는 다이어그램의 `EpicProInput</code> 노드가 구성된 방식에 따라 두 가지 입력 모드가 있습니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 28.5714%;">
+<col style="width: 42.8572%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">모드</th>
+<th class="tableblock halign-left valign-top"><code>runMode</code> / <code>run_mode</code></th>
+<th class="tableblock halign-left valign-top">입력 대상</th>
+<th class="tableblock halign-left valign-top">입력 내용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">일반 모드</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"others"</code> 또는 통과하지 못함</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RuntimeFrame</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">전체 EPICRAW2/표준 EPICRAW3 + <code>cam2_base</code> + 옵션 ROI</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">패시브 쌍안경 모드</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"passive_bino"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RuntimePassiveBinoFrame</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수동쌍안경 EPICRAW3 + <code>cam2_base</code> + 옵션 ROI</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>이 두 가지 모드를 혼합하지 마십시오. 일반 모드에는 `RuntimeFrame`을 사용하고 수동 쌍안경 모드에는 `RuntimePassiveBinoFrame`을 사용하십시오.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_일반_모드_runtimeframe"><a class="anchor" href="#_일반_모드_runtimeframe"></a>일반 모드: RuntimeFrame</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>`RuntimeFrame`은 일반 모드에서 `RuntimeService.run_graph`의 입력 단위입니다. 각 프레임은 전체 EPICRAW, 카메라-베이스 변환 매트릭스 및 선택적으로 ROI의 복사본을 캡슐화합니다.</p>
+</div>
+<div class="paragraph">
+<p>일반 모드에서 `run_graph`을 호출하면 하나 이상의 프레임을 전달할 수 있으며 서버는 병렬 처리 후 결과를 반환합니다.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><code>runtime.run_graph`을 사용하는 경우 현재 버전에서는 그래프에 `EpicPro输入</code> 또는 <code>EpicPro输入(单组数据)</code> 노드와 <code>EpicPro输出</code> 노드가 있어야 합니다. 그렇지 않으면 실행할 수 없으며 오류가 보고됩니다.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_일반_모드_필드_및_항목"><a class="anchor" href="#_일반_모드_필드_및_항목"></a>일반 모드 필드 및 항목</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 10%;">
+<col style="width: 10%;">
+<col style="width: 10%;">
+<col style="width: 10%;">
+<col style="width: 10%;">
+<col style="width: 30%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드 의미</th>
+<th class="tableblock halign-left valign-top">Python</th>
+<th class="tableblock halign-left valign-top">C++</th>
+<th class="tableblock halign-left valign-top">C#</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">필수</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">EPICRAW</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>epicraw</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>epicraw</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>EpicRaw</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bytes</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">은(는)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">전체 EPICRAW 원시 바이트</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">외부 매개변수(회전 벡터)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cam2_base</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cam_to_base</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Cam2Base</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">길이 6의 목록</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">은(는)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">카메라에서 기본 좌표계로 변환, 회전 벡터 형식 <code>[x, y, z, rx, ry, rz]</code>; 서버는 현재 이 형식만 지원하고 행렬은 지원하지 않습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ROI 영역</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>roi</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>roi</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Roi</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">dict</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">아니요</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">관심영역, 형식은 다음과 같습니다</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>SDK에는 <code>from_file</code>/<code>from_bytes</code>/`from_data`의 세 가지 유형이 있습니다(C#은 PascalCase를 사용합니다). `from_data`은 원시 이미지, 포인트 클라우드, 내부 매개변수 및 왜곡을 수신하여 로컬로 인코딩합니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>EPICRAW2는 일반 <code>intrinsic</code>/`distortion`을 사용할 경우에만 자동으로 생성됩니다.</p>
+</li>
+<li>
+<p>EPICRAW3는 <code>camera_params`에 `TextureSrc</code>, <code>DepthSrc1</code> 또는 `DepthSrc2`이 포함된 경우 자동으로 생성됩니다.</p>
+</li>
+<li>
+<p>`version=2/3`을 지정하면 자동 선택이 명시적으로 무시됩니다.</p>
+</li>
+<li>
+<p>일반 EPICRAW3에는 `Depth + TextureBGR`만 포함됩니다. Depth는 포인트 클라우드 Z 값에서 나오며 전체 PointCloud를 포함하지 않습니다.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_수동_쌍안경_모드_runtimepassivebinoframe"><a class="anchor" href="#_수동_쌍안경_모드_runtimepassivebinoframe"></a>수동 쌍안경 모드: RuntimePassiveBinoFrame</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>일반 <code>RuntimeFrame`은 서버 `runMode="others"`에 해당합니다. 다이어그램의 `EpicProInput</code> 노드가 `passive_bino`로 구성된 경우 입력은 더 이상 이미지 + 포인트 클라우드가 아니라 완전한 EPICRAW3 원시 바이트입니다.</p>
+</div>
+<div class="paragraph">
+<p>서버는 EPICRAW3에서 구문 분석합니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>DepthSrc1</code></p>
+</li>
+<li>
+<p><code>DepthSrc2</code></p>
+</li>
+<li>
+<p><code>TextureSrc</code></p>
+</li>
+<li>
+<p><code>passive_bino_params</code></p>
+</li>
+<li>
+<p><code>intrinsic</code></p>
+</li>
+<li>
+<p><code>distortion</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Python은 코드에서 `cam2_base`만 추가로 전달하면 됩니다. SDK는 metadata 요청에서 서버 필드 `cam2Base`로 변환됩니다.</p>
+</div>
+<div class="paragraph">
+<p>bytes 데이터로 구성된 기본값:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import RuntimePassiveBinoFrame, RuntimeRunParams
+
+frame = RuntimePassiveBinoFrame(
+    epicraw3=epicraw3_bytes,
+    cam2_base=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+)
+
+result = client.runtime.run_graph(
+    RuntimeRunParams("detection_graph", [frame], run_mode="passive_bino")
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>카메라로 캡처한 EPICRAW3 파일이 이미 있는 경우 파일에서 직접 구성하는 것이 좋습니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import RuntimeRunParams
+
+params = RuntimeRunParams.passive_bino_from_file(
+    "detection_graph",
+    "/data/passive_bino.epicraw",
+    cam2_base=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+)
+
+result = client.runtime.run_graph(params)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>비즈니스 계층이 3개의 수동 쌍안경 이미지와 해당 매개변수를 얻은 경우 <code>RuntimeRunParams.passive_bino_from_images(&#8230;&#8203;)`을 사용하여 SDK이 EPICRAW3를 생성하도록 할 수도 있습니다. `image_list`의 순서는 `DepthSrc1</code>, <code>DepthSrc2</code>, <code>TextureSrc</code>, <code>params`로 고정되어 있으며 동일한 이름을 가진 metadata의 복사본 3개를 포함해야 합니다. metadata의 각 복사본에는 `CameraMatrix</code>, <code>CameraDistortion</code>, <code>CameraRotation</code> 및 `CameraTranslation`이 포함됩니다.</p>
+</div>
+<div class="paragraph">
+<p>C에 해당하는 방법은 `RuntimeRunParams::passive_bino_from_file/bytes/images(...)`입니다. C#에 해당하는 방법은 `RuntimeRunParams.PassiveBinoFromFile/Bytes/Images(...)`입니다. C/C#의 `from_images`은 각 이미지의 원본 픽셀, 너비 및 높이와 OpenCV Mat type를 명시적으로 전달해야 합니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import RuntimeRunParams
+run_params = RuntimeRunParams.passive_bino_from_images(
+    graph_name,
+    image_list=image_list,
+    params=passive_bino_params,
+    cam2_base=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+)
+result = client.runtime.run_graph(params)</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_카메라_내부_매개변수intrinsic"><a class="anchor" href="#_카메라_내부_매개변수intrinsic"></a>카메라 내부 매개변수(intrinsic)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>3×3 행렬, 행 주요 2차원 배열:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>[[fx,  0, cx],
+ [ 0, fy, cy],
+ [ 0,  0,  1]]</pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">기호</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>fx</code>、<code>fy</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">X 및 Y 방향 초점 거리(픽셀 단위)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cx</code>、<code>cy</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">주점 좌표(보통 이미지 중심과 거의 동일)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_왜곡계수distortion"><a class="anchor" href="#_왜곡계수distortion"></a>왜곡계수(distortion)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>OpenCV 순서로 정렬된 5개 요소의 1차원 배열:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>[k1, k2, p1, p2, k3]</pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">기호</th>
+<th class="tableblock halign-left valign-top">의미</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>k1</code>、<code>k2</code>、<code>k3</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">방사형 왜곡 계수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>p1</code>、<code>p2</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">접선왜곡계수</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>왜곡이 없을 때 모두 0을 전송함: <code>[0.0, 0.0, 0.0, 0.0, 0.0]</code></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_외부_매개변수cam2_base_cam_to_base_cam2base"><a class="anchor" href="#_외부_매개변수cam2_base_cam_to_base_cam2base"></a>외부 매개변수(cam2_base / cam_to_base / Cam2Base)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>서버는 현재 카메라 좌표계에서 로봇 기본 좌표계로의 변환을 설명하는 *회전 벡터 형식*만 지원하며 길이는 6으로 고정되어 있습니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>[x, y, z, rx, ry, rz]</pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">위치</th>
+<th class="tableblock halign-left valign-top">의미</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">처음 3자리 <code>x, y, z</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">번역 벡터</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">마지막 3자리 <code>rx, ry, rz</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">회전 벡터(Rodrigues 축 각도 표현, `cv2.Rodrigues`를 통해 회전 행렬로 변환됨)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>4×4/3×4 행렬의 전송은 지원되지 않습니다. 서버 노드는 <code>len(cam2Base) == 6`에 따라 입력을 필터링하며, 길이가 6이 아닌 값은 오류 보고 없이 바로 폐기됩니다. SDK은 요청이 자동으로 삭제되는 것을 방지하기 위해 `RuntimeFrame</code>/`RuntimePassiveBinoFrame`을 구성할 때 미리 길이를 확인하고 오류를 보고합니다.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>좌표계가 변환되지 않으면 모두 0인 벡터가 전송됩니다: <code>[0, 0, 0, 0, 0, 0]</code></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_roi_형식"><a class="anchor" href="#_roi_형식"></a>ROI 형식</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>ROI(관심 영역)은 선택 필드이며 권장되는 형식은 다음과 같습니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">roi = {
+    "min": {"x": 0.0, "y": 0.0, "z": 0.0},
+    "max": {"x": 1.0, "y": 1.0, "z": 1.0},
+    "cam2ROIFrame": [0, 0, 0, 0, 0, 0]
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_일반_모드의_전체_사용_예"><a class="anchor" href="#_일반_모드의_전체_사용_예"></a>일반 모드의 전체 사용 예</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_python"><a class="anchor" href="#_python"></a>Python</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import numpy as np
+from atom_sdk import AtomClient, RuntimeFrame, RuntimeRunParams
+
+client = AtomClient("http://127.0.0.1:10026")
+load_result = client.runtime.load_graph("detection_graph")
+print("로드 요청 상태：", load_result["status"])
+
+# 프레임 데이터 준비（실제 현장의 카메라에서 SDK）
+height, width = 480, 640
+image = np.zeros((height, width, 3), dtype=np.uint8)
+points = np.zeros((height, width, 3), dtype=np.float32)
+
+intrinsic = [[600.0, 0.0, 320.0],
+             [0.0, 600.0, 240.0],
+             [0.0, 0.0,   1.0]]
+
+distortion = [0.0, 0.0, 0.0, 0.0, 0.0]
+
+# 벡터 형태 회전：[x, y, z, rx, ry, rz]
+cam2base = [0.0, 0.0, 0.5, 0.0, 0.0, 0.0]
+roi = {
+    "min": {"x": 0.0, "y": 0.0, "z": 0.0},
+    "max": {"x": 1.0, "y": 1.0, "z": 1.0},
+    "cam2ROIFrame": [0, 0, 0, 0, 0, 0]
+}
+
+# 실행하다（단일 프레임）：SDK 포인트 클라우드 + 이미지 + 카메라 매개변수는 로컬로 인코딩됩니다. EPICRAW
+frame = RuntimeFrame.from_data(
+    points=points,
+    image=image,
+    intrinsic=intrinsic,
+    distortion=distortion,
+    cam2_base=cam2base,
+    roi=roi,
+)
+result = client.runtime.run_graph(RuntimeRunParams("detection_graph", [frame]))
+
+print("실행 요청 상태：", result["status"])
+print("테스트 결과：", result.get("instanceList", []))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_c"><a class="anchor" href="#_c"></a>C++</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include "atom_sdk/core/json.hpp"
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+atom::sdk::AtomClient client("http://127.0.0.1:10026");
+auto loaded = client.runtime().load_graph("detection_graph");
+std::cout &lt;&lt; "로드 요청 상태：" &lt;&lt; loaded.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+// 프레임 데이터 준비（실제 현장의 카메라에서 SDK）
+constexpr int height = 480, width = 640;
+atom::sdk::ByteBuffer image_bytes(height * width * 3, 0);   // uint8, HWC
+atom::sdk::ByteBuffer pc_bytes(height * width * 3 * 4, 0);  // float32, HWC
+
+// 카메라 내부 매개변수 매트릭스（3×3）
+atom::sdk::JsonValue intrinsic = atom::sdk::JsonArray{
+    atom::sdk::JsonArray{600.0, 0.0,   320.0},
+    atom::sdk::JsonArray{0.0,   600.0, 240.0},
+    atom::sdk::JsonArray{0.0,   0.0,   1.0  }
+};
+
+// 왜곡 계수
+atom::sdk::JsonValue distortion = atom::sdk::JsonArray{0.0, 0.0, 0.0, 0.0, 0.0};
+
+// 외부 참조：벡터 형태 회전 [x, y, z, rx, ry, rz]
+atom::sdk::JsonValue cam2base = atom::sdk::JsonArray{0.0, 0.0, 0.5, 0.0, 0.0, 0.0};
+
+// ROI（선택사항）
+atom::sdk::JsonValue roi = atom::sdk::JsonObject{
+    {"min", atom::sdk::JsonObject{{"x", 0.0}, {"y", 0.0}, {"z", 0.0}}},
+    {"max", atom::sdk::JsonObject{{"x", 1.0}, {"y", 1.0}, {"z", 1.0}}},
+    {"cam2ROIFrame", atom::sdk::JsonArray{0.0, 0.0, 0.0, 0.0, 0.0, 0.0}}
+};
+
+// 프레임 구성 및 실행（단일 프레임）
+auto frame = atom::sdk::RuntimeFrame::from_bytes(
+    image_bytes, pc_bytes, width, height,
+    width, height,
+    intrinsic, distortion, cam2base, roi
+);
+auto result = client.runtime().run_graph({"detection_graph", {frame}});
+std::cout &lt;&lt; "실행 요청 상태：" &lt;&lt; result.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+if (result.contains("instanceList"))
+    std::cout &lt;&lt; "테스트 결과：" &lt;&lt; result.at("instanceList") &lt;&lt; "\n";</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_c_2"><a class="anchor" href="#_c_2"></a>C#</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://127.0.0.1:10026");
+var graphRef = await client.Runtime.LoadGraphInfoAsync("detection_graph");
+Console.WriteLine($"로드 요청 상태：{graphRef.Status}");
+
+// 프레임 데이터 준비（실제 현장의 카메라에서 SDK）
+int height = 480, width = 640;
+byte[] imageBytes = new byte[height * width * 3];      // uint8, HWC
+byte[] pcBytes    = new byte[height * width * 3 * 4]; // float32, HWC
+
+var frame = new RuntimeFrame(
+    image: imageBytes,
+    pointCloud: pcBytes,
+    width: width,
+    height: height,
+    cloudWidth: width,
+    cloudHeight: height,
+    intrinsic: new double[][]
+    {
+        new[] { 600.0, 0.0,   320.0 },
+        new[] { 0.0,   600.0, 240.0 },
+        new[] { 0.0,   0.0,     1.0 },
+    },
+    distortion: new[] { 0.0, 0.0, 0.0, 0.0, 0.0 },
+    // 외부 참조：벡터 형태 회전 [x, y, z, rx, ry, rz]
+    cam2Base: new[] { 0.0, 0.0, 0.5, 0.0, 0.0, 0.0 },
+    roi: new
+    {
+        min = new { x = 0.0, y = 0.0, z = 0.0 },
+        max = new { x = 1.0, y = 1.0, z = 1.0 },
+        cam2ROIFrame = new[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
+    });
+
+// 실행하다（단일 프레임）
+var result = await client.Runtime.RunGraphAsync(
+    new RuntimeRunParams("detection_graph", new[] { frame }));
+Console.WriteLine($"실행 요청 상태：{result.GetProperty("status").GetInt32()}");
+
+if (result.TryGetProperty("instanceList", out var instances))
+    Console.WriteLine($"테스트 결과：{instances}");</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_일반_모드_다중_프레임_입력"><a class="anchor" href="#_일반_모드_다중_프레임_입력"></a>일반 모드 다중 프레임 입력</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>여러 카메라의 데이터를 동시에 처리해야 하는 경우 하나의 일반 모드`run_graph`에서 여러 프레임을 전달할 수 있습니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import RuntimeFrame, RuntimeRunParams
+
+result = client.runtime.run_graph(RuntimeRunParams("multi_cam_graph", [
+    RuntimeFrame.from_data(
+        points=cam0_pc, image=cam0_image,
+        intrinsic=cam0_intrinsic, distortion=cam0_dist, cam2_base=cam0_ext,
+    ),
+    RuntimeFrame.from_data(
+        points=cam1_pc, image=cam1_image,
+        intrinsic=cam1_intrinsic, distortion=cam1_dist, cam2_base=cam1_ext,
+    ),
+]))
+print("실행 요청 상태：", result["status"])</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>각 프레임은 카메라 데이터 세트에 해당하며 서버는 이를 그래프 구성에 따라 해당 노드로 라우팅합니다. <code>passive_bino</code> 모드는 하나의 복사본 `RuntimePassiveBinoFrame`만 전송하며 다중 프레임 `RuntimeFrame`을 사용하지 않습니다.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="timestamp.html">Timestamp이 무엇인가요?</a></span>
+  <span class="next"><a href="point-cloud-protocol.html">포인트 클라우드 유형 입출력을 위한 바이너리 프로토콜</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

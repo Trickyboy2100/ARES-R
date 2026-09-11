@@ -1,0 +1,2 @@
+add_executable(IntrinsicCalibration main.cpp intrinsic_calibration_utils.cpp)
+target_link_libraries(IntrinsicCalibration PRIVATE epiceye_sdk::epiceye_sdk)

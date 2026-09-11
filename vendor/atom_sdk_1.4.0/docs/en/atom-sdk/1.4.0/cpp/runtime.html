@@ -1,0 +1,2909 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>RuntimeService（C++） :: Atom SDK Developer Guide</title>
+    <link rel="prev" href="graph_node.html">
+    <link rel="next" href="../csharp/overview.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          Online Product Documentation
+                  </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="Search documentation"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              This manual only
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            Switch manual
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK Developer Guide</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          Download Center
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          Official Website
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            English
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK Developer Guide</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">welcome</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">quick start</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">quick start</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">sample sample</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Getting Started</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK Getting Started</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService Getting Started</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService Getting Started</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService Getting Started</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">User Guide</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">Select the appropriate Service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">Graph and node operations</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">Error handling and troubleshooting</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">FAQ</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">basic concepts</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/what-is-atom-sdk.html">What is Atom SDK</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-node-subgraph.html">graph, node, subgraph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-vs-runtime.html">The difference between Graph and Runtime</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/timestamp.html">What is Timestamp</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/runtime-frame.html">Runtime input frames (RuntimeFrame / RuntimePassiveBinoFrame)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/point-cloud-protocol.html">Binary protocol for point cloud type input and output</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/param-binding.html">Parameter types and binding names</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API Reference</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API Reference Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python Overview and Installation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/params.html">Python parameter object</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/public_api.html">Python Public Utility API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="overview.html">Atom SDK C++ version — User Guide</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="params.html">C++ parameter object</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">Atom SDK — C# Version</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/params.html">C# Parameter object</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK Developer Guide</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK Developer Guide</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK Developer Guide</a></li>
+    <li>API Reference</li>
+    <li>C++ SDK</li>
+    <li><a href="runtime.html">RuntimeService（C++）</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="On this page"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">RuntimeService（C++）</h1>
+<div class="sect1">
+<h2 id="_service_introduction"><a class="anchor" href="#_service_introduction"></a>Service introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>RuntimeService</code> is an inference runtime service for Atom SDK, designed specifically for high-frequency inference in production environments. Different from the graph editing process of <code>GraphService</code>/<code>NodeService</code>, <code>RuntimeService</code> provides a complete reasoning closed loop such as loading graphs, setting parameters, batch reasoning execution, and reading binding output for configured graphs. Supports ordinary image + point cloud multi-frame input, passive binocular EPICRAW3 input, strategy node parameters, and single-node direct running mode that does not rely on graphs.</p>
+</div>
+<div class="paragraph">
+<p><strong>Header file:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+// or quoted individually(Pass client.hpp automatically included)
+#include "atom_sdk/services/runtime.hpp"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Entrance:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">atom::sdk::AtomClient client("http://127.0.0.1:10026");
+atom::sdk::RuntimeService&amp; rs = client.runtime();</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_applicable_scenarios"><a class="anchor" href="#_applicable_scenarios"></a>Applicable scenarios</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Load configured/edited graph as runtime graph and loop inference</p>
+</li>
+<li>
+<p>Input image + point cloud data in normal mode, or in passive binocular mode EPICRAW3, and read the detection/segmentation results</p>
+</li>
+<li>
+<p>Dynamically update running parameters (without rebuilding the graph)</p>
+</li>
+<li>
+<p>Read binding output (JSON result or point cloud bytes)</p>
+</li>
+<li>
+<p>Quickly test individual nodes without relying on graph structure</p>
+</li>
+<li>
+<p>Query MD5 for file type parameters to avoid repeated uploads</p>
+</li>
+</ul>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_core_types"><a class="anchor" href="#_core_types"></a>core types</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_run_graph_two_input_modes"><a class="anchor" href="#_run_graph_two_input_modes"></a>run_graph Two input modes</h3>
+<div class="paragraph">
+<p><code>run_graph(const RuntimeRunParams&amp;)</code> distinguishes two input structures based on <code>RuntimeRunParams::run_mode</code>:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">mode</th>
+<th class="tableblock halign-left valign-top"><code>run_mode</code></th>
+<th class="tableblock halign-left valign-top">field</th>
+<th class="tableblock halign-left valign-top">Input content</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Normal mode</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>"others"</code> or leave blank</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>frames</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>One or more <code>RuntimeFrame</code>, each frame contains the complete EPICRAW + <code>cam_to_base</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Passive binocular mode</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>"passive_bino"</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>passive_bino_frame</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>a <code>RuntimePassiveBinoFrame</code>, containing the complete EPICRAW3 + <code>cam_to_base</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>cam_to_base</code> The server currently only supports rotation vector form: <code>[x, y, z, rx, ry, rz]</code> with length 6 (translation + Rodrigues rotation vector), and does not support 4x4/3x4 matrices; if the length is not met, <code>std::invalid_argument</code> will be thrown during construction. <code>roi["cam2ROIFrame"]</code> (if provided) also only supports rotation vector forms of length 6.
+Do not mix the two modes. Normal mode can encapsulate EPICRAW2 or standard layout EPICRAW3; passive binocular mode must use <code>RuntimePassiveBinoFrame</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_normal_mode_runtimeframe_structure"><a class="anchor" href="#_normal_mode_runtimeframe_structure"></a>Normal mode: RuntimeFrame structure</h3>
+<div class="paragraph">
+<p><code>RuntimeFrame</code> encapsulates a complete copy of EPICRAW in normal mode, which is the core parameter of <code>run_mode="others"</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">namespace atom::sdk {
+
+struct RuntimeFrame {
+    ByteBuffer epicraw;
+    JsonValue cam_to_base;
+    std::optional&lt;JsonValue&gt; roi;
+};
+
+}  // namespace atom::sdk</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If there is already EPICRAW bytes or file, encapsulate it directly:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto bytes_frame = atom::sdk::RuntimeFrame::from_bytes(epicraw_bytes, cam2base_json);
+auto file_frame = atom::sdk::RuntimeFrame::from_file("frame.epicraw", cam2base_json);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Generated from raw images and point clouds:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">atom::sdk::RuntimePointData points{point_values, width, height, 3};
+atom::sdk::RuntimeImageData image{image_bytes, width, height, 3, 1};
+auto frame = atom::sdk::RuntimeFrame::from_data(
+    points, image, cam2base_json, intrinsic_json, distortion_json);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When the version is not specified, ordinary internal parameters/distortions generate EPICRAW2; when <code>camera_params</code> contains <code>TextureSrc</code>, <code>DepthSrc1</code> or <code>DepthSrc2</code>, EPICRAW3 is generated. The standard EPICRAW3 only writes <code>Depth + TextureBGR</code>, not the full PointCloud.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_passive_binocular_mode_runtimepassivebinoframe"><a class="anchor" href="#_passive_binocular_mode_runtimepassivebinoframe"></a>Passive binocular mode: RuntimePassiveBinoFrame</h3>
+<div class="paragraph">
+<p>If the <code>EpicProInput</code> node in the diagram is configured as <code>passive_bino</code>, please submit a complete copy of the EPICRAW3 original bytes. The server will parse three images, internal parameters, distortion and <code>passive_bino_params</code> from EPICRAW3.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto params = atom::sdk::RuntimeRunParams::passive_bino_from_file(
+    "detection_graph",
+    "/data/passive_bino.epicraw",
+    cam2base_json);
+
+auto result = client.runtime().run_graph(params);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If the business layer has obtained EPICRAW3 bytes, <code>RuntimeRunParams::passive_bino_from_bytes(&#8230;&#8203;)</code> can be used. If the business layer gets three original pictures, it can use <code>RuntimeRunParams::passive_bino_from_images(&#8230;&#8203;)</code>, and the picture is represented by <code>RuntimePassiveBinoImage{data, width, height, mat_type}</code>; <code>mat_type</code> is OpenCV Mat type encoding, such as <code>CV_8UC1=0</code>, <code>CV_16UC1=2</code>, <code>CV_8UC3=16</code>.
+<code>params</code> of <code>passive_bino_from_images(&#8230;&#8203;)</code> needs to contain <code>DepthSrc1</code>, <code>DepthSrc2</code>, <code>TextureSrc</code> and metadata, each of which must contain the following four fields:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">json::object camera_params;
+camera_params["CameraMatrix"] = json::array{
+    2113.997971632298, 0, 1956.222038925553,
+    0, 2113.7299751270057, 1505.0473199581195,
+    0, 0, 1};
+camera_params["CameraDistortion"] = json::array{
+    0.049901632334, -0.037810281265, -0.00048319461,
+    -0.000276258172, -0.026886293015};
+camera_params["CameraRotation"] = json::array{
+    0.9995132330503337, -0.005059159488191983, -0.030784766728731865,
+    0.004951704878090689, 0.9999813828533568, -0.003565748937897527,
+    0.030802233296787017, 0.003411576169582241, 0.999519676430619};
+camera_params["CameraTranslation"] = json::array{
+    -25.837377992238334, -0.6852264771262435, -4.372034519324568};
+
+json::object passive_bino_params;
+passive_bino_params["DepthSrc1"] = camera_params;
+passive_bino_params["DepthSrc2"] = camera_params;
+passive_bino_params["TextureSrc"] = camera_params;</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top"><code>RuntimePassiveBinoImage</code> field</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>data</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Raw pixel bytes</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>width</code> / <code>height</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Image width and height</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>mat_type</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>OpenCV Mat type, such as <code>CV_8UC1=0</code>, <code>CV_16UC1=2</code>, <code>CV_8UC3=16</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_singlenodeparsedresult_type_recommended"><a class="anchor" href="#_singlenodeparsedresult_type_recommended"></a>SingleNodeParsedResult type (recommended)</h3>
+<div class="paragraph">
+<p><code>run_single_node_no_graph_parsed</code> returns <code>SingleNodeParsedResult</code>. It will retain the original return from the server and parse the identifiable point clouds and images in <code>outputs</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">using SingleNodeParsedOutput =
+    std::variant&lt;JsonValue, std::vector&lt;ParsedPointCloud&gt;, std::vector&lt;ParsedImage&gt;&gt;;
+
+struct SingleNodeParsedResult {
+    JsonValue raw;
+    std::unordered_map&lt;std::string, SingleNodeParsedOutput&gt; outputs;
+};</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Reading method:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">atom::sdk::SingleNodeParsedResult result =
+    client.runtime().run_single_node_no_graph_parsed(params);
+
+const auto&amp; clouds = std::get&lt;std::vector&lt;atom::sdk::ParsedPointCloud&gt;&gt;(
+    result.outputs.at("points"));</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_singlenoderesult_type_optional"><a class="anchor" href="#_singlenoderesult_type_optional"></a>SingleNodeResult type (optional)</h3>
+<div class="paragraph">
+<p><code>run_single_node_no_graph</code> returns the original <code>SingleNodeResult</code>, which is a variant:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">using SingleNodeResult = std::variant&lt;JsonValue, ByteBuffer&gt;;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You need to judge and read by yourself:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">atom::sdk::SingleNodeResult result = client.runtime().run_single_node_no_graph(params);
+
+if (std::holds_alternative&lt;atom::sdk::JsonValue&gt;(result)) {
+    const auto&amp; json_result = std::get&lt;atom::sdk::JsonValue&gt;(result);
+    // Process JSON result
+} else {
+    const auto&amp; bin_result = std::get&lt;atom::sdk::ByteBuffer&gt;(result);
+    // Handling binary results
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_singlenodeinputs_type"><a class="anchor" href="#_singlenodeinputs_type"></a>SingleNodeInputs type</h3>
+<div class="paragraph">
+<p>Single node input supports three types (unified by variant):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">using SingleNodeInput = std::variant&lt;JsonValue, ByteBuffer, std::filesystem::path&gt;;
+using SingleNodeInputs = std::unordered_map&lt;std::string, SingleNodeInput&gt;;</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_recommended_calling_order"><a class="anchor" href="#_recommended_calling_order"></a>Recommended calling order</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">load_graph(graph_name)           ← Load configured graph
+       ↓
+get_meta_info(graph_name)        ← Understand the parameters and bindings exposed by the graph(Optional)
+       ↓
+set_shared_params(graph_name)    ← Set shared parameters for multi-frame multiplexing(Optional)
+       ↓
+  ┌────────────────────────────────────┐
+  │   Per-frame inference loop                       │
+  │                                    │
+  │   set_run_params(graph_name)       │  ← Each frame running parameters(Optional)
+  │          ↓                         │
+  │   run_graph(graph_name, frame)     │  ← Perform reasoning
+  │          ↓                         │
+  │   get_binded_output_value /        │
+  │   get_binded_point_cloud           │  ← Read binding output
+  └────────────────────────────────────┘
+       ↓
+release_graph(graph_name)        ← Release resources</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_interface_detailed_explanation"><a class="anchor" href="#_interface_detailed_explanation"></a>Interface detailed explanation</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_load_graph"><a class="anchor" href="#_load_graph"></a>load_graph</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject load_graph(const std::string&amp; graph_name) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose:</strong> Load the existing graph on the server to the runtime for subsequent <code>run_graph</code> use.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">parameters</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The name of the image to be loaded (existing on the server)</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*Return value: * <code>JsonObject</code>, containing loading status information.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+
+    auto result = client.runtime().load_graph("detection_graph");
+    std::cout &lt;&lt; "Picture loaded successfully" &lt;&lt; std::endl;
+    std::cout &lt;&lt; "Request status:" &lt;&lt; result.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_list_graphs"><a class="anchor" href="#_list_graphs"></a>list_graphs</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonArray list_graphs() const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose:</strong> List all currently visible images on the server.</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameters:</strong> None</p>
+</div>
+<div class="paragraph">
+<p>*Return value: * <code>JsonArray</code>, each element is the basic information object of the graph.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+
+    auto graphs = client.runtime().list_graphs();
+    std::cout &lt;&lt; "Number of images available:" &lt;&lt; graphs.size() &lt;&lt; std::endl;
+
+    for (const auto&amp; g : graphs) {
+        std::string name = g.at("name").get&lt;std::string&gt;();
+        std::cout &lt;&lt; "  - " &lt;&lt; name &lt;&lt; std::endl;
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_all_nodes_info"><a class="anchor" href="#_get_all_nodes_info"></a>get_all_nodes_info</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject get_all_nodes_info() const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose:</strong> Read all node type definitions registered on the server to understand the available nodes.</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameters:</strong> None</p>
+</div>
+<div class="paragraph">
+<p>*Return value: * <code>JsonObject</code>, with node type name key and node definition value.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+
+    auto info = client.runtime().get_all_nodes_info();
+    std::cout &lt;&lt; "Number of registered node types:" &lt;&lt; info.size() &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_release_graph"><a class="anchor" href="#_release_graph"></a>release_graph</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject release_graph(const std::string&amp; graph_name) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose:</strong> Releases loaded runtime graph resources, usually called after inference is complete.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">parameters</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The name of the image to be released</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*Return value: * <code>JsonObject</code>, release the result.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+
+    auto loaded = client.runtime().load_graph("detection_graph");
+    std::cout &lt;&lt; "Load request status:" &lt;&lt; loaded.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    // ... reasoning ...
+
+    client.runtime().release_graph("detection_graph");
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_meta_info"><a class="anchor" href="#_get_meta_info"></a>get_meta_info</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject get_meta_info(const std::string&amp; graph_name) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose:</strong> Read the shared/runtime parameter metainformation exposed by the graph, including parameter name, type and default value description.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">parameters</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Picture name</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*Return value: * <code>JsonObject</code>, containing parameter metainformation and binding description.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto loaded = client.runtime().load_graph("detection_graph");
+    std::cout &lt;&lt; "Load request status:" &lt;&lt; loaded.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    auto meta = client.runtime().get_meta_info("detection_graph");
+    std::cout &lt;&lt; "Meta information request status:" &lt;&lt; meta.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    // View the configurable parameters of the graph
+    if (meta.contains("shared_params")) {
+        const auto&amp; sp = meta.at("shared_params");
+        for (const auto&amp; [k, v] : sp) {
+            std::cout &lt;&lt; "Shared parameters:" &lt;&lt; k &lt;&lt; std::endl;
+        }
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_binded_output_value"><a class="anchor" href="#_get_binded_output_value"></a>get_binded_output_value</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonValue get_binded_output_value(const BindingRef&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose:</strong> Read a single output value of the graph by binding name (JSON format), usually called after <code>run_graph</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">parameters</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Picture name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>binding_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>output binding name (set through <code>set_binding_name</code> during graph editing)</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*Return value: * <code>JsonValue</code>, the output value of the bound port.</p>
+</div>
+<div class="paragraph">
+<p><strong>Read data from return value:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">atom::sdk::JsonValue output = client.runtime().get_binded_output_value(
+    {"detection_graph", "result"});
+
+// read as object
+const auto&amp; obj = output;
+
+// Read detection frame
+if (obj.contains("boxes")) {
+    const auto&amp; boxes = obj.at("boxes");
+    for (const auto&amp; box : boxes) {
+        const auto&amp; b = box;
+        double x1 = b.at("x1").get&lt;double&gt;();
+        double y1 = b.at("y1").get&lt;double&gt;();
+        double conf = b.at("confidence").get&lt;double&gt;();
+        // ...
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("detection_graph");
+
+    // Generated locally from raw images and point clouds EPICRAW;cam_to_base is the rotation vector form [x, y, z, rx, ry, rz]
+    atom::sdk::RuntimePointData points{point_values, 640, 480, 3};
+    atom::sdk::RuntimeImageData image{image_bytes, 640, 480, 3, 1};
+    auto frame = atom::sdk::RuntimeFrame::from_data(
+        points,
+        image,
+        atom::sdk::json::parse("[0,0,0,0,0,0]"),
+        atom::sdk::json::parse(R"([[800,0,320],[0,800,240],[0,0,1]])"),
+        atom::sdk::json::parse("[0,0,0,0,0]"));
+
+    auto run_info = rs.run_graph({"detection_graph", {frame}});
+    std::cout &lt;&lt; "Request status:" &lt;&lt; run_info.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    // Read binding output
+    auto output = rs.get_binded_output_value({"detection_graph", "detection_result"});
+    const auto&amp; obj = output;
+
+    if (obj.contains("count")) {
+        std::cout &lt;&lt; "Number of targets detected:" &lt;&lt; obj.at("count").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+    }
+
+    rs.release_graph("detection_graph");
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_binded_outputs_info"><a class="anchor" href="#_get_binded_outputs_info"></a>get_binded_outputs_info</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject get_binded_outputs_info(const std::string&amp; graph_name) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose:</strong> Read the description information (name, type, etc.) of all current output bindings in the graph to dynamically discover available outputs.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">parameters</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Picture name</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="ulist">
+<ul>
+<li>
+<p>Return value: * <code>JsonObject</code>, containing descriptions of all output bindings.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto loaded = client.runtime().load_graph("detection_graph");
+    std::cout &lt;&lt; "Load request status:" &lt;&lt; loaded.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    auto outputs_info = client.runtime().get_binded_outputs_info("detection_graph");
+
+    std::cout &lt;&lt; "Bind output quantity:" &lt;&lt; outputs_info.size() &lt;&lt; std::endl;
+    for (const auto&amp; [name, info] : outputs_info) {
+        std::cout &lt;&lt; "  Output binding name:" &lt;&lt; name &lt;&lt; std::endl;
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_binded_point_cloud_parsed"><a class="anchor" href="#_get_binded_point_cloud_parsed"></a>get_binded_point_cloud_parsed</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">std::vector&lt;ParsedPointCloud&gt; get_binded_point_cloud_parsed(
+    const std::string&amp; graph_name,
+    const std::string&amp; binding_name,
+    std::optional&lt;std::size_t&gt; point_dim = std::nullopt) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose:</strong> Directly read and parse runtime bound point clouds, recommended for priority use.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto clouds = rs.get_binded_point_cloud_parsed(
+    "lidar_graph",
+    "filtered_cloud",
+    3
+);</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_binded_point_cloud"><a class="anchor" href="#_get_binded_point_cloud"></a>get_binded_point_cloud</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">ByteBuffer get_binded_point_cloud(const BindingRef&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose:</strong> Read the raw bytes output by the point cloud class by binding name.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">parameters</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Picture name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>binding_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Binding name of point cloud output</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*Return value: * <code>ByteBuffer</code> (<code>std::vector&lt;uint8_t&gt;</code>), point cloud raw binary data.
+Note:
+* The header information of <code>Runtime/GetBindedPointCloud</code> only contains the number of point cloud copies and the total number of elements.
+* There is no dimension of each point here, so we cannot directly assume that it must be <code>xyz</code>
+* In ordinary scenarios, it is recommended to use the above <code>get_binded_point_cloud_parsed(&#8230;&#8203;)</code> first.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;cstring&gt;
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("lidar_graph");
+
+    // cam_to_base The server currently only supports rotation vector form:[x, y, z, rx, ry, rz]
+    auto frame = atom::sdk::RuntimeFrame::from_bytes(
+        epicraw_bytes,
+        atom::sdk::json::parse("[0,0,0,0,0,0]"));
+
+    auto run_info = rs.run_graph({"lidar_graph", {frame}});
+    std::cout &lt;&lt; "Request status:" &lt;&lt; run_info.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    // Read point cloud binding output
+    atom::sdk::ByteBuffer pc_bytes = rs.get_binded_point_cloud(
+        {"lidar_graph", "filtered_cloud"});
+
+    std::cout &lt;&lt; "raw bytes: " &lt;&lt; pc_bytes.size() &lt;&lt; std::endl;
+
+    rs.release_graph("lidar_graph");
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_set_shared_params"><a class="anchor" href="#_set_shared_params"></a>set_shared_params</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonValue set_shared_params(const RuntimeParamsUpdate&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose:</strong> Write shared parameters that are reusable across multiple runs and remain unchanged during multi-frame inference (such as model thresholds, category lists).</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">parameters</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Picture name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params_data</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>const JsonObject&amp;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>parameter key-value pair, key is the parameter name, value is the parameter value</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*Return value: * <code>JsonValue</code>, operation result.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include "atom_sdk/core/json.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("detection_graph");
+
+    // Set shared parameters(Valid for entire session)
+    atom::sdk::JsonObject shared;
+    shared["confidence_threshold"] = 0.5;
+    shared["nms_threshold"] = 0.4;
+
+    // Set category list(JSON array)
+    atom::sdk::JsonArray classes;
+    classes.push_back("person");
+    classes.push_back("car");
+    classes.push_back("truck");
+    shared["class_names"] = classes;
+
+    rs.set_shared_params({"detection_graph", shared});
+
+    std::cout &lt;&lt; "Shared parameter setting completed" &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_set_run_params"><a class="anchor" href="#_set_run_params"></a>set_run_params</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonValue set_run_params(const RuntimeParamsUpdate&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose:</strong> Write the operating parameters used for this execution, which can be adjusted as needed before each <code>run_graph</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">parameters</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Picture name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params_data</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>const JsonObject&amp;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Parameter key-value pair for this run</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*Return value: * <code>JsonValue</code>, operation result.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("detection_graph");
+
+    // Running parameters can be adjusted before each inference
+    atom::sdk::JsonObject run_params;
+    run_params["score_threshold"] = 0.6;
+    run_params["max_detections"] = 50;
+
+    rs.set_run_params({"detection_graph", run_params});
+
+    // and then perform inference...
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_run_graph_normal_mode_single_frame"><a class="anchor" href="#_run_graph_normal_mode_single_frame"></a>run_graph (normal mode single frame)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject run_graph(const RuntimeRunParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose:</strong> Use the normal mode single-frame input execution graph, which is the most commonly used image + point cloud reasoning interface. For passive binocular mode please use <code>RuntimeRunParams::passive_bino_from_file/bytes/images(&#8230;&#8203;)</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">parameters</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Figure name (loaded via <code>load_graph</code>)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>frame</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>const RuntimeFrame&amp;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Single frame input data</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*Return value: * <code>JsonObject</code>, containing running status information. Usually the result is read via <code>get_binded_output_value</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Note:</strong>
+When using runtime.run_graph, the current version requires that there are <code>EpicPro输入</code> or <code>EpicPro输入(单组数据)</code> nodes and <code>EpicPro输出</code> nodes in the graph. Otherwise, it cannot run and an error will be reported.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include "atom_sdk/core/json.hpp"
+
+// hypothesis load_image and load_points It is a data loading function implemented by yourself
+atom::sdk::ByteBuffer load_image(const std::string&amp; path);
+std::vector&lt;float&gt; load_points(const std::string&amp; path);
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("detection_graph");
+
+    // Construct camera internal parameters(3x3 matrix,row precedence)
+    auto intrinsic = atom::sdk::json::parse(
+        "[[800.0, 0.0, 320.0], [0.0, 800.0, 240.0], [0.0, 0.0, 1.0]]"
+    );
+    auto distortion = atom::sdk::json::parse("[0.0, 0.0, 0.0, 0.0, 0.0]");
+    // cam_to_base The server currently only supports rotation vector form:[x, y, z, rx, ry, rz]
+    auto cam_to_base = atom::sdk::json::parse("[0,0,0,0,0,0]");
+
+    // Generate natively from raw images and point clouds using factory methods EPICRAW
+    atom::sdk::RuntimeImageData image{load_image("/data/frame_001.bin"), 640, 480, 3, 1};
+    atom::sdk::RuntimePointData points{load_points("/data/pc_001.bin"), 640, 480, 3};
+    auto frame = atom::sdk::RuntimeFrame::from_data(
+        points,
+        image,
+        cam_to_base,
+        intrinsic,
+        distortion
+    );
+
+    // Perform reasoning
+    auto run_info = rs.run_graph({"detection_graph", {frame}});
+    std::cout &lt;&lt; "Request status:" &lt;&lt; run_info.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    // Read binding output
+    auto result = rs.get_binded_output_value({"detection_graph", "detection_result"});
+    const auto&amp; obj = result;
+
+    if (obj.contains("detections")) {
+        const auto&amp; dets = obj.at("detections");
+        for (const auto&amp; det : dets) {
+            const auto&amp; d = det;
+            std::string label = d.at("label").get&lt;std::string&gt;();
+            double conf = d.at("confidence").get&lt;double&gt;();
+            // ...
+        }
+    }
+
+    rs.release_graph("detection_graph");
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_run_graph_normal_mode_multi_frame"><a class="anchor" href="#_run_graph_normal_mode_multi_frame"></a>run_graph (normal mode multi-frame)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject run_graph(const RuntimeRunParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose:</strong> Use normal mode to input batch execution graphs for multiple frames, suitable for multi-camera or multi-frame fusion scenarios. <code>passive_bino</code> mode only passes one <code>RuntimePassiveBinoFrame</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">parameters</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Picture name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>frames</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>const std::vector&lt;RuntimeFrame&gt;&amp;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Multiple frames of input data, arranged in order</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*Return value: * <code>JsonObject</code>, containing running status information.</p>
+</div>
+<div class="paragraph">
+<p><strong>Note:</strong>
+When using runtime.run_graph, the current version requires that there are <code>EpicPro输入</code> or <code>EpicPro输入(单组数据)</code> nodes and <code>EpicPro输出</code> nodes in the graph. Otherwise, it cannot run and an error will be reported.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include "atom_sdk/core/json.hpp"
+#include &lt;vector&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("multi_cam_graph");
+
+    // cam_to_base The server currently only supports rotation vector form:[x, y, z, rx, ry, rz]
+    std::vector&lt;atom::sdk::JsonValue&gt; cam_to_base_per_camera = {
+        atom::sdk::json::parse("[0,0,0,0,0,0]"),
+        atom::sdk::json::parse("[100,0,0,0,0,0]"),
+    };
+
+    // Construct two frames of input(Such as binocular camera).Each camera has its own complete EPICRAW bytes put in one RuntimeFrame.
+    std::vector&lt;atom::sdk::RuntimeFrame&gt; frames;
+
+    for (int i = 0; i &lt; 2; ++i) {
+        frames.push_back(atom::sdk::RuntimeFrame::from_bytes(
+            camera_epicraws.at(i),
+            cam_to_base_per_camera.at(i)));
+    }
+
+    auto run_info = rs.run_graph({"multi_cam_graph", frames});
+    std::cout &lt;&lt; "Request status:" &lt;&lt; run_info.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    auto result = rs.get_binded_output_value({"multi_cam_graph", "fused_result"});
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_set_graph_binding_data"><a class="anchor" href="#_set_graph_binding_data"></a>set_graph_binding_data</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonValue set_graph_binding_data(
+    const RuntimeBindingDataUpdate&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose:</strong> Write the input data of the graph directly according to the binding name, suitable for non-image/point cloud type input (such as pure JSON data stream).</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">parameters</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Picture name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>binding_data</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>const JsonObject&amp;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>input data, key is the binding name, value is the JSON value</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*Return value: * <code>JsonValue</code>, operation result.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("pose_graph");
+
+    // Write binding input data directly
+    atom::sdk::JsonObject binding_data;
+    atom::sdk::JsonObject pose;
+    pose["x"] = 1.5;
+    pose["y"] = 2.3;
+    pose["theta"] = 0.45;
+    binding_data["robot_pose"] = pose;
+
+    rs.set_graph_binding_data({"pose_graph", binding_data});
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_node_params_info_with_strategy"><a class="anchor" href="#_get_node_params_info_with_strategy"></a>get_node_params_info_with_strategy</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject get_node_params_info_with_strategy(const NodeRef&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose:</strong> Read node description information that supports policy parameters, including parameter name, type and value range.</p>
+</div>
+<div class="paragraph">
+<p><strong>Support scope:</strong> Currently only supports <code>PoseListFilter</code>, <code>PickPointFilter</code>,
+<code>PoseListSorterInXOY</code>、<code>PickPointSorterInXOY</code>、<code>PickPointSorterNew</code>、
+<code>PoseListSorter</code> These 6 types of nodes.
+<code>paramsData</code> in the return value is usually used as the input template of <code>set_params_in_strategy(&#8230;&#8203;)</code>:
+First modify the fields that need to be adjusted, and then return the complete <code>paramsData</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">parameters</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Picture name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>policy node ID</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*Return value: * <code>JsonObject</code>, containing parameter meta-information of the policy node.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("strategy_graph");
+
+    auto params_info = rs.get_node_params_info_with_strategy(
+        {"strategy_graph", "strategy_node_001"}
+    );
+
+    for (const auto&amp; [key, val] : params_info) {
+        std::cout &lt;&lt; "Strategy parameters:" &lt;&lt; key &lt;&lt; std::endl;
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_set_params_in_strategy"><a class="anchor" href="#_set_params_in_strategy"></a>set_params_in_strategy</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonValue set_params_in_strategy(
+    const RuntimeStrategyParamsUpdate&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose:</strong> Write parameters in batches to nodes that support policy parameters to adjust node behavior.</p>
+</div>
+<div class="paragraph">
+<p><strong>Support scope:</strong> Currently only supports <code>PoseListFilter</code>, <code>PickPointFilter</code>,
+<code>PoseListSorterInXOY</code>、<code>PickPointSorterInXOY</code>、<code>PickPointSorterNew</code>、
+<code>PoseListSorter</code> These 6 types of nodes. For other nodes, please use the common parameter interface to set parameters.
+<code>RuntimeStrategyParamsUpdate.params_data</code> usually comes from
+<code>get_node_params_info_with_strategy(&#8230;&#8203;).at("paramsData")</code>. Don’t just handwrite a small section
+Parameters; it is recommended to retain the complete structure returned by the server and only replace the fields that need to be modified.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">parameters</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Picture name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Policy Node ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params_data</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>const JsonObject&amp;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The complete parameter structure modified from <code>paramsData</code> returned from the server</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*Return value: * <code>JsonValue</code>, operation result.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("strategy_graph");
+
+    auto params_info = rs.get_node_params_info_with_strategy(
+        {"strategy_graph", "strategy_node_001"}
+    );
+    atom::sdk::JsonObject params_data =
+        params_info.at("paramsData");
+
+    atom::sdk::JsonObject by_score_config;
+    by_score_config["order"] = "HIGHEST";
+    by_score_config["differenceThreshold"] = 1;
+    by_score_config["groupInterval"] = 0.75;
+
+    atom::sdk::JsonObject by_score;
+    by_score["BY_SCORE"] = by_score_config;
+
+    atom::sdk::JsonArray strategies;
+    strategies.emplace_back(by_score);
+
+    atom::sdk::JsonObject strategies_config;
+    strategies_config["value"] = strategies;
+    params_data["run_params"]["strategies_config"] = strategies_config;
+
+    rs.set_params_in_strategy(
+        {"strategy_graph", "strategy_node_001", params_data}
+    );
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_file_param_md5"><a class="anchor" href="#_get_file_param_md5"></a>get_file_param_md5</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject get_file_param_md5(const FileParamRef&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose:</strong> Query the MD5 value recorded on the server side for file-type parameters, which is used to determine whether the file needs to be re-uploaded (to avoid repeated transmission of large model files).</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">parameters</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Picture name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>param_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>File parameter name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>param_type</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>parameter category, default is <code>"init_params"</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Return value:</strong> <code>JsonObject</code>, containing MD5 information:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">field</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>md5</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Server recorded file MD5 value</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("detection_graph");
+
+    // Query model files MD5
+    auto md5_info = rs.get_file_param_md5(
+        "detection_graph",
+        "model_file",
+        "init_params"
+    );
+    std::cout &lt;&lt; "Request status:" &lt;&lt; md5_info.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    if (md5_info.contains("md5")) {
+        std::string server_md5 = md5_info.at("md5").get&lt;std::string&gt;();
+        std::cout &lt;&lt; "Server model MD5:" &lt;&lt; server_md5 &lt;&lt; std::endl;
+
+        // with local files MD5 Contrast,Decide if you need to re-upload
+        std::string local_md5 = "..."; // Count local files MD5
+        if (server_md5 == local_md5) {
+            std::cout &lt;&lt; "The model is up to date,No need to upload" &lt;&lt; std::endl;
+        }
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_run_single_node_no_graph_parsed_recommended"><a class="anchor" href="#_run_single_node_no_graph_parsed_recommended"></a>run_single_node_no_graph_parsed (recommended)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">SingleNodeParsedResult run_single_node_no_graph_parsed(
+    const SingleNodeParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose:</strong> Does not rely on any graph, directly runs a single node, and automatically parses the point clouds and images in <code>outputs</code> into directly usable data structures. Ordinary users are recommended to use this interface first; the returned dictionary key will be consistent with the server <code>outputs</code> key, but the point cloud and image values ​​will be parsed.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">parameters</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>node_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Node type name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>inputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SingleNodeInputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>input data map, key is the port name, value is one of <code>JsonValue</code>/<code>ByteBuffer</code>/<code>filesystem::path</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>run_params</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Operating parameters</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>init_params</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Initialization parameters</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>input_data_types</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>unordered_map&lt;string, string&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Optional. Input port type mapping; usually omitted, SDK will be queried by node name if needed</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>input_point_dims</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>unordered_map&lt;string, size_t&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Optional. Point cloud input dimension hints; often automatically inferred from port type</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>output_data_types</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>unordered_map&lt;string, string&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Optional. Output port type mapping; when omitted, SDK will query the node output definition by node name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>output_point_dims</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>unordered_map&lt;string, size_t&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Optional. Output point cloud dimension prompt; <code>XYZPoints</code> defaults to 3, <code>NormalPoints</code>/<code>RGBPoints</code> defaults to 6</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Return value:</strong> <code>SingleNodeParsedResult</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">using SingleNodeParsedOutput =
+    std::variant&lt;JsonValue, std::vector&lt;ParsedPointCloud&gt;, std::vector&lt;ParsedImage&gt;&gt;;
+
+struct SingleNodeParsedResult {
+    JsonValue raw;  // Server side original JSON;If the server returns raw bytes,Then it is null
+    std::unordered_map&lt;std::string, SingleNodeParsedOutput&gt; outputs;
+};</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Parsing rules:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Output port type
+Type of</th>
+<th class="tableblock halign-left valign-top"><code>outputs[name]</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Points</code> / <code>XYZPoints</code> / <code>NormalPoints</code> / <code>RGBPoints</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::vector&lt;ParsedPointCloud&gt;</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Image</code> / <code>MonoImage</code> / <code>ColorImage</code> / <code>BinaryImage</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::vector&lt;ParsedImage&gt;</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Other types</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonValue</code>, keep the original JSON value on the server</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Failure handling:</strong> If the top level of the server is <code>status=0</code>, but the single node result is <code>status_queue</code>
+Contains <code>success:false</code>, <code>activate failed</code>, <code>error</code> or negative status, SDK will be parsed
+<code>AtomApiError</code> is thrown before <code>outputs</code>, the exception message will contain the node name and <code>status_queue</code>
+reasons for failure.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;filesystem&gt;
+#include &lt;iostream&gt;
+#include &lt;variant&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    atom::sdk::SingleNodeParams params;
+    params.node_name = "EstimateNormal";
+    params.inputs["points"] = std::filesystem::path("/data/input.ply");
+
+    // Can be omitted,let SDK Automatic query based on node name;Explicitly filling in can save one node information query..
+    params.output_data_types = {{"points", "XYZPoints"}};
+    params.output_point_dims = {{"points", 3}};
+
+    auto result = rs.run_single_node_no_graph_parsed(params);
+    const auto&amp; clouds = std::get&lt;std::vector&lt;atom::sdk::ParsedPointCloud&gt;&gt;(
+        result.outputs.at("points"));
+
+    std::cout &lt;&lt; "Number of point clouds:" &lt;&lt; clouds.size() &lt;&lt; std::endl;
+    std::cout &lt;&lt; "The first point cloud shape: ";
+    for (auto dim : clouds.front().shape) {
+        std::cout &lt;&lt; dim &lt;&lt; " ";
+    }
+    std::cout &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>!!! tip "When do I need to fill in output_data_types explicitly?"
+If SDK can query the node output definition through <code>node_name</code>, you don&#8217;t need to fill it in; if the server returns raw bytes, or you want to save one <code>get_all_nodes_info()</code> query, it is recommended to fill in <code>output_data_types</code> explicitly. raw bytes In order for the results to be automatically parsed, the only point cloud output port must be determined.</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_run_single_node_no_graph_optional_raw_return"><a class="anchor" href="#_run_single_node_no_graph_optional_raw_return"></a>run_single_node_no_graph (optional: raw return)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">SingleNodeResult run_single_node_no_graph(
+    const SingleNodeParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose:</strong> Does not rely on any graph, directly runs a single node and obtains the original results, supporting JSON or binary output. Only use it when you need to handle the server&#8217;s original JSON/raw bytes yourself; in normal scenarios, it is recommended to use <code>run_single_node_no_graph_parsed</code> first.
+Like the parsed interface, if <code>status_queue</code> indicates that the internal operation of the node fails, the raw interface will also throw
+<code>AtomApiError</code>, to avoid returning the empty <code>outputs</code> as a normal result on failure.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">parameters</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>node_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Node type name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>inputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SingleNodeInputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>input data map, key is the port name, value is one of <code>JsonValue</code>/<code>ByteBuffer</code>/<code>filesystem::path</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>run_params</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Operating parameters</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>init_params</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Initialization parameters</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>input_data_types</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>unordered_map&lt;string, string&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Optional. Input port type mapping; usually omitted, SDK will be queried by node name when path or byte input is encountered</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>input_point_dims</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>unordered_map&lt;string, size_t&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Optional. Point cloud input dimension prompt; usually automatically inferred from types such as <code>XYZPoints</code>/<code>NormalPoints</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*Return value: * <code>SingleNodeResult</code> (<code>std::variant&lt;JsonValue, ByteBuffer&gt;</code>), you need to use <code>std::holds_alternative</code> to determine the type and then use <code>std::get</code> to get the value.
+<code>inputs</code> automatically handles common data by node input port type:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Port type</th>
+<th class="tableblock halign-left valign-top">C++ input value</th>
+<th class="tableblock halign-left valign-top">SDK behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>File</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::filesystem::path</code> / UTF-8 <code>ByteBuffer</code> / JSON string</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>is put into JSON as a path string, and the file content is not read.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Image</code> / <code>MonoImage</code> / <code>ColorImage</code> / <code>BinaryImage</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::filesystem::path</code> / <code>ByteBuffer</code> / base64 string</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>is converted into <code>data:image/&#8230;&#8203;;base64,&#8230;&#8203;</code> string list</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Points</code> / <code>XYZPoints</code> / <code>NormalPoints</code> / <code>RGBPoints</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>.ply</code> path / encoded <code>ByteBuffer</code> / JSON numeric array</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>.ply</code> will be converted to Atom point cloud binary; the encoded bytes will be uploaded unchanged</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Other types</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonValue</code> / <code>ByteBuffer</code> / <code>path</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>maintains old behavior: JSON into <code>inputs</code>, bytes or path contents are uploaded by file field</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>!!! note "PLY Support range"
+C++ SDK currently supports <code>vertex</code> attribute reading of ASCII PLY in single-node direct operation; <code>XYZPoints</code>/<code>Points</code> reads <code>x,y,z</code>, <code>NormalPoints</code> reads <code>x,y,z,nx,ny,nz</code>, <code>RGBPoints</code> reads <code>x,y,z,red,green,blue</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;filesystem&gt;
+#include &lt;iostream&gt;
+#include &lt;variant&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    // Construct input:mix JSON,binary,file path
+    atom::sdk::SingleNodeInputs inputs;
+
+    // JSON type input
+    atom::sdk::JsonObject img_meta;
+    img_meta["width"] = 640;
+    img_meta["height"] = 480;
+    inputs["image_meta"] = atom::sdk::JsonValue(img_meta);
+
+    // Binary type input(image bytes)
+    atom::sdk::ByteBuffer image_bytes = /* image bytes */;
+    inputs["image"] = image_bytes;
+
+    // Path input:SDK Will be automatically processed according to node port type.
+    // If the port is File,Will only pass the path string;if yes ColorImage,will be converted into base64 Picture list;
+    // if yes XYZPoints and the path is .ply,will be converted into Atom point cloud binary.
+    inputs["model_config"] = std::filesystem::path("/configs/yolo.yaml");
+
+    // Operating parameters
+    atom::sdk::JsonObject run_params;
+    run_params["score_threshold"] = 0.5;
+
+    // Initialization parameters
+    atom::sdk::JsonObject init_params;
+    init_params["device"] = "cuda:0";
+
+    // Execute single node,Get the original return from the server
+    atom::sdk::SingleNodeParams params;
+    params.node_name = "YoloDetectionNode";
+    params.inputs = inputs;
+    params.run_params = run_params;
+    params.init_params = init_params;
+    atom::sdk::SingleNodeResult result = rs.run_single_node_no_graph(params);
+
+    // Determine the original return type
+    if (std::holds_alternative&lt;atom::sdk::JsonValue&gt;(result)) {
+        const auto&amp; json_out = std::get&lt;atom::sdk::JsonValue&gt;(result);
+        const auto&amp; obj = json_out;
+
+        if (obj.contains("detections")) {
+            const auto&amp; dets = obj.at("detections");
+            std::cout &lt;&lt; "Number of test results:" &lt;&lt; dets.size() &lt;&lt; std::endl;
+
+            for (const auto&amp; det : dets) {
+                const auto&amp; d = det;
+                std::string label = d.at("label").get&lt;std::string&gt;();
+                double conf = d.at("confidence").get&lt;double&gt;();
+                std::cout &lt;&lt; "  " &lt;&lt; label &lt;&lt; "：" &lt;&lt; conf &lt;&lt; std::endl;
+            }
+        }
+    } else {
+        const auto&amp; bin_out = std::get&lt;atom::sdk::ByteBuffer&gt;(result);
+        std::cout &lt;&lt; "Binary result size:" &lt;&lt; bin_out.size() &lt;&lt; " bytes" &lt;&lt; std::endl;
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_run_single_node_json"><a class="anchor" href="#_run_single_node_json"></a>run_single_node_json</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonValue run_single_node_json(const SingleNodeParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>*Usage: * Convenience version of <code>run_single_node_no_graph</code> that forces the expectation of JSON output and throws an exception if the node returns binary.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">parameters</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>node_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Node type name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>inputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SingleNodeInputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Input data</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>run_params</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Operating parameters</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>init_params</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Initialization parameters</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*Return value: * <code>JsonValue</code>, node&#8217;s JSON output result.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    atom::sdk::JsonObject run_params;
+    run_params["threshold"] = 0.5;
+
+    atom::sdk::SingleNodeParams params;
+    params.node_name = "ClassificationNode";
+    params.run_params = run_params;
+
+    // Get it directly JSON result,No need variant judge
+    auto json_result = rs.run_single_node_json(params);
+
+    const auto&amp; obj = json_result;
+    if (obj.contains("top1")) {
+        std::string top1 = obj.at("top1").get&lt;std::string&gt;();
+        std::cout &lt;&lt; "Classification results:" &lt;&lt; top1 &lt;&lt; std::endl;
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_run_single_node_binary"><a class="anchor" href="#_run_single_node_binary"></a>run_single_node_binary</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">ByteBuffer run_single_node_binary(const SingleNodeParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>*Use: * Convenience version of <code>run_single_node_no_graph</code>, forces to expect binary output (e.g. point clouds, raw images), and throws an exception if the node returns JSON.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">parameters</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>node_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Node type name</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>inputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SingleNodeInputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Input data</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>run_params</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Operating parameters</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>init_params</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Initialization parameters</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="ulist">
+<ul>
+<li>
+<p>Return value: * <code>ByteBuffer</code> (<code>std::vector&lt;uint8_t&gt;</code>), binary output data of the node.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;cstring&gt;
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    atom::sdk::SingleNodeInputs inputs;
+    inputs["raw_cloud"] = atom::sdk::ByteBuffer(/* Raw point cloud bytes */);
+
+    atom::sdk::SingleNodeParams params;
+    params.node_name = "PointCloudFilterNode";
+    params.inputs = inputs;
+
+    // Get binary results directly
+    atom::sdk::ByteBuffer filtered = rs.run_single_node_binary(params);
+
+    auto clouds = atom::sdk::decode_point_cloud_payload(filtered, false, 3);
+    std::cout &lt;&lt; "Filtered point cloud shape: ";
+    for (const auto dim : clouds.front().shape) {
+        std::cout &lt;&lt; dim &lt;&lt; " ";
+    }
+    std::cout &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_complete_example"><a class="anchor" href="#_complete_example"></a>Complete example</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following shows a complete production-level reasoning loop: loading graph, setting parameters, loop reasoning, reading output, and releasing resources.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include "atom_sdk/core/json.hpp"
+#include &lt;cstring&gt;
+#include &lt;filesystem&gt;
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+// Simulate data loading(Replaced with real implementation in actual projects)
+atom::sdk::ByteBuffer capture_image() {
+    // Collect images from camera,Returns raw pixel bytes
+    return atom::sdk::ByteBuffer(640 * 480 * 3, 0);
+}
+
+std::vector&lt;float&gt; capture_point_cloud() {
+    // Collecting point clouds from lidar
+    return std::vector&lt;float&gt;(640 * 480 * 3, 0.0F);
+}
+
+int main() {
+    try {
+        atom::sdk::AtomClient client("http://127.0.0.1:10026");
+        auto&amp; rs = client.runtime();
+
+        // ─── 1. Load graph ──────────────────────────────────────
+        auto loaded = rs.load_graph("robot_perception");
+        std::cout &lt;&lt; "Picture loading completed,Request status:" &lt;&lt; loaded.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+        // ─── 2. Query graph parameter meta information ────────────────────────────
+        auto meta = rs.get_meta_info("robot_perception");
+        std::cout &lt;&lt; "Number of primitive information fields:" &lt;&lt; meta.size()
+                  &lt;&lt; ",Request status:" &lt;&lt; meta.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+        // ─── 3. Set shared parameters(Valid for entire session)────────────────
+        atom::sdk::JsonObject shared_params;
+        shared_params["confidence_threshold"] = 0.5;
+        shared_params["nms_threshold"] = 0.45;
+
+        atom::sdk::JsonArray class_names;
+        class_names.push_back("person");
+        class_names.push_back("car");
+        shared_params["class_names"] = class_names;
+
+        rs.set_shared_params({"robot_perception", shared_params});
+
+        // ─── 4. Prepare camera parameters ────────────────────────────────
+        auto intrinsic = atom::sdk::json::parse(
+            "[[800.0, 0.0, 320.0], [0.0, 800.0, 240.0], [0.0, 0.0, 1.0]]"
+        );
+        auto distortion = atom::sdk::json::parse(
+            "[-0.1, 0.05, 0.001, 0.001, -0.02]"
+        );
+        // cam_to_base The server currently only supports rotation vector form:[x, y, z, rx, ry, rz]
+        auto cam_to_base = atom::sdk::json::parse("[0.15, 0.0, 0.5, 0.012, 0.049, -0.045]");
+
+        // ─── 5. Reasoning main loop ──────────────────────────────────
+        for (int frame_idx = 0; frame_idx &lt; 10; ++frame_idx) {
+            std::cout &lt;&lt; "\n─── frame " &lt;&lt; frame_idx &lt;&lt; " ───" &lt;&lt; std::endl;
+
+            // 5.1 Set the running parameters of this frame(Optional,Adjust per frame)
+            atom::sdk::JsonObject run_params;
+            run_params["frame_id"] = frame_idx;
+            rs.set_run_params({"robot_perception", run_params});
+
+            // 5.2 Construct input frame:Generated locally from raw images and point clouds EPICRAW
+            atom::sdk::RuntimeImageData image{capture_image(), 640, 480, 3, 1};
+            atom::sdk::RuntimePointData points{capture_point_cloud(), 640, 480, 3};
+            auto frame = atom::sdk::RuntimeFrame::from_data(
+                points,
+                image,
+                cam_to_base,
+                intrinsic,
+                distortion
+            );
+
+            // 5.3 Perform single-frame inference
+            auto run_info = rs.run_graph({"robot_perception", {frame}});
+            std::cout &lt;&lt; "Request status:" &lt;&lt; run_info.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+            // 5.4 read JSON Bind output
+            auto det_result = rs.get_binded_output_value(
+                {"robot_perception", "detection_result"});
+            const auto&amp; det_obj = det_result;
+
+            if (det_obj.contains("detections")) {
+                const auto&amp; dets = det_obj.at("detections");
+                std::cout &lt;&lt; "detected " &lt;&lt; dets.size() &lt;&lt; " goals" &lt;&lt; std::endl;
+
+                for (const auto&amp; det : dets) {
+                    const auto&amp; d = det;
+                    if (d.contains("label") &amp;&amp; d.contains("confidence")) {
+                        std::string label = d.at("label").get&lt;std::string&gt;();
+                        double conf = d.at("confidence").get&lt;double&gt;();
+                        std::cout &lt;&lt; "  [" &lt;&lt; label &lt;&lt; "] Confidence=" &lt;&lt; conf &lt;&lt; std::endl;
+                    }
+                }
+            }
+
+            // 5.5 Read point cloud binding output(If so)
+            try {
+                auto pc_bytes = rs.get_binded_point_cloud(
+                    {"robot_perception", "filtered_cloud"});
+                std::size_t n = pc_bytes.size() / sizeof(float);
+                std::cout &lt;&lt; "Point cloud points after filtering:" &lt;&lt; n / 3 &lt;&lt; std::endl;
+            } catch (const atom::sdk::AtomError&amp;) {
+                // The graph may not have point cloud binding output,ignore
+            }
+        }
+
+        // ─── 6. Release graph resources ───────────────────────────────────
+        rs.release_graph("robot_perception");
+        std::cout &lt;&lt; "\nGraphic resources have been released,Reasoning completed" &lt;&lt; std::endl;
+
+    } catch (const atom::sdk::AtomError&amp; e) {
+        std::cerr &lt;&lt; "SDK Error:" &lt;&lt; e.what() &lt;&lt; std::endl;
+        return 1;
+    } catch (const std::exception&amp; e) {
+        std::cerr &lt;&lt; "Abnormal:" &lt;&lt; e.what() &lt;&lt; std::endl;
+        return 1;
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="graph_node.html">GraphNodeService（C++）</a></span>
+  <span class="next"><a href="../csharp/overview.html">Atom SDK — C# Version</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

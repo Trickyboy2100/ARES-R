@@ -1,0 +1,2 @@
+add_executable(IntrinsicAccuracyCheck main.cpp)
+target_link_libraries(IntrinsicAccuracyCheck PRIVATE epiceye_sdk::epiceye_sdk)

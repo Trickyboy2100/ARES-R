@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>运行时输入帧（RuntimeFrame / RuntimePassiveBinoFrame） :: Atom SDK 开发手册</title>
+    <link rel="prev" href="timestamp.html">
+    <link rel="next" href="point-cloud-protocol.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          在线产品文档        </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="输入关键词搜索"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              仅本手册
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            切换手册
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK 开发手册</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          下载中心
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          官网
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            简体中文
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK 开发手册</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">欢迎</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">快速开始</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">快速开始</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">示例样本</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">入门使用</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK 入门使用</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService 入门使用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService 入门使用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService 入门使用</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">使用指南</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">选择合适的 Service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">图与节点操作</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">错误处理与排查</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">常见问题解答</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">基础概念</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="what-is-atom-sdk.html">什么是 Atom SDK</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="graph-node-subgraph.html">图、节点、子图</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="graph-vs-runtime.html">Graph 与 Runtime 的区别</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="timestamp.html">Timestamp 是什么</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="runtime-frame.html">运行时输入帧（RuntimeFrame / RuntimePassiveBinoFrame）</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="point-cloud-protocol.html">点云类型输入输出的二进制协议</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="param-binding.html">参数类型与绑定名</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API 参考</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API 参考总览</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python 概览与安装</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/params.html">Python 参数对象</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/public_api.html">Python 公共工具 API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ 版 — 使用指南</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ 参数对象</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">Atom SDK — C# 版本</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/params.html">C# 参数对象</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK 开发手册</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK 开发手册</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK 开发手册</a></li>
+    <li>基础概念</li>
+    <li><a href="runtime-frame.html">运行时输入帧（RuntimeFrame / RuntimePassiveBinoFrame）</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="本页内容"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">运行时输入帧（RuntimeFrame / RuntimePassiveBinoFrame）</h1>
+<div class="sect1">
+<h2 id="_两种运行时输入模式"><a class="anchor" href="#_两种运行时输入模式"></a>两种运行时输入模式</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>RuntimeService.run_graph</code> 有两种输入模式，取决于图里的 <code>EpicProInput</code> 节点怎么配置：</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 28.5714%;">
+<col style="width: 42.8572%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">模式</th>
+<th class="tableblock halign-left valign-top"><code>runMode</code> / <code>run_mode</code></th>
+<th class="tableblock halign-left valign-top">输入对象</th>
+<th class="tableblock halign-left valign-top">输入内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">普通模式</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"others"</code> 或不传</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RuntimeFrame</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">完整 EPICRAW2/标准 EPICRAW3 + <code>cam2_base</code> + 可选 ROI</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">被动双目模式</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"passive_bino"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RuntimePassiveBinoFrame</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">被动双目 EPICRAW3 + <code>cam2_base</code> + 可选 ROI</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>这两种模式不要混用：普通模式使用 <code>RuntimeFrame</code>，被动双目模式使用 <code>RuntimePassiveBinoFrame</code>。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_普通模式runtimeframe"><a class="anchor" href="#_普通模式runtimeframe"></a>普通模式：RuntimeFrame</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>RuntimeFrame</code> 是普通模式下 <code>RuntimeService.run_graph</code> 的输入单元。每一帧封装一份完整 EPICRAW、相机到基座的变换矩阵和可选 ROI。</p>
+</div>
+<div class="paragraph">
+<p>当你调用普通模式的 <code>run_graph</code> 时，可以传入一帧或多帧，服务端并行处理后返回结果。</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>使用 <code>runtime.run_graph</code> 时，当前版本要求图里有 <code>EpicPro输入</code> 或 <code>EpicPro输入(单组数据)</code> 节点和 <code>EpicPro输出</code> 节点，否则无法运行，会报错。</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_普通模式字段与入口"><a class="anchor" href="#_普通模式字段与入口"></a>普通模式字段与入口</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 10%;">
+<col style="width: 10%;">
+<col style="width: 10%;">
+<col style="width: 10%;">
+<col style="width: 10%;">
+<col style="width: 30%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段含义</th>
+<th class="tableblock halign-left valign-top">Python</th>
+<th class="tableblock halign-left valign-top">C++</th>
+<th class="tableblock halign-left valign-top">C#</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">必填</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">EPICRAW</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>epicraw</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>epicraw</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>EpicRaw</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bytes</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">是</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">完整 EPICRAW 原始字节</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">外参（旋转矢量）</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cam2_base</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cam_to_base</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Cam2Base</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">长度为 6 的列表</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">是</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">相机到基座坐标系的变换，旋转矢量形式 <code>[x, y, z, rx, ry, rz]</code>；服务端目前只支持这一种形式，不支持矩阵</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ROI 区域</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>roi</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>roi</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Roi</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">dict</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">否</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">感兴趣区域，格式见下</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>三种 SDK 均提供 <code>from_file</code>/<code>from_bytes</code>/<code>from_data</code>（C# 使用 PascalCase）。<code>from_data</code> 接收原始图像、点云、内参和畸变并在本地编码：</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>只有普通 <code>intrinsic</code>/<code>distortion</code> 时自动生成 EPICRAW2。</p>
+</li>
+<li>
+<p><code>camera_params</code> 含 <code>TextureSrc</code>、<code>DepthSrc1</code> 或 <code>DepthSrc2</code> 时自动生成 EPICRAW3。</p>
+</li>
+<li>
+<p>显式指定 <code>version=2/3</code> 可覆盖自动选择。</p>
+</li>
+<li>
+<p>普通 EPICRAW3 只包含 <code>Depth + TextureBGR</code>；Depth 来自点云 Z 值，不包含完整 PointCloud。</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_被动双目模式runtimepassivebinoframe"><a class="anchor" href="#_被动双目模式runtimepassivebinoframe"></a>被动双目模式：RuntimePassiveBinoFrame</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>普通 <code>RuntimeFrame</code> 对应服务端 <code>runMode="others"</code>。如果图里的 <code>EpicProInput</code> 节点配置为 <code>passive_bino</code>，输入不再是图像+点云，而是一份完整 EPICRAW3 原始字节。</p>
+</div>
+<div class="paragraph">
+<p>服务端会从 EPICRAW3 里解析：</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>DepthSrc1</code></p>
+</li>
+<li>
+<p><code>DepthSrc2</code></p>
+</li>
+<li>
+<p><code>TextureSrc</code></p>
+</li>
+<li>
+<p><code>passive_bino_params</code></p>
+</li>
+<li>
+<p><code>intrinsic</code></p>
+</li>
+<li>
+<p><code>distortion</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Python 代码里只需要额外传 <code>cam2_base</code>，SDK 会在请求 metadata 里转换成服务端字段 <code>cam2Base</code>。</p>
+</div>
+<div class="paragraph">
+<p>默认从 bytes 数据构造：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import RuntimePassiveBinoFrame, RuntimeRunParams
+
+frame = RuntimePassiveBinoFrame(
+    epicraw3=epicraw3_bytes,
+    cam2_base=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+)
+
+result = client.runtime.run_graph(
+    RuntimeRunParams("detection_graph", [frame], run_mode="passive_bino")
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>如果已经有相机采集出的 EPICRAW3 文件，推荐直接从文件构造：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import RuntimeRunParams
+
+params = RuntimeRunParams.passive_bino_from_file(
+    "detection_graph",
+    "/data/passive_bino.epicraw",
+    cam2_base=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+)
+
+result = client.runtime.run_graph(params)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>如果业务层已经拿到了三张被动双目图和对应参数，也可以用 <code>RuntimeRunParams.passive_bino_from_images(&#8230;&#8203;)</code> 让 SDK 生成 EPICRAW3。<code>image_list</code> 顺序固定为 <code>DepthSrc1</code>、<code>DepthSrc2</code>、<code>TextureSrc</code>，<code>params</code> 需要包含同名三份 metadata；每份 metadata 包含 <code>CameraMatrix</code>、<code>CameraDistortion</code>、<code>CameraRotation</code> 和 <code>CameraTranslation</code>。</p>
+</div>
+<div class="paragraph">
+<p>C&#43;&#43; 对应方法是 <code>RuntimeRunParams::passive_bino_from_file/bytes/images(&#8230;&#8203;)</code>；C# 对应方法是 <code>RuntimeRunParams.PassiveBinoFromFile/Bytes/Images(&#8230;&#8203;)</code>。C&#43;&#43;/C# 的 <code>from_images</code> 需要显式传每张图的原始像素、宽高和 OpenCV Mat type。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import RuntimeRunParams
+run_params = RuntimeRunParams.passive_bino_from_images(
+    graph_name,
+    image_list=image_list,
+    params=passive_bino_params,
+    cam2_base=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+)
+result = client.runtime.run_graph(params)</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_相机内参intrinsic"><a class="anchor" href="#_相机内参intrinsic"></a>相机内参（intrinsic）</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>3×3 矩阵，行主序二维数组：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>[[fx,  0, cx],
+ [ 0, fy, cy],
+ [ 0,  0,  1]]</pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">符号</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>fx</code>、<code>fy</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">X 和 Y 方向焦距（像素单位）</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cx</code>、<code>cy</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">主点坐标（通常约等于图像中心）</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_畸变系数distortion"><a class="anchor" href="#_畸变系数distortion"></a>畸变系数（distortion）</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>5 元素一维数组，按 OpenCV 顺序排列：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>[k1, k2, p1, p2, k3]</pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">符号</th>
+<th class="tableblock halign-left valign-top">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>k1</code>、<code>k2</code>、<code>k3</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">径向畸变系数</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>p1</code>、<code>p2</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">切向畸变系数</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>无畸变时传全零：<code>[0.0, 0.0, 0.0, 0.0, 0.0]</code></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_外参cam2_base_cam_to_base_cam2base"><a class="anchor" href="#_外参cam2_base_cam_to_base_cam2base"></a>外参（cam2_base / cam_to_base / Cam2Base）</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>服务端目前只支持*旋转矢量形式*，描述相机坐标系到机器人基座坐标系的变换，长度固定为 6：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>[x, y, z, rx, ry, rz]</pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">位置</th>
+<th class="tableblock halign-left valign-top">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">前 3 位 <code>x, y, z</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">平移向量</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">后 3 位 <code>rx, ry, rz</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">旋转向量（Rodrigues 轴角表示，通过 <code>cv2.Rodrigues</code> 与旋转矩阵互相转换）</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>不支持传 4×4/3×4 矩阵；服务端节点按 <code>len(cam2Base) == 6</code> 过滤输入，非 6 长度的值会被直接丢弃而不报错，SDK 会在构造 <code>RuntimeFrame</code>/<code>RuntimePassiveBinoFrame</code> 时提前校验长度并报错，避免请求被静默丢弃。</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>坐标系无变换时传全零向量：<code>[0, 0, 0, 0, 0, 0]</code></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_roi_格式"><a class="anchor" href="#_roi_格式"></a>ROI 格式</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>ROI（感兴趣区域）是可选字段，推荐格式：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">roi = {
+    "min": {"x": 0.0, "y": 0.0, "z": 0.0},
+    "max": {"x": 1.0, "y": 1.0, "z": 1.0},
+    "cam2ROIFrame": [0, 0, 0, 0, 0, 0]
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_普通模式完整使用示例"><a class="anchor" href="#_普通模式完整使用示例"></a>普通模式完整使用示例</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_python"><a class="anchor" href="#_python"></a>Python</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import numpy as np
+from atom_sdk import AtomClient, RuntimeFrame, RuntimeRunParams
+
+client = AtomClient("http://127.0.0.1:10026")
+load_result = client.runtime.load_graph("detection_graph")
+print("加载请求状态：", load_result["status"])
+
+# 准备帧数据（实际场景中来自相机 SDK）
+height, width = 480, 640
+image = np.zeros((height, width, 3), dtype=np.uint8)
+points = np.zeros((height, width, 3), dtype=np.float32)
+
+intrinsic = [[600.0, 0.0, 320.0],
+             [0.0, 600.0, 240.0],
+             [0.0, 0.0,   1.0]]
+
+distortion = [0.0, 0.0, 0.0, 0.0, 0.0]
+
+# 旋转矢量形式：[x, y, z, rx, ry, rz]
+cam2base = [0.0, 0.0, 0.5, 0.0, 0.0, 0.0]
+roi = {
+    "min": {"x": 0.0, "y": 0.0, "z": 0.0},
+    "max": {"x": 1.0, "y": 1.0, "z": 1.0},
+    "cam2ROIFrame": [0, 0, 0, 0, 0, 0]
+}
+
+# 执行（单帧）：SDK 把点云 + 图像 + 相机参数在本地编码成 EPICRAW
+frame = RuntimeFrame.from_data(
+    points=points,
+    image=image,
+    intrinsic=intrinsic,
+    distortion=distortion,
+    cam2_base=cam2base,
+    roi=roi,
+)
+result = client.runtime.run_graph(RuntimeRunParams("detection_graph", [frame]))
+
+print("运行请求状态：", result["status"])
+print("检测结果：", result.get("instanceList", []))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_c"><a class="anchor" href="#_c"></a>C++</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include "atom_sdk/core/json.hpp"
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+atom::sdk::AtomClient client("http://127.0.0.1:10026");
+auto loaded = client.runtime().load_graph("detection_graph");
+std::cout &lt;&lt; "加载请求状态：" &lt;&lt; loaded.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+// 准备帧数据（实际场景中来自相机 SDK）
+constexpr int height = 480, width = 640;
+atom::sdk::ByteBuffer image_bytes(height * width * 3, 0);   // uint8, HWC
+atom::sdk::ByteBuffer pc_bytes(height * width * 3 * 4, 0);  // float32, HWC
+
+// 相机内参矩阵（3×3）
+atom::sdk::JsonValue intrinsic = atom::sdk::JsonArray{
+    atom::sdk::JsonArray{600.0, 0.0,   320.0},
+    atom::sdk::JsonArray{0.0,   600.0, 240.0},
+    atom::sdk::JsonArray{0.0,   0.0,   1.0  }
+};
+
+// 畸变系数
+atom::sdk::JsonValue distortion = atom::sdk::JsonArray{0.0, 0.0, 0.0, 0.0, 0.0};
+
+// 外参：旋转矢量形式 [x, y, z, rx, ry, rz]
+atom::sdk::JsonValue cam2base = atom::sdk::JsonArray{0.0, 0.0, 0.5, 0.0, 0.0, 0.0};
+
+// ROI（可选）
+atom::sdk::JsonValue roi = atom::sdk::JsonObject{
+    {"min", atom::sdk::JsonObject{{"x", 0.0}, {"y", 0.0}, {"z", 0.0}}},
+    {"max", atom::sdk::JsonObject{{"x", 1.0}, {"y", 1.0}, {"z", 1.0}}},
+    {"cam2ROIFrame", atom::sdk::JsonArray{0.0, 0.0, 0.0, 0.0, 0.0, 0.0}}
+};
+
+// 构造帧并执行（单帧）
+auto frame = atom::sdk::RuntimeFrame::from_bytes(
+    image_bytes, pc_bytes, width, height,
+    width, height,
+    intrinsic, distortion, cam2base, roi
+);
+auto result = client.runtime().run_graph({"detection_graph", {frame}});
+std::cout &lt;&lt; "运行请求状态：" &lt;&lt; result.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+if (result.contains("instanceList"))
+    std::cout &lt;&lt; "检测结果：" &lt;&lt; result.at("instanceList") &lt;&lt; "\n";</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_c_2"><a class="anchor" href="#_c_2"></a>C#</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://127.0.0.1:10026");
+var graphRef = await client.Runtime.LoadGraphInfoAsync("detection_graph");
+Console.WriteLine($"加载请求状态：{graphRef.Status}");
+
+// 准备帧数据（实际场景中来自相机 SDK）
+int height = 480, width = 640;
+byte[] imageBytes = new byte[height * width * 3];      // uint8, HWC
+byte[] pcBytes    = new byte[height * width * 3 * 4]; // float32, HWC
+
+var frame = new RuntimeFrame(
+    image: imageBytes,
+    pointCloud: pcBytes,
+    width: width,
+    height: height,
+    cloudWidth: width,
+    cloudHeight: height,
+    intrinsic: new double[][]
+    {
+        new[] { 600.0, 0.0,   320.0 },
+        new[] { 0.0,   600.0, 240.0 },
+        new[] { 0.0,   0.0,     1.0 },
+    },
+    distortion: new[] { 0.0, 0.0, 0.0, 0.0, 0.0 },
+    // 外参：旋转矢量形式 [x, y, z, rx, ry, rz]
+    cam2Base: new[] { 0.0, 0.0, 0.5, 0.0, 0.0, 0.0 },
+    roi: new
+    {
+        min = new { x = 0.0, y = 0.0, z = 0.0 },
+        max = new { x = 1.0, y = 1.0, z = 1.0 },
+        cam2ROIFrame = new[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
+    });
+
+// 执行（单帧）
+var result = await client.Runtime.RunGraphAsync(
+    new RuntimeRunParams("detection_graph", new[] { frame }));
+Console.WriteLine($"运行请求状态：{result.GetProperty("status").GetInt32()}");
+
+if (result.TryGetProperty("instanceList", out var instances))
+    Console.WriteLine($"检测结果：{instances}");</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_普通模式多帧输入"><a class="anchor" href="#_普通模式多帧输入"></a>普通模式多帧输入</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>当需要同时处理多个摄像头的数据时，可以在一次普通模式 <code>run_graph</code> 中传入多帧：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import RuntimeFrame, RuntimeRunParams
+
+result = client.runtime.run_graph(RuntimeRunParams("multi_cam_graph", [
+    RuntimeFrame.from_data(
+        points=cam0_pc, image=cam0_image,
+        intrinsic=cam0_intrinsic, distortion=cam0_dist, cam2_base=cam0_ext,
+    ),
+    RuntimeFrame.from_data(
+        points=cam1_pc, image=cam1_image,
+        intrinsic=cam1_intrinsic, distortion=cam1_dist, cam2_base=cam1_ext,
+    ),
+]))
+print("运行请求状态：", result["status"])</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>每帧对应一组摄像头数据，服务端会按图的配置分别路由到对应节点。<code>passive_bino</code> 模式只传一份 <code>RuntimePassiveBinoFrame</code>，不要用多帧 <code>RuntimeFrame</code>。</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="timestamp.html">Timestamp 是什么</a></span>
+  <span class="next"><a href="point-cloud-protocol.html">点云类型输入输出的二进制协议</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

@@ -1,0 +1,2770 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Python 매개변수 객체 :: Atom SDK 개발자 가이드</title>
+    <link rel="prev" href="overview.html">
+    <link rel="next" href="public_api.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          온라인 제품 문서
+                  </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="문서 검색"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              이 매뉴얼만
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            매뉴얼 전환
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK 개발자 가이드</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          다운로드 센터
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          공식 웹사이트
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            한국어
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK 개발자 가이드</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">환영합니다</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">빠른 시작</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">빠른 시작</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">샘플 샘플</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">입문 사용</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK 입문 사용</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">사용자 가이드</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">적절한 Service을 선택합니다.</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">그래프 및 노드 작업</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">오류 처리 및 문제 해결</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">FAQ</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">기본 개념</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/what-is-atom-sdk.html">Atom SDK 란 무엇입니까?</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-node-subgraph.html">그래프, 노드, 하위 그래프</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-vs-runtime.html">Graph과 Runtime의 차이점</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/timestamp.html">Timestamp이 무엇인가요?</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/runtime-frame.html">런타임 입력 프레임(RuntimeFrame / RuntimePassiveBinoFrame)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/point-cloud-protocol.html">포인트 클라우드 유형 입출력을 위한 바이너리 프로토콜</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/param-binding.html">매개변수 유형 및 바인딩 이름</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API 참조</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API 참조 개요</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="overview.html">Python 개요 및 설치</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="params.html">Python 매개변수 객체</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="public_api.html">Python 공용 유틸리티 API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ 버전 — 사용자 가이드</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ 매개변수 객체</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">Atom SDK — C# 버전</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/params.html">C# 매개변수 객체</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK 개발자 가이드</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK 개발자 가이드</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK 개발자 가이드</a></li>
+    <li>API 참조</li>
+    <li>Python SDK</li>
+    <li><a href="params.html">Python 매개변수 객체</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="이 페이지의 내용"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Python 매개변수 객체</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Python SDK의 많은 메소드는 더 이상 긴 위치 매개변수 목록을 직접 수신하지 않지만 <code>CreateNodeParams(&#8230;&#8203;)</code>, <code>NodeConnectionParams(&#8230;&#8203;)</code>, `RuntimeRunParams(&#8230;&#8203;)`와 같은 매개변수 객체를 수신합니다.</p>
+</div>
+<div class="paragraph">
+<p>이 디자인은 특히 노드 연결, 하위 그래프 작업, 런타임 프레임 데이터 등 매개 변수가 많고 순서가 바뀌기 쉽고 사례가 잘못 작성되기 쉬운 시나리오에서 호출 코드를 더 명확하게 만들기 위한 것입니다.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_가져오는_방법"><a class="anchor" href="#_가져오는_방법"></a>가져오는 방법</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>모든 공용 매개변수 객체는 `atom_sdk`에서 직접 가져올 수 있습니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import (
+    BindingRef,
+    ChangeNodeIOParams,
+    ChangeSubGraphNodeIOParams,
+    CopyGraphParams,
+    CopyNodeParams,
+    CreateNodeParams,
+    CreateDynamicNodeParams,
+    CreateDynamicSubGraphNodeParams,
+    CreateGraphParams,
+    CreateGraphNodeParams,
+    EditGraphCommentParams,
+    EditGraphNameParams,
+    EditNodeCommentParams,
+    EditSubGraphNameParams,
+    EditSubGraphNodeCommentParams,
+    ExportGraphParams,
+    ExportSubGraphParams,
+    FileParamRef,
+    GenerateGraphNodeByNodesParams,
+    ImportExtensionNodesByPathParams,
+    LoadGraphParams,
+    NodeConnectionParams,
+    NodeBindingUpdate,
+    NodeParamUpdate,
+    NodeRef,
+    PointCloudRef,
+    PortRef,
+    RuntimeBindingDataUpdate,
+    RuntimeFrame,
+    RuntimePassiveBinoFrame,
+    RuntimeParamsUpdate,
+    RuntimeRunParams,
+    RuntimeStrategyParamsUpdate,
+    SetSubgraphAsCustomSubgraphParams,
+    SingleNodeParams,
+    SubGraphBindingUpdate,
+    SubGraphConnectionParams,
+    SubGraphCopyNodeParams,
+    SubGraphCreateNodeParams,
+    SubGraphNodeParamUpdate,
+    SubGraphNodeRef,
+    SubGraphPortRef,
+    SubGraphRef,
+)</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_명명_규칙"><a class="anchor" href="#_명명_규칙"></a>명명 규칙</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>매개변수 객체의 이름은 인터페이스 동사가 아닌 목적에 따라 지정됩니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 33.3333%;">
+<col style="width: 50.0001%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">접미사</th>
+<th class="tableblock halign-left valign-top">의미</th>
+<th class="tableblock halign-left valign-top">예</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Ref</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">은 기존 객체를 참조하며 리소스 찾기만 담당합니다.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeRef</code>、<code>PortRef</code>、<code>BindingRef</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Params</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">인터페이스 호출에 필요한 전체 입력 매개변수</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CreateNodeParams</code>、<code>RuntimeRunParams</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Update</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">기존 구성 또는 런타임 데이터 수정</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeParamUpdate</code>、<code>NodeBindingUpdate</code>、<code>RuntimeParamsUpdate</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>따라서 `NodeRef`과 같은 클래스 이름은 "노드를 가리킨다"를 의미하고, `NodeBindingUpdate`은 "노드 바인딩 업데이트"를 의미하며, `RuntimeParamsUpdate`는 "런타임 매개변수 업데이트"를 의미합니다. `Set&#8230;&#8203;Data`와 같은 이전 작업 이름은 더 이상 공개 클래스 이름으로 사용되지 않습니다.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_매개변수_객체를_사용하는_경우"><a class="anchor" href="#_매개변수_객체를_사용하는_경우"></a>매개변수 객체를 사용하는 경우</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 40%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">시나리오</th>
+<th class="tableblock halign-left valign-top">권장 작성 방법</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">메서드에는 `graph_name`과 같은 간단한 값만 있습니다.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">문자열을 직접 전달합니다(예: <code>client.graph.open_graph("demo")</code>).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">방법에는 여러 비즈니스 필드가 필요합니다.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">매개변수 객체 전달(예: <code>client.node.create_node(CreateNodeParams(&#8230;&#8203;))</code>)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">연결, 하위 그래프 위치 지정, 런타임 프레임 등 매개변수의 순서가 혼동되기 쉽습니다.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">은 먼저 매개변수 객체를 사용해야 합니다.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>메소드에 필요한 매개변수가 무엇인지 확실하지 않은 경우 먼저 해당 Service 페이지를 살펴보십시오.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="graph.html" class="xref page">GraphService</a></p>
+</li>
+<li>
+<p><a href="node.html" class="xref page">NodeService</a></p>
+</li>
+<li>
+<p><a href="graph_node.html" class="xref page">GraphNodeService</a></p>
+</li>
+<li>
+<p><a href="runtime.html" class="xref page">RuntimeService</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_graphservice_매개변수"><a class="anchor" href="#_graphservice_매개변수"></a>GraphService 매개변수</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_creategraphparams"><a class="anchor" href="#_creategraphparams"></a><code>CreateGraphParams</code></h3>
+<div class="paragraph">
+<p>`client.graph.create_graph(&#8230;&#8203;)`의 경우.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">새 이미지 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사진 비고, 선택 사항</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import CreateGraphParams
+
+result = client.graph.create_graph(CreateGraphParams("demo_graph", description="데모 다이어그램"))
+print("요청 상태：", result["status"])</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_copygraphparams"><a class="anchor" href="#_copygraphparams"></a><code>CopyGraphParams</code></h3>
+<div class="paragraph">
+<p>`client.graph.copy_graph(&#8230;&#8203;)`의 경우.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">소스 이미지 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>new_graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">복사 후 새 이미지의 이름</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import CopyGraphParams
+
+client.graph.copy_graph(CopyGraphParams("demo_graph", "demo_graph_backup"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_loadgraphparams"><a class="anchor" href="#_loadgraphparams"></a><code>LoadGraphParams</code></h3>
+<div class="paragraph">
+<p>`client.graph.load_graph(&#8230;&#8203;)`의 경우.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">가져오기 후 Atom에 사용되는 그림 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>file_path</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str | pathlib.Path</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">로컬 <code>.atom</code> 이미지 파일 경로</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from pathlib import Path
+from atom_sdk import LoadGraphParams
+
+result = client.graph.load_graph(LoadGraphParams("imported_graph", Path("/data/demo.atom")))
+print("요청 상태：", result["status"])</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_importextensionnodesbypathparams"><a class="anchor" href="#_importextensionnodesbypathparams"></a><code>ImportExtensionNodesByPathParams</code></h3>
+<div class="paragraph">
+<p><code>client.graph.import_extension_nodes_by_path(&#8230;&#8203;)`의 경우. 이 매개변수는 일반적으로
+`client.graph.load_graph(&#8230;&#8203;)</code> 값의 <code>extensionNodes</code> 필드를 반환합니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>extension_nodes</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>load_graph</code> 반환 값의 <code>extensionNodes</code> 필드</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import ImportExtensionNodesByPathParams
+
+load_result = client.graph.load_graph(LoadGraphParams("imported_graph", Path("/data/demo.atom")))
+extension_nodes = load_result.get("extensionNodes") or {}
+if extension_nodes:
+    client.graph.import_extension_nodes_by_path(
+        ImportExtensionNodesByPathParams(extension_nodes)
+    )</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_exportgraphparams"><a class="anchor" href="#_exportgraphparams"></a><code>ExportGraphParams</code></h3>
+<div class="paragraph">
+<p>`client.graph.export_graph(&#8230;&#8203;)`의 경우.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">내보낼 그래프의 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dl_models_info</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">내보낼 때 패키징해야 하는 모델 정보, 선택사항</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>custom_nodes</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">내보낼 때 패키징해야 하는 사용자 정의 노드 정보, 선택 사항</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import ExportGraphParams
+
+client.graph.export_graph(ExportGraphParams("demo_graph"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_editgraphnameparams"><a class="anchor" href="#_editgraphnameparams"></a><code>EditGraphNameParams</code></h3>
+<div class="paragraph">
+<p>`client.graph.edit_graph_name(&#8230;&#8203;)`의 경우.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">현재 이미지 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>new_graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정된 사진 이름</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_editgraphcommentparams"><a class="anchor" href="#_editgraphcommentparams"></a><code>EditGraphCommentParams</code></h3>
+<div class="paragraph">
+<p>`client.graph.edit_graph_comment(&#8230;&#8203;)`의 경우.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사진 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>comment</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">새 노트 콘텐츠</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_nodeservice_매개변수"><a class="anchor" href="#_nodeservice_매개변수"></a>NodeService 매개변수</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_noderef"><a class="anchor" href="#_noderef"></a><code>NodeRef</code></h3>
+<div class="paragraph">
+<p>"특정 그래프의 특정 노드"를 찾는 데 사용되는 기본 그래프 노드 참조입니다.</p>
+</div>
+<div class="paragraph">
+<p>용도:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>client.node.delete_node(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.node.get_node_params(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.node.get_node_info_in_graph(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.node.activate_node(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.node.initial_node(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.node.update_node(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.runtime.get_node_params_info_with_strategy(&#8230;&#8203;)</code></p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사진 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">노드 ID</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeRef
+
+client.node.activate_node(NodeRef("demo_graph", "node-001"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_createnodeparams"><a class="anchor" href="#_createnodeparams"></a><code>CreateNodeParams</code></h3>
+<div class="paragraph">
+<p>`client.node.create_node(&#8230;&#8203;)`의 경우.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">메인 이미지 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">서버가 인식하는 노드 클래스 이름 또는 노드 이름</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import CreateNodeParams
+
+result = client.node.create_node(
+    CreateNodeParams("demo_graph", "DetectAndSegment")
+)
+print("요청 상태：", result["status"])
+node_id = result["nodeId"]</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_createdynamicnodeparams"><a class="anchor" href="#_createdynamicnodeparams"></a><code>CreateDynamicNodeParams</code></h3>
+<div class="paragraph">
+<p>`client.node.create_dynamic_io_node(&#8230;&#8203;)`의 경우.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">메인 이미지 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">노드 클래스 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">동적 입력 및 출력 정의</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_changenodeioparams"><a class="anchor" href="#_changenodeioparams"></a><code>ChangeNodeIOParams</code></h3>
+<div class="paragraph">
+<p>`client.node.change_node_io(&#8230;&#8203;)`의 경우.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사진 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정할 노드 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">동적 입력 및 출력 정의 업데이트됨</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_creategraphnodeparams"><a class="anchor" href="#_creategraphnodeparams"></a><code>CreateGraphNodeParams</code></h3>
+<div class="paragraph">
+<p>`client.node.create_graph_node(&#8230;&#8203;)`의 경우.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">상위 이미지 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">새 graph node 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>sub_graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">랩핑할 하위 그래프의 이름</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_generategraphnodebynodesparams"><a class="anchor" href="#_generategraphnodebynodesparams"></a><code>GenerateGraphNodeByNodesParams</code></h3>
+<div class="paragraph">
+<p>`client.node.generate_graph_node_by_nodes(&#8230;&#8203;)`의 경우.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">상위 이미지 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">새 graph node 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_ids</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>list[str]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">하위 그래프 ID에 압축할 노드 목록</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_copynodeparams"><a class="anchor" href="#_copynodeparams"></a><code>CopyNodeParams</code></h3>
+<div class="paragraph">
+<p>`client.node.create_node_by_copy(&#8230;&#8203;)`의 경우.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">메인 이미지 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">복사 후 새 노드 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">복사할 대상 노드 ID</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_nodeconnectionparams"><a class="anchor" href="#_nodeconnectionparams"></a><code>NodeConnectionParams</code></h3>
+<div class="paragraph">
+<p><code>client.node.connect_nodes(&#8230;&#8203;)</code> 및 `client.node.disconnect_nodes(&#8230;&#8203;)`에 사용됩니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사진 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>output_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">소스 노드, 데이터를 생성하는 노드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>output_port_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">소스 노드 출력 포트 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>input_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">대상 노드, 데이터를 수신하는 노드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>input_port_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">대상 노드 입력 포트 이름</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>한 가지 규칙을 기억하세요. 데이터 흐름은 `output &#8594; input`입니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeConnectionParams
+
+client.node.connect_nodes(
+    NodeConnectionParams(
+        graph_name="demo_graph",
+        output_node_id="source_node",
+        output_port_name="image_out",
+        input_node_id="detect_node",
+        input_port_name="image_in",
+    )
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_portref"><a class="anchor" href="#_portref"></a><code>PortRef</code></h3>
+<div class="paragraph">
+<p>노드의 입력 또는 출력 포트를 읽는 데 사용되는 기본 그래프 노드 포트 참조입니다.</p>
+</div>
+<div class="paragraph">
+<p>용도:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>client.node.get_node_port_data(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.node.get_points_data(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.node.get_points_data_parsed(&#8230;&#8203;)</code></p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사진 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">노드 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>port_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">포트 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>io_type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">포트 방향, 일반적으로 <code>"inputs"</code> 또는 <code>"outputs"</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import PortRef
+
+port = PortRef("demo_graph", "detect_node", "result", "outputs")
+data = client.node.get_node_port_data(port)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_nodeparamupdate"><a class="anchor" href="#_nodeparamupdate"></a><code>NodeParamUpdate</code></h3>
+<div class="paragraph">
+<p>`client.node.set_node_param_data(&#8230;&#8203;)`의 경우.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사진 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">노드 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>param_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">파라미터 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>param_type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">매개변수 유형, 일반적으로 <code>"init_params"</code> 또는 <code>"run_params"</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">매개변수 값; `PathLike`인 경우 SDK가 자동으로 파일로 업로드됩니다.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from pathlib import Path
+from atom_sdk import NodeParamUpdate
+
+client.node.set_node_param_data(
+    NodeParamUpdate("demo_graph", "detect_node", "threshold", "run_params", 0.5)
+)
+
+client.node.set_node_param_data(
+    NodeParamUpdate("demo_graph", "detect_node", "model", "init_params", Path("/models/model.onnx"))
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_nodebindingupdate"><a class="anchor" href="#_nodebindingupdate"></a><code>NodeBindingUpdate</code></h3>
+<div class="paragraph">
+<p>`client.node.set_binding_name(&#8230;&#8203;)`의 경우.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사진 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">노드 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>binding_type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">바인딩 유형(예: <code>"inputs"</code>, <code>"outputs"</code>, <code>"init_params"</code>, <code>"run_params"</code>)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>origin_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">원래 포트 이름 또는 매개변수 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>binding_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">새 바인딩 이름. 빈 문자열을 전달하는 것은 일반적으로 바인딩을 취소하는 것을 의미합니다.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeBindingUpdate
+
+client.node.set_binding_name(
+    NodeBindingUpdate("demo_graph", "detect_node", "outputs", "result", "detect_result")
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_editnodecommentparams"><a class="anchor" href="#_editnodecommentparams"></a><code>EditNodeCommentParams</code></h3>
+<div class="paragraph">
+<p>`client.node.edit_node_comment(&#8230;&#8203;)`의 경우.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사진 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">노드 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>comment</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">새 노트 콘텐츠</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_singlenodeparams"><a class="anchor" href="#_singlenodeparams"></a><code>SingleNodeParams</code></h3>
+<div class="paragraph">
+<p><code>client.runtime.run_single_node_no_graph(&#8230;&#8203;)`의 경우
+및 `client.runtime.run_single_node_no_graph_parsed(&#8230;&#8203;)</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">노드 클래스 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>inputs</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">포트 값을 입력하세요. 공통 경로, 그림, PLY 포인트 클라우드, 숫자, 사전은 노드 입력 포트 유형에 따라 자동으로 처리됩니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>run_params</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">작동 매개변수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>init_params</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">초기화 매개변수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>output_data_types</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, str] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">출력 이름 value로 구문 분석할 `run_single_node_no_graph_parsed(&#8230;&#8203;)`에 대한 출력 포트 유형 매핑</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>output_point_dims</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, int] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">포인트 클라우드 출력 치수 프롬프트; 일반 <code>convertResponse</code> 출력은 일반적으로 자체 차원과 함께 제공되며 차원 헤더가 없는 포인트 클라우드 바이트만 필요합니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>input_data_types</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, str] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">입력 포트 유형 매핑입니다. 일반적으로 생략할 수 있습니다. SDK은 경로 또는 bytes 입력이 발생할 때 노드 이름으로 쿼리합니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>input_point_dims</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, int] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">포인트 클라우드 입력 차원 힌트; 일반적으로 입력 유형에서 자동으로 추론됩니다.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>RuntimeService은 노드 포트 유형에 따라 입력을 자동으로 처리하려고 시도합니다. 예를 들어, <code>File</code> 입력은 경로 문자열로 유지되고, <code>ColorImage</code> 경로는 base64 이미지 목록으로 변환되며, <code>XYZPoints`의 `.ply</code> 경로는 Atom 포인트 클라우드 바이너리로 변환됩니다.</p>
+</div>
+<div class="paragraph">
+<p><code>outputs</code> 및 key를 변경하지 않고 유지하고 포인트 클라우드 및 이미지와 같은 전송 형식만 구조화된 객체로 구문 분석하는 `run_single_node_no_graph_parsed(&#8230;&#8203;)`을 먼저 사용하는 것이 좋습니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from pathlib import Path
+from atom_sdk import SingleNodeParams
+
+result = client.runtime.run_single_node_no_graph_parsed(
+    SingleNodeParams(
+        node_name="EstimateNormal",
+        inputs={"points": Path("/data/scan.ply")},
+    )
+)
+
+clouds = result["outputs"]["points"]
+print(clouds[0].shape)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>서버의 원본 반환을 확인하려면 `run_single_node_no_graph(&#8230;&#8203;)`을 사용하세요.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SingleNodeParams
+
+raw_result = client.runtime.run_single_node_no_graph(
+    SingleNodeParams(
+        node_name="MathAddNode",
+        inputs={"a": 1.0, "b": 2.0},
+        run_params={"threshold": 0.5},
+        init_params={},
+    )
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>노드 정보를 자동으로 쿼리할 수 없는 경우 <code>input_data_types</code> 또는 `output_data_types`을 수동으로 단서로 전달할 수도 있습니다.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_graphnodeservice_매개변수"><a class="anchor" href="#_graphnodeservice_매개변수"></a>GraphNodeService 매개변수</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>`GraphNodeService`은 graph node 내부에서 하위 그래프를 작동하므로 이 매개변수 개체 세트에는 일반적으로 `graph_node_id`이 하나 더 있습니다.</p>
+</div>
+<div class="sect2">
+<h3 id="_subgraphref"><a class="anchor" href="#_subgraphref"></a><code>SubGraphRef</code></h3>
+<div class="paragraph">
+<p>"특정 상위 사진에서 graph node 내부 하위 사진"을 찾는 데 사용되는 하위 사진 참조입니다.</p>
+</div>
+<div class="paragraph">
+<p>용도:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>client.graph_node.open_graph(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.graph_node.run_graph(&#8230;&#8203;)</code></p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">상위 이미지 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">상위 그래프 graph node의  노드 ID</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_subgraphcreatenodeparams"><a class="anchor" href="#_subgraphcreatenodeparams"></a><code>SubGraphCreateNodeParams</code></h3>
+<div class="paragraph">
+<p>`client.graph_node.create_node(&#8230;&#8203;)`의 경우.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">상위 이미지 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node 노드 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">생성할 노드 클래스 이름</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_createdynamicsubgraphnodeparams"><a class="anchor" href="#_createdynamicsubgraphnodeparams"></a><code>CreateDynamicSubGraphNodeParams</code></h3>
+<div class="paragraph">
+<p>`client.graph_node.create_dynamic_io_node(&#8230;&#8203;)`의 경우.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">상위 이미지 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node 노드 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">생성할 노드 클래스 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">동적 입력 및 출력 정의</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_subgraphcopynodeparams"><a class="anchor" href="#_subgraphcopynodeparams"></a><code>SubGraphCopyNodeParams</code></h3>
+<div class="paragraph">
+<p>`client.graph_node.create_node_by_copy(&#8230;&#8203;)`의 경우.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">상위 이미지 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node 노드 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">복사 후 새 노드 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">복사할 대상 노드 ID</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_changesubgraphnodeioparams"><a class="anchor" href="#_changesubgraphnodeioparams"></a><code>ChangeSubGraphNodeIOParams</code></h3>
+<div class="paragraph">
+<p>`client.graph_node.change_node_io(&#8230;&#8203;)`의 경우.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">상위 이미지 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node 노드 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">하위 그래프의 노드 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">동적 입력 및 출력 정의 업데이트됨</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_subgraphnoderef"><a class="anchor" href="#_subgraphnoderef"></a><code>SubGraphNodeRef</code></h3>
+<div class="paragraph">
+<p>"graph node 내부 하위 그래프의 노드"를 찾는 데 사용되는 하위 그래프 내의 노드 참조입니다.</p>
+</div>
+<div class="paragraph">
+<p>용도:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>client.graph_node.delete_node(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.graph_node.get_node_params(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.graph_node.get_node_info_in_graph(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.graph_node.activate_node(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.graph_node.initial_node(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.graph_node.update_node(&#8230;&#8203;)</code></p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">상위 이미지 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node 노드 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">하위 그래프의 노드 ID</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_subgraphconnectionparams"><a class="anchor" href="#_subgraphconnectionparams"></a><code>SubGraphConnectionParams</code></h3>
+<div class="paragraph">
+<p><code>client.graph_node.connect_nodes(&#8230;&#8203;)</code> 및 `client.graph_node.disconnect_nodes(&#8230;&#8203;)`에 사용됩니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">상위 이미지 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node 노드 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>output_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">하위 그래프의 내부 소스 노드는 데이터를 생성하는 노드입니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>output_port_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">소스 노드 출력 포트 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>input_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">하위 그래프의 대상 노드는 데이터를 수신하는 노드입니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>input_port_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">대상 노드 입력 포트 이름</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SubGraphConnectionParams
+
+client.graph_node.connect_nodes(
+    SubGraphConnectionParams(
+        "demo_graph",
+        "graph_node_id",
+        "source_sub_node",
+        "image_out",
+        "target_sub_node",
+        "image_in",
+    )
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_subgraphportref"><a class="anchor" href="#_subgraphportref"></a><code>SubGraphPortRef</code></h3>
+<div class="paragraph">
+<p>하위 그래프 내의 노드 포트 참조입니다.</p>
+</div>
+<div class="paragraph">
+<p>용도:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>client.graph_node.get_node_port_data(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.graph_node.get_points_data(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.graph_node.get_points_data_parsed(&#8230;&#8203;)</code></p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">상위 이미지 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node 노드 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">하위 그래프의 노드 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>port_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">포트 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>io_type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">포트 방향, 일반적으로 <code>"inputs"</code> 또는 <code>"outputs"</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_subgraphnodeparamupdate"><a class="anchor" href="#_subgraphnodeparamupdate"></a><code>SubGraphNodeParamUpdate</code></h3>
+<div class="paragraph">
+<p>`client.graph_node.set_node_param_data(&#8230;&#8203;)`의 경우.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">상위 이미지 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node 노드 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">하위 그래프의 노드 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>param_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">파라미터 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>param_type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">매개변수 유형, 일반적으로 <code>"init_params"</code> 또는 <code>"run_params"</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">매개변수 값; `PathLike`인 경우 SDK가 자동으로 파일로 업로드됩니다.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_subgraphbindingupdate"><a class="anchor" href="#_subgraphbindingupdate"></a><code>SubGraphBindingUpdate</code></h3>
+<div class="paragraph">
+<p>`client.graph_node.set_binding_name(&#8230;&#8203;)`의 경우.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">상위 이미지 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node 노드 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">하위 그래프의 노드 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>binding_type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">바인딩 유형</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>origin_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">원래 포트 이름 또는 매개변수 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>binding_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">새 바인딩 이름. 빈 문자열을 전달하는 것은 일반적으로 바인딩을 취소하는 것을 의미합니다.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_editsubgraphnameparams"><a class="anchor" href="#_editsubgraphnameparams"></a><code>EditSubGraphNameParams</code></h3>
+<div class="paragraph">
+<p>`client.graph_node.edit_graph_name(&#8230;&#8203;)`의 경우.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">상위 이미지 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node 노드 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>new_sub_graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정된 하위 사진 이름</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_exportsubgraphparams"><a class="anchor" href="#_exportsubgraphparams"></a><code>ExportSubGraphParams</code></h3>
+<div class="paragraph">
+<p>`client.graph_node.export_graph(&#8230;&#8203;)`의 경우.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">상위 이미지 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node 노드 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dl_models_info</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">선택적으로 패키징해야 하는 모델 정보</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>custom_nodes</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">패키징해야 하는 선택적 사용자 정의 노드 정보</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_setsubgraphascustomsubgraphparams"><a class="anchor" href="#_setsubgraphascustomsubgraphparams"></a><code>SetSubgraphAsCustomSubgraphParams</code></h3>
+<div class="paragraph">
+<p>`client.graph_node.set_subgraph_as_custom_subgraph(&#8230;&#8203;)`의 경우.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">상위 이미지 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node 노드 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>custom_subgraph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">내보낸 사용자 정의 하위 그래프 템플릿 이름</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_editsubgraphnodecommentparams"><a class="anchor" href="#_editsubgraphnodecommentparams"></a><code>EditSubGraphNodeCommentParams</code></h3>
+<div class="paragraph">
+<p>`client.graph_node.edit_node_comment(&#8230;&#8203;)`의 경우.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">상위 이미지 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node 노드 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">하위 그래프의 노드 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>comment</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">새 노트 콘텐츠</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_runtimeservice_매개변수"><a class="anchor" href="#_runtimeservice_매개변수"></a>RuntimeService 매개변수</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_runtimeparamsupdate"><a class="anchor" href="#_runtimeparamsupdate"></a><code>RuntimeParamsUpdate</code></h3>
+<div class="paragraph">
+<p><code>client.runtime.set_shared_params(&#8230;&#8203;)</code> 및 `client.runtime.set_run_params(&#8230;&#8203;)`에 사용됩니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사진 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>params_data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">- key이라는 매개변수 사전을 바인딩합니다.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import RuntimeParamsUpdate
+
+client.runtime.set_run_params(
+    RuntimeParamsUpdate("demo_graph", {"threshold": 0.5})
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_rungraph_두_가지_입력_모드"><a class="anchor" href="#_rungraph_두_가지_입력_모드"></a>RunGraph 두 가지 입력 모드</h3>
+<div class="paragraph">
+<p>`RuntimeRunParams`은 사진 속 `EpicProInput`의 구성에 따라 두 가지 모드로 구분됩니다. 두 모드의 입력 구조는 다르므로 혼합할 수 없습니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 42.8571%;">
+<col style="width: 28.5715%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">모드</th>
+<th class="tableblock halign-left valign-top"><code>run_mode</code></th>
+<th class="tableblock halign-left valign-top">무엇을 전송해야 하는가</th>
+<th class="tableblock halign-left valign-top">시나리오에 적합</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">일반 모드</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"others"</code> 또는 통과하지 못함</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">하나 이상의 <code>RuntimeFrame</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">이미지는 일반 이미지 + 포인트 클라우드 입력으로 실행됩니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">패시브 쌍안경 모드</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"passive_bino"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">a <code>RuntimePassiveBinoFrame</code>, <code>RuntimeRunParams.passive_bino_from_file(&#8230;&#8203;)</code> 또는 <code>passive_bino_from_images(&#8230;&#8203;)</code> 구성을 사용하는 것이 좋습니다.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사진의 `EpicProInput`은 `passive_bino`로 구성되어 있으며 입력은 EPICRAW3의 복사본입니다.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>일반 모드는 EPICRAW 및 `cam2_base`의 인코딩된 복사본을 전달하며, 이는 이미지, 포인트 클라우드 및 카메라 매개변수에서 SDK에 의해 생성될 수도 있습니다. 수동 쌍안경 모드는 EPICRAW3 및 `cam2_base`만 통과합니다. 세 개의 이미지, 내부 매개변수, 왜곡 및 `passive_bino_params`가 EPICRAW3에서 구문 분석됩니다.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_runtimeframe"><a class="anchor" href="#_runtimeframe"></a><code>RuntimeFrame</code></h3>
+<div class="paragraph">
+<p>일반 모드에서 런타임 시 단일 프레임 입력, <code>run_mode="others"</code> 또는 `run_mode`이 생략된 경우에만 사용됩니다. 세 개의 공장 입구를 이용하십시오:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>RuntimeFrame.from_file(&#8230;&#8203;)</code>: 기존 EPICRAW 파일을 읽습니다.</p>
+</li>
+<li>
+<p><code>RuntimeFrame.from_bytes(&#8230;&#8203;)</code>: 기존 EPICRAW bytes를 수신합니다.</p>
+</li>
+<li>
+<p><code>RuntimeFrame.from_data(&#8230;&#8203;)</code>: NumPy 이미지, 포인트 클라우드 및 카메라 매개변수에서 EPICRAW를 생성합니다.</p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>epicraw</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">전체 EPICRAW 원시 바이트 또는 `bytes()`로 변환 가능한 객체</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cam2_base</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">카메라를 기본 좌표계로 변환, 회전 벡터 형식, 길이가 6인 <code>[x, y, z, rx, ry, rz]</code>(변환 + Rodrigues 회전 벡터); 서버는 현재 이 형식만 지원하며 행렬은 지원하지 않습니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>roi</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">관심 영역, 선택 사항. 그 중 `cam2ROIFrame`도 길이가 6인 회전 벡터 형식만 지원합니다.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>from_data(&#8230;&#8203;)`은 일반 `intrinsic</code> / <code>distortion`만 있는 경우 자동으로 EPICRAW2를 선택합니다. EPICRAW3은 `camera_params`에 `TextureSrc</code>, <code>DepthSrc1</code> 또는 <code>DepthSrc2`과 같은 확장 매개변수가 포함된 경우 자동으로 선택됩니다. `version=2</code> 또는 `version=3`을 명시적으로 전달하면 자동 선택이 무시될 수 있습니다. 일반 모드의 EPICRAW3 표준 레이아웃에는 `Depth + TextureBGR`만 포함됩니다. Depth은 포인트 클라우드 Z 값에서 생성되며 전체 PointCloud를 포함하지 않습니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import numpy as np
+from atom_sdk import RuntimeFrame
+
+image = np.zeros((2, 3, 3), dtype=np.uint8)
+points = np.zeros((2, 3, 3), dtype=np.float32)
+points[:, :, 2] = 1.0
+
+frame = RuntimeFrame.from_data(
+    points=points,
+    image=image,
+    intrinsic=[[600.0, 0.0, 320.0], [0.0, 600.0, 240.0], [0.0, 0.0, 1.0]],
+    distortion=[0.0, 0.0, 0.0, 0.0, 0.0],
+    cam2_base=[0.0, 0.0, 0.5, 0.0, 0.0, 0.0],  # 벡터 형태 회전：[x, y, z, rx, ry, rz]
+    roi={"min": {"x": -0.5, "y": -0.5, "z": 0.1}, "max": {"x": 0.5, "y": 0.5, "z": 2.0}},
+    camera_params={
+        "TextureSrc": {
+            "CameraMatrix": [600.0, 0.0, 320.0, 0.0, 600.0, 240.0, 0.0, 0.0, 1.0],
+            "CameraDistortion": [0.0, 0.0, 0.0, 0.0, 0.0],
+            "CameraRotation": [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0],
+            "CameraTranslation": [0.0, 0.0, 0.0],
+        }
+    },
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_runtimepassivebinoframe"><a class="anchor" href="#_runtimepassivebinoframe"></a><code>RuntimePassiveBinoFrame</code></h3>
+<div class="paragraph">
+<p>수동 쌍안 모드의 단일 프레임 입력, `run_mode="passive_bino"`에만 해당됩니다. 서버는 EPICRAW3에서 세 가지 이미지, 내부 매개변수, 왜곡 및 `passive_bino_params`를 구문 분석합니다. SDK는 `cam2_base`만 추가로 통과합니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>epicraw3</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">전체 EPICRAW3 원시 바이트 또는 `bytes()`로 변환 가능한 객체</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cam2_base</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">카메라를 기본 좌표계로 변환, 회전 벡터 형식, 길이가 6인 <code>[x, y, z, rx, ry, rz]</code>(변환 + Rodrigues 회전 벡터); 서버는 현재 이 형식만 지원하며 행렬은 지원하지 않습니다.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import RuntimePassiveBinoFrame
+
+frame = RuntimePassiveBinoFrame.from_file(
+    "/data/passive_bino.epicraw",
+    cam2_base=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>기존 bytes 또는 세 개의 그림으로 구성할 수도 있습니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">frame = RuntimePassiveBinoFrame.from_bytes(
+    epicraw3_bytes,
+    cam2_base=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+)
+
+camera_params = {
+    "CameraMatrix": [2113.997971632298, 0.0, 1956.222038925553, 0.0, 2113.7299751270057, 1505.0473199581195, 0.0, 0.0, 1.0],
+    "CameraDistortion": [0.049901632334, -0.037810281265, -0.00048319461, -0.000276258172, -0.026886293015],
+    "CameraRotation": [0.9995132330503337, -0.005059159488191983, -0.030784766728731865, 0.004951704878090689, 0.9999813828533568, -0.003565748937897527, 0.030802233296787017, 0.003411576169582241, 0.999519676430619],
+    "CameraTranslation": [-25.837377992238334, -0.6852264771262435, -4.372034519324568],
+}
+
+frame = RuntimePassiveBinoFrame.from_images(
+    image_list=[depth_src1, depth_src2, texture_bgr],
+    params={
+        "DepthSrc1": camera_params,
+        "DepthSrc2": camera_params,
+        "TextureSrc": camera_params,
+    },
+    cam2_base=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_runtimerunparams"><a class="anchor" href="#_runtimerunparams"></a><code>RuntimeRunParams</code></h3>
+<div class="paragraph">
+<p>`client.runtime.run_graph(&#8230;&#8203;)`의 경우.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사진 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>frames</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>list[RuntimeFrame]</code> 또는 <code>list[RuntimePassiveBinoFrame]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">입력 프레임 목록</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>run_mode</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">기본값 <code>"others"</code>; 수동 쌍안 전송 <code>"passive_bino"</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>RuntimeRunParams`은 `frames`의 요소 유형을 확인합니다. 일반 모드는 `RuntimeFrame`를 통과해야 합니다. `passive_bino</code> 모드는 하나의 `RuntimePassiveBinoFrame`만 통과해야 합니다. 일반 `dict`가 전달되면 `TypeError`이 직접 발생하므로 매개변수 형식 오류를 최대한 빨리 발견할 수 있습니다.</p>
+</div>
+<div class="paragraph">
+<p>일반 모드 예:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import RuntimeRunParams
+
+result = client.runtime.run_graph(
+    RuntimeRunParams("demo_graph", frames=[frame])
+)
+print("요청 상태：", result["status"])</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>`passive_bino`은 `run_mode`을 잊어버리지 않도록 팩토리 메소드를 사용할 것을 권장합니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">params = RuntimeRunParams.passive_bino_from_file(
+    "demo_graph",
+    "/data/passive_bino.epicraw",
+    cam2_base=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+)
+
+params = RuntimeRunParams.passive_bino_from_images(
+    "demo_graph",
+    image_list=[depth_src1, depth_src2, texture_bgr],
+    params=passive_bino_params,
+    cam2_base=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>`passive_bino_from_image(&#8230;&#8203;)`은 `passive_bino_from_images(&#8230;&#8203;)`와 매개변수 및 반환 값이 같은 호환 별칭입니다. 새 코드는 복수형 메소드를 사용하는 것이 좋습니다.</p>
+</div>
+<div class="paragraph">
+<p>수동 쌍안 모드에는 일반 <code>RuntimeFrame`을 사용하지 마십시오. `RuntimePassiveBinoFrame</code> 또는 <code>RuntimeRunParams.passive_bino_*</code> 공장 항목을 사용하십시오.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_bindingref"><a class="anchor" href="#_bindingref"></a><code>BindingRef</code></h3>
+<div class="paragraph">
+<p>런타임 시 출력 바인딩 참조입니다.</p>
+</div>
+<div class="paragraph">
+<p>용도:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>client.runtime.get_binded_output_value(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.runtime.get_binded_point_cloud(&#8230;&#8203;)</code></p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사진 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>binding_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">출력 바인딩 이름</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_pointcloudref"><a class="anchor" href="#_pointcloudref"></a><code>PointCloudRef</code></h3>
+<div class="paragraph">
+<p>런타임 포인트 클라우드 출력 바인딩 참조입니다.</p>
+</div>
+<div class="paragraph">
+<p>`client.runtime.get_binded_point_cloud_parsed(&#8230;&#8203;)`의 경우.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사진 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>binding_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">출력 바인딩 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>point_dim</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">각 포인트의 크기, 공통값은 <code>3</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>런타임 포인트 클라우드 응답 헤더에는 반드시 각 포인트의 치수가 포함될 필요는 없습니다. 2차원 포인트 테이블을 직접 얻고 싶을 때에는 `point_dim=3`을 전달하는 것이 좋습니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import PointCloudRef
+
+clouds = client.runtime.get_binded_point_cloud_parsed(
+    PointCloudRef("demo_graph", "cloud_output", point_dim=3)
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_runtimebindingdataupdate"><a class="anchor" href="#_runtimebindingdataupdate"></a><code>RuntimeBindingDataUpdate</code></h3>
+<div class="paragraph">
+<p>`client.runtime.set_graph_binding_data(&#8230;&#8203;)`의 경우.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사진 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>binding_data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">바인딩 이름이 key인 바인딩 데이터 사전에</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_runtimestrategyparamsupdate"><a class="anchor" href="#_runtimestrategyparamsupdate"></a><code>RuntimeStrategyParamsUpdate</code></h3>
+<div class="paragraph">
+<p>`client.runtime.set_params_in_strategy(&#8230;&#8203;)`의 경우.</p>
+</div>
+<div class="paragraph">
+<p>현재는 <code>PoseListFilter</code>, <code>PickPointFilter</code>, <code>PoseListSorterInXOY`에만 사용할 수 있습니다.
+노드에는 `PickPointSorterInXOY</code>, <code>PickPointSorterNew</code>, `PoseListSorter`의 6가지 유형이 있습니다.</p>
+</div>
+<div class="paragraph">
+<p>`params_data`는 일반적으로 `client.runtime.get_node_params_info_with_strategy(&#8230;&#8203;)`에서 시작됩니다.
+반환값에 `paramsData`을 빼고, 업데이트가 필요한 필드를 수정한 후 전체적으로 반환합니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사진 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">노드 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>params_data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">서버에서 반환된 `paramsData`에서 수정된 전체 매개변수 구조</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_fileparamref"><a class="anchor" href="#_fileparamref"></a><code>FileParamRef</code></h3>
+<div class="paragraph">
+<p>`client.runtime.get_file_param_md5(&#8230;&#8203;)`의 경우.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사진 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>param_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">매개변수 바인딩 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>param_type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">매개변수 유형, 기본값 <code>"init_params"</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_실수가_가장_많이_일어나는_곳"><a class="anchor" href="#_실수가_가장_많이_일어나는_곳"></a>실수가 가장 많이 일어나는 곳</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_연결_방향"><a class="anchor" href="#_연결_방향"></a>연결 방향</h3>
+<div class="paragraph">
+<p>기본 및 하위 그림 연결은 동일한 방향을 따릅니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">output_node.output_port -&gt; input_node.input_port</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>즉, 다음과 같습니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>output_node_id</code> / `output_port_name`은 데이터 소스입니다.</p>
+</li>
+<li>
+<p><code>input_node_id</code> / `input_port_name`은 데이터 수신기입니다.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_기본_그래프_노드와_하위_그래프_노드를_혼합하지_마세요"><a class="anchor" href="#_기본_그래프_노드와_하위_그래프_노드를_혼합하지_마세요"></a>기본 그래프 노드와 하위 그래프 노드를 혼합하지 마세요.</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">주 사진 매개변수 객체</th>
+<th class="tableblock halign-left valign-top">하위 사진 매개변수 객체</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeRef</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SubGraphNodeRef</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeConnectionParams</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SubGraphConnectionParams</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>PortRef</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SubGraphPortRef</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeParamUpdate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SubGraphNodeParamUpdate</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeBindingUpdate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SubGraphBindingUpdate</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>메소드 항목이 <code>client.graph_node`인 경우 일반적으로 `SubGraph*</code> 매개변수 개체가 사용됩니다.</p>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="overview.html">Python 개요 및 설치</a></span>
+  <span class="next"><a href="public_api.html">Python 공용 유틸리티 API</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

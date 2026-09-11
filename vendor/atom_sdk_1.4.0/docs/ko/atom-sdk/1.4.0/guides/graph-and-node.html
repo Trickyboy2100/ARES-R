@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>그래프 및 노드 작업 :: Atom SDK 개발자 가이드</title>
+    <link rel="prev" href="how-to-choose-service.html">
+    <link rel="next" href="error-handling.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          온라인 제품 문서
+                  </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="문서 검색"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              이 매뉴얼만
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            매뉴얼 전환
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK 개발자 가이드</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          다운로드 센터
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          공식 웹사이트
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            한국어
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK 개발자 가이드</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">환영합니다</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">빠른 시작</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">빠른 시작</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">샘플 샘플</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">입문 사용</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK 입문 사용</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">사용자 가이드</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="how-to-choose-service.html">적절한 Service을 선택합니다.</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="graph-and-node.html">그래프 및 노드 작업</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="error-handling.html">오류 처리 및 문제 해결</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="faq.html">FAQ</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">기본 개념</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/what-is-atom-sdk.html">Atom SDK 란 무엇입니까?</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-node-subgraph.html">그래프, 노드, 하위 그래프</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-vs-runtime.html">Graph과 Runtime의 차이점</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/timestamp.html">Timestamp이 무엇인가요?</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/runtime-frame.html">런타임 입력 프레임(RuntimeFrame / RuntimePassiveBinoFrame)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/point-cloud-protocol.html">포인트 클라우드 유형 입출력을 위한 바이너리 프로토콜</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/param-binding.html">매개변수 유형 및 바인딩 이름</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API 참조</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API 참조 개요</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python 개요 및 설치</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/params.html">Python 매개변수 객체</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/public_api.html">Python 공용 유틸리티 API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ 버전 — 사용자 가이드</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ 매개변수 객체</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">Atom SDK — C# 버전</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/params.html">C# 매개변수 객체</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK 개발자 가이드</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK 개발자 가이드</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK 개발자 가이드</a></li>
+    <li>사용자 가이드</li>
+    <li><a href="graph-and-node.html">그래프 및 노드 작업</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="이 페이지의 내용"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">그래프 및 노드 작업</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>이 페이지에서는 SDK을 사용하여 메인 그래프, 메인 그래프 노드 및 하위 그래프 노드를 작동하는 방법을 소개합니다.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>어떤 Service을 사용해야 할지 모르시나요? 먼저 <a href="how-to-choose-service.html" class="xref page">적절한 Service을 선택합니다.</a>을 살펴보겠습니다.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_사진_만들기_및_편집"><a class="anchor" href="#_사진_만들기_및_편집"></a>사진 만들기 및 편집</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_완전한_과정"><a class="anchor" href="#_완전한_과정"></a>완전한 과정</h3>
+<div class="listingblock">
+<div class="content">
+<pre>create_graph()          ← 다이어그램 만들기
+    ↓
+open_graph()            ← 편집 모드로 열기（받기 timestamp）
+    ↓
+create_node()           ← 노드 생성
+    ↓
+get_node_info_in_graph()  ← 매개변수 정의 보기
+    ↓
+set_node_param_data()   ← 매개변수 설정（선택사항：파일 업로드）
+    ↓
+initial_node()          ← 노드 초기화（로드 init_params）
+    ↓
+connect_nodes()         ← 노드 연결（노드가 여러 개인 경우）
+    ↓
+run_graph() / activate_node()  ← 달리다</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_메인_사진_작업"><a class="anchor" href="#_메인_사진_작업"></a>메인 사진 작업</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>메인 그래프는 `GraphService`을 통해 관리되는 최상위 그래프 구조입니다.</p>
+</div>
+<div class="sect2">
+<h3 id="_다이어그램_만들기_및_열기"><a class="anchor" href="#_다이어그램_만들기_및_열기"></a>다이어그램 만들기 및 열기</h3>
+<div class="sect3">
+<h4 id="_python"><a class="anchor" href="#_python"></a>Python</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import AtomClient, CreateGraphParams
+
+client = AtomClient(base_url="http://127.0.0.1:10026")
+
+created = client.graph.create_graph(CreateGraphParams("my_graph", description="예시 다이어그램"))
+print("그래프 요청 상태 생성：", created["status"])
+result = client.graph.open_graph("my_graph")
+print("처음으로 오픈：", result["firstOpen"])</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_c"><a class="anchor" href="#_c"></a>C++</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+using namespace atom::sdk;
+
+AtomClient client("http://127.0.0.1:10026");
+
+auto created = client.graph().create_graph({"my_graph", "예시 다이어그램"});
+std::cout &lt;&lt; "그래프 요청 상태 생성：" &lt;&lt; created.at("status").get&lt;std::int64_t&gt;() &lt;&lt; "\n";
+auto result = client.graph().open_graph("my_graph");
+// result["firstOpen"] 에 대한 true 처음으로 열리는 것을 나타냅니다.</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_c_2"><a class="anchor" href="#_c_2"></a>C#</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using AtomSdk;
+
+var client = new AtomClient("http://127.0.0.1:10026");
+
+var created = await client.Graph.CreateGraphInfoAsync(
+    new CreateGraphParams("my_graph", "예시 다이어그램"));
+Console.WriteLine($"그래프 요청 상태 생성：{created.Status}");
+var result = await client.Graph.OpenGraphInfoAsync("my_graph");
+Console.WriteLine($"처음으로 오픈：{result.FirstOpen}");</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_그래프를_실행하고_정리하세요"><a class="anchor" href="#_그래프를_실행하고_정리하세요"></a>그래프를 실행하고 정리하세요.</h3>
+<div class="sect3">
+<h4 id="_python_2"><a class="anchor" href="#_python_2"></a>Python</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">result = client.graph.run_graph("my_graph")
+print("요청 상태：", result["status"])
+print("완료：", result["finish"], "시간이 많이 걸린다：", result["total_time"], "ms")
+
+client.graph.release_graph("my_graph")</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_c_3"><a class="anchor" href="#_c_3"></a>C++</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto result = client.graph().run_graph("my_graph");
+std::cout &lt;&lt; "요청 상태：" &lt;&lt; result.at("status").get&lt;std::int64_t&gt;() &lt;&lt; "\n";
+std::cout &lt;&lt; "완료：" &lt;&lt; result["finish"]
+          &lt;&lt; " 시간이 많이 걸린다：" &lt;&lt; result["total_time"] &lt;&lt; "ms\n";
+
+client.graph().release_graph("my_graph");</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_c_4"><a class="anchor" href="#_c_4"></a>C#</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var result = await client.Graph.RunGraphResultAsync("my_graph");
+Console.WriteLine($"요청 상태：{result.Status}");
+Console.WriteLine($"완료：{result.Finish}，시간이 많이 걸린다：{result.TotalTime}ms");
+
+await client.Graph.ReleaseGraphAsync("my_graph");</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_그래프_바인딩_보기"><a class="anchor" href="#_그래프_바인딩_보기"></a>그래프 바인딩 보기</h3>
+<div class="paragraph">
+<p>그래프를 실행한 후 그래프에 노출된 입력/출력 바인딩을 확인할 수 있습니다.</p>
+</div>
+<div class="sect3">
+<h4 id="_python_3"><a class="anchor" href="#_python_3"></a>Python</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">bindings = client.graph.get_graph_bindings("my_graph")
+for b in bindings.get("outputs", []):
+    print("출력 바인딩：", b["bindingName"])</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_c_5"><a class="anchor" href="#_c_5"></a>C++</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto bindings = client.graph().get_graph_bindings("my_graph");
+for (const auto&amp; b : bindings["outputs"]) {
+    std::cout &lt;&lt; "출력 바인딩：" &lt;&lt; b["bindingName"] &lt;&lt; "\n";
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_c_6"><a class="anchor" href="#_c_6"></a>C#</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var bindings = await client.Graph.GetGraphBindingsInfoAsync("my_graph");
+foreach (var b in bindings.Outputs)
+    Console.WriteLine($"출력 바인딩：{b.BindingName}");</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_기본_그래프_노드_작업"><a class="anchor" href="#_기본_그래프_노드_작업"></a>기본 그래프 노드 작업</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>`NodeService`을 통해 메인 그래프의 노드를 동작시킵니다.</p>
+</div>
+<div class="sect2">
+<h3 id="_노드_생성_및_매개변수_설정"><a class="anchor" href="#_노드_생성_및_매개변수_설정"></a>노드 생성 및 매개변수 설정</h3>
+<div class="paragraph">
+<p><strong>단계</strong>: 먼저 노드를 생성하고 `nodeId`을 가져온 다음 매개변수 정의를 확인한 다음 실제 매개변수 이름에 따라 값을 설정합니다.</p>
+</div>
+<div class="sect3">
+<h4 id="_python_4"><a class="anchor" href="#_python_4"></a>Python</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import CreateNodeParams, NodeParamUpdate, NodeRef
+
+# 노드 생성
+result = client.node.create_node(CreateNodeParams("my_graph", "FilterNode"))
+print("노드 요청 상태 생성：", result["status"])
+node_id = result["nodeId"]
+
+# 매개변수 정의 확인（먼저 확인해 보시는 것이 좋습니다，다시 쓰기）
+info = client.node.get_node_info_in_graph(NodeRef("my_graph", node_id))
+print("사용 가능한 매개변수：", [p["name"] for p in info["nodeInfo"].get("runParams", [])])
+
+# 작동 매개변수 설정
+client.node.set_node_param_data(
+    NodeParamUpdate("my_graph", node_id, "threshold", "run_params", 0.7)
+)
+
+# 모델 파일 업로드（init_params）
+from pathlib import Path
+client.node.set_node_param_data(
+    NodeParamUpdate("my_graph", node_id, "model", "init_params",
+                    Path("/path/to/model.bin"))
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_c_7"><a class="anchor" href="#_c_7"></a>C++</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">// 노드 생성
+auto result = client.node().create_node({"my_graph", "FilterNode"});
+std::cout &lt;&lt; "노드 요청 상태 생성：" &lt;&lt; result.at("status").get&lt;std::int64_t&gt;() &lt;&lt; "\n";
+std::string node_id = result.at("nodeId").get&lt;std::string&gt;();
+
+// 매개변수 정의 확인
+auto info = client.node().get_node_info_in_graph({"my_graph", node_id});
+for (const auto&amp; p : info.at("nodeInfo").at("runParams")) {
+    std::cout &lt;&lt; "매개변수：" &lt;&lt; p.at("name").get&lt;std::string&gt;() &lt;&lt; "\n";
+}
+
+// 작동 매개변수 설정
+client.node().set_node_param_data(
+    {"my_graph", node_id, "threshold", "run_params", atom::sdk::JsonValue(0.7)});
+
+// 모델 파일 업로드
+client.node().set_node_param_data(
+    {"my_graph", node_id, "model", "init_params",
+     std::filesystem::path("/path/to/model.bin")});</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_c_8"><a class="anchor" href="#_c_8"></a>C#</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 노드 생성
+var info = await client.Node.CreateNodeInfoAsync(
+    new CreateNodeParams("my_graph", "FilterNode"));
+Console.WriteLine($"노드 요청 상태 생성：{info.Status}");
+string nodeId = info.NodeId;
+
+// 매개변수 정의 확인
+var nodeInfo = await client.Node.GetNodeInfoInGraphModelAsync(
+    new NodeRef("my_graph", nodeId));
+
+// 작동 매개변수 설정
+await client.Node.SetNodeParamDataAsync(
+    new NodeParamUpdate("my_graph", nodeId, "threshold", "run_params", 0.7));
+
+// 모델 파일 업로드
+await client.Node.SetNodeParamDataAsync(
+    new NodeParamUpdate("my_graph", nodeId, "model", "init_params",
+        new FileInfo("/path/to/model.bin")));</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_노드_연결"><a class="anchor" href="#_노드_연결"></a>노드 연결</h3>
+<div class="paragraph">
+<p>데이터는 `output_node`의 `output_port`에서 `input_node`의 `input_port`로 흐릅니다.</p>
+</div>
+<div class="sect3">
+<h4 id="_python_5"><a class="anchor" href="#_python_5"></a>Python</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeConnectionParams
+
+client.node.connect_nodes(
+    NodeConnectionParams(
+        "my_graph",
+        output_node_id=node_a_id,  # 데이터를 출력하는 노드
+        output_port_name="result",
+        input_node_id=node_b_id,   # 데이터를 수신하는 노드
+        input_port_name="input",
+    )
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_c_9"><a class="anchor" href="#_c_9"></a>C++</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">client.node().connect_nodes(
+    {"my_graph",
+     node_a_id, "result",  // 출력 데이터
+     node_b_id, "input"}); // 데이터를 수신하다</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_c_10"><a class="anchor" href="#_c_10"></a>C#</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">await client.Node.ConnectNodesAsync(
+    new NodeConnectionParams(
+        "my_graph",
+        nodeAId, "result", // 출력 데이터
+        nodeBId, "input")); // 데이터를 수신하다</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_노드를_활성화하고_출력을_읽습니다"><a class="anchor" href="#_노드를_활성화하고_출력을_읽습니다"></a>노드를 활성화하고 출력을 읽습니다.</h3>
+<div class="sect3">
+<h4 id="_python_6"><a class="anchor" href="#_python_6"></a>Python</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import numpy as np
+from atom_sdk import NodeRef, PortRef
+
+# 노드 초기화（로드 init_params 자원）
+client.node.initial_node(NodeRef("my_graph", node_id))
+
+# 노드 및 다운스트림 활성화
+result = client.node.activate_node(NodeRef("my_graph", node_id))
+print("완료：", result["finish"])
+
+# 읽다 JSON 유형 포트 출력
+data = client.node.get_node_port_data(PortRef("my_graph", node_id, "result", "outputs"))
+print(data)
+
+# 포인트 클라우드 유형 포트 출력 읽기
+raw = client.node.get_points_data(PortRef("my_graph", node_id, "points", "outputs"))
+points = np.frombuffer(raw, dtype=np.float32).reshape(-1, 3)
+print(f"포인트：{len(points)}")</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_c_11"><a class="anchor" href="#_c_11"></a>C++</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">// 초기화
+client.node().initial_node({"my_graph", node_id});
+
+// 활성화하다
+auto result = client.node().activate_node({"my_graph", node_id});
+std::cout &lt;&lt; "완료：" &lt;&lt; result["finish"] &lt;&lt; "\n";
+
+// 읽다 JSON 유형 포트
+auto port_data = client.node().get_node_port_data({"my_graph", node_id, "result", "outputs"});
+std::cout &lt;&lt; port_data.data.dump() &lt;&lt; "\n";
+
+// 포인트 클라우드 읽기
+auto raw = client.node().get_points_data({"my_graph", node_id, "points", "outputs"});
+size_t n = raw.size() / (3 * sizeof(float));
+std::cout &lt;&lt; "포인트：" &lt;&lt; n &lt;&lt; "\n";</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_c_12"><a class="anchor" href="#_c_12"></a>C#</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 초기화
+await client.Node.InitialNodeAsync(new NodeRef("my_graph", nodeId));
+
+// 활성화하다
+var result = await client.Node.ActivateNodeResultAsync(new NodeRef("my_graph", nodeId));
+Console.WriteLine($"완료：{result.Finish}");
+
+// 읽다 JSON 유형 포트
+var data = await client.Node.GetNodePortDataAsync(new PortRef("my_graph", nodeId, "result", "outputs"));
+Console.WriteLine(data);
+
+// 포인트 클라우드 읽기
+var raw = await client.Node.GetPointsDataAsync(new PortRef("my_graph", nodeId, "points", "outputs"));
+int nPoints = raw.Length / (3 * sizeof(float));
+Console.WriteLine($"포인트：{nPoints}");</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_하위_그래프_노드_작업"><a class="anchor" href="#_하위_그래프_노드_작업"></a>하위 그래프 노드 작업</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>메인 그래프(하위 그래프의 노드 포함)에 graph node이 있는 경우 `GraphNodeService`를 사용하여 내부를 조작합니다.</p>
+</div>
+<div class="paragraph">
+<p>*두 레이어 ID*에 유의하세요.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>graph_node_id</code>: 메인 그래프 ID에서 "하위 그래프를 포함하는" 노드</p>
+</li>
+<li>
+<p><code>node_id</code>: 노드 ID <strong>하위 그래프 내부</strong></p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="_하위_그래프_입력_및_내부_노드_조작"><a class="anchor" href="#_하위_그래프_입력_및_내부_노드_조작"></a>하위 그래프 입력 및 내부 노드 조작</h3>
+<div class="sect3">
+<h4 id="_python_7"><a class="anchor" href="#_python_7"></a>Python</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SubGraphCreateNodeParams, SubGraphNodeParamUpdate, SubGraphRef
+
+# 하위 사진 입력
+result = client.graph_node.open_graph(SubGraphRef("my_graph", graph_node_id))
+print(f"하위 그래프의 노드 수：{len(result['graph'].get('nodes', []))}")
+
+# 하위 그래프 내부에 노드 생성
+inner = client.graph_node.create_node(
+    SubGraphCreateNodeParams("my_graph", graph_node_id, "FilterNode")
+)
+print("하위 그래프 노드 생성 요청 상태：", inner["status"])
+inner_id = inner["nodeId"]
+
+# 하위 그래프의 내부 노드 매개변수를 설정합니다.
+client.graph_node.set_node_param_data(
+    SubGraphNodeParamUpdate(
+        "my_graph", graph_node_id, inner_id, "threshold", "run_params", 0.7
+    )
+)
+
+# 전체 하위 그래프 실행
+result = client.graph_node.run_graph(SubGraphRef("my_graph", graph_node_id))
+print("요청 상태：", result["status"])
+print("시간이 많이 걸린다：", result.get("total_time"), "ms")</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_c_13"><a class="anchor" href="#_c_13"></a>C++</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">// 하위 사진 입력
+auto opened = client.graph_node().open_graph({"my_graph", graph_node_id});
+
+// 하위 그래프 내부에 노드 생성
+auto result = client.graph_node().create_node(
+    {"my_graph", graph_node_id, "FilterNode"});
+std::cout &lt;&lt; "하위 그래프 노드 생성 요청 상태：" &lt;&lt; result.at("status").get&lt;std::int64_t&gt;() &lt;&lt; "\n";
+std::string inner_id = result.at("nodeId").get&lt;std::string&gt;();
+
+// 매개변수 설정
+client.graph_node().set_node_param_data(
+    {"my_graph", graph_node_id, inner_id, "threshold", "run_params",
+     atom::sdk::JsonValue(0.7)});
+
+// 하위 그래프 실행
+auto run = client.graph_node().run_graph({"my_graph", graph_node_id});
+std::cout &lt;&lt; "요청 상태：" &lt;&lt; run.at("status").get&lt;std::int64_t&gt;() &lt;&lt; "\n";
+std::cout &lt;&lt; "시간이 많이 걸린다：" &lt;&lt; run.at("total_time") &lt;&lt; "ms\n";</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_c_14"><a class="anchor" href="#_c_14"></a>C#</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 하위 사진 입력
+var opened = await client.GraphNode.OpenGraphInfoAsync(
+    new SubGraphRef("my_graph", graphNodeId));
+
+// 하위 그래프 내부에 노드 생성
+var info = await client.GraphNode.CreateNodeInfoAsync(
+    new SubGraphCreateNodeParams("my_graph", graphNodeId, "FilterNode"));
+Console.WriteLine($"하위 그래프 노드 생성 요청 상태：{info.Status}");
+string innerId = info.NodeId;
+
+// 매개변수 설정
+await client.GraphNode.SetNodeParamDataAsync(
+    new SubGraphNodeParamUpdate(
+        "my_graph", graphNodeId, innerId, "threshold", "run_params", 0.7));
+
+// 하위 그래프 실행
+var run = await client.GraphNode.RunGraphResultAsync(
+    new SubGraphRef("my_graph", graphNodeId));
+Console.WriteLine($"요청 상태：{run.Status}");
+Console.WriteLine($"시간이 많이 걸린다：{run.TotalTime}ms");</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_일반적인_작업에_대한_빠른_확인"><a class="anchor" href="#_일반적인_작업에_대한_빠른_확인"></a>일반적인 작업에 대한 빠른 확인</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 40%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">태스크</th>
+<th class="tableblock halign-left valign-top">인터페이스</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">그래프 생성/삭제</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GraphService.create_graph</code> / <code>delete_graph</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>.atom</code> 파일 가져오기</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GraphService.load_graph</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">메인 그래프에 노드 추가</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeService.create_node</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">메인 그래프 노드 연결</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeService.connect_nodes</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">노드 매개변수 설정</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeService.set_node_param_data</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">노드 JSON 출력 읽기</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeService.get_node_port_data</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">노드 포인트 클라우드 출력 읽기</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeService.get_points_data</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">하위 사진 작업 입력</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GraphNodeService.open_graph</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">하위 그래프 실행</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GraphNodeService.run_graph</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_그래프를_생성하지_않고_단일_노드를_직접_실행"><a class="anchor" href="#_그래프를_생성하지_않고_단일_노드를_직접_실행"></a>그래프를 생성하지 않고 단일 노드를 직접 실행</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>그래프를 먼저 작성하지 않고 노드의 기능을 빠르게 테스트하는 데 사용됩니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SingleNodeParams
+
+result = client.runtime.run_single_node_no_graph(
+    SingleNodeParams(
+        "MathAddNode",
+        inputs={"a": 3.0, "b": 2.0},
+        run_params={"mode": "add"},
+    )
+)
+print("노드 출력：", result.get("outputs"))</code></pre>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="how-to-choose-service.html">적절한 Service을 선택합니다.</a></span>
+  <span class="next"><a href="error-handling.html">오류 처리 및 문제 해결</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

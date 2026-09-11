@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>NodeService（Python） :: Atom SDK 개발자 가이드</title>
+    <link rel="prev" href="graph.html">
+    <link rel="next" href="graph_node.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          온라인 제품 문서
+                  </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="문서 검색"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              이 매뉴얼만
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            매뉴얼 전환
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK 개발자 가이드</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          다운로드 센터
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          공식 웹사이트
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            한국어
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK 개발자 가이드</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">환영합니다</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">빠른 시작</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">빠른 시작</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">샘플 샘플</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">입문 사용</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK 입문 사용</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">사용자 가이드</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">적절한 Service을 선택합니다.</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">그래프 및 노드 작업</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">오류 처리 및 문제 해결</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">FAQ</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">기본 개념</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/what-is-atom-sdk.html">Atom SDK 란 무엇입니까?</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-node-subgraph.html">그래프, 노드, 하위 그래프</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-vs-runtime.html">Graph과 Runtime의 차이점</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/timestamp.html">Timestamp이 무엇인가요?</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/runtime-frame.html">런타임 입력 프레임(RuntimeFrame / RuntimePassiveBinoFrame)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/point-cloud-protocol.html">포인트 클라우드 유형 입출력을 위한 바이너리 프로토콜</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/param-binding.html">매개변수 유형 및 바인딩 이름</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API 참조</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API 참조 개요</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="overview.html">Python 개요 및 설치</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="params.html">Python 매개변수 객체</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="public_api.html">Python 공용 유틸리티 API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ 버전 — 사용자 가이드</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ 매개변수 객체</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">Atom SDK — C# 버전</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/params.html">C# 매개변수 객체</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK 개발자 가이드</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK 개발자 가이드</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK 개발자 가이드</a></li>
+    <li>API 참조</li>
+    <li>Python SDK</li>
+    <li><a href="node.html">NodeService（Python）</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="이 페이지의 내용"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">NodeService（Python）</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>일반 사전 반환 값에는 `status`이 포함되며 성공은 일반적으로 `0`입니다. 서버가 0이 아닌 상태를 반환하면 SDK는 `AtomApiError`을 발생시킵니다.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_새로운_매개변수_형식"><a class="anchor" href="#_새로운_매개변수_형식"></a>새로운 매개변수 형식</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>이제 기본 그래프 노드 인터페이스는 매개변수 개체를 균일하게 사용합니다. 먼저 `atom_sdk`에서 필수 매개변수 클래스를 가져오십시오.
+전체 필드 설명은 <a href="params.html" class="xref page">Python 参数对象</a>을 참조하세요.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import (
+    ChangeNodeIOParams,
+    CopyNodeParams,
+    CreateNodeParams,
+    CreateDynamicNodeParams,
+    CreateGraphNodeParams,
+    EditNodeCommentParams,
+    GenerateGraphNodeByNodesParams,
+    NodeBindingUpdate,
+    NodeConnectionParams,
+    NodeParamUpdate,
+    NodeRef,
+    PortRef,
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>이러한 방식으로 사용자는 특히 연결, 매개변수 설정, 바인딩과 같이 쉽게 되돌릴 수 있는 인터페이스의 경우 여러 문자열 매개변수의 순서를 기억할 필요가 없습니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">메서드</th>
+<th class="tableblock halign-left valign-top">매개변수 객체</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>create_node</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CreateNodeParams</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>create_dynamic_io_node</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CreateDynamicNodeParams</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>create_node_by_copy</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CopyNodeParams</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>change_node_io</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>ChangeNodeIOParams</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>create_graph_node</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CreateGraphNodeParams</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>generate_graph_node_by_nodes</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>GenerateGraphNodeByNodesParams</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>delete_node</code> / <code>get_node_params</code> / <code>get_node_info_in_graph</code> / <code>activate_node</code> / <code>initial_node</code> / <code>update_node</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>NodeRef</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>connect_nodes</code> / <code>disconnect_nodes</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>NodeConnectionParams</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>get_node_port_data</code> / <code>get_points_data</code> / <code>get_points_data_parsed</code> / <code>download_data</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PortRef</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>set_node_param_data</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>NodeParamUpdate</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>set_binding_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>NodeBindingUpdate</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>edit_node_comment</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>EditNodeCommentParams</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_권장_호출_순서"><a class="anchor" href="#_권장_호출_순서"></a>권장 호출 순서</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">client.graph.open_graph(graph_name)      &lt;- 먼저 사진을 열어보세요，SDK 캐시 timestamp
+        |
+  node.create_node(CreateNodeParams(...))     &lt;- 노드 생성，얻다 node_id
+        |
+  node.set_node_param_data(NodeParamUpdate(...))
+        |
+  node.connect_nodes(NodeConnectionParams(...))
+        |
+  node.set_binding_name(NodeBindingUpdate(...))
+        |
+  node.activate_node(NodeRef(...)) / client.graph.run_graph(graph_name)</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_인터페이스_상세_설명"><a class="anchor" href="#_인터페이스_상세_설명"></a>인터페이스 상세 설명</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_create_nodeparams"><a class="anchor" href="#_create_nodeparams"></a><code>create_node(params)</code></h3>
+<div class="paragraph">
+<p>기본 그래프에 노드를 만듭니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수 개체</strong>:<br>
+<code>CreateNodeParams</code></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>메인 이미지 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>node_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>노드 클래스 이름은 서버에 등록된 노드 유형이어야 합니다.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환 값</strong>: <code>dict[str, Any]</code>, 일반적으로 <code>status</code>, <code>nodeId</code>, <code>currentIndex</code>, `timestamp`를 포함합니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import CreateNodeParams
+
+result = client.node.create_node(CreateNodeParams("my_graph", "DetectAndSegment"))
+print("요청 상태：", result["status"])
+node_id = result["nodeId"]</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_create_node_by_copyparams"><a class="anchor" href="#_create_node_by_copyparams"></a><code>create_node_by_copy(params)</code></h3>
+<div class="paragraph">
+<p>기본 그래프의 기존 노드를 복사합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수 개체</strong>:<br>
+<code>CopyNodeParams</code></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>메인 이미지 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>node_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>복사 후 새 노드 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>복사된 소스 노드 ID</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import CopyNodeParams
+
+result = client.node.create_node_by_copy(
+    CopyNodeParams("my_graph", "DetectAndSegment", "source_node_id")
+)
+print("요청 상태：", result["status"])
+print("복사 후 노드 ID：", result["nodeId"])</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_create_dynamic_io_nodeparams"><a class="anchor" href="#_create_dynamic_io_nodeparams"></a><code>create_dynamic_io_node(params)</code></h3>
+<div class="paragraph">
+<p>동적 입력 및 출력 정의를 사용하여 노드를 만듭니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import CreateDynamicNodeParams
+
+result = client.node.create_dynamic_io_node(
+    CreateDynamicNodeParams(
+        "my_graph",
+        "DynamicIONode",
+        {"outputs": [{"name": "mask_out", "dtype": "BinaryImage"}]},
+    )
+)
+print(result["nodeId"])</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_change_node_ioparams"><a class="anchor" href="#_change_node_ioparams"></a><code>change_node_io(params)</code></h3>
+<div class="paragraph">
+<p>동적 노드의 입력 및 출력 정의를 수정합니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import ChangeNodeIOParams
+
+client.node.change_node_io(
+    ChangeNodeIOParams(
+        "my_graph",
+        "node_id",
+        {"outputs": [{"name": "score_out", "dtype": "Float"}]},
+    )
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_create_graph_nodeparams"><a class="anchor" href="#_create_graph_nodeparams"></a><code>create_graph_node(params)</code></h3>
+<div class="paragraph">
+<p>기존 하위 그래프를 기반으로 graph node을 만듭니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import CreateGraphNodeParams
+
+result = client.node.create_graph_node(
+    CreateGraphNodeParams("my_graph", "WrappedSubgraph", "subgraph_template")
+)
+print(result["nodeId"])</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_generate_graph_node_by_nodesparams"><a class="anchor" href="#_generate_graph_node_by_nodesparams"></a><code>generate_graph_node_by_nodes(params)</code></h3>
+<div class="paragraph">
+<p>여러 노드를 새로운 graph node로 압축합니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import GenerateGraphNodeByNodesParams
+
+result = client.node.generate_graph_node_by_nodes(
+    GenerateGraphNodeByNodesParams("my_graph", "GroupedSubgraph", ["node_a", "node_b"])
+)
+print(result["nodeId"])</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_delete_nodeparams"><a class="anchor" href="#_delete_nodeparams"></a><code>delete_node(params)</code></h3>
+<div class="paragraph">
+<p>기본 그래프에서 노드를 삭제합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수 개체</strong>:<br>
+<code>NodeRef</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeRef
+
+client.node.delete_node(NodeRef("my_graph", "node_id"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_connect_nodesparams"><a class="anchor" href="#_connect_nodesparams"></a><code>connect_nodes(params)</code></h3>
+<div class="paragraph">
+<p>두 노드를 연결하는 포트입니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수 개체</strong>:<br>
+<code>NodeConnectionParams</code></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>메인 이미지 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>output_node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>소스 노드 ID, 데이터를 생성하는 노드</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>output_port_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>소스 노드 출력 포트 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>input_node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>대상 노드 ID, 데이터를 수신하는 노드</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>input_port_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>대상 노드 입력 포트 이름</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>메모리 방식: 앞은 <code>output_*</code>, 뒤는 <code>input_*</code>. 데이터 흐름 방향은 `output &#8594; input`입니다.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeConnectionParams
+
+client.node.connect_nodes(
+    NodeConnectionParams(
+        graph_name="my_graph",
+        output_node_id="node_a_id",
+        output_port_name="image_out",
+        input_node_id="node_b_id",
+        input_port_name="image_in",
+    )
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_disconnect_nodesparams"><a class="anchor" href="#_disconnect_nodesparams"></a><code>disconnect_nodes(params)</code></h3>
+<div class="paragraph">
+<p>두 노드 사이의 연결을 끊습니다. 매개변수 객체는 `connect_nodes`과 완전히 동일합니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeConnectionParams
+
+client.node.disconnect_nodes(
+    NodeConnectionParams(
+        "my_graph",
+        "node_a_id",
+        "image_out",
+        "node_b_id",
+        "image_in",
+    )
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_node_paramsparams"><a class="anchor" href="#_get_node_paramsparams"></a><code>get_node_params(params)</code></h3>
+<div class="paragraph">
+<p>노드의 현재 매개변수 값에 대한 스냅샷을 가져옵니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수 개체</strong>:<br>
+<code>NodeRef</code>
+*반환 값*에는 일반적으로 다음이 포함됩니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>init_params</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>파라미터 사전 초기화</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>run_params</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>매개변수 사전 실행</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeRef
+
+params = client.node.get_node_params(NodeRef("my_graph", "node_id"))
+print(params.get("run_params"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_node_info_in_graphparams"><a class="anchor" href="#_get_node_info_in_graphparams"></a><code>get_node_info_in_graph(params)</code></h3>
+<div class="paragraph">
+<p>매개변수, 포트 정의, 정책 구성 등을 포함하여 그래프의 노드에 대한 전체 정보를 가져옵니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수 개체</strong>:<br>
+<code>NodeRef</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeRef
+
+info = client.node.get_node_info_in_graph(NodeRef("my_graph", "node_id"))
+print(info.get("nodeInfo", {}).get("inputs"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_node_port_dataparams"><a class="anchor" href="#_get_node_port_dataparams"></a><code>get_node_port_data(params)</code></h3>
+<div class="paragraph">
+<p>노드의 특정 포트의 현재 데이터를 가져옵니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수 개체</strong>:<br>
+<code>PortRef</code></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>노드 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>port_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>포트 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>io_type</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>포트 방향, 일반적으로 <code>"inputs"</code> 또는 <code>"outputs"</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import PortRef
+
+data = client.node.get_node_port_data(
+    PortRef("my_graph", "node_id", "result_image", "outputs")
+)
+print(data)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_points_data_parsedparams"><a class="anchor" href="#_get_points_data_parsedparams"></a><code>get_points_data_parsed(params)</code></h3>
+<div class="paragraph">
+<p>노드 포인트 클라우드를 읽고 구문 분석합니다. 일반 사용자는 이 인터페이스를 우선적으로 사용합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수 개체</strong>:<br>
+<code>PortRef</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import PortRef
+
+clouds = client.node.get_points_data_parsed(
+    PortRef("my_graph", "node_id", "point_cloud_out", "outputs")
+)
+print(clouds[0].shape)
+print(clouds[0].tolist()[:2])</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_points_dataparams"><a class="anchor" href="#_get_points_dataparams"></a><code>get_points_data(params)</code></h3>
+<div class="paragraph">
+<p>노드 포트의 원시 포인트 클라우드 바이트 스트림을 읽습니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수 개체</strong>:<br>
+<code>PortRef</code>
+<strong>반환 값</strong>: <code>bytes</code>
+참고: 여기에 반환되는 것은 단순한 <code>float32</code> 배열이 아닌 Atom 사용자 정의 바이너리 포인트 클라우드 payload입니다. 포인트 클라우드 결과를 일반적으로 사용하는 경우 `get_points_data_parsed(&#8230;&#8203;)`가 선호됩니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import PortRef
+
+raw = client.node.get_points_data(
+    PortRef("my_graph", "node_id", "point_cloud_out", "outputs")
+)
+print(len(raw))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_download_dataparams"><a class="anchor" href="#_download_dataparams"></a><code>download_data(params)</code></h3>
+<div class="paragraph">
+<p>특정 포트 결과에 대한 서버 다운로드 링크를 생성합니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import PortRef
+
+result = client.node.download_data(
+    PortRef("my_graph", "node_id", "point_cloud_out", "outputs")
+)
+print(result["url"])</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_set_node_param_dataparams"><a class="anchor" href="#_set_node_param_dataparams"></a><code>set_node_param_data(params)</code></h3>
+<div class="paragraph">
+<p>노드 매개변수를 설정합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수 개체</strong>:<br>
+<code>NodeParamUpdate</code></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>노드 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>param_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>파라미터 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>param_type</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>매개변수 유형, 일반적으로 <code>"init_params"</code> 또는 <code>"run_params"</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>value</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Any</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>매개변수 값; `pathlib.Path`이 전달되면 SDK가 자동으로 파일로 업로드됩니다.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from pathlib import Path
+from atom_sdk import NodeParamUpdate
+
+client.node.set_node_param_data(
+    NodeParamUpdate(
+        "my_graph",
+        "node_id",
+        "confidence",
+        "run_params",
+        0.75,
+    )
+)
+
+client.node.set_node_param_data(
+    NodeParamUpdate(
+        "my_graph",
+        "node_id",
+        "config_file",
+        "init_params",
+        Path("/configs/detect_config.json"),
+    )
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_set_binding_nameparams"><a class="anchor" href="#_set_binding_nameparams"></a><code>set_binding_name(params)</code></h3>
+<div class="paragraph">
+<p>노드의 포트 또는 매개변수에 대해 외부에 노출된 바인딩 이름을 설정합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수 개체</strong>:<br>
+<code>NodeBindingUpdate</code></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>노드 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>binding_type</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>"inputs"</code>, <code>"outputs"</code>, <code>"init_params"</code> 또는 <code>"run_params"</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>origin_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>원래 포트 이름 또는 매개변수 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>binding_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>새 바인딩 이름. 빈 문자열을 전달하는 것은 일반적으로 바인딩을 취소하는 것을 의미합니다.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeBindingUpdate
+
+client.node.set_binding_name(
+    NodeBindingUpdate(
+        "my_graph",
+        "node_id",
+        "outputs",
+        "result",
+        "detect_result",
+    )
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_edit_node_commentparams"><a class="anchor" href="#_edit_node_commentparams"></a><code>edit_node_comment(params)</code></h3>
+<div class="paragraph">
+<p>노드 설명을 수정합니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import EditNodeCommentParams
+
+client.node.edit_node_comment(EditNodeCommentParams("my_graph", "node_id", "새로운 메모입니다"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_activate_nodeparams_timeout_seconds30"><a class="anchor" href="#_activate_nodeparams_timeout_seconds30"></a><code>activate_node(params, *, timeout_seconds=30)</code></h3>
+<div class="paragraph">
+<p>지정된 노드에서 시작하여 노드와 해당 다운스트림 노드를 활성화하고 완료 또는 대기 시간이 초과될 때까지 자동으로 내부적으로 폴링합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수 개체</strong>:<br>
+<code>NodeRef</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeRef
+
+result = client.node.activate_node(NodeRef("my_graph", "node_id"), timeout_seconds=120)
+print("완료：", result.get("finish"))</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>`timeout_seconds=None`은 서버가 완료 또는 오류를 반환할 때까지 기다리는 것을 의미합니다.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_initial_nodeparams"><a class="anchor" href="#_initial_nodeparams"></a><code>initial_node(params)</code></h3>
+<div class="paragraph">
+<p>모델 로드, 구성 읽기 등 노드를 초기화합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수 개체</strong>:<br>
+<code>NodeRef</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeRef
+
+result = client.node.initial_node(NodeRef("my_graph", "node_id"))
+print("초기화 성공：", result.get("success"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_update_nodeparams"><a class="anchor" href="#_update_nodeparams"></a><code>update_node(params)</code></h3>
+<div class="paragraph">
+<p>단일 노드를 업데이트합니다. 이 인터페이스는 한 번만 요청되며, 서버에서 반환된 <code>finish</code> 상태가 그대로 사용자에게 전달됩니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수 개체</strong>:<br>
+<code>NodeRef</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeRef
+
+result = client.node.update_node(NodeRef("my_graph", "node_id"))
+print("이번 반납이 완료됐나요?：", result.get("finish"))</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_완전한_예"><a class="anchor" href="#_완전한_예"></a>완전한 예</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import (
+    AtomClient,
+    CreateNodeParams,
+    NodeBindingUpdate,
+    NodeConnectionParams,
+    NodeParamUpdate,
+    NodeRef,
+    PortRef,
+)
+
+client = AtomClient(base_url="http://127.0.0.1:10026")
+GRAPH_NAME = "pipeline_graph"
+
+client.graph.open_graph(GRAPH_NAME)
+
+source = client.node.create_node(CreateNodeParams(GRAPH_NAME, "ImageLoadNode"))
+print("소스 노드 생성 요청 상태：", source["status"])
+source_id = source["nodeId"]
+
+detect = client.node.create_node(CreateNodeParams(GRAPH_NAME, "DetectAndSegment"))
+print("노드 생성 요청 상태 감지：", detect["status"])
+detect_id = detect["nodeId"]
+
+client.node.set_node_param_data(
+    NodeParamUpdate(GRAPH_NAME, detect_id, "model", "init_params", "/models/yolov8n.onnx")
+)
+client.node.set_node_param_data(
+    NodeParamUpdate(GRAPH_NAME, detect_id, "threshold", "run_params", 0.6)
+)
+
+client.node.connect_nodes(
+    NodeConnectionParams(GRAPH_NAME, source_id, "image_out", detect_id, "image")
+)
+
+client.node.set_binding_name(
+    NodeBindingUpdate(GRAPH_NAME, detect_id, "outputs", "results", "detect_result")
+)
+
+result = client.node.activate_node(NodeRef(GRAPH_NAME, source_id))
+print("활성화가 완료되었습니다：", result.get("finish"))
+
+output_data = client.node.get_node_port_data(
+    PortRef(GRAPH_NAME, detect_id, "results", "outputs")
+)
+print("테스트 결과：", output_data)</code></pre>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="graph.html">GraphService（Python）</a></span>
+  <span class="next"><a href="graph_node.html">GraphNodeService（Python）</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

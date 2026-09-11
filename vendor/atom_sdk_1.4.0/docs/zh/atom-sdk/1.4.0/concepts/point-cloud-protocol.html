@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>点云类型输入输出的二进制协议 :: Atom SDK 开发手册</title>
+    <link rel="prev" href="runtime-frame.html">
+    <link rel="next" href="param-binding.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          在线产品文档        </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="输入关键词搜索"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              仅本手册
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            切换手册
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK 开发手册</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          下载中心
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          官网
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            简体中文
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK 开发手册</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">欢迎</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">快速开始</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">快速开始</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">示例样本</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">入门使用</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK 入门使用</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService 入门使用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService 入门使用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService 入门使用</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">使用指南</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">选择合适的 Service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">图与节点操作</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">错误处理与排查</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">常见问题解答</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">基础概念</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="what-is-atom-sdk.html">什么是 Atom SDK</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="graph-node-subgraph.html">图、节点、子图</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="graph-vs-runtime.html">Graph 与 Runtime 的区别</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="timestamp.html">Timestamp 是什么</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="runtime-frame.html">运行时输入帧（RuntimeFrame / RuntimePassiveBinoFrame）</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="point-cloud-protocol.html">点云类型输入输出的二进制协议</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="param-binding.html">参数类型与绑定名</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API 参考</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API 参考总览</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python 概览与安装</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/params.html">Python 参数对象</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/public_api.html">Python 公共工具 API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ 版 — 使用指南</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ 参数对象</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">Atom SDK — C# 版本</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/params.html">C# 参数对象</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK 开发手册</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK 开发手册</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK 开发手册</a></li>
+    <li>基础概念</li>
+    <li><a href="point-cloud-protocol.html">点云类型输入输出的二进制协议</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="本页内容"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">点云类型输入输出的二进制协议</h1>
+<div class="sect1">
+<h2 id="_它是干什么的一句话"><a class="anchor" href="#_它是干什么的一句话"></a>它是干什么的（一句话）</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>Points</code>/<code>XYZPoints</code>/<code>NormalPoints</code>/<code>RGBPoints</code> 这几种端口类型，无论是作为节点输入还是输出，传输的都不是普通 JSON，而是一段自定义的紧凑二进制格式。Runtime 单节点直跑会尽量按节点端口类型自动处理 <code>.ply</code> 路径和已编码字节；Python SDK 另外暴露了 <code>encode_point_cloud_payload</code> / <code>load_ply_points</code> / <code>decode_point_cloud_payload</code> 这三个函数，方便你手动处理这段格式。</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>这不是普通模式 <code>RuntimeFrame</code> 里的点云格式。普通模式的 <code>RuntimeFrame.point_cloud</code> 用的是另一套更简单的格式：按 <code>[height, width, 3]</code> reshape 的 float32 原始数组，没有下面说的这层协议头。被动双目 <code>passive_bino</code> 模式传 EPICRAW3，不单独传 <code>point_cloud</code>。两者不能混用，具体见 <a href="runtime-frame.html" class="xref page">运行时输入帧（RuntimeFrame / RuntimePassiveBinoFrame）</a>。</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_为什么会有这个机制"><a class="anchor" href="#_为什么会有这个机制"></a>为什么会有这个机制</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>点云数据量通常很大（几万到几百万个点），用 JSON 传输解析开销太高，服务端约定了一套紧凑的 <code>float32</code> 二进制格式；同时考虑到一个端口有时要一次携带多份点云，格式里带了"点云个数 + 每份长度"的头信息，方便服务端一次性切分。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_它怎么影响你的开发"><a class="anchor" href="#_它怎么影响你的开发"></a>它怎么影响你的开发</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>给点云类型输入传值时</strong>（例如 <code>SingleNodeParams(&#8230;&#8203;, inputs={"points": &#8230;&#8203;})</code>），推荐直接传本地 <code>.ply</code> 路径；SDK 会按节点输入端口类型自动编码成协议要求的格式：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SingleNodeParams
+
+result = client.runtime.run_single_node_no_graph(
+    SingleNodeParams("EstimateNormal", inputs={"points": "/data/scan.ply"})
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>如果你手里已经是点数组，或者需要显式控制点维度，也可以手动编码：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SingleNodeParams, encode_point_cloud_payload, load_ply_points
+
+points = load_ply_points("/data/scan.ply")           # 从 PLY 文件读出展平的 xyz 浮点列表
+payload = encode_point_cloud_payload(points, point_dim=3)  # 编码成协议要求的二进制格式
+
+result = client.runtime.run_single_node_no_graph(
+    SingleNodeParams("EstimateNormal", inputs={"points": payload})
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>从服务端读取点云类型输出时</strong>，大多数接口 SDK 会自动帮你解析好（例如 <code>get_binded_point_cloud_parsed</code>），你不需要关心这层协议。但 <code>run_single_node_no_graph</code> 对下面这几个节点是例外——它们直接返回未经封装的原始点云字节（<code>bytes</code>），需要你自己调用 <code>decode_point_cloud_payload</code> 解析：</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>CalculateEdge</code></p>
+</li>
+<li>
+<p><code>CalculateEdgeNew</code></p>
+</li>
+<li>
+<p><code>EstimateNormal</code></p>
+</li>
+<li>
+<p><code>DownSample</code></p>
+</li>
+<li>
+<p><code>DownSampleWithNormal</code></p>
+</li>
+<li>
+<p><code>FilterByNormal</code></p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import decode_point_cloud_payload
+
+result = client.runtime.run_single_node_no_graph(
+    SingleNodeParams("EstimateNormal", inputs={"points": payload})
+)
+# result 是 bytes，不是 dict —— 这是上面这几个节点的固定行为
+clouds = decode_point_cloud_payload(result, has_dim_in_header=False, point_dim=6)
+print(clouds[0].shape)          # (点数, 6)  -&gt; [x, y, z, nx, ny, nz]
+print(clouds[0].tolist()[:2])</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>point_dim</code> 要按节点输出端口的实际类型来定：<code>XYZPoints</code>/<code>Points</code> 传 <code>3</code>；<code>NormalPoints</code>（带法向量）/<code>RGBPoints</code>（带颜色）传 <code>6</code>。具体看节点定义里 <code>outputs_info</code> 的 <code>dtype</code>。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_什么时候可能遇到问题"><a class="anchor" href="#_什么时候可能遇到问题"></a>什么时候可能遇到问题</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>SDK 查不到节点输入类型，或使用旧版本 SDK</strong>：这种情况下 <code>inputs={"points": "/data/scan.ply"}</code> 可能会被当成普通文件上传，原样把 PLY 文件内容传给服务端，服务端按 <code>float32</code> 解析时会报 <code>AtomApiError: buffer size must be a multiple of element size</code>。<br>
+解决：升级 SDK，或用 <code>input_data_types={"points": "XYZPoints"}</code> 显式告诉 SDK 端口类型；Python 也可以用 <code>load_ply_points</code> + <code>encode_point_cloud_payload</code> 手动编码后再传。</p>
+</li>
+<li>
+<p><strong>以为 run_single_node_no_graph 一定返回 dict</strong>：对上面列出的几个特殊节点，返回值是 <code>bytes</code>，直接 <code>result["xxx"]</code> 会报 <code>TypeError: byte indices must be integers</code>。<br>
+解决：先判断类型，或者提前知道自己调的是哪个节点，直接按 <code>bytes</code> 处理，用 <code>decode_point_cloud_payload</code> 解析。</p>
+</li>
+<li>
+<p><strong>point_dim 传错</strong>：把带法向量的输出按 <code>point_dim=3</code> 解析，会导致 <code>reshape</code> 后数据错位（每一行会把下一份点的坐标错当成当前点的字段）。<br>
+解决：对照节点的 <code>outputs_info</code> 确认端口的 <code>dtype</code> 是 <code>XYZPoints</code>（3）还是 <code>NormalPoints</code>/<code>RGBPoints</code>（6）。</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_遇到问题怎么处理"><a class="anchor" href="#_遇到问题怎么处理"></a>遇到问题怎么处理</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>优先直接传 <code>.ply</code> 路径，让 SDK 按节点端口类型自动编码；如果自动查询不到节点类型，再显式传 <code>input_data_types</code>，或在 Python 中用 <code>load_ply_points</code> + <code>encode_point_cloud_payload</code> 手动生成 <code>bytes</code>。</p>
+</li>
+<li>
+<p>调用 <code>run_single_node_no_graph</code> 前，确认节点名是否在上面那份特殊列表里；如果在，提前预期拿到的是 <code>bytes</code>。</p>
+</li>
+<li>
+<p>拿到 <code>bytes</code> 后统一用 <code>decode_point_cloud_payload(raw, has_dim_in_header=False, point_dim=&#8230;&#8203;)</code> 解析，<code>has_dim_in_header</code> 在这个场景下始终传 <code>False</code>。</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_技术细节"><a class="anchor" href="#_技术细节"></a>技术细节</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>协议本质是一段 <code>float32</code> 数组，按小端序排列：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>[cloud_count, size_0, size_1, ..., size_{cloud_count-1}, data_0..., data_1..., ...]</pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cloud_count</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">这次携带了几份点云，<code>SingleNodeParams</code> 场景下通常是 <code>1</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>size_i</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">第 <code>i</code> 份点云展平后的浮点总数（点数 × <code>point_dim</code>，不是字节数）</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data_i</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">第 <code>i</code> 份点云的原始数据，按 <code>point_dim</code> 个一组连续排列</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>decode_point_cloud_payload(payload, *, has_dim_in_header, point_dim=None)</code>：</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">参数</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>payload</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bytes</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">原始二进制点云流</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>has_dim_in_header</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bool</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">头信息里是否额外带了每份点云的维度；<code>run_single_node_no_graph</code> 的特殊节点场景固定传 <code>False</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>point_dim</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code> 或 <code>None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">当头信息不带维度时，手动指定每个点的维度用于 reshape</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>返回 <code>list[ParsedPointCloud]</code>，<code>ParsedPointCloud.values</code> 是展平的 <code>array('f')</code>，<code>.shape</code> 是推荐的形状，<code>.tolist()</code> 按 <code>shape</code> 转成嵌套列表。</p>
+</div>
+<div class="paragraph">
+<p><code>encode_point_cloud_payload(points, *, point_dim=3)</code>：</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 33.3333%;">
+<col style="width: 50.0001%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">参数</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>points</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">展平的浮点序列，或按行给的点序列（如 <code>[(x,y,z), &#8230;&#8203;]</code>）</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">会自动展平，两种写法等价</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>point_dim</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">每个点的通道数：xyz 用 <code>3</code>，带法向量/颜色用 <code>6</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>load_ply_points(path, *, properties=("x", "y", "z"))</code>：</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">参数</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>path</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">文件路径</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PLY 文件，自动识别 <code>ascii</code>/<code>binary_little_endian</code>/<code>binary_big_endian</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>properties</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tuple[str, &#8230;&#8203;]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">要提取的顶点属性名，按顺序展平；带法向量可传 <code>("x","y","z","nx","ny","nz")</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>只解析 <code>vertex</code> 元素里声明的属性，会自动跳过 <code>face</code>、<code>camera</code> 等其他 element。</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="runtime-frame.html">运行时输入帧（RuntimeFrame / RuntimePassiveBinoFrame）</a></span>
+  <span class="next"><a href="param-binding.html">参数类型与绑定名</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

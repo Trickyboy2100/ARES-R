@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Python Public Utility API :: Atom SDK Developer Guide</title>
+    <link rel="prev" href="params.html">
+    <link rel="next" href="graph.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          Online Product Documentation
+                  </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="Search documentation"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              This manual only
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            Switch manual
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK Developer Guide</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          Download Center
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          Official Website
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            English
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK Developer Guide</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">welcome</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">quick start</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">quick start</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">sample sample</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Getting Started</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK Getting Started</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService Getting Started</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService Getting Started</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService Getting Started</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">User Guide</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">Select the appropriate Service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">Graph and node operations</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">Error handling and troubleshooting</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">FAQ</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">basic concepts</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/what-is-atom-sdk.html">What is Atom SDK</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-node-subgraph.html">graph, node, subgraph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-vs-runtime.html">The difference between Graph and Runtime</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/timestamp.html">What is Timestamp</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/runtime-frame.html">Runtime input frames (RuntimeFrame / RuntimePassiveBinoFrame)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/point-cloud-protocol.html">Binary protocol for point cloud type input and output</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/param-binding.html">Parameter types and binding names</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API Reference</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API Reference Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="overview.html">Python Overview and Installation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="params.html">Python parameter object</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="public_api.html">Python Public Utility API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ version — User Guide</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ parameter object</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">Atom SDK — C# Version</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/params.html">C# Parameter object</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK Developer Guide</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK Developer Guide</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK Developer Guide</a></li>
+    <li>API Reference</li>
+    <li>Python SDK</li>
+    <li><a href="public_api.html">Python Public Utility API</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="On this page"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Python Public Utility API</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This page documents public Python APIs outside the four Services and parameter objects.
+They cover point-cloud encoding and decoding, single-node output parsing, EPICRAW and PLY
+helpers, errors, and custom transports.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_imports"><a class="anchor" href="#_imports"></a>Imports</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import (
+    AtomApiError,
+    AtomClient,
+    AtomHttpError,
+    AtomProtocolError,
+    AtomTimeoutError,
+    ParsedImage,
+    ParsedPointCloud,
+    decode_point_cloud_payload,
+    encode_point_cloud_payload,
+    load_ply_points,
+    make_epicraw,
+    parse_single_node_output,
+    parse_single_node_outputs,
+    parse_single_node_result,
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>AtomSdkError</code> is the base class for all SDK exceptions. In the current version, import it
+from <code>atom_sdk.core.errors</code>; it is not re-exported at the top level of <code>atom_sdk</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_api_summary"><a class="anchor" href="#_api_summary"></a>API summary</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">API</th>
+<th class="tableblock halign-left valign-top">Purpose</th>
+<th class="tableblock halign-left valign-top">Return value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ParsedPointCloud</code> / <code>ParsedPointCloud.tolist()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Represents one parsed point cloud</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Object / <code>list</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>decode_point_cloud_payload(&#8230;&#8203;)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Decodes the Atom point-cloud binary protocol</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>list[ParsedPointCloud]</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>encode_point_cloud_payload(&#8230;&#8203;)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Encodes points into the Atom point-cloud input protocol</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bytes</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ParsedImage</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Represents one image returned by a parsed single-node call</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Object</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>parse_single_node_output(&#8230;&#8203;)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parses one single-node output value</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parsed value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>parse_single_node_outputs(&#8230;&#8203;)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parses an output dictionary while preserving port names</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any]</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>parse_single_node_result(&#8230;&#8203;)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parses the <code>outputs</code> field of a single-node result</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Result dictionary or original value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>make_epicraw(&#8230;&#8203;)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Builds an EPICRAW frame from points, images, and camera parameters</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bytes</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>load_ply_points(&#8230;&#8203;)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reads selected vertex properties from a PLY file</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>list[float]</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Exception classes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Distinguishes HTTP, protocol, business, and polling failures</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Raises an exception</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_point_cloud_apis"><a class="anchor" href="#_point_cloud_apis"></a>Point-cloud APIs</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_parsedpointcloud"><a class="anchor" href="#_parsedpointcloud"></a><code>ParsedPointCloud</code></h3>
+<div class="paragraph">
+<p><code>ParsedPointCloud</code> is returned by <code>get_points_data_parsed</code>,
+<code>get_binded_point_cloud_parsed</code>, and parsed single-node calls.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Attribute or method</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>values</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>array.array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Flattened <code>float32</code> data decoded from the server protocol</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>shape</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tuple[int, &#8230;&#8203;]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Usually <code>(point_count, point_dimension)</code> when the dimension is known; otherwise <code>(float_count,)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tolist()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>list</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Converts the values according to <code>shape</code>; returns a flat list when the dimension is unknown</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_decode_point_cloud_payload"><a class="anchor" href="#_decode_point_cloud_payload"></a><code>decode_point_cloud_payload</code></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">decode_point_cloud_payload(
+    payload: bytes,
+    *,
+    has_dim_in_header: bool,
+    point_dim: int | None = None,
+) -&gt; list[ParsedPointCloud]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>payload</code> is the raw point-cloud byte stream. Set <code>has_dim_in_header</code> according to the
+protocol: node-port data normally uses <code>True</code>, while runtime bound point clouds and some
+single-node raw results use <code>False</code>. When the header has no dimension, pass <code>point_dim</code>,
+such as <code>3</code> for <code>XYZPoints</code>/<code>Points</code> or <code>6</code> for <code>NormalPoints</code>/<code>RGBPoints</code>.</p>
+</div>
+<div class="paragraph">
+<p>Empty bytes return an empty list. Invalid byte length, a truncated header, inconsistent
+payload length, or an invalid dimension raises <code>AtomProtocolError</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import decode_point_cloud_payload
+
+clouds = decode_point_cloud_payload(
+    raw_bytes,
+    has_dim_in_header=False,
+    point_dim=6,
+)
+print(clouds[0].shape)
+print(clouds[0].tolist()[:2])</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_encode_point_cloud_payload"><a class="anchor" href="#_encode_point_cloud_payload"></a><code>encode_point_cloud_payload</code></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">encode_point_cloud_payload(points, *, point_dim: int = 3) -&gt; bytes</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>points</code> can be a sequence of points such as <code>[(x, y, z), &#8230;&#8203;]</code> or a flattened sequence
+of floats. The function adds the server-required header
+<code>[cloud_count, float_count, data&#8230;&#8203;]</code>. It raises <code>AtomProtocolError</code> when <code>point_dim</code> is
+not positive or the number of values is not divisible by <code>point_dim</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import encode_point_cloud_payload
+
+xyz_payload = encode_point_cloud_payload([(0.0, 0.0, 1.0), (1.0, 0.0, 1.0)])
+normal_payload = encode_point_cloud_payload(
+    [(0.0, 0.0, 1.0, 0.0, 0.0, 1.0)],
+    point_dim=6,
+)</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_single_node_output_parsing"><a class="anchor" href="#_single_node_output_parsing"></a>Single-node output parsing</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_parsedimage"><a class="anchor" href="#_parsedimage"></a><code>ParsedImage</code></h3>
+<div class="paragraph">
+<p><code>ParsedImage</code> represents one image returned by a parsed single-node call:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Attribute</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bytes</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Raw image bytes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>format</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>png</code> for <code>BinaryImage</code>; normally <code>jpg</code> for other image types</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data_type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The server port type, such as <code>ColorImage</code> or <code>BinaryImage</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_parse_single_node_output"><a class="anchor" href="#_parse_single_node_output"></a><code>parse_single_node_output</code></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">parse_single_node_output(
+    data_type: str,
+    value: Any,
+    *,
+    point_dim: int | None = None,
+    has_dim_in_header: bool = True,
+) -&gt; Any</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Point types (<code>Points</code>, <code>XYZPoints</code>, <code>NormalPoints</code>, <code>RGBPoints</code>) become
+<code>list[ParsedPointCloud]</code>. Image types (<code>Image</code>, <code>MonoImage</code>, <code>ColorImage</code>, <code>BinaryImage</code>)
+become <code>list[ParsedImage]</code>. Other values are returned unchanged. Point and image values
+are normally Base64 text; <code>bytes</code> are also accepted. Invalid Base64 or protocol data raises
+<code>AtomProtocolError</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_parse_single_node_outputs"><a class="anchor" href="#_parse_single_node_outputs"></a><code>parse_single_node_outputs</code></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">parse_single_node_outputs(
+    outputs: dict[str, Any],
+    output_data_types: dict[str, str] | None,
+    *,
+    point_dims: dict[str, int] | None = None,
+) -&gt; dict[str, Any]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This function preserves output port names and applies <code>parse_single_node_output</code> using
+<code>output_data_types</code>. If the type mapping is <code>None</code>, it returns a shallow copy without parsing.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_parse_single_node_result"><a class="anchor" href="#_parse_single_node_result"></a><code>parse_single_node_result</code></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">parse_single_node_result(
+    result: Any,
+    output_data_types: dict[str, str] | None = None,
+    *,
+    point_dims: dict[str, int] | None = None,
+) -&gt; Any</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For a normal result, this function copies the result and replaces its <code>outputs</code> value.
+For raw <code>bytes</code>, a single output type must be supplied to reconstruct
+<code>{"outputs": {port_name: value}}</code>; otherwise the raw value is returned or
+<code>AtomProtocolError</code> is raised.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_epicraw_and_ply"><a class="anchor" href="#_epicraw_and_ply"></a>EPICRAW and PLY</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_make_epicraw"><a class="anchor" href="#_make_epicraw"></a><code>make_epicraw</code></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">make_epicraw(
+    points,
+    image,
+    intrinsic=None,
+    distortion=None,
+    version: int | None = None,
+    camera_params: dict[str, Any] | None = None,
+) -&gt; bytes</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This function builds the standard EPICRAW2 or EPICRAW3 used by normal runtime mode:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Without <code>version</code>, ordinary <code>intrinsic</code>/<code>distortion</code> parameters select EPICRAW2.</p>
+</li>
+<li>
+<p>If <code>camera_params</code> contains extended source parameters such as <code>TextureSrc</code>, <code>DepthSrc1</code>,
+or <code>DepthSrc2</code>, the default selection is EPICRAW3.</p>
+</li>
+<li>
+<p><code>version=2</code> or <code>version=3</code> overrides automatic selection. EPICRAW2 requires both
+<code>intrinsic</code> and <code>distortion</code>; an unsupported version raises <code>ValueError</code>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>For normal application code, prefer <code>RuntimeFrame.from_data(&#8230;&#8203;)</code>, which wraps the bytes
+with <code>cam2_base</code> and optional <code>roi</code> into a frame accepted by <code>RuntimeRunParams</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_load_ply_points"><a class="anchor" href="#_load_ply_points"></a><code>load_ply_points</code></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">load_ply_points(
+    path,
+    *,
+    properties: tuple[str, ...] = ("x", "y", "z"),
+) -&gt; list[float]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This function supports ASCII, binary little-endian, and binary big-endian PLY files. It
+reads selected properties from the <code>vertex</code> element and returns a flattened list. The
+default is xyz. For normals, pass for example
+<code>("x", "y", "z", "nx", "ny", "nz")</code>, then use
+<code>encode_point_cloud_payload(&#8230;&#8203;, point_dim=6)</code>. Invalid format, missing properties, or
+truncated vertex data raises <code>ValueError</code>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_exceptions"><a class="anchor" href="#_exceptions"></a>Exceptions</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Exception definitions are in <code>atom_sdk.core.errors</code>:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 37.5%;">
+<col style="width: 37.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Exception</th>
+<th class="tableblock halign-left valign-top">When it occurs</th>
+<th class="tableblock halign-left valign-top">Useful attributes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AtomSdkError</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Base class for all SDK exceptions</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">None</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AtomHttpError</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Network failure or HTTP 4xx/5xx response</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>status_code</code>, usually <code>None</code> for connection failures</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AtomProtocolError</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JSON, binary, or point-cloud protocol cannot be parsed</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">None</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AtomTimeoutError</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An edit-mode run or node activation exceeds its wait time</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>path</code>, <code>timeout_seconds</code>, <code>attempts</code>, <code>last_data</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AtomApiError</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HTTP succeeded but the server business <code>status</code> is not 0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>status</code>, <code>payload</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk.core.errors import (
+    AtomApiError,
+    AtomHttpError,
+    AtomProtocolError,
+    AtomSdkError,
+    AtomTimeoutError,
+)
+
+try:
+    result = client.runtime.run_single_node_no_graph_parsed(params)
+except AtomApiError as exc:
+    print(exc.status, exc.payload)
+except AtomTimeoutError as exc:
+    print(exc.path, exc.attempts, exc.last_data)
+except AtomHttpError as exc:
+    print(exc.status_code)
+except AtomSdkError as exc:
+    print(exc)</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_transport_extensions"><a class="anchor" href="#_transport_extensions"></a>Transport extensions</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>AtomClient</code> accepts a <code>BaseTransport</code> in its <code>transport</code> parameter. A custom transport
+must implement <code>request(method, path, **kwargs) &#8594; HttpResponse</code>. The default implementation
+is <code>RequestsTransport</code>. These types are in <code>atom_sdk.core.transport</code>; <code>RequestOptions</code> is
+in <code>atom_sdk.core.models</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import AtomClient
+from atom_sdk.core.models import HttpResponse, RequestOptions
+from atom_sdk.core.transport import BaseTransport
+
+class MockTransport(BaseTransport):
+    def request(self, method, path, **kwargs):
+        return HttpResponse(
+            status_code=200,
+            headers={"content-type": "application/json"},
+            content=b'{"status": 0, "data": {}}',
+        )
+
+client = AtomClient("http://localhost", transport=MockTransport())</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>RequestOptions(timeout=30.0, headers={})</code> controls the default timeout and public request
+headers. A request-level <code>timeout</code> or <code>headers</code> value overrides the defaults.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_related_pages"><a class="anchor" href="#_related_pages"></a>Related pages</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="runtime.html" class="xref page">RuntimeService（Python）</a>: single-node execution, runtime frames, and bound outputs.</p>
+</li>
+<li>
+<p><a href="params.html" class="xref page">Python parameter object</a>: Service parameter objects and runtime frame factories.</p>
+</li>
+<li>
+<p><a href="../guides/error-handling.html" class="xref page">Error handling and troubleshooting</a>: cross-language error handling examples.</p>
+</li>
+<li>
+<p><a href="../concepts/point-cloud-protocol.html" class="xref page">Binary protocol for point cloud type input and output</a>: point-cloud binary protocol details.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="params.html">Python parameter object</a></span>
+  <span class="next"><a href="graph.html">GraphService（Python）</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

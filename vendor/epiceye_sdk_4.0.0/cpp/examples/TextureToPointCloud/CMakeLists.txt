@@ -1,0 +1,2 @@
+add_executable(TextureToPointCloud main.cpp)
+target_link_libraries(TextureToPointCloud PRIVATE epiceye_sdk::epiceye_sdk)

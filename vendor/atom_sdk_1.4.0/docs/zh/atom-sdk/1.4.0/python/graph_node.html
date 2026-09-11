@@ -1,0 +1,1777 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>GraphNodeService（Python） :: Atom SDK 开发手册</title>
+    <link rel="prev" href="node.html">
+    <link rel="next" href="runtime.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          在线产品文档        </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="输入关键词搜索"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              仅本手册
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            切换手册
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK 开发手册</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          下载中心
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          官网
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            简体中文
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK 开发手册</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">欢迎</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">快速开始</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">快速开始</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">示例样本</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">入门使用</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK 入门使用</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService 入门使用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService 入门使用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService 入门使用</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">使用指南</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">选择合适的 Service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">图与节点操作</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">错误处理与排查</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">常见问题解答</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">基础概念</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/what-is-atom-sdk.html">什么是 Atom SDK</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-node-subgraph.html">图、节点、子图</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-vs-runtime.html">Graph 与 Runtime 的区别</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/timestamp.html">Timestamp 是什么</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/runtime-frame.html">运行时输入帧（RuntimeFrame / RuntimePassiveBinoFrame）</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/point-cloud-protocol.html">点云类型输入输出的二进制协议</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/param-binding.html">参数类型与绑定名</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API 参考</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API 参考总览</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="overview.html">Python 概览与安装</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="params.html">Python 参数对象</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="public_api.html">Python 公共工具 API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ 版 — 使用指南</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ 参数对象</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">Atom SDK — C# 版本</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/params.html">C# 参数对象</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK 开发手册</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK 开发手册</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK 开发手册</a></li>
+    <li>API 参考</li>
+    <li>Python SDK</li>
+    <li><a href="graph_node.html">GraphNodeService（Python）</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="本页内容"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">GraphNodeService（Python）</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>GraphNodeService</code> 用来操作某个 graph node 内部的子图。它和 <code>NodeService</code> 很像，但每次操作都需要知道两层位置：
+* <code>graph_name</code>：父图名称
+* <code>graph_node_id</code>：父图中那个 graph node 的节点 ID
+<strong>入口</strong>：<code>client.graph_node</code></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_新参数格式"><a class="anchor" href="#_新参数格式"></a>新参数格式</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>子图节点接口现在统一使用 <code>SubGraph*</code> 参数对象：
+完整字段说明见：<a href="params.html" class="xref page">Python 参数对象</a>。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import (
+    ChangeSubGraphNodeIOParams,
+    CreateDynamicSubGraphNodeParams,
+    EditSubGraphNameParams,
+    EditSubGraphNodeCommentParams,
+    ExportSubGraphParams,
+    SetSubgraphAsCustomSubgraphParams,
+    SubGraphBindingUpdate,
+    SubGraphConnectionParams,
+    SubGraphCopyNodeParams,
+    SubGraphCreateNodeParams,
+    SubGraphNodeParamUpdate,
+    SubGraphNodeRef,
+    SubGraphPortRef,
+    SubGraphRef,
+)</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">方法</th>
+<th class="tableblock halign-left valign-top">参数对象</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>open_graph</code> / <code>run_graph</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SubGraphRef</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>create_node</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SubGraphCreateNodeParams</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>create_dynamic_io_node</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CreateDynamicSubGraphNodeParams</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>create_node_by_copy</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SubGraphCopyNodeParams</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>change_node_io</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>ChangeSubGraphNodeIOParams</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>delete_node</code> / <code>get_node_params</code> / <code>get_node_info_in_graph</code> / <code>activate_node</code> / <code>initial_node</code> / <code>update_node</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SubGraphNodeRef</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>connect_nodes</code> / <code>disconnect_nodes</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SubGraphConnectionParams</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>get_node_port_data</code> / <code>get_points_data</code> / <code>get_points_data_parsed</code> / <code>download_data</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SubGraphPortRef</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>set_node_param_data</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SubGraphNodeParamUpdate</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>set_binding_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SubGraphBindingUpdate</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>edit_node_comment</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>EditSubGraphNodeCommentParams</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>edit_graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>EditSubGraphNameParams</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>export_graph</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>ExportSubGraphParams</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>set_subgraph_as_custom_subgraph</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SetSubgraphAsCustomSubgraphParams</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_推荐调用顺序"><a class="anchor" href="#_推荐调用顺序"></a>推荐调用顺序</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">client.graph.open_graph(graph_name)                  &lt;- 先打开父图
+        |
+client.graph_node.open_graph(SubGraphRef(...))       &lt;- 打开 graph node 内部子图
+        |
+client.graph_node.create_node(SubGraphCreateNodeParams(...))
+        |
+client.graph_node.set_node_param_data(SubGraphNodeParamUpdate(...))
+        |
+client.graph_node.connect_nodes(SubGraphConnectionParams(...))
+        |
+client.graph_node.run_graph(SubGraphRef(...))</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_接口详解"><a class="anchor" href="#_接口详解"></a>接口详解</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_open_graphparams"><a class="anchor" href="#_open_graphparams"></a><code>open_graph(params)</code></h3>
+<div class="paragraph">
+<p>打开指定 graph node 对应的内部子图，并缓存 timestamp。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数对象</strong>：<br>
+<code>SubGraphRef</code></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>父图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>父图中的 graph node 节点 ID</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SubGraphRef
+
+result = client.graph_node.open_graph(SubGraphRef("my_graph", "gn_abc123"))
+print("子图节点数：", len(result.get("graph", {}).get("nodes", [])))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_create_nodeparams"><a class="anchor" href="#_create_nodeparams"></a><code>create_node(params)</code></h3>
+<div class="paragraph">
+<p>在子图中创建一个节点。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数对象</strong>：<br>
+<code>SubGraphCreateNodeParams</code></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>父图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>graph node 节点 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>node_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>要创建的节点类名</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SubGraphCreateNodeParams
+
+result = client.graph_node.create_node(
+    SubGraphCreateNodeParams(
+        "my_graph",
+        "gn_abc123",
+        "PreprocessNode",
+    )
+)
+sub_node_id = result["nodeId"]
+print("请求状态：", result["status"])</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_create_node_by_copyparams"><a class="anchor" href="#_create_node_by_copyparams"></a><code>create_node_by_copy(params)</code></h3>
+<div class="paragraph">
+<p>复制子图中的已有节点。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数对象</strong>：<br>
+<code>SubGraphCopyNodeParams</code></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>父图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>graph node 节点 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>node_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>复制后的新节点名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>被复制的源节点 ID</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SubGraphCopyNodeParams
+
+result = client.graph_node.create_node_by_copy(
+    SubGraphCopyNodeParams("my_graph", "gn_abc123", "PreprocessNode_2", "source_sub_node_id")
+)
+print("请求状态：", result["status"])
+print("复制后节点 ID：", result["nodeId"])</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_create_dynamic_io_nodeparams"><a class="anchor" href="#_create_dynamic_io_nodeparams"></a><code>create_dynamic_io_node(params)</code></h3>
+<div class="paragraph">
+<p>在子图里创建带动态输入输出定义的节点。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import CreateDynamicSubGraphNodeParams
+
+result = client.graph_node.create_dynamic_io_node(
+    CreateDynamicSubGraphNodeParams(
+        "my_graph",
+        "gn_abc123",
+        "DynamicIONode",
+        {"outputs": [{"name": "mask_out", "dtype": "BinaryImage"}]},
+    )
+)
+print(result["nodeId"])</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_change_node_ioparams"><a class="anchor" href="#_change_node_ioparams"></a><code>change_node_io(params)</code></h3>
+<div class="paragraph">
+<p>修改子图内动态节点的输入输出定义。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import ChangeSubGraphNodeIOParams
+
+client.graph_node.change_node_io(
+    ChangeSubGraphNodeIOParams(
+        "my_graph",
+        "gn_abc123",
+        "sub_node_id",
+        {"outputs": [{"name": "score_out", "dtype": "Float"}]},
+    )
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_delete_nodeparams"><a class="anchor" href="#_delete_nodeparams"></a><code>delete_node(params)</code></h3>
+<div class="paragraph">
+<p>删除子图中的某个节点。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数对象</strong>：<br>
+<code>SubGraphNodeRef</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SubGraphNodeRef
+
+client.graph_node.delete_node(
+    SubGraphNodeRef("my_graph", "gn_abc123", "sub_node_id")
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_connect_nodesparams"><a class="anchor" href="#_connect_nodesparams"></a><code>connect_nodes(params)</code></h3>
+<div class="paragraph">
+<p>连接子图中两个节点的端口。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数对象</strong>：<br>
+<code>SubGraphConnectionParams</code></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>父图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>graph node 节点 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>output_node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>源节点 ID，也就是产生数据的节点</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>output_port_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>源节点输出端口名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>input_node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>目标节点 ID，也就是接收数据的节点</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>input_port_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>目标节点输入端口名</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>记忆方式：<code>output_*</code> 在前，<code>input_*</code> 在后。数据流向是 <code>output &#8594; input</code>。</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SubGraphConnectionParams
+
+client.graph_node.connect_nodes(
+    SubGraphConnectionParams(
+        graph_name="my_graph",
+        graph_node_id="gn_abc123",
+        output_node_id="sub_node_a",
+        output_port_name="image_out",
+        input_node_id="sub_node_b",
+        input_port_name="image_in",
+    )
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_disconnect_nodesparams"><a class="anchor" href="#_disconnect_nodesparams"></a><code>disconnect_nodes(params)</code></h3>
+<div class="paragraph">
+<p>断开子图中两个节点之间的连线。参数对象和 <code>connect_nodes</code> 相同。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SubGraphConnectionParams
+
+client.graph_node.disconnect_nodes(
+    SubGraphConnectionParams(
+        "my_graph",
+        "gn_abc123",
+        "sub_node_a",
+        "image_out",
+        "sub_node_b",
+        "image_in",
+    )
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_node_paramsparams"><a class="anchor" href="#_get_node_paramsparams"></a><code>get_node_params(params)</code></h3>
+<div class="paragraph">
+<p>获取子图内节点的当前参数值。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数对象</strong>：<br>
+<code>SubGraphNodeRef</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SubGraphNodeRef
+
+params = client.graph_node.get_node_params(
+    SubGraphNodeRef("my_graph", "gn_abc123", "sub_node_id")
+)
+print(params.get("init_params"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_node_info_in_graphparams"><a class="anchor" href="#_get_node_info_in_graphparams"></a><code>get_node_info_in_graph(params)</code></h3>
+<div class="paragraph">
+<p>获取子图内某个节点的完整信息，包括参数、端口和策略配置。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数对象</strong>：<br>
+<code>SubGraphNodeRef</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SubGraphNodeRef
+
+info = client.graph_node.get_node_info_in_graph(
+    SubGraphNodeRef("my_graph", "gn_abc123", "sub_node_id")
+)
+print(info.get("nodeInfo"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_node_port_dataparams"><a class="anchor" href="#_get_node_port_dataparams"></a><code>get_node_port_data(params)</code></h3>
+<div class="paragraph">
+<p>获取子图内节点某个端口的当前数据。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数对象</strong>：<br>
+<code>SubGraphPortRef</code></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>父图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>graph node 节点 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>子图内节点 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>port_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>端口名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>io_type</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>端口方向，通常是 <code>"inputs"</code> 或 <code>"outputs"</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SubGraphPortRef
+
+data = client.graph_node.get_node_port_data(
+    SubGraphPortRef("my_graph", "gn_abc123", "sub_node_id", "result_out", "outputs")
+)
+print(data)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_points_data_parsedparams"><a class="anchor" href="#_get_points_data_parsedparams"></a><code>get_points_data_parsed(params)</code></h3>
+<div class="paragraph">
+<p>读取并解析子图节点点云。普通用户优先用这个接口。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数对象</strong>：<br>
+<code>SubGraphPortRef</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SubGraphPortRef
+
+clouds = client.graph_node.get_points_data_parsed(
+    SubGraphPortRef("my_graph", "gn_abc123", "sub_node_id", "cloud_out", "outputs")
+)
+print(clouds[0].shape)
+print(clouds[0].tolist()[:2])</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_points_dataparams"><a class="anchor" href="#_get_points_dataparams"></a><code>get_points_data(params)</code></h3>
+<div class="paragraph">
+<p>读取子图节点端口的原始点云字节流。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数对象</strong>：<br>
+<code>SubGraphPortRef</code>
+<strong>返回值</strong>：<code>bytes</code>
+注意：这里返回的是 Atom 自定义二进制点云 payload。正常消费点云时，优先用 <code>get_points_data_parsed(&#8230;&#8203;)</code>。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SubGraphPortRef
+
+raw = client.graph_node.get_points_data(
+    SubGraphPortRef("my_graph", "gn_abc123", "sub_node_id", "cloud_out", "outputs")
+)
+print(len(raw))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_download_dataparams"><a class="anchor" href="#_download_dataparams"></a><code>download_data(params)</code></h3>
+<div class="paragraph">
+<p>为子图节点结果生成服务端下载链接。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SubGraphPortRef
+
+result = client.graph_node.download_data(
+    SubGraphPortRef("my_graph", "gn_abc123", "sub_node_id", "cloud_out", "outputs")
+)
+print(result["url"])</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_set_node_param_dataparams"><a class="anchor" href="#_set_node_param_dataparams"></a><code>set_node_param_data(params)</code></h3>
+<div class="paragraph">
+<p>设置子图内节点参数。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数对象</strong>：<br>
+<code>SubGraphNodeParamUpdate</code></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>父图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>graph node 节点 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>子图内节点 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>param_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>参数名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>param_type</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>参数类型，通常是 <code>"init_params"</code> 或 <code>"run_params"</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>value</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Any</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>参数值；传入 <code>pathlib.Path</code> 时，SDK 自动按文件上传</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SubGraphNodeParamUpdate
+
+client.graph_node.set_node_param_data(
+    SubGraphNodeParamUpdate(
+        "my_graph",
+        "gn_abc123",
+        "sub_node_id",
+        "threshold",
+        "run_params",
+        0.8,
+    )
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_set_binding_nameparams"><a class="anchor" href="#_set_binding_nameparams"></a><code>set_binding_name(params)</code></h3>
+<div class="paragraph">
+<p>为子图内节点的端口或参数设置绑定名。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数对象</strong>：<br>
+<code>SubGraphBindingUpdate</code></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>父图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>graph node 节点 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>子图内节点 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>binding_type</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>"inputs"</code>、<code>"outputs"</code>、<code>"init_params"</code> 或 <code>"run_params"</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>origin_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>原始端口名或参数名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>binding_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>新绑定名；传空字符串通常表示取消绑定</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SubGraphBindingUpdate
+
+client.graph_node.set_binding_name(
+    SubGraphBindingUpdate(
+        "my_graph",
+        "gn_abc123",
+        "sub_node_id",
+        "outputs",
+        "detection_result",
+        "sub_detect_out",
+    )
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_edit_node_commentparams"><a class="anchor" href="#_edit_node_commentparams"></a><code>edit_node_comment(params)</code></h3>
+<div class="paragraph">
+<p>修改子图内节点备注。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import EditSubGraphNodeCommentParams
+
+client.graph_node.edit_node_comment(
+    EditSubGraphNodeCommentParams("my_graph", "gn_abc123", "sub_node_id", "新的子图备注")
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_graph_bindingsparams"><a class="anchor" href="#_get_graph_bindingsparams"></a><code>get_graph_bindings(params)</code></h3>
+<div class="paragraph">
+<p>读取整个子图当前的绑定情况。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SubGraphRef
+
+bindings = client.graph_node.get_graph_bindings(SubGraphRef("my_graph", "gn_abc123"))
+print(bindings.get("outputs"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_graph_dl_nodes_model_infoparams"><a class="anchor" href="#_get_graph_dl_nodes_model_infoparams"></a><code>get_graph_dl_nodes_model_info(params)</code></h3>
+<div class="paragraph">
+<p>获取子图中深度学习节点关联的模型信息。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数对象</strong>：<br>
+<code>SubGraphRef</code>
+<strong>返回值</strong>：服务端返回的模型信息映射。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SubGraphRef
+
+models = client.graph_node.get_graph_dl_nodes_model_info(
+    SubGraphRef("my_graph", "gn_abc123")
+)
+print(models)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_graph_custom_nodesparams"><a class="anchor" href="#_get_graph_custom_nodesparams"></a><code>get_graph_custom_nodes(params)</code></h3>
+<div class="paragraph">
+<p>获取子图中使用到的自定义节点信息。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数对象</strong>：<br>
+<code>SubGraphRef</code>
+<strong>返回值</strong>：服务端返回的自定义节点信息映射。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">custom_nodes = client.graph_node.get_graph_custom_nodes(
+    SubGraphRef("my_graph", "gn_abc123")
+)
+print(custom_nodes)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_edit_graph_nameparams"><a class="anchor" href="#_edit_graph_nameparams"></a><code>edit_graph_name(params)</code></h3>
+<div class="paragraph">
+<p>修改子图名称。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import EditSubGraphNameParams
+
+client.graph_node.edit_graph_name(
+    EditSubGraphNameParams("my_graph", "gn_abc123", "subgraph_v2")
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_export_graphparams"><a class="anchor" href="#_export_graphparams"></a><code>export_graph(params)</code></h3>
+<div class="paragraph">
+<p>导出某个 graph node 内部子图。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import ExportSubGraphParams
+
+result = client.graph_node.export_graph(
+    ExportSubGraphParams("my_graph", "gn_abc123")
+)
+print(result.get("url"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_release_graphparams"><a class="anchor" href="#_release_graphparams"></a><code>release_graph(params)</code></h3>
+<div class="paragraph">
+<p>释放指定 graph node 对应的子图，并清理服务端资源。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数对象</strong>：<br>
+<code>SubGraphRef</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SubGraphRef
+
+client.graph_node.clear_graph(SubGraphRef("my_graph", "gn_abc123"))
+nodes_info = client.graph_node.get_all_nodes_info()
+client.graph_node.release_graph(SubGraphRef("my_graph", "gn_abc123"))</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>返回值</strong>：服务端返回的释放结果，通常为 <code>dict</code> 或布尔值。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_clear_graphparams"><a class="anchor" href="#_clear_graphparams"></a><code>clear_graph(params)</code></h3>
+<div class="paragraph">
+<p>清空子图上一次运行留下的中间数据，不会删除子图结构。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数对象</strong>：<br>
+<code>SubGraphRef</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SubGraphRef
+
+result = client.graph_node.clear_graph(SubGraphRef("my_graph", "gn_abc123"))
+print(result)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_all_nodes_info"><a class="anchor" href="#_get_all_nodes_info"></a><code>get_all_nodes_info()</code></h3>
+<div class="paragraph">
+<p>获取子图编辑场景可用的全部节点定义。该接口不绑定某一张图或某一个 graph node，
+因此不需要请求参数。
+<strong>返回值</strong>：<code>dict[str, Any]</code>。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">nodes_info = client.graph_node.get_all_nodes_info()
+print("可用节点数量：", len(nodes_info))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_set_subgraph_as_custom_subgraphparams"><a class="anchor" href="#_set_subgraph_as_custom_subgraphparams"></a><code>set_subgraph_as_custom_subgraph(params)</code></h3>
+<div class="paragraph">
+<p>把当前子图保存成可复用的自定义子图模板。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SetSubgraphAsCustomSubgraphParams
+
+result = client.graph_node.set_subgraph_as_custom_subgraph(
+    SetSubgraphAsCustomSubgraphParams("my_graph", "gn_abc123", "custom_subgraph_template")
+)
+print(result.get("customGraphName"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_activate_nodeparams_timeout_seconds30"><a class="anchor" href="#_activate_nodeparams_timeout_seconds30"></a><code>activate_node(params, *, timeout_seconds=30)</code></h3>
+<div class="paragraph">
+<p>激活子图中的某个节点及其下游节点，内部自动轮询直到完成或等待超时。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数对象</strong>：<br>
+<code>SubGraphNodeRef</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SubGraphNodeRef
+
+result = client.graph_node.activate_node(
+    SubGraphNodeRef("my_graph", "gn_abc123", "sub_node_id"),
+    timeout_seconds=120,
+)
+print("完成：", result.get("finish"))</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>timeout_seconds=None</code> 表示一直等待，直到服务端返回完成或错误。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_initial_nodeparams"><a class="anchor" href="#_initial_nodeparams"></a><code>initial_node(params)</code></h3>
+<div class="paragraph">
+<p>初始化子图中的某个节点。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数对象</strong>：<br>
+<code>SubGraphNodeRef</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SubGraphNodeRef
+
+result = client.graph_node.initial_node(
+    SubGraphNodeRef("my_graph", "gn_abc123", "sub_node_id")
+)
+print("初始化成功：", result.get("success"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_update_nodeparams"><a class="anchor" href="#_update_nodeparams"></a><code>update_node(params)</code></h3>
+<div class="paragraph">
+<p>更新子图中的单个节点。该接口只请求一次，会把服务端本次返回的 <code>finish</code> 状态原样交给用户。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数对象</strong>：<br>
+<code>SubGraphNodeRef</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SubGraphNodeRef
+
+result = client.graph_node.update_node(
+    SubGraphNodeRef("my_graph", "gn_abc123", "sub_node_id")
+)
+print("本次返回是否已完成：", result.get("finish"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_run_graphparams_timeout_seconds30"><a class="anchor" href="#_run_graphparams_timeout_seconds30"></a><code>run_graph(params, *, timeout_seconds=30)</code></h3>
+<div class="paragraph">
+<p>运行整个子图，内部自动轮询直到完成或等待超时。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数对象</strong>：<br>
+<code>SubGraphRef</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SubGraphRef
+
+result = client.graph_node.run_graph(SubGraphRef("my_graph", "gn_abc123"), timeout_seconds=120)
+print("请求状态：", result["status"])
+print("子图运行完成：", result.get("finish"))</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>timeout_seconds=None</code> 表示一直等待，直到服务端返回完成或错误。</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_graphnodeservice_与_nodeservice_的区别"><a class="anchor" href="#_graphnodeservice_与_nodeservice_的区别"></a>GraphNodeService 与 NodeService 的区别</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">对比项</th>
+<th class="tableblock halign-left valign-top">NodeService</th>
+<th class="tableblock halign-left valign-top">GraphNodeService</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>操作目标</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>主图中的节点</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>某个 graph node 内部子图中的节点</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>入口</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>client.node</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>client.graph_node</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>参数对象</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>NodeRef</code>、<code>PortRef</code> 等</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SubGraphRef</code>、<code>SubGraphPortRef</code> 等</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>额外定位字段</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>无</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_node_id</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>路由前缀</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>/Node/*</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>/GraphNode/*</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_完整示例"><a class="anchor" href="#_完整示例"></a>完整示例</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import (
+    AtomClient,
+    SubGraphConnectionParams,
+    SubGraphCreateNodeParams,
+    SubGraphNodeParamUpdate,
+    SubGraphRef,
+)
+
+client = AtomClient(base_url="http://127.0.0.1:10026")
+GRAPH_NAME = "main_graph"
+GRAPH_NODE_ID = "gn_abc123"
+
+client.graph.open_graph(GRAPH_NAME)
+
+sub_result = client.graph_node.open_graph(
+    SubGraphRef(GRAPH_NAME, GRAPH_NODE_ID)
+)
+print("子图节点数：", len(sub_result.get("graph", {}).get("nodes", [])))
+
+resize = client.graph_node.create_node(
+    SubGraphCreateNodeParams(GRAPH_NAME, GRAPH_NODE_ID, "ResizeImage")
+)
+resize_id = resize["nodeId"]
+print("Resize 节点创建请求状态：", resize["status"])
+
+filter_node = client.graph_node.create_node(
+    SubGraphCreateNodeParams(GRAPH_NAME, GRAPH_NODE_ID, "FilterNode")
+)
+filter_id = filter_node["nodeId"]
+print("Filter 节点创建请求状态：", filter_node["status"])
+
+client.graph_node.set_node_param_data(
+    SubGraphNodeParamUpdate(GRAPH_NAME, GRAPH_NODE_ID, resize_id, "scale_factor", "run_params", 0.5)
+)
+
+client.graph_node.connect_nodes(
+    SubGraphConnectionParams(GRAPH_NAME, GRAPH_NODE_ID, resize_id, "resized_image", filter_id, "image_in")
+)
+
+result = client.graph_node.run_graph(SubGraphRef(GRAPH_NAME, GRAPH_NODE_ID))
+print("请求状态：", result["status"])
+print("子图运行完成：", result.get("finish"))</code></pre>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="node.html">NodeService（Python）</a></span>
+  <span class="next"><a href="runtime.html">RuntimeService（Python）</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

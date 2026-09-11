@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>C# — 뚱 베어 :: Epic Eye SDK 개발자 가이드</title>
+    <link rel="prev" href="intrinsics.html">
+    <link rel="next" href="hand-eye-calibration.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+         <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" /> 
+         <span class="navbar-title">온라인 제품 문서</span>
+      </a>
+
+      
+
+
+    </div>
+
+      <div id="topbar-nav" class="navbar-menu">
+        <div class="navbar-end">
+
+          
+            <div class="navbar-item search hide-for-print">
+              <div id="search-field" class="field has-filter">
+                <input id="search-input" type="text" placeholder="검색할 키워드를 입력하세요" >
+                <label class="filter checkbox">
+                  <input type="checkbox" data-facet-filter="component:epic-eye-sdk">현재 매뉴얼만</label>
+              </div>
+            </div>
+          
+          <button class="navbar-burger" data-target="topbar-nav">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">매뉴얼 전환</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Epic Eye SDK 개발자 가이드</a>
+          </div>
+        </div>
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">다운로드 센터</a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">공식 웹사이트</a>
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+            <a class="navbar-link" href="#"><span class="globe-icon">🌐</span>한국어</a>
+            <div class="navbar-dropdown">
+                <a class="navbar-item" href="http://docs.qianyi.ai/zh/index.html">简体中文</a>
+                <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+                <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-logo {
+  height: 32px;
+  margin-right: 8px;
+}
+
+.navbar-title {
+  font-size: 18px;
+  color: #333;
+}
+
+.globe-icon {
+  margin-right: 5px;
+}
+
+.navbar-item {
+  color: #000 !important;
+}
+
+.navbar-item:hover {
+  background-color: #3273dc !important;
+  color: #fff !important;
+}
+
+.navbar-item a {
+  color: #000 !important;
+}
+
+.navbar-item a:hover {
+  color: #fff !important;
+}
+
+.navbar-dropdown .navbar-item {
+  color: #000 !important;
+}
+
+.navbar-dropdown .navbar-item:hover {
+  background-color: #3273dc !important;
+  color: #fff !important;
+}
+
+.navbar-link:hover {
+  background-color: #3273dc !important;
+  color: #fff !important;
+}
+
+.navbar-link a {
+  color: #000 !important;
+}
+
+.navbar-link a:hover {
+  color: #fff !important;
+}
+
+.language-selector .navbar-link {
+  display: flex;
+  align-items: center;
+  color: #000 !important;
+}
+
+.navbar-link {
+  color: #000 !important;
+}
+
+/* 添加这个新规则，使下拉菜单激活时保持链接的蓝色背景 */
+.navbar-item.has-dropdown.is-active .navbar-link,
+.navbar-item.has-dropdown:focus .navbar-link,
+.navbar-item.has-dropdown:focus-within .navbar-link {
+  background-color: #3273dc !important;
+  color: #fff !important;
+}
+
+/* 添加这个规则，确保鼠标悬停在下拉菜单项上时父级链接保持蓝色背景 */
+.navbar-item.has-dropdown:hover .navbar-link {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* 添加这个特定的样式规则，确保搜索框区域在悬停时背景不变 */
+.navbar-item.search.hide-for-print:hover {
+  background-color: transparent !important;  /* 使背景透明，保持原来的背景色 */
+}
+
+/* 确保搜索框内的输入框在悬停时也不改变背景 */
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input {
+  background-color: inherit !important;
+}
+</style> 
+<div class="body">
+<div class="nav-container" data-component="epic-eye-sdk" data-version="4.0.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Epic Eye SDK 개발자 가이드</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">환영합니다</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">빠른 시작</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">빠른 시작</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/examples.html">예제</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">사용자 가이드</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/discovery.html">카메라 발견 및 연결</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/capture.html">촬영 및 촬영 EpicRaw 디코딩</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/config.html">사진기 윤곽 &amp; 모수</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/intrinsic-calibration.html">뚱 베어</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/hand-eye-calibration.html">손 눈 표제.</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/line-scan.html">철사 sweeping</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/stream2d.html">Stream2D 라이브 동영상</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API 참조</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API - 연혁</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="overview.html">C# — 개요 및 통합</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="device.html">C# — 장치 및 네트워크</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="capture.html">C# — 사진 및 데이터 수집</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="epicraw.html">C# — EpicRaw 파싱</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="camera-config.html">C# — 카메라 구성</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="intrinsics.html">C# — 변형의 내부 참여 LUT</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="intrinsic-calibration.html">C# — 뚱 베어</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="hand-eye-calibration.html">C# — 손 눈 표제.</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="line-scan.html">C# — 와이어 스윕</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="stream2d.html">C# — Stream2D</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="alignment.html">C# — 텍스트 정렬</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="data-models.html">C# — 데이터 유형 및 필드</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python — 개요 및 설치</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">Python — 설정 실행하기</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/device.html">Python — 장치 및 네트워크</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/capture.html">Python — 사진 및 데이터 수집</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/epicraw.html">Python — EpicRaw 파싱</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/camera-config.html">Python — 카메라 구성</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/intrinsics.html">Python — 변형의 내부 참여 LUT</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/intrinsic-calibration.html">Python — 뚱 베어</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/hand-eye-calibration.html">Python — 손 눈 표제.</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/line-scan.html">Python — 와이어 스윕</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/stream2d.html">Python — Stream2D</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/alignment.html">Python — 텍스트 정렬</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/data-models.html">Python — 데이터 유형 및 필드</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">C++ — 개요 및 통합</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/device.html">C++ — 장치 및 네트워크</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/capture.html">C++ — 사진 및 데이터 수집</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/epicraw.html">C++ — EpicRaw 파싱</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/camera-config.html">C++ — 카메라 구성</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/intrinsics.html">C++ — 변형의 내부 참여 LUT</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/intrinsic-calibration.html">C++ — 뚱 베어</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/hand-eye-calibration.html">C++ — 손 눈 표제.</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/line-scan.html">C++ — 와이어 스윕</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/stream2d.html">C++ — Stream2D</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/alignment.html">C++ — Texture 정렬 및 완료</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/data-models.html">C++ — 데이터 유형 및 필드</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Epic Eye SDK 개발자 가이드</span>
+    <span class="version">4.0.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Epic Eye SDK 개발자 가이드</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">4.0.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Epic Eye SDK 개발자 가이드</a></li>
+    <li>API 참조</li>
+    <li>C# SDK</li>
+    <li><a href="intrinsic-calibration.html">C# — 뚱 베어</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Content"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside><article class="doc">
+<h1 class="page">C# — 뚱 베어</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>내부 파라미터 캘리브레이션, 내부 파라미터 쓰기 및 출하 상태 복원은 해당 API를 제공하는 카메라 모델과 펌웨어에서만 사용할 수 있습니다. 쓰기 작업에는 완전한 `CameraParametersConfig`를 사용합니다.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>관련 상품 `EpicEye.Calibration.Intrinsic.cs`내부 참조 패널, 관리 교정, 내부 및 외부 카메라 참조 계산, 현재의 내부 정확도의 독립적 인 검사의 식별에 대한.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_api_레퍼런스"><a class="anchor" href="#_api_레퍼런스"></a>API 레퍼런스</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_identifyboard_identifyboardasync"><a class="anchor" href="#_identifyboard_identifyboardasync"></a><code>IdentifyBoard / IdentifyBoardAsync</code></h3>
+<div class="paragraph">
+<p><strong>용도</strong>：(b) 사진이 트리거하고 내부 참조 판의 유형을 식별하고 테스트의 결과와 미리보기를 돌려 패널의 유형과 가시성을 확인합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 30%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ip</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">카메라 주소.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>timeout</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">요청 제한 시간(밀리초); 기본값: <code>30000</code>.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환값</strong>：<a href="data-models.html#api-response" class="xref page"><code>ApiResponse&lt;CalibrationBoardIdentifyResponse&gt;</code></a>여러분의 위치 <a href="data-models.html#intrinsic-calibration-types" class="xref page">내부 참조 유형</a>.</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_checkintrinsicaccuracy_checkintrinsicaccuracyasync"><a class="anchor" href="#_checkintrinsicaccuracy_checkintrinsicaccuracyasync"></a><code>CheckIntrinsicAccuracy / CheckIntrinsicAccuracyAsync</code></h3>
+<div class="paragraph">
+<p><strong>용도</strong>：필름, 판 인식, 태블릿 위치 추정, 단일 카메라 재 투사 오류 및 스테레오 정렬 오류 계산을 포함하여 독립적 인 내부 nuance 정확도 검사를 수행하십시오. 인터페이스는 표시된 세션에 이미지를 추가하지 않습니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 30%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ip</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">카메라 주소.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>timeout</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">요청 제한 시간(밀리초); 기본값: <code>120000</code>.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환값</strong>：<a href="data-models.html#intrinsic-accuracy-check-result" class="xref page"><code>ApiResponse&lt;IntrinsicAccuracyCheckResult&gt;</code></a>.</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_addcalibimage_addcalibimageasync"><a class="anchor" href="#_addcalibimage_addcalibimageasync"></a><code>AddCalibImage / AddCalibImageAsync</code></h3>
+<div class="paragraph">
+<p><strong>용도</strong>：식별된 판에 의한 심도 소스와 색상 소스 세트를 수집하고 카메라의 현재 내부 참조 세션을 추가합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 30%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ip</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">카메라 주소.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>boardType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">캘리브레이션 보드 형식.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>timeout</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">요청 제한 시간(밀리초); 기본값: <code>30000</code>.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환값</strong>：`ApiResponse&lt;IntrinsicAddCalibImageResponse&gt;`여러분의 위치 <a href="data-models.html#intrinsic-calibration-types" class="xref page">내부 참조 유형</a>.</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_removecalibimage_removecalibimageasync"><a class="anchor" href="#_removecalibimage_removecalibimageasync"></a><code>RemoveCalibImage / RemoveCalibImageAsync</code></h3>
+<div class="paragraph">
+<p><strong>용도</strong>：현재 내부 참조 세션에서 지정된지도 쌍을 제거하고 종종 마스크, 실수로 재 투영 된 샘플의 제거에 적용합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 30%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ip</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">카메라 주소.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pairIndex</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">캘리브레이션 이미지 쌍 인덱스.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>timeout</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">요청 제한 시간(밀리초); 기본값: <code>5000</code>.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환값</strong>：`ApiResponse&lt;IntrinsicRemoveCalibPairResponse&gt;`여러분의 위치 <a href="data-models.html#intrinsic-calibration-types" class="xref page">내부 참조 유형</a>.</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_calculate_calculateasync"><a class="anchor" href="#_calculate_calculateasync"></a><code>Calculate / CalculateAsync</code></h3>
+<div class="paragraph">
+<p><strong>용도</strong>：현재 세션에서 왼쪽으로 모든 차트를 사용하여 내부 및 외부 참조를 계산하고 카메라에 쓸 수있는 전체 구성을 반환합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 30%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">형식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ip</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">카메라 주소.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>timeout</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">요청 제한 시간(밀리초); 기본값: <code>60000</code>.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환값</strong>：`ApiResponse&lt;IntrinsicCalculateResponse&gt;`여러분의 위치 <a href="data-models.html#intrinsic-calibration-types" class="xref page">내부 참조 유형</a>.
+== Mark 프로세스</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . <code>IdentifyBoard</code> 판의 유형과 탐지의 효력의 ID.</p>
+</li>
+<li>
+<p>팔레트의 각 재배 및 안정화 후, 연산자로 전화 확인 <code>AddCalibImage</code>. 각 수집은 탐지 상태, 도표에 색인, 정제 위치, 경사 및 시사에 정보를 표시합니다.</p>
+</li>
+<li>
+<p><code>DetectSuccess=false</code> . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . <code>PairIndex</code> . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . <code>RemoveCalibImage</code>; 성공적으로 시험되었지만 미리 지정된지도는 운영자와 재발행에 의해 삭제 될 수 있습니다.</p>
+</li>
+<li>
+<p>연산자는 유지 유효 차트가 설정 번호를 도달 한 후 계속 수집하거나 호출 할 것을 선택합니다. <code>Calculate</code>.SDK Example 기본값은 적어도 유지 4 그룹.</p>
+</li>
+<li>
+<p>관련 상품 <code>StereoRms`옵션 정보 `ColorStereoRms</code>, 모수 과실 및 completeness <code>CameraParametersConfig</code>.<code>ShouldWarnRms=true</code> 또는 완전한 구성이 누락되면, 쓰기는 재생 후 비활성화되고 재순환됩니다.</p>
+</li>
+<li>
+<p>계산이 정상적일 때, 연산자는 전달되지 여부를 확인한다. <a href="intrinsics.html" class="xref page"><code>SetCameraIntrinsicParameters</code></a> 카메라 쓰기; 출구, 입력 끝 또는 반환 수집을 선택하면 서면되지 않습니다.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><code>IdentifyBoard</code>, <code>AddCalibImage</code> 으로 <code>Calculate</code> Overtime은 카메라 촬영, 이미지 전송, 패널 테스트 및 매개 변수 계산의 전체 서비스 종료 프로세스를 다룹니다. HTTP _기타 Organiser</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_multi_image_소스_유형"><a class="anchor" href="#_multi_image_소스_유형"></a>Multi-Image 소스 유형</h3>
+<div class="paragraph">
+<p>모든 단위는 한 번 통과합니다. <code>CalculateAsync</code> 전체장편 <code>CameraParametersConfig</code>.<code>BinoWithColor</code> 항공기 유형의 구성은 포함합니다 <code>DepthSrc1</code>, <code>DepthSrc2</code> 으로 <code>TextureSrc</code>; <code>CameraParameters</code>, <code>ColorCameraParameters</code> 그리고 해당 오류 필드는 계산 세부 사항을 확인합니다. 카메라를 작성할 때 사용 <code>CameraParametersConfig</code>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_주디지_example"><a class="anchor" href="#_주디지_example"></a>(주)디지 Example</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">dotnet run --project examples/IntrinsicCalibration -- 10.10.11.33 4</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>두 번째 매개 변수는 최소한의 유효성 그래프 logarithm가 계산을 허용해야하며, 최소 값이 4; 3개의 모수는 지정하기 위하여 선택했습니다 <code>boardType</code>. 카메라 주소가 지정되지 않을 때,Example 카메라를 검색하고 첫 번째 장치를 사용합니다. 판이 지정되지 않은 경우, 연산자로 전화하십시오. <code>IdentifyBoard</code>.</p>
+</div>
+<div class="paragraph">
+<p>콘솔 작업은 다음과 같습니다:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>C</code>: palette이 새로운 위치로 이동하고 안정적으로 유지하고 맵 세트를 수집한다는 것을 확인합니다.</p>
+</li>
+<li>
+<p><code>K</code>: 성공적인 테스트 및 가능한지도 쌍의 미리보기를 유지;`R` 이 그룹을 삭제하고 재입고합니다. 테스트의 실패는 자동으로 삭제되며, 프로세스는 낙관되고 계산은 실패가 발생할 때 비활성화됩니다.</p>
+</li>
+<li>
+<p>유효 맵의 수가 도달 한 후,<code>K</code> 현재 유지된 데이터를 사용하여 참조를 계산합니다.<code>C</code> 계속하기.</p>
+</li>
+<li>
+<p>계산 후 정상,<code>W</code> _기타 Organiser`B` 수집을 다시,<code>Q</code> 퀴즈와 쓰기는 하지 않습니다.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_예_확인_후_작성"><a class="anchor" href="#_예_확인_후_작성"></a>예: 확인 후 작성</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var calculation = await EpicEye.CalculateAsync(ip, timeout: 60000);
+if (calculation.Status != 0 || calculation.Data?.CameraParametersConfig is null)
+{
+    Console.WriteLine(calculation.ErrorMessage);
+    return;
+}
+
+Console.WriteLine($"깊이 두 배 눈 RMS: {calculation.Data.StereoRms}");
+if (calculation.Data.ColorStereoRms is double colorRms)
+{
+    Console.WriteLine($"주요 깊이 사진기-색깔 사진기 RMS: {colorRms}");
+}
+if (calculation.Data.ShouldWarnRms)
+{
+    Console.WriteLine("팟캐스트 RMS 보안 임계값을 넘어, 카메라에 쓰지 않는");
+    return;
+}
+
+Console.Write("카메라 위의 전체 구성을 작성하려면? W 쓰기, 다른 입력 취소:");
+if (!string.Equals(Console.ReadLine()?.Trim(), "W", StringComparison.OrdinalIgnoreCase))
+{
+    Console.WriteLine("취소, 카메라에 서면");
+    return;
+}
+
+var write = await EpicEye.SetCameraIntrinsicParametersAsync(ip, calculation.Data.CameraParametersConfig);
+if (write.Status != 0 || write.Data != true)
+{
+    Console.WriteLine(write.ErrorMessage);
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_예_인라인_정밀_검사"><a class="anchor" href="#_예_인라인_정밀_검사"></a>예: 인라인 정밀 검사</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var check = await EpicEye.CheckIntrinsicAccuracyAsync(ip, timeout: 120000);
+if (check.Status != 0 || check.Data is null)
+{
+    Console.WriteLine(check.ErrorMessage);
+    return;
+}
+
+var result = check.Data;
+Console.WriteLine($"의논하기: {result.BoardTypeDetected}, 위치는 일합니다.: {result.BoardPositionValid}");
+Console.WriteLine($"두 배 눈 평균/최대. 오류: {result.StereoAveragePixelError:F3} / {result.StereoMaxPixelError:F3} px");
+Console.WriteLine($"자주 묻는 질문: {(result.CameraAccuracyPass &amp;&amp; result.StereoAveragePass &amp;&amp; result.StereoMaxPass ? "그것은 를 통해." : "지원되지 않음")}");</code></pre>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="intrinsics.html">C# — 변형의 내부 참여 LUT</a></span>
+  <span class="next"><a href="hand-eye-calibration.html">C# — 손 눈 표제.</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

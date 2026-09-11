@@ -1,0 +1,2427 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>NodeService（C#） :: Atom SDK 开发手册</title>
+    <link rel="prev" href="graph.html">
+    <link rel="next" href="graph_node.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          在线产品文档        </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="输入关键词搜索"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              仅本手册
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            切换手册
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK 开发手册</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          下载中心
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          官网
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            简体中文
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK 开发手册</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">欢迎</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">快速开始</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">快速开始</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">示例样本</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">入门使用</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK 入门使用</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService 入门使用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService 入门使用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService 入门使用</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">使用指南</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">选择合适的 Service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">图与节点操作</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">错误处理与排查</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">常见问题解答</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">基础概念</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/what-is-atom-sdk.html">什么是 Atom SDK</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-node-subgraph.html">图、节点、子图</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-vs-runtime.html">Graph 与 Runtime 的区别</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/timestamp.html">Timestamp 是什么</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/runtime-frame.html">运行时输入帧（RuntimeFrame / RuntimePassiveBinoFrame）</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/point-cloud-protocol.html">点云类型输入输出的二进制协议</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/param-binding.html">参数类型与绑定名</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API 参考</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API 参考总览</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python 概览与安装</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/params.html">Python 参数对象</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/public_api.html">Python 公共工具 API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ 版 — 使用指南</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ 参数对象</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="overview.html">Atom SDK — C# 版本</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="params.html">C# 参数对象</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK 开发手册</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK 开发手册</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK 开发手册</a></li>
+    <li>API 参考</li>
+    <li>C# SDK</li>
+    <li><a href="node.html">NodeService（C#）</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="本页内容"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">NodeService（C#）</h1>
+<div class="sect1">
+<h2 id="_服务简介"><a class="anchor" href="#_服务简介"></a>服务简介</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>NodeService</code> 负责*主图（Graph）内部节点*的全套操作。它提供了节点的创建（含复制）、删除、连接与断开、参数读写、绑定名设置、节点激活/初始化/更新等功能。所有方法均为异步，需在 <code>OpenGraphAsync</code> 之后调用（以维护时间戳一致性）。</p>
+</div>
+<div class="paragraph">
+<p><strong>命名空间</strong>：<code>AtomSdk.Services</code></p>
+</div>
+<div class="paragraph">
+<p><strong>入口</strong>：<code>client.Node</code></p>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_适用场景"><a class="anchor" href="#_适用场景"></a>适用场景</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>在已打开的主图中增加或删除节点；</p>
+</li>
+<li>
+<p>通过连接端口将多个节点串联为计算流水线；</p>
+</li>
+<li>
+<p>读取或修改节点的初始化参数、运行参数；</p>
+</li>
+<li>
+<p>为端口设置 Runtime 绑定名，以便 Runtime 阶段通过名称读写数据；</p>
+</li>
+<li>
+<p>单独运行某个节点以调试输出（<code>ActivateNodeAsync</code> / <code>UpdateNodeAsync</code>）；</p>
+</li>
+</ul>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_推荐调用顺序"><a class="anchor" href="#_推荐调用顺序"></a>推荐调用顺序</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">client.Graph.OpenGraphAsync(graphName)  （先打开图获取时间戳）
+        ↓
+CreateNodeAsync          （创建节点）
+        ↓
+SetNodeParamDataAsync    （设置参数，可多次调用）
+        ↓
+ConnectNodesAsync        （连接节点端口）
+        ↓
+InitialNodeAsync         （初始化节点，可选）
+        ↓
+ActivateNodeAsync        （激活/运行单个节点，轮询等待完成）
+        ↓
+GetNodePortDataAsync     （读取输出端口数据）</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_接口详解"><a class="anchor" href="#_接口详解"></a>接口详解</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_createnodeasync"><a class="anchor" href="#_createnodeasync"></a>CreateNodeAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; CreateNodeAsync(
+    CreateNodeParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; CreateNodeAsync&lt;T&gt;(
+    CreateNodeParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 强类型便捷版本
+Task&lt;NodeReference&gt; CreateNodeInfoAsync(
+    CreateNodeParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：在指定主图中创建一个新节点实例。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>主图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>节点类型名（由 <code>GetAllNodesInfoAsync</code> 获取）</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，关键字段：</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>新节点的唯一 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>节点类型名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>timestamp</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>double</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>操作后图的时间戳</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Graph.OpenGraphAsync("my_graph");
+
+// 强类型版本（推荐）
+var node = await client.Node.CreateNodeInfoAsync(
+    new CreateNodeParams("my_graph", "ResizeImage"));
+Console.WriteLine($"创建节点成功，ID: {node.NodeId}");
+Console.WriteLine($"请求状态: {node.Status}");
+
+// 原始 JsonElement 版本
+var raw = await client.Node.CreateNodeAsync(new CreateNodeParams("my_graph", "DetectAndSegment"));
+string nodeId = raw.GetProperty("nodeId").GetString()!;
+Console.WriteLine($"请求状态: {raw.GetProperty("status").GetInt32()}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_createdynamicionodeasync"><a class="anchor" href="#_createdynamicionodeasync"></a>CreateDynamicIoNodeAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; CreateDynamicIoNodeAsync(
+    CreateDynamicNodeParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; CreateDynamicIoNodeAsync&lt;T&gt;(
+    CreateDynamicNodeParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 强类型便捷版本
+Task&lt;NodeReference&gt; CreateDynamicIoNodeInfoAsync(
+    CreateDynamicNodeParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：在主图中创建带动态输入输出定义的节点。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var dynamicNode = await client.Node.CreateDynamicIoNodeAsync(
+    new CreateDynamicNodeParams(
+        "demo_graph",
+        "DynamicNode",
+        new Dictionary&lt;string, object?&gt;
+        {
+            ["inputs"] = new[] { new Dictionary&lt;string, object?&gt; { ["name"] = "image_in" } }
+        }));</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_changenodeioasync"><a class="anchor" href="#_changenodeioasync"></a>ChangeNodeIoAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; ChangeNodeIoAsync(
+    ChangeNodeIOParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; ChangeNodeIoAsync&lt;T&gt;(
+    ChangeNodeIOParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：修改动态节点的输入输出结构。适合创建动态节点后，根据业务配置追加或调整端口。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">await client.Node.ChangeNodeIoAsync(
+    new ChangeNodeIOParams(
+        "demo_graph",
+        dynamicNode.GetProperty("nodeId").GetString()!,
+        new Dictionary&lt;string, object?&gt;
+        {
+            ["outputs"] = new[] { new Dictionary&lt;string, object?&gt; { ["name"] = "mask_out" } }
+        }));</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_createnodebycopyasync"><a class="anchor" href="#_createnodebycopyasync"></a>CreateNodeByCopyAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; CreateNodeByCopyAsync(
+    CopyNodeParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; CreateNodeByCopyAsync&lt;T&gt;(
+    CopyNodeParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 强类型便捷版本
+Task&lt;NodeReference&gt; CreateNodeByCopyInfoAsync(
+    CopyNodeParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：复制图中已有节点（含其参数配置），创建一个同类型的新节点。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>主图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>新节点的名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>要复制的源节点 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，新节点的 <code>nodeId</code>、<code>nodeName</code> 等信息。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Graph.OpenGraphAsync("my_graph");
+
+// 复制已有节点（保留所有参数配置）
+var copy = await client.Node.CreateNodeByCopyInfoAsync(
+    new CopyNodeParams("my_graph", "ResizeImage_copy", "node-id-abcdef"));
+Console.WriteLine($"复制节点成功，新 ID: {copy.NodeId}");
+Console.WriteLine($"请求状态: {copy.Status}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_creategraphnodeasync"><a class="anchor" href="#_creategraphnodeasync"></a>CreateGraphNodeAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; CreateGraphNodeAsync(
+    CreateGraphNodeParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; CreateGraphNodeAsync&lt;T&gt;(
+    CreateGraphNodeParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 强类型便捷版本
+Task&lt;NodeReference&gt; CreateGraphNodeInfoAsync(
+    CreateGraphNodeParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：基于已有子图，在主图中创建一个 GraphNode。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var graphNode = await client.Node.CreateGraphNodeInfoAsync(
+    new CreateGraphNodeParams("demo_graph", "SubFlow", "sub_graph_alpha"));
+Console.WriteLine($"GraphNode ID: {graphNode.NodeId}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_generategraphnodebynodesasync"><a class="anchor" href="#_generategraphnodebynodesasync"></a>GenerateGraphNodeByNodesAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; GenerateGraphNodeByNodesAsync(
+    GenerateGraphNodeByNodesParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; GenerateGraphNodeByNodesAsync&lt;T&gt;(
+    GenerateGraphNodeByNodesParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 强类型便捷版本
+Task&lt;NodeReference&gt; GenerateGraphNodeByNodesInfoAsync(
+    GenerateGraphNodeByNodesParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：把主图中的一组已有节点打包生成新的 GraphNode。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var packed = await client.Node.GenerateGraphNodeByNodesInfoAsync(
+    new GenerateGraphNodeByNodesParams("demo_graph", "PackedNode", new[] { "node-a", "node-b" }));
+Console.WriteLine($"打包生成 GraphNode: {packed.NodeId}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_deletenodeasync"><a class="anchor" href="#_deletenodeasync"></a>DeleteNodeAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; DeleteNodeAsync(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; DeleteNodeAsync&lt;T&gt;(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// 强类型便捷版本
+Task&lt;NodeTimestampInfo&gt; DeleteNodeInfoAsync(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：从主图中删除指定节点（同时自动断开所有相关连接）。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>主图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>要删除的节点 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，包含操作后的时间戳信息。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Graph.OpenGraphAsync("my_graph");
+
+var result = await client.Node.DeleteNodeInfoAsync(new NodeRef("my_graph", "node-id-abcdef"));
+Console.WriteLine($"节点已删除，当前时间戳: {result.Timestamp}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_connectnodesasync"><a class="anchor" href="#_connectnodesasync"></a>ConnectNodesAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; ConnectNodesAsync(
+    NodeConnectionParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; ConnectNodesAsync&lt;T&gt;(
+    NodeConnectionParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 强类型便捷版本
+Task&lt;NodeTimestampInfo&gt; ConnectNodesInfoAsync(
+    NodeConnectionParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：将两个节点的端口连接起来，数据将从 <code>outputNode.outputPort</code> 流向 <code>inputNode.inputPort</code>。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>主图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>outputNodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>产生数据的节点 ID（上游节点）</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>outputPortName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>上游节点的输出端口名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>inputNodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>接收数据的节点 ID（下游节点）</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>inputPortName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>下游节点的输入端口名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，包含操作后的时间戳信息。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Graph.OpenGraphAsync("my_graph");
+
+var resize = await client.Node.CreateNodeInfoAsync(new CreateNodeParams("my_graph", "ResizeImage"));
+var detect = await client.Node.CreateNodeInfoAsync(new CreateNodeParams("my_graph", "DetectAndSegment"));
+Console.WriteLine($"节点创建请求状态: resize={resize.Status}, detect={detect.Status}");
+
+// 将 ResizeImage 的 resized_image 端口连接到 DetectAndSegment 的 image 端口
+await client.Node.ConnectNodesInfoAsync(
+    new NodeConnectionParams(
+        "my_graph",
+        outputNodeId: resize.NodeId, outputPortName: "resized_image", // 上游：ResizeImage
+        inputNodeId: detect.NodeId, inputPortName: "image"));  // 下游：DetectAndSegment
+Console.WriteLine("节点已连接");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_disconnectnodesasync"><a class="anchor" href="#_disconnectnodesasync"></a>DisconnectNodesAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; DisconnectNodesAsync(
+    NodeConnectionParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; DisconnectNodesAsync&lt;T&gt;(
+    NodeConnectionParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 强类型便捷版本
+Task&lt;NodeTimestampInfo&gt; DisconnectNodesInfoAsync(
+    NodeConnectionParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：断开两个节点端口之间已有的连接（参数与 <code>ConnectNodesAsync</code> 完全对称）。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>主图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>outputNodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>上游节点 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>outputPortName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>上游节点输出端口名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>inputNodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>下游节点 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>inputPortName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>下游节点输入端口名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，包含操作后时间戳。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Graph.OpenGraphAsync("my_graph");
+
+await client.Node.DisconnectNodesInfoAsync(
+    new NodeConnectionParams(
+        "my_graph",
+        outputNodeId: "resize-node-id", outputPortName: "output",
+        inputNodeId: "detect-node-id", inputPortName: "image"));
+Console.WriteLine("节点连接已断开");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getnodeparamsasync"><a class="anchor" href="#_getnodeparamsasync"></a>GetNodeParamsAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; GetNodeParamsAsync(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; GetNodeParamsAsync&lt;T&gt;(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// 强类型便捷版本
+Task&lt;NodeParamsSnapshot&gt; GetNodeParamsSnapshotAsync(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：获取指定节点所有参数（包括初始化参数和运行参数）的当前值快照。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>主图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>节点 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，参数字典，字段名为参数名。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+var params_ = await client.Node.GetNodeParamsSnapshotAsync(new NodeRef("my_graph", "node-id-123"));
+Console.WriteLine($"参数快照: {params_}");
+
+// 或用原始 JsonElement 方式读取具体参数
+var raw = await client.Node.GetNodeParamsAsync(new NodeRef("my_graph", "node-id-123"));
+if (raw.TryGetProperty("threshold", out var threshold))
+{
+    Console.WriteLine($"阈值: {threshold.GetDouble()}");
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getnodeinfoingraphasync"><a class="anchor" href="#_getnodeinfoingraphasync"></a>GetNodeInfoInGraphAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; GetNodeInfoInGraphAsync(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; GetNodeInfoInGraphAsync&lt;T&gt;(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// 强类型便捷版本
+Task&lt;NodeInfoInGraph&gt; GetNodeInfoInGraphModelAsync(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：获取节点在图中的完整描述信息（端口列表、参数定义、当前值、连接情况等）。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>主图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>节点 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，包含节点完整描述信息。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+var info = await client.Node.GetNodeInfoInGraphModelAsync(
+    new NodeRef("my_graph", "node-id-123"));
+Console.WriteLine($"节点名: {info.NodeName}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getnodeportdataasync"><a class="anchor" href="#_getnodeportdataasync"></a>GetNodePortDataAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; GetNodePortDataAsync(
+    PortRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; GetNodePortDataAsync&lt;T&gt;(
+    PortRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：读取节点某个端口的当前数据值（JSON 格式）。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>主图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>节点 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>portName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>端口名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>ioType</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>端口类型，<code>"input"</code> 或 <code>"output"</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，端口数据值（格式由节点类型决定）。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+// 读取输出端口数据
+var portData = await client.Node.GetNodePortDataAsync(
+    new PortRef("my_graph", "detect-node-id", "results", "outputs"));
+Console.WriteLine($"检测结果: {portData}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_downloaddataasync"><a class="anchor" href="#_downloaddataasync"></a>DownloadDataAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; DownloadDataAsync(
+    PortRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; DownloadDataAsync&lt;T&gt;(
+    PortRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：为节点端口数据生成下载链接。适合端口输出较大、调用方希望按链接下载的场景。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var download = await client.Node.DownloadDataAsync(
+    new PortRef("demo_graph", "node-1", "points", "outputs"));
+Console.WriteLine(download);</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getpointsdataparsedasync"><a class="anchor" href="#_getpointsdataparsedasync"></a>GetPointsDataParsedAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">Task&lt;IReadOnlyList&lt;ParsedPointCloud&gt;&gt; GetPointsDataParsedAsync(
+    PortRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：直接读取并解析节点点云，推荐优先使用。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var clouds = await client.Node.GetPointsDataParsedAsync(
+    new PortRef("my_graph", "lidar-node-id", "pointcloud", "outputs"));
+Console.WriteLine($"点云 shape: {string.Join(" x ", clouds[0].Shape)}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getpointsdataasync"><a class="anchor" href="#_getpointsdataasync"></a>GetPointsDataAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">Task&lt;byte[]&gt; GetPointsDataAsync(
+    PortRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：以二进制格式读取节点端口的点云数据，返回原始 <code>byte[]</code>。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>主图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>节点 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>portName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>端口名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>ioType</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>端口类型，<code>"input"</code> 或 <code>"output"</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;byte[]&gt;</code>，原始点云二进制数据。
+注意：
+* 这里返回的是服务端原始 <code>byte[]</code>
+* <code>Node/GetPointsData</code> 的字节前面带有 Atom 自己的点云头信息
+* 普通场景建议优先使用上面的 <code>GetPointsDataParsedAsync(&#8230;&#8203;)</code></p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.IO;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+byte[] pointCloud = await client.Node.GetPointsDataAsync(
+    new PortRef("my_graph", "lidar-node-id", "pointcloud", "outputs"));
+Console.WriteLine($"raw bytes: {pointCloud.Length}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_setnodeparamdataasync"><a class="anchor" href="#_setnodeparamdataasync"></a>SetNodeParamDataAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; SetNodeParamDataAsync(
+    NodeParamUpdate paramsData,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; SetNodeParamDataAsync&lt;T&gt;(
+    NodeParamUpdate paramsData,
+    CancellationToken cancellationToken = default)
+
+// 强类型便捷版本
+Task&lt;NodeTimestampInfo&gt; SetNodeParamDataInfoAsync(
+    NodeParamUpdate paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：设置节点的某个参数值。支持基础类型（字符串、数值、布尔）和二进制文件（<code>byte[]</code>）。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>主图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>节点 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>参数名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramType</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>参数类型，通常为 <code>"init_params"</code> 或 <code>"run_params"</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>value</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>object?</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>参数值，支持 <code>string</code>、数值类型、<code>bool</code>、<code>byte[]</code>、<code>FileInfo</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，包含操作后时间戳信息。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.IO;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Graph.OpenGraphAsync("my_graph");
+
+// 设置数值参数
+await client.Node.SetNodeParamDataInfoAsync(
+    new NodeParamUpdate(
+        "my_graph", "resize-node-id", "scale_factor", "run_params", 0.5));
+
+// 设置字符串参数
+await client.Node.SetNodeParamDataAsync(
+    new NodeParamUpdate(
+        "my_graph", "model-node-id", "model_path", "init_params",
+        "/models/resnet50.onnx"));
+
+// 设置文件参数（如模型文件）
+await client.Node.SetNodeParamDataAsync(
+    new NodeParamUpdate(
+        "my_graph", "model-node-id", "model_file", "init_params",
+        new FileInfo("/models/custom.onnx")));
+
+Console.WriteLine("参数设置完成");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_setbindingnameasync"><a class="anchor" href="#_setbindingnameasync"></a>SetBindingNameAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; SetBindingNameAsync(
+    NodeBindingUpdate paramsData,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; SetBindingNameAsync&lt;T&gt;(
+    NodeBindingUpdate paramsData,
+    CancellationToken cancellationToken = default)
+
+// 强类型便捷版本
+Task&lt;NodeTimestampInfo&gt; SetBindingNameInfoAsync(
+    NodeBindingUpdate paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：为节点端口设置 Runtime 绑定名，使 Runtime 阶段可以通过 <code>bindingName</code> 直接读写该端口数据。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>主图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>节点 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>bindingType</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>绑定类型，通常为 <code>"inputs"</code> 或 <code>"outputs"</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>originName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>端口的原始名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>bindingName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>绑定后在 Runtime 中使用的名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，包含操作后时间戳信息。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Graph.OpenGraphAsync("my_graph");
+
+// 将 DetectAndSegment 的 results 输出端口绑定名为 "result"
+await client.Node.SetBindingNameInfoAsync(
+    new NodeBindingUpdate(
+        "my_graph", "detect-node-id", "outputs", "results", "result"));
+
+Console.WriteLine("绑定名设置成功，Runtime 阶段可通过 'result' 读取结果");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_editnodecommentasync"><a class="anchor" href="#_editnodecommentasync"></a>EditNodeCommentAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; EditNodeCommentAsync(
+    EditNodeCommentParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; EditNodeCommentAsync&lt;T&gt;(
+    EditNodeCommentParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：修改节点备注。SDK 会自动携带当前图的 <code>timestamp</code>，并在服务端返回后同步新的时间戳。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">await client.Node.EditNodeCommentAsync(
+    new EditNodeCommentParams("demo_graph", "node-1", "这是新的备注"));</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_activatenodeasync"><a class="anchor" href="#_activatenodeasync"></a>ActivateNodeAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本（轮询等待完成）
+Task&lt;JsonElement&gt; ActivateNodeAsync(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default,
+    TimeSpan? timeout = null)
+
+// 泛型版本
+Task&lt;T&gt; ActivateNodeAsync&lt;T&gt;(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default,
+    TimeSpan? timeout = null)
+
+// 强类型便捷版本
+Task&lt;NodeRunResult&gt; ActivateNodeResultAsync(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default,
+    TimeSpan? timeout = null)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：激活并运行指定节点，SDK 内部轮询直到运行完成后返回。默认最多等待 30 秒；如果超过 <code>timeout</code>，抛出 <code>AtomTimeoutException</code>。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>主图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>节点 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，用于调用方主动取消</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>timeout</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>TimeSpan?</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>SDK 轮询等待超时；<code>null</code> 使用默认 30 秒，<code>Timeout.InfiniteTimeSpan</code> 表示一直等待</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，节点运行结果，含各输出端口数据。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Graph.OpenGraphAsync("my_graph");
+
+var result = await client.Node.ActivateNodeResultAsync(
+    new NodeRef("my_graph", "detect-node-id"),
+    timeout: TimeSpan.FromSeconds(60));
+Console.WriteLine($"节点运行完成，请求状态: {result.Status}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_initialnodeasync"><a class="anchor" href="#_initialnodeasync"></a>InitialNodeAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; InitialNodeAsync(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; InitialNodeAsync&lt;T&gt;(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// 强类型便捷版本
+Task&lt;NodeTimestampInfo&gt; InitialNodeInfoAsync(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：初始化节点（触发节点的 init 逻辑，通常在参数设置完成后、首次运行前调用）。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>主图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>节点 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，包含操作后时间戳信息。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Graph.OpenGraphAsync("my_graph");
+
+// 设置参数后初始化节点
+await client.Node.SetNodeParamDataAsync(
+    new NodeParamUpdate("my_graph", "model-node-id", "model_path", "init_params", "/models/resnet50.onnx"));
+var ts = await client.Node.InitialNodeInfoAsync(new NodeRef("my_graph", "model-node-id"));
+Console.WriteLine($"节点初始化完成，时间戳: {ts.Timestamp}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_updatenodeasync"><a class="anchor" href="#_updatenodeasync"></a>UpdateNodeAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本（单次请求，不轮询）
+Task&lt;JsonElement&gt; UpdateNodeAsync(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; UpdateNodeAsync&lt;T&gt;(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// 强类型便捷版本
+Task&lt;NodeRunResult&gt; UpdateNodeResultAsync(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：更新并运行节点（触发节点的 update/run 逻辑）。该接口按服务端 <code>UpdateNode</code> 定义只发起一次请求，不轮询 <code>finish</code>；如果服务端返回 <code>finish=false</code>，SDK 也会把这次响应直接返回给调用方。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>主图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>节点 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，用于调用方主动取消</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，节点运行结果。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Graph.OpenGraphAsync("my_graph");
+
+var result = await client.Node.UpdateNodeResultAsync(
+    new NodeRef("my_graph", "detect-node-id"));
+Console.WriteLine($"节点更新请求已返回，请求状态: {result.Status}");</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_完整示例"><a class="anchor" href="#_完整示例"></a>完整示例</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>以下示例展示在主图中构建一个简单的两节点流水线并运行：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Core;
+using AtomSdk.Models;
+
+class NodeWorkflowExample
+{
+    static async Task Main()
+    {
+        var client = new AtomClient("http://localhost:8080");
+        const string graphName = "node_demo_graph";
+
+        try
+        {
+            // 1. 创建图并打开
+            var graphInfo = await client.Graph.CreateGraphInfoAsync(new CreateGraphParams(graphName));
+            await client.Graph.OpenGraphAsync(graphName);
+            Console.WriteLine($"[1] 图已创建并打开，请求状态={graphInfo.Status}");
+
+            // 2. 创建两个节点
+            var resizeNode = await client.Node.CreateNodeInfoAsync(new CreateNodeParams(graphName, "ResizeImage"));
+            var detectNode = await client.Node.CreateNodeInfoAsync(new CreateNodeParams(graphName, "DetectAndSegment"));
+            Console.WriteLine($"[2] 节点已创建: resize={resizeNode.NodeId}, detect={detectNode.NodeId}, 请求状态={detectNode.Status}");
+
+            // 3. 设置 ResizeImage 参数
+            await client.Node.SetNodeParamDataAsync(
+                new NodeParamUpdate(
+                    graphName, resizeNode.NodeId, "scale_factor", "run_params", 0.5));
+            Console.WriteLine("[3] 参数设置完成");
+
+            // 4. 连接节点
+            await client.Node.ConnectNodesAsync(
+                new NodeConnectionParams(
+                    graphName,
+                    outputNodeId: resizeNode.NodeId, outputPortName: "resized_image",
+                    inputNodeId: detectNode.NodeId, inputPortName: "image"));
+            Console.WriteLine("[4] 节点已连接");
+
+            // 5. 为 DetectAndSegment 输出端口设置 Runtime 绑定名
+            await client.Node.SetBindingNameAsync(
+                new NodeBindingUpdate(
+                    graphName, detectNode.NodeId, "outputs", "results", "result"));
+            Console.WriteLine("[5] 绑定名已设置");
+
+            // 6. 运行整图，最多等待 30 秒
+            var runResult = await client.Graph.RunGraphResultAsync(
+                graphName,
+                timeout: TimeSpan.FromSeconds(30));
+            Console.WriteLine($"[6] 图运行完成，请求状态: {runResult.Status}");
+
+            // 7. 读取输出数据
+            var portData = await client.Node.GetNodePortDataAsync(
+                new PortRef(graphName, detectNode.NodeId, "results", "outputs"));
+            Console.WriteLine($"[7] 检测结果: {portData}");
+
+            // 8. 释放图
+            await client.Graph.ReleaseGraphAsync(graphName);
+            Console.WriteLine("[8] 图已释放");
+        }
+        catch (AtomApiException ex)
+        {
+            Console.WriteLine($"服务端错误 {ex.Status}: {ex.Message}");
+        }
+        catch (AtomHttpException ex)
+        {
+            Console.WriteLine($"HTTP 错误 {ex.StatusCode}: {ex.Message}");
+        }
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="graph.html">GraphService（C#）</a></span>
+  <span class="next"><a href="graph_node.html">GraphNodeService（C#）</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

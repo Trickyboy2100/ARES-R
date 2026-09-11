@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Atom SDK — C# 버전 :: Atom SDK 개발자 가이드</title>
+    <link rel="prev" href="../cpp/runtime.html">
+    <link rel="next" href="params.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          온라인 제품 문서
+                  </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="문서 검색"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              이 매뉴얼만
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            매뉴얼 전환
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK 개발자 가이드</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          다운로드 센터
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          공식 웹사이트
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            한국어
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK 개발자 가이드</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">환영합니다</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">빠른 시작</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">빠른 시작</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">샘플 샘플</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">입문 사용</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK 입문 사용</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">사용자 가이드</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">적절한 Service을 선택합니다.</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">그래프 및 노드 작업</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">오류 처리 및 문제 해결</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">FAQ</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">기본 개념</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/what-is-atom-sdk.html">Atom SDK 란 무엇입니까?</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-node-subgraph.html">그래프, 노드, 하위 그래프</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-vs-runtime.html">Graph과 Runtime의 차이점</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/timestamp.html">Timestamp이 무엇인가요?</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/runtime-frame.html">런타임 입력 프레임(RuntimeFrame / RuntimePassiveBinoFrame)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/point-cloud-protocol.html">포인트 클라우드 유형 입출력을 위한 바이너리 프로토콜</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/param-binding.html">매개변수 유형 및 바인딩 이름</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API 참조</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API 참조 개요</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python 개요 및 설치</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/params.html">Python 매개변수 객체</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/public_api.html">Python 공용 유틸리티 API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ 버전 — 사용자 가이드</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ 매개변수 객체</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="overview.html">Atom SDK — C# 버전</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="params.html">C# 매개변수 객체</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK 개발자 가이드</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK 개발자 가이드</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK 개발자 가이드</a></li>
+    <li>API 참조</li>
+    <li>C# SDK</li>
+    <li><a href="overview.html">Atom SDK — C# 버전</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="이 페이지의 내용"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Atom SDK — C# 버전</h1>
+<div class="sect1">
+<h2 id="_소개"><a class="anchor" href="#_소개"></a>소개</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Atom SDK C# 버전은 .NET 개발자를 위한 공식 클라이언트 라이브러리입니다. 이는 async/await 패턴을 기반으로 설계되었으며 Atom 플랫폼의 모든 REST 인터페이스에 대해 강력한 형식의 캡슐화를 제공합니다. 모든 네트워크 호출은 비차단 비동기 방식으로 높은 동시성 시나리오를 자연스럽게 지원합니다. 대상 프레임워크는 .NET 6 이상입니다.</p>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sdk_핵심_기능"><a class="anchor" href="#_sdk_핵심_기능"></a>SDK 핵심 기능</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">특징</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>완전 비동기식 API</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>모든 Service 메서드는 `Task&lt;T&gt;`를 반환하고 `async/await`를 지원합니다.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>강력한 유형의 오버로딩</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>각 인터페이스는 두 가지 반환 값 세트 <code>JsonElement</code>(원본)와 특정 모델 클래스를 제공합니다.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>CancellationToken</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>모든 메소드는 호출자 시작 취소에 대해 선택적 `CancellationToken`을 허용합니다.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>폴링 시간 초과</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>그래프 실행 및 노드 활성화 인터페이스는 <code>timeout</code> 명명된 매개변수를 지원합니다. 기본값은 30초이며 시간 초과로 인해 `AtomTimeoutException`가 발생합니다.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>통합 예외 시스템</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>AtomApiException</code> / <code>AtomHttpException</code> / <code>AtomProtocolException</code> / <code>AtomTimeoutException</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>대상 프레임워크</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>일반 개체 결과는 이 요청의 <code>status</code> 필드를 자동으로 전달하며 강력한 형식의 결과는 <code>result.Status`에서 직접 읽을 수 있습니다. 목록, 부울, 원시 `byte[]</code>, 구문 분석된 포인트 클라우드, 바인딩된 원시 값 및 노드 매개변수 스냅샷은 원래 데이터 모양을 유지합니다.</p>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_설치"><a class="anchor" href="#_설치"></a>설치</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>전제조건: .NET 6 SDK 이상.</p>
+</div>
+<div class="paragraph">
+<p>먼저 <a href="https://docs.transfertech.cn/app/<mark>/downloadCenter">다운로드 센터</a>에서 `atom_sdk_&lt;버전&gt;.zip`을 다운로드하고 압축을 풉니다. C</mark> 패키지는 `&lt;SDK_DIR&gt;/csharp/AtomSdk.&lt;버전&gt;.nupkg`에 있습니다. 추가 NuGet 소스 설정은 필요하지 않습니다.</p>
+</div>
+<div class="sect2">
+<h3 id="_1단계_패키지_설치"><a class="anchor" href="#_1단계_패키지_설치"></a>1단계: 패키지 설치</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">dotnet add package AtomSdk --version &lt;버전&gt; \
+  --source &lt;SDK_DIR&gt;/csharp</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>`.csproj`에 추가할 수도 있습니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;PackageReference Include="AtomSdk" Version="&lt;버전&gt;" /&gt;</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>패키지를 찾을 수 없으면 `&lt;SDK_DIR&gt;/csharp`에 `AtomSdk.&lt;버전&gt;.nupkg`가 있는지, `--version`이 파일 이름의 버전과 일치하는지 확인하세요.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_네임스페이스"><a class="anchor" href="#_네임스페이스"></a>네임스페이스</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using AtomSdk;                // AtomClient
+using AtomSdk.Services;      // GraphService, NodeService, GraphNodeService, RuntimeService
+using AtomSdk.Models;        // RuntimeFrame、RuntimePassiveBinoFrame、RuntimePassiveBinoImage 그리고 다양한 모델 클래스
+using AtomSdk.Core;          // 예외 유형
+using System.Text.Json;      // JsonElement</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_big_four_service_책임_개요"><a class="anchor" href="#_big_four_service_책임_개요"></a>Big Four Service 책임 개요</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Service</th>
+<th class="tableblock halign-left valign-top">출입구</th>
+<th class="tableblock halign-left valign-top">책임</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>GraphService</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>client.Graph</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>메인 이미지의 완전한 라이프사이클 관리(생성, 삭제, 복사, 로드, 실행, 내보내기 등)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>NodeService</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>client.Node</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>메인 그래프의 노드에 대한 추가, 삭제, 수정, 확인, 연결 해제, 매개변수 읽기 및 쓰기, 단일 노드 동작</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>GraphNodeService</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>client.GraphNode</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>하위 그래프 노드(GraphNode) 내부의 노드 작업, 인터페이스는 NodeService에 해당하지만 <code>graphNodeId</code> 레이어가 하나 더 있습니다.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>RuntimeService</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>client.Runtime</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Runtime 환경에서 그래프 로딩, 프레임 추론, 파라미터 설정, 바인딩 값 읽기</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_구조화된_매개변수_이름_지정"><a class="anchor" href="#_구조화된_매개변수_이름_지정"></a>구조화된 매개변수 이름 지정</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>복합 인터페이스는 Python SDK과 동일한 매개변수 개체 이름 지정 세트를 유지합니다.
+* <code>*Ref</code>: 기존 객체를 참조하며 <code>NodeRef</code>, <code>PortRef</code>, <code>BindingRef</code> 등의 리소스를 찾는 역할만 담당합니다.
+* <code>*Params</code>: <code>CreateGraphParams</code>, <code>RuntimeRunParams`와 같은 인터페이스 호출의 전체 입력 매개변수
+* `*Update</code>: <code>NodeParamUpdate</code>, `RuntimeParamsUpdate`와 같은 기존 구성 또는 값을 수정합니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">await client.Graph.CreateGraphInfoAsync(new CreateGraphParams("my_graph"));
+await client.Node.CreateNodeInfoAsync(new CreateNodeParams("my_graph", "ResizeImage"));
+// 일반 모드 예；passive_bino 모드를 이용해주세요 RuntimeRunParams.PassiveBinoFromFile/Bytes/Images。
+await client.Runtime.RunGraphAsync(new RuntimeRunParams("my_graph", new[] { frame }));</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>매개변수 객체의 구성 방법, 파일 업로드 및 오류 발생 가능성에 대한 자세한 내용은 <a href="params.html" class="xref page">参数对象</a>을 참조하세요.</p>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_빠른_시작"><a class="anchor" href="#_빠른_시작"></a>빠른 시작</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_클라이언트_생성"><a class="anchor" href="#_클라이언트_생성"></a>클라이언트 생성</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using AtomSdk;
+
+// baseUrl 에 대한 Atom 플랫폼 서비스 주소，예를 들어 "http://localhost:8080"
+var client = new AtomClient("http://localhost:8080");</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_async_main_예시_완료"><a class="anchor" href="#_async_main_예시_완료"></a>async Main 예시 완료</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Core;
+using AtomSdk.Models;
+
+class Program
+{
+    static async Task Main(string[] args)
+    {
+        var client = new AtomClient("http://localhost:8080");
+
+        try
+        {
+            // 1. 그래프 만들기
+            var graphInfo = await client.Graph.CreateGraphInfoAsync(new CreateGraphParams("my_graph"));
+            Console.WriteLine($"다이어그램이 생성되었습니다.，ID: {graphInfo.GraphId}, 요청 상태: {graphInfo.Status}");
+
+            // 2. 모든 사진 나열
+            var graphs = await client.Graph.ListGraphSummariesAsync();
+            Console.WriteLine($"현재는 {graphs.Length} 그림");
+
+            // 3. 오픈 다이어그램（타임스탬프 가져오기）
+            await client.Graph.OpenGraphAsync("my_graph");
+
+            // 4. 그래프에 노드 만들기
+            var nodeInfo = await client.Node.CreateNodeInfoAsync(new CreateNodeParams("my_graph", "ResizeImage"));
+            Console.WriteLine($"노드가 생성되었습니다，ID: {nodeInfo.NodeId}, 요청 상태: {nodeInfo.Status}");
+
+            // 5. 차트 실행
+            var runResult = await client.Graph.RunGraphResultAsync("my_graph");
+            Console.WriteLine($"실행 완료，요청 상태: {runResult.Status}");
+
+            // 6. 릴리스 차트
+            await client.Graph.ReleaseGraphAsync("my_graph");
+        }
+        catch (AtomApiException ex)
+        {
+            Console.WriteLine($"서버 오류 {ex.Status}: {ex.Message}");
+        }
+        catch (AtomHttpException ex)
+        {
+            Console.WriteLine($"HTTP 오류 {ex.StatusCode}: {ex.Message}");
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_동기_코드에서_호출됨"><a class="anchor" href="#_동기_코드에서_호출됨"></a>동기 코드에서 호출됨</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>프로젝트가 async/await(예: Unity 비메인 스레드, 기존 프레임워크)을 지원하지 않는 경우 다음과 같은 방법으로 동기적으로 기다릴 수 있습니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 방법 1：GetAwaiter().GetResult()（추천，스택 정보 유지）
+var result = client.Graph.CreateGraphAsync(new CreateGraphParams("my_graph")).GetAwaiter().GetResult();
+
+// 방법 2：Task.Run().Result（콘솔이나 테스트에 적합）
+var result = Task.Run(() =&gt; client.Graph.CreateGraphAsync(new CreateGraphParams("my_graph"))).Result;</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>참고: ASP.NET 내에서 <code>.Result</code> 또는 `.GetAwaiter().GetResult()`를 사용하거나 SynchronizationContext 내에서 WinForms/WPF을 사용하면 교착 상태가 발생할 수 있으므로 항상 `await`를 사용하는 것이 좋습니다.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_통합된_오류_처리"><a class="anchor" href="#_통합된_오류_처리"></a>통합된 오류 처리</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">try
+{
+    var result = await client.Graph.CreateGraphAsync(new CreateGraphParams("my_graph"));
+}
+catch (AtomApiException ex)
+{
+    // 서버에서 비즈니스 오류를 반환했습니다.（사진이 이미 존재합니다.、매개변수가 불법입니다.）
+    Console.WriteLine($"서버 오류 {ex.Status}: {ex.Message}");
+    if (ex.Payload.HasValue)
+    {
+        Console.WriteLine($"오류 세부정보: {ex.Payload.Value}");
+    }
+}
+catch (AtomTimeoutException ex)
+{
+    // 그래프 실행 또는 노드 활성화가 완료되지 않았습니다.，SDK 폴링 대기 시간 초과
+    Console.WriteLine($"인터페이스가 완료되기를 기다리는 동안 시간이 초과되었습니다.: {ex.Path}, attempts={ex.Attempts}");
+    Console.WriteLine($"마지막 응답: {ex.LastData}");
+}
+catch (AtomHttpException ex)
+{
+    // HTTP 레이어 오류（와 같은 404、500、연결이 거부되었습니다.）
+    Console.WriteLine($"HTTP 오류 {ex.StatusCode}: {ex.Message}");
+}
+catch (AtomProtocolException ex)
+{
+    // 응답 프로토콜 구문 분석에 실패했습니다.
+    Console.WriteLine($"프로토콜 오류: {ex.Message}");
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_jsonelement_필드_액세스_빠른_참조"><a class="anchor" href="#_jsonelement_필드_액세스_빠른_참조"></a>JsonElement 필드 액세스 빠른 참조</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>SDK의 원래 반환 값은 `System.Text.Json.JsonElement`이며, 접근 방법은 다음과 같습니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var result = await client.Graph.CreateGraphAsync(new CreateGraphParams("my_graph"));
+
+// 문자열 읽기（추가하다 ! 비어 있지 않은 주장）
+string id = result.GetProperty("graphId").GetString()!;
+
+// 숫자 읽기
+double ts = result.GetProperty("timestamp").GetDouble();
+
+// 정수 읽기
+int count = result.GetProperty("count").GetInt32();
+
+// 읽기 요청 상태
+int status = result.GetProperty("status").GetInt32();
+
+// 트래버스 배열
+foreach (var item in result.GetProperty("nodes").EnumerateArray())
+{
+    string name = item.GetProperty("nodeName").GetString()!;
+}
+
+// 필드가 존재하는지 확인（선택 필드）
+if (result.TryGetProperty("description", out var desc))
+{
+    Console.WriteLine(desc.GetString());
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_문서_탐색"><a class="anchor" href="#_문서_탐색"></a>문서 탐색</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="graph.html" class="xref page">GraphService</a> — 기본 이미지 관리</p>
+</li>
+<li>
+<p><a href="node.html" class="xref page">NodeService</a> — 메인 그래프 노드 작동</p>
+</li>
+<li>
+<p><a href="graph_node.html" class="xref page">GraphNodeService</a> — 하위 그래프 노드 작업</p>
+</li>
+<li>
+<p><a href="runtime.html" class="xref page">RuntimeService</a> — Runtime 추론 엔진</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="../cpp/runtime.html">RuntimeService（C++）</a></span>
+  <span class="next"><a href="params.html">C# 매개변수 객체</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

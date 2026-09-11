@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>매개변수 유형 및 바인딩 이름 :: Atom SDK 개발자 가이드</title>
+    <link rel="prev" href="point-cloud-protocol.html">
+    <link rel="next" href="../api/index.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          온라인 제품 문서
+                  </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="문서 검색"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              이 매뉴얼만
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            매뉴얼 전환
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK 개발자 가이드</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          다운로드 센터
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          공식 웹사이트
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            한국어
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK 개발자 가이드</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">환영합니다</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">빠른 시작</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">빠른 시작</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">샘플 샘플</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">입문 사용</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK 입문 사용</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">사용자 가이드</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">적절한 Service을 선택합니다.</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">그래프 및 노드 작업</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">오류 처리 및 문제 해결</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">FAQ</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">기본 개념</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="what-is-atom-sdk.html">Atom SDK 란 무엇입니까?</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="graph-node-subgraph.html">그래프, 노드, 하위 그래프</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="graph-vs-runtime.html">Graph과 Runtime의 차이점</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="timestamp.html">Timestamp이 무엇인가요?</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="runtime-frame.html">런타임 입력 프레임(RuntimeFrame / RuntimePassiveBinoFrame)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="point-cloud-protocol.html">포인트 클라우드 유형 입출력을 위한 바이너리 프로토콜</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="param-binding.html">매개변수 유형 및 바인딩 이름</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API 참조</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API 참조 개요</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python 개요 및 설치</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/params.html">Python 매개변수 객체</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/public_api.html">Python 공용 유틸리티 API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ 버전 — 사용자 가이드</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ 매개변수 객체</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">Atom SDK — C# 버전</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/params.html">C# 매개변수 객체</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK 개발자 가이드</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK 개발자 가이드</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK 개발자 가이드</a></li>
+    <li>기본 개념</li>
+    <li><a href="param-binding.html">매개변수 유형 및 바인딩 이름</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="이 페이지의 내용"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">매개변수 유형 및 바인딩 이름</h1>
+<div class="sect1">
+<h2 id="_매개변수_유형param_type"><a class="anchor" href="#_매개변수_유형param_type"></a>매개변수 유형(param_type)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>각 노드의 매개변수는 두 가지 범주로 나뉩니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 42.8571%;">
+<col style="width: 42.8572%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top"></th>
+<th class="tableblock halign-left valign-top"><code>init_params</code> (초기화 매개변수)</th>
+<th class="tableblock halign-left valign-top"><code>run_params</code> (작동 매개변수)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">특징</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">은 한 번 로드되며 일반적으로 더 무겁습니다(모델 파일, 구성 파일 등).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">실행마다 다를 수 있으며 일반적으로 더 가벼움(임계값, 스위치 등)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">은 언제 적용되나요?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">이 `initial_node()`을 호출할 때</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">이 <code>activate_node()</code> 또는 `run_graph()`를 호출할 때</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">일반 콘텐츠</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">모델 파일 경로, 네트워크 구조 구성, 가중치 파일</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">신뢰도 임계값, 최대 감지 횟수, ROI 영역</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">업데이트 비용</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">높음: 변경 후 노드를 다시 초기화해야 합니다.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">낮음: 언제든지 변경될 수 있으며 다음에 실행될 때 적용됩니다.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="sect2">
+<h3 id="_코드에서의_사용법"><a class="anchor" href="#_코드에서의_사용법"></a>코드에서의 사용법</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeParamUpdate
+
+# 초기화 매개변수 설정（모델 파일）
+client.node.set_node_param_data(
+    NodeParamUpdate(
+        "my_graph",
+        node_id,
+        "model",       # 매개변수 이름，에서 get_node_info_in_graph 확인
+        "init_params", # 고정된 작성 방법
+        Path("/models/detector.bin"),  # Path 객체가 자동으로 업로드됨
+    )
+)
+
+# 작동 매개변수 설정（문지방）
+client.node.set_node_param_data(
+    NodeParamUpdate(
+        "my_graph",
+        node_id,
+        "confidence_threshold",
+        "run_params",  # 고정된 작성 방법
+        0.85,
+    )
+)</code></pre>
+</div>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><code>param_type`에는 `"init_params"</code> 및 `"run_params"`라는 두 가지 유효한 값만 있습니다. 잘못 작성된 경우 오류가 보고되지 않지만 매개변수는 적용되지 않습니다.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_바인딩_이름binding_name"><a class="anchor" href="#_바인딩_이름binding_name"></a>바인딩 이름(binding_name)</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_바인딩_이름이란_무엇입니까"><a class="anchor" href="#_바인딩_이름이란_무엇입니까"></a>바인딩 이름이란 무엇입니까?</h3>
+<div class="paragraph">
+<p>바인딩 이름은 하위 그래프와 상위 그래프 간의 통신을 위한 인터페이스인 노드 포트 또는 매개변수의 *외부적으로 노출되는 이름*입니다.</p>
+</div>
+<div class="paragraph">
+<p>하위 그래프 노드(GraphNode)에서 하위 그래프 내부의 포트가 바인딩 이름으로 설정된 경우 다음과 같을 수 있습니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>상위 그래프의 다른 노드는 다음에 연결됩니다.</p>
+</li>
+<li>
+<p>RuntimeService을 통해 런타임에 이름으로 액세스</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>바인딩 이름이 설정되지 않으면 포트는 하위 그래프 내부에만 표시되며 외부에서 직접 액세스할 수 없습니다.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_포트_이름_vs_바인딩_이름"><a class="anchor" href="#_포트_이름_vs_바인딩_이름"></a>포트 이름 vs 바인딩 이름</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 40%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">개념</th>
+<th class="tableblock halign-left valign-top">설명</th>
+<th class="tableblock halign-left valign-top">예</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>origin_name</code> / 포트 이름</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">노드 내부의 원래 포트 또는 매개변수 이름</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"output_image"</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>binding_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">노출된 이름(다를 수 있음)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"rgb_frame"</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>바인딩 이름을 설정하는 목적은 내부 구현 세부 정보를 노출하지 않고 외부 세계에 보다 의미 있는 인터페이스 이름을 제공하는 것입니다.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_바인딩_유형binding_type"><a class="anchor" href="#_바인딩_유형binding_type"></a>바인딩 유형(binding_type)</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">값</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"inputs"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">포트의 바인딩 이름을 입력하세요.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"outputs"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">출력 포트의 바인딩 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"init_params"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">초기화 매개변수 바인딩 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"run_params"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">실행 매개변수의 바인딩 이름</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_바인딩_이름_설정_예시"><a class="anchor" href="#_바인딩_이름_설정_예시"></a>바인딩 이름 설정 예시</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SubGraphBindingUpdate
+
+# 하위 그래프 내부 노드의 출력 포트에 대한 바인딩 이름을 설정합니다.
+client.graph_node.set_binding_name(
+    SubGraphBindingUpdate(
+        "my_graph",
+        graph_node_id,
+        inner_node_id,
+        "outputs",
+        "output_image",    # 노드 내부의 포트 이름
+        "processed_frame", # 외부 바인딩 이름
+    )
+)
+
+# 바인딩 해제（빈 문자열 전달）
+client.graph_node.set_binding_name(
+    SubGraphBindingUpdate(
+        "my_graph",
+        graph_node_id,
+        inner_node_id,
+        "outputs",
+        "output_image",
+        "",  # 빈 문자열은 바인딩 해제를 나타냅니다.
+    )
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_runtimeservice에서_어떤_바인딩_이름이_사용됩니까"><a class="anchor" href="#_runtimeservice에서_어떤_바인딩_이름이_사용됩니까"></a>RuntimeService에서 어떤 바인딩 이름이 사용됩니까?</h3>
+<div class="paragraph">
+<p>RuntimeService의 공유 매개변수 인터페이스는 바인딩 이름을 통해 그래프의 매개변수에 액세스합니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import BindingRef, RuntimeParamsUpdate
+
+# 그래프의 바인딩 메타정보 읽기
+meta = client.runtime.get_meta_info("my_graph")
+print("메타정보 요청현황：", meta["status"])
+# 반환 {"sharedParams": [...], "runtimeParams": [...]}
+# 각 매개변수에는 "bindingName" 필드
+
+# 바인딩 이름별로 공유 매개변수를 일괄 설정
+client.runtime.set_shared_params(
+    RuntimeParamsUpdate("my_graph", {
+        "model_path": "/models/new_model.bin",  # bindingName → 가치
+        "max_detection": 10,
+    })
+)
+
+client.runtime.set_run_params(RuntimeParamsUpdate("my_graph", {"threshold": 0.7}))
+
+# 바인딩 이름으로 출력 값 읽기
+output_value = client.runtime.get_binded_output_value(
+    BindingRef("my_graph", "processed_frame")  # bindingName
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_노드에_어떤_포트와_매개변수가_있는지_확인하는_방법"><a class="anchor" href="#_노드에_어떤_포트와_매개변수가_있는지_확인하는_방법"></a>노드에 어떤 포트와 매개변수가 있는지 확인하는 방법</h3>
+<div class="paragraph">
+<p>노드의 전체 정의를 보려면 `get_node_info_in_graph`을 사용하십시오.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeRef
+
+info = client.node.get_node_info_in_graph(NodeRef("my_graph", node_id))
+
+# 보기 init_params
+for param in info["nodeInfo"].get("initParams", []):
+    print(f"  init_params: {param['name']} ({param['type']})")
+
+# 보기 run_params
+for param in info["nodeInfo"].get("runParams", []):
+    print(f"  run_params: {param['name']} ({param['type']})")
+
+# 입력 포트 보기
+for port in info["nodeInfo"].get("inputs", []):
+    print(f"  input: {port['name']}")
+
+# 출력 포트 보기
+for port in info["nodeInfo"].get("outputs", []):
+    print(f"  output: {port['name']}")</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="point-cloud-protocol.html">포인트 클라우드 유형 입출력을 위한 바이너리 프로토콜</a></span>
+  <span class="next"><a href="../api/index.html">API 참조 개요</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

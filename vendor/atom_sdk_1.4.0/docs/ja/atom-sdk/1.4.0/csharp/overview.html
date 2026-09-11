@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Atom SDK — C# バージョン :: Atom SDK 開発者ガイド</title>
+    <link rel="prev" href="../cpp/runtime.html">
+    <link rel="next" href="params.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          オンライン製品ドキュメント
+                  </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="ドキュメントを検索"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              このマニュアルのみ
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            マニュアルを切り替え
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK 開発者ガイド</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          ダウンロードセンター
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          公式サイト
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            日本語
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK 開発者ガイド</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">ようこそ</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">クイックスタート</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">クイックスタート</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">サンプルサンプル</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">入門利用</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK 入門利用</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">ユーザーガイド</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">適切な Service を選択します</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">グラフとノードの操作</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">エラー処理とトラブルシューティング</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">よくある質問</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">基本的な概念</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/what-is-atom-sdk.html">Atom SDK とは</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-node-subgraph.html">グラフ、ノード、サブグラフ</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-vs-runtime.html">Graph と Runtime の違い</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/timestamp.html">Timestampとは何ですか</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/runtime-frame.html">ランタイム入力フレーム (RuntimeFrame / RuntimePassiveBinoFrame)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/point-cloud-protocol.html">点群タイプの入出力用のバイナリ プロトコル</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/param-binding.html">パラメータのタイプとバインディング名</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API リファレンス</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API リファレンスの概要</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python の概要とインストール</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/params.html">Python パラメータ オブジェクト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/public_api.html">Python パブリック ユーティリティ API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ バージョン — ユーザーガイド</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ パラメータ オブジェクト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="overview.html">Atom SDK — C# バージョン</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="params.html">C# パラメータオブジェクト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK 開発者ガイド</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK 開発者ガイド</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK 開発者ガイド</a></li>
+    <li>API リファレンス</li>
+    <li>C# SDK</li>
+    <li><a href="overview.html">Atom SDK — C# バージョン</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="このページの内容"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Atom SDK — C# バージョン</h1>
+<div class="sect1">
+<h2 id="_はじめに"><a class="anchor" href="#_はじめに"></a>はじめに</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Atom SDK C# バージョンは、.NET 開発者向けの公式クライアント ライブラリです。 async/await パターンに基づいて設計されており、Atom プラットフォームのすべての REST インターフェイスの厳密に型指定されたカプセル化を提供します。すべてのネットワーク呼び出しはノンブロッキングの非同期メソッドであり、必然的に高同時実行シナリオをサポートします。対象フレームワークは .NET 6 以降です。</p>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sdk_コア機能"><a class="anchor" href="#_sdk_コア機能"></a>SDK コア機能</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">の特徴</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>完全非同期 API</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>すべての Service メソッドは <code>Task&lt;T&gt;</code> を返し、<code>async/await</code> をサポートします</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>厳密に型指定されたオーバーロード</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>各インターフェイスは 2 セットの戻り値 <code>JsonElement</code> (オリジナル) と特定のモデル クラスを提供します。</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>CancellationToken</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>すべてのメソッドは、呼び出し側によるキャンセルのオプション <code>CancellationToken</code> を受け入れます</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ポーリングタイムアウト</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>グラフ実行およびノードアクティブ化インターフェイスは、<code>timeout</code> 名前付きパラメータをサポートします。デフォルトは 30 秒、タイムアウトは <code>AtomTimeoutException</code> をスローします</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>統合例外システム</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>AtomApiException</code> / <code>AtomHttpException</code> / <code>AtomProtocolException</code> / <code>AtomTimeoutException</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ターゲット フレームワーク</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>通常のオブジェクトの結果には、このリクエストの <code>status</code> フィールドが自動的に送信され、厳密に型指定された結果は直接読み込むことができます <code>result.Status</code>。リスト、ブール値、生の <code>byte[]</code>、解析された点群、バインドされた生の値、およびノー​​ド パラメーターのスナップショットは、元のデータの形状を維持します。</p>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_インストール"><a class="anchor" href="#_インストール"></a>インストール</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>前提条件: .NET 6 SDK 以降。</p>
+</div>
+<div class="paragraph">
+<p>まず <a href="https://docs.transfertech.cn/app/<mark>/downloadCenter">ダウンロードセンター</a> から <code>atom_sdk_&lt;バージョン&gt;.zip</code> をダウンロードして解凍します。C</mark> パッケージは <code>&lt;SDK_DIR&gt;/csharp/AtomSdk.&lt;バージョン&gt;.nupkg</code> にあります。追加の NuGet ソース設定は必要ありません。</p>
+</div>
+<div class="sect2">
+<h3 id="_ステップ_1_パッケージをインストールする"><a class="anchor" href="#_ステップ_1_パッケージをインストールする"></a>ステップ 1: パッケージをインストールする</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">dotnet add package AtomSdk --version &lt;バージョン&gt; \
+  --source &lt;SDK_DIR&gt;/csharp</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>.csproj</code> に追加することもできます。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;PackageReference Include="AtomSdk" Version="&lt;バージョン&gt;" /&gt;</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>パッケージが見つからない場合は、<code>&lt;SDK_DIR&gt;/csharp</code> に <code>AtomSdk.&lt;バージョン&gt;.nupkg</code> が存在し、<code>--version</code> がファイル名のバージョンと一致していることを確認してください。</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_名前空間"><a class="anchor" href="#_名前空間"></a>名前空間</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using AtomSdk;                // AtomClient
+using AtomSdk.Services;      // GraphService, NodeService, GraphNodeService, RuntimeService
+using AtomSdk.Models;        // RuntimeFrame、RuntimePassiveBinoFrame、RuntimePassiveBinoImage およびさまざまなモデルクラス
+using AtomSdk.Core;          // 例外の種類
+using System.Text.Json;      // JsonElement</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ビッグ_4_service_の責任の概要"><a class="anchor" href="#_ビッグ_4_service_の責任の概要"></a>ビッグ 4 Service の責任の概要</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Service</th>
+<th class="tableblock halign-left valign-top">アクセス入口</th>
+<th class="tableblock halign-left valign-top">責任</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>GraphService</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>client.Graph</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>メインイメージの完全なライフサイクル管理 (作成、削除、コピー、ロード、実行、エクスポートなど)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>NodeService</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>client.Node</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>メイングラフ内のノードの追加、削除、変更、確認、切断、パラメータの読み書き、単一ノード操作</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>GraphNodeService</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>client.GraphNode</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>サブグラフ ノード (GraphNode) 内のノード操作。インターフェイスは NodeService に対応しますが、もう 1 つのレイヤー <code>graphNodeId</code> があります。</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>RuntimeService</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>client.Runtime</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Runtime 環境でのグラフのロード、フレーム推論、パラメーター設定、およびバインディング値の読み取り</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_構造化されたパラメータの命名"><a class="anchor" href="#_構造化されたパラメータの命名"></a>構造化されたパラメータの命名</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>複雑なインターフェイスは、Python SDK と同じ一連のパラメーター オブジェクト命名を維持します。
+* <code>*Ref</code>: 既存のオブジェクトを参照し、<code>NodeRef</code>、<code>PortRef</code>、<code>BindingRef</code> などのリソースの検索のみを行います。
+* <code>*Params</code>: <code>CreateGraphParams</code>、<code>RuntimeRunParams</code> などのインターフェイス呼び出しの完全な入力パラメータ
+* <code>*Update</code>: <code>NodeParamUpdate</code>、<code>RuntimeParamsUpdate</code> などの既存の構成または値を変更します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">await client.Graph.CreateGraphInfoAsync(new CreateGraphParams("my_graph"));
+await client.Node.CreateNodeInfoAsync(new CreateNodeParams("my_graph", "ResizeImage"));
+// ノーマルモードの例；passive_bino モードを使用してください RuntimeRunParams.PassiveBinoFromFile/Bytes/Images。
+await client.Runtime.RunGraphAsync(new RuntimeRunParams("my_graph", new[] { frame }));</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>パラメータ オブジェクトの構築方法、ファイルのアップロード、エラーが発生しやすい点の詳細については、<a href="params.html" class="xref page">参数对象</a> を参照してください。</p>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_クイックスタート"><a class="anchor" href="#_クイックスタート"></a>クイックスタート</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_クライアントの作成"><a class="anchor" href="#_クライアントの作成"></a>クライアントの作成</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using AtomSdk;
+
+// baseUrl のために Atom プラットフォームサービスアドレス，たとえば "http://localhost:8080"
+var client = new AtomClient("http://localhost:8080");</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_完全な_async_main_の例"><a class="anchor" href="#_完全な_async_main_の例"></a>完全な async Main の例</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Core;
+using AtomSdk.Models;
+
+class Program
+{
+    static async Task Main(string[] args)
+    {
+        var client = new AtomClient("http://localhost:8080");
+
+        try
+        {
+            // 1. グラフを作成する
+            var graphInfo = await client.Graph.CreateGraphInfoAsync(new CreateGraphParams("my_graph"));
+            Console.WriteLine($"作成された図，ID: {graphInfo.GraphId}, リクエストステータス: {graphInfo.Status}");
+
+            // 2. すべての写真をリストする
+            var graphs = await client.Graph.ListGraphSummariesAsync();
+            Console.WriteLine($"現在、 {graphs.Length} 写真");
+
+            // 3. 図を開く（タイムスタンプを取得する）
+            await client.Graph.OpenGraphAsync("my_graph");
+
+            // 4. グラフ内にノードを作成する
+            var nodeInfo = await client.Node.CreateNodeInfoAsync(new CreateNodeParams("my_graph", "ResizeImage"));
+            Console.WriteLine($"ノードが作成されました，ID: {nodeInfo.NodeId}, リクエストステータス: {nodeInfo.Status}");
+
+            // 5. ランチャート
+            var runResult = await client.Graph.RunGraphResultAsync("my_graph");
+            Console.WriteLine($"実行が完了しました，リクエストステータス: {runResult.Status}");
+
+            // 6. リリースチャート
+            await client.Graph.ReleaseGraphAsync("my_graph");
+        }
+        catch (AtomApiException ex)
+        {
+            Console.WriteLine($"サーバーエラー {ex.Status}: {ex.Message}");
+        }
+        catch (AtomHttpException ex)
+        {
+            Console.WriteLine($"HTTP エラー {ex.StatusCode}: {ex.Message}");
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_同期コードで呼び出される"><a class="anchor" href="#_同期コードで呼び出される"></a>同期コードで呼び出される</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>プロジェクトが async/await (Unity 非メインスレッド、古いフレームワークなど) をサポートしていない場合は、次の方法で同期的に待機できます。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 方法 1：GetAwaiter().GetResult()（おすすめ，スタック情報を保持する）
+var result = client.Graph.CreateGraphAsync(new CreateGraphParams("my_graph")).GetAwaiter().GetResult();
+
+// 方法 2：Task.Run().Result（コンソールまたはテストに適しています）
+var result = Task.Run(() =&gt; client.Graph.CreateGraphAsync(new CreateGraphParams("my_graph"))).Result;</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>注: ASP.NET 内で <code>.Result</code> または <code>.GetAwaiter().GetResult()</code> を使用したり、SynchronizationContext 内で WinForms/WPF を使用するとデッドロックが発生する可能性があります。常に <code>await</code> を使用することをお勧めします。</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_統合されたエラー処理"><a class="anchor" href="#_統合されたエラー処理"></a>統合されたエラー処理</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">try
+{
+    var result = await client.Graph.CreateGraphAsync(new CreateGraphParams("my_graph"));
+}
+catch (AtomApiException ex)
+{
+    // サーバーがビジネス エラーを返しました（画像はすでに存在します、パラメータが不正であるなど。）
+    Console.WriteLine($"サーバーエラー {ex.Status}: {ex.Message}");
+    if (ex.Payload.HasValue)
+    {
+        Console.WriteLine($"エラーの詳細: {ex.Payload.Value}");
+    }
+}
+catch (AtomTimeoutException ex)
+{
+    // グラフの実行またはノードのアクティブ化が完了しない，SDK ポーリング待機タイムアウト
+    Console.WriteLine($"インターフェースの完了を待機中のタイムアウト: {ex.Path}, attempts={ex.Attempts}");
+    Console.WriteLine($"最後の応答: {ex.LastData}");
+}
+catch (AtomHttpException ex)
+{
+    // HTTP レイヤーエラー（など 404、500、接続拒否など）
+    Console.WriteLine($"HTTP エラー {ex.StatusCode}: {ex.Message}");
+}
+catch (AtomProtocolException ex)
+{
+    // 応答プロトコルの解析に失敗しました
+    Console.WriteLine($"プロトコルエラー: {ex.Message}");
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_jsonelement_フィールド_アクセス_クイック_リファレンス"><a class="anchor" href="#_jsonelement_フィールド_アクセス_クイック_リファレンス"></a>JsonElement フィールド アクセス クイック リファレンス</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>SDK の本来の戻り値は <code>System.Text.Json.JsonElement</code> であり、アクセス方法は次のとおりです。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var result = await client.Graph.CreateGraphAsync(new CreateGraphParams("my_graph"));
+
+// 文字列の読み取り（追加する ! 空ではないことをアサートします）
+string id = result.GetProperty("graphId").GetString()!;
+
+// 数字を読む
+double ts = result.GetProperty("timestamp").GetDouble();
+
+// 整数の読み取り
+int count = result.GetProperty("count").GetInt32();
+
+// 読み取りリクエストのステータス
+int status = result.GetProperty("status").GetInt32();
+
+// トラバース配列
+foreach (var item in result.GetProperty("nodes").EnumerateArray())
+{
+    string name = item.GetProperty("nodeName").GetString()!;
+}
+
+// フィールドが存在するかどうかを確認する（オプションのフィールド）
+if (result.TryGetProperty("description", out var desc))
+{
+    Console.WriteLine(desc.GetString());
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ドキュメントナビゲーション"><a class="anchor" href="#_ドキュメントナビゲーション"></a>ドキュメントナビゲーション</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="graph.html" class="xref page">GraphService</a> — メインイメージの管理</p>
+</li>
+<li>
+<p><a href="node.html" class="xref page">NodeService</a> — メイン グラフ ノードの操作</p>
+</li>
+<li>
+<p><a href="graph_node.html" class="xref page">GraphNodeService</a> — サブグラフ ノードの操作</p>
+</li>
+<li>
+<p><a href="runtime.html" class="xref page">RuntimeService</a> — Runtime 推論エンジン</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="../cpp/runtime.html">RuntimeService（C++）</a></span>
+  <span class="next"><a href="params.html">C# パラメータオブジェクト</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

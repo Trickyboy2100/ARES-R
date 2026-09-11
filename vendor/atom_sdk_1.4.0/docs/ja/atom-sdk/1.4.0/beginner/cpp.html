@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>C++ RuntimeService 入門利用 :: Atom SDK 開発者ガイド</title>
+    <link rel="prev" href="python.html">
+    <link rel="next" href="csharp.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          オンライン製品ドキュメント
+                  </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="ドキュメントを検索"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              このマニュアルのみ
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            マニュアルを切り替え
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK 開発者ガイド</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          ダウンロードセンター
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          公式サイト
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            日本語
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK 開発者ガイド</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">ようこそ</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">クイックスタート</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">クイックスタート</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">サンプルサンプル</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">入門利用</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="index.html">Atom SDK 入門利用</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="python.html">Python RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="cpp.html">C++ RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="csharp.html">C# RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">ユーザーガイド</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">適切な Service を選択します</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">グラフとノードの操作</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">エラー処理とトラブルシューティング</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">よくある質問</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">基本的な概念</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/what-is-atom-sdk.html">Atom SDK とは</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-node-subgraph.html">グラフ、ノード、サブグラフ</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-vs-runtime.html">Graph と Runtime の違い</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/timestamp.html">Timestampとは何ですか</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/runtime-frame.html">ランタイム入力フレーム (RuntimeFrame / RuntimePassiveBinoFrame)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/point-cloud-protocol.html">点群タイプの入出力用のバイナリ プロトコル</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/param-binding.html">パラメータのタイプとバインディング名</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API リファレンス</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API リファレンスの概要</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python の概要とインストール</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/params.html">Python パラメータ オブジェクト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/public_api.html">Python パブリック ユーティリティ API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ バージョン — ユーザーガイド</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ パラメータ オブジェクト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">Atom SDK — C# バージョン</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/params.html">C# パラメータオブジェクト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK 開発者ガイド</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK 開発者ガイド</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK 開発者ガイド</a></li>
+    <li>入門利用</li>
+    <li>C++</li>
+    <li><a href="cpp.html">C++ RuntimeService 入門利用</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="このページの内容"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">C++ RuntimeService 入門利用</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>このページでは <code>RuntimeService</code> の基本的な4つの使い方を説明します。完全な仕様は <a href="../cpp/runtime.html" class="xref page">C++ RuntimeService リファレンス</a> を参照してください。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_0_クライアントを作成する"><a class="anchor" href="#_0_クライアントを作成する"></a>0. クライアントを作成する</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include "atom_sdk/core/json.hpp"
+namespace json = atom::sdk::json;
+atom::sdk::AtomClient client("http://127.0.0.1:10026");
+auto&amp; runtime = client.runtime();
+const std::string graph_name = "detection_graph";</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_1_グラフ一覧を取得する"><a class="anchor" href="#_1_グラフ一覧を取得する"></a>1. グラフ一覧を取得する</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto graphs = runtime.list_graphs();
+for (const auto&amp; graph : graphs) {
+    std::cout &lt;&lt; json::serialize(graph) &lt;&lt; "\n";
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>まず JSON を表示し、サービスが返すグラフ名フィールドを確認します。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_2_グラフを実行して結果を読む"><a class="anchor" href="#_2_グラフを実行して結果を読む"></a>2. グラフを実行して結果を読む</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_2_1_通常モード"><a class="anchor" href="#_2_1_通常モード"></a>2.1 通常モード</h3>
+<div class="paragraph">
+<p><code>RuntimeFrame</code> はファイル、EPICRAW bytes、または画像と点群から作成できます。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">json::value roi = json::parse(R"({"min":{"x":-0.5,"y":-0.5,"z":0.1},"max":{"x":0.5,"y":0.5,"z":2.0},"cam2ROIFrame":[0,0,0,0,0,0]})");
+runtime.load_graph(graph_name);
+auto frame = atom::sdk::RuntimeFrame::from_file("/data/frame.epicraw", json::parse("[0,0,0,0,0,0]"), roi);
+auto result = runtime.run_graph({graph_name, {frame}});</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>メモリ上の EPICRAW は <code>RuntimeFrame::from_bytes(&#8230;&#8203;)</code>、原始画像と点群は <code>RuntimeFrame::from_data(&#8230;&#8203;)</code> を使用します。</p>
+</div>
+<div class="paragraph">
+<p>画像と点群をメモリで持っている場合は <code>RuntimeFrame::from_data(&#8230;&#8203;)</code> を使います。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto point_values = get_point_values_from_camera();
+auto image_bytes = get_image_bytes_from_camera();
+atom::sdk::RuntimePointData points{point_values, 640, 480, 3};
+atom::sdk::RuntimeImageData image{image_bytes, 640, 480, 3, 1};
+auto frame_from_data = atom::sdk::RuntimeFrame::from_data(
+    points, image, json::parse("[0,0,0,0,0,0]"),
+    json::parse("[[600,0,320],[0,600,240],[0,0,1]]"),
+    json::parse("[0,0,0,0,0]"));
+auto result = runtime.run_graph({graph_name, {frame_from_data}});</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>point_values</code> と <code>image_bytes</code> はカメラの取得処理に置き換えます。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_2_2_パッシブステレオモード"><a class="anchor" href="#_2_2_パッシブステレオモード"></a>2.2 パッシブステレオモード</h3>
+<div class="paragraph">
+<p>グラフの <code>EpicProInput</code> が <code>passive_bino</code> の場合に使用します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto params = atom::sdk::RuntimeRunParams::passive_bino_from_bytes(
+    graph_name, get_epicraw3_bytes_from_camera(), json::parse("[0,0,0,0,0,0]"));
+auto result = runtime.run_graph(params);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>3枚の画像を持つ場合は <code>passive_bino_from_images(&#8230;&#8203;)</code> と3路のメタデータを使用します。</p>
+</div>
+<div class="paragraph">
+<p>3枚のパッシブステレオ画像を持っている場合は <code>passive_bino_from_images(&#8230;&#8203;)</code> を使います。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">json::object camera_params;
+camera_params["CameraMatrix"] = json::array{600, 0, 320, 0, 600, 240, 0, 0, 1};
+camera_params["CameraDistortion"] = json::array{0, 0, 0, 0, 0};
+camera_params["CameraRotation"] = json::array{1, 0, 0, 0, 1, 0, 0, 0, 1};
+camera_params["CameraTranslation"] = json::array{0, 0, 0};
+json::object passive_params;
+passive_params["DepthSrc1"] = camera_params;
+passive_params["DepthSrc2"] = camera_params;
+passive_params["TextureSrc"] = camera_params;
+auto params = atom::sdk::RuntimeRunParams::passive_bino_from_images(
+    graph_name,
+    {atom::sdk::RuntimePassiveBinoImage{depth_src1, 640, 480, 2}, atom::sdk::RuntimePassiveBinoImage{depth_src2, 640, 480, 2}, atom::sdk::RuntimePassiveBinoImage{texture_bgr, 640, 480, 16}},
+    passive_params, json::parse("[0,0,0,0,0,0]"));
+auto result = runtime.run_graph(params);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>画像の順序は <code>DepthSrc1</code>、<code>DepthSrc2</code>、<code>TextureSrc</code> で固定です。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_2_3_出力を解析する"><a class="anchor" href="#_2_3_出力を解析する"></a>2.3 出力を解析する</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto info = runtime.get_binded_outputs_info(graph_name);
+auto value = runtime.get_binded_output_value({graph_name, "detection_result"});
+auto clouds = runtime.get_binded_point_cloud_parsed({graph_name, "filtered_cloud", 3});</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>ノード結果を読むには、先にそのポートを出力バインディングに設定します。完了後は <code>runtime.release_graph(graph_name)</code> を呼びます。</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_3_グラフなしで1つのアルゴリズムを実行する"><a class="anchor" href="#_3_グラフなしで1つのアルゴリズムを実行する"></a>3. グラフなしで1つのアルゴリズムを実行する</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">atom::sdk::SingleNodeParams params;
+params.node_name = "EstimateNormal";
+params.inputs["points"] = std::filesystem::path("/data/scan.ply");
+auto parsed = runtime.run_single_node_no_graph_parsed(params);
+auto raw = runtime.run_single_node_no_graph(params);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>parsed</code> は構造化された出力、<code>raw</code> はサービスの JSON/bytes です。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_4_パラメータを変更して再実行する"><a class="anchor" href="#_4_パラメータを変更して再実行する"></a>4. パラメータを変更して再実行する</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">runtime.load_graph(graph_name);
+auto meta = runtime.get_meta_info(graph_name);
+atom::sdk::JsonObject shared;
+shared["camera_id"] = "cam-01";
+runtime.set_shared_params({graph_name, shared});
+atom::sdk::JsonObject run_params;
+run_params["confidence"] = 0.8;
+runtime.set_run_params({graph_name, run_params});
+auto result = runtime.run_graph({graph_name, {frame}});</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>パラメータ名とバインディング名はサービスのメタ情報に置き換えてください。</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="python.html">Python RuntimeService 入門利用</a></span>
+  <span class="next"><a href="csharp.html">C# RuntimeService 入門利用</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

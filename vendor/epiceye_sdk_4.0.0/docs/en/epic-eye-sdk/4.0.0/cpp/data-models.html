@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>C++ — Data type and field :: Epic Eye SDK Developer Guide</title>
+    <link rel="prev" href="alignment.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+         <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" /> 
+         <span class="navbar-title">Online Product Documentation</span>
+      </a>
+
+      
+
+
+    </div>
+
+      <div id="topbar-nav" class="navbar-menu">
+        <div class="navbar-end">
+
+          
+            <div class="navbar-item search hide-for-print">
+              <div id="search-field" class="field has-filter">
+                <input id="search-input" type="text" placeholder="Enter keywords to search" >
+                <label class="filter checkbox">
+                  <input type="checkbox" data-facet-filter="component:epic-eye-sdk">Only this manual
+                </label>
+              </div>
+            </div>
+          
+          <button class="navbar-burger" data-target="topbar-nav">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Switch Manual</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Epic Eye SDK Developer Guide</a>
+          </div>
+        </div>
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">Download Center</a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">Official Website</a>
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+            <a class="navbar-link" href="#"><span class="globe-icon">🌐</span>English</a>
+            <div class="navbar-dropdown">
+                <a class="navbar-item" href="http://docs.qianyi.ai/zh/index.html">简体中文</a>
+                <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+                <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+            </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-logo {
+  height: 32px;
+  margin-right: 8px;
+}
+
+.navbar-title {
+  font-size: 18px;
+  color: #333;
+}
+
+.globe-icon {
+  margin-right: 5px;
+}
+
+.navbar-item {
+  color: #000 !important;
+}
+
+.navbar-item:hover {
+  background-color: #3273dc !important;
+  color: #fff !important;
+}
+
+.navbar-item a {
+  color: #000 !important;
+}
+
+.navbar-item a:hover {
+  color: #fff !important;
+}
+
+.navbar-dropdown .navbar-item {
+  color: #000 !important;
+}
+
+.navbar-dropdown .navbar-item:hover {
+  background-color: #3273dc !important;
+  color: #fff !important;
+}
+
+.navbar-link:hover {
+  background-color: #3273dc !important;
+  color: #fff !important;
+}
+
+.navbar-link a {
+  color: #000 !important;
+}
+
+.navbar-link a:hover {
+  color: #fff !important;
+}
+
+.language-selector .navbar-link {
+  display: flex;
+  align-items: center;
+  color: #000 !important;
+}
+
+.navbar-link {
+  color: #000 !important;
+}
+
+/* 添加这个新规则，使下拉菜单激活时保持链接的蓝色背景 */
+.navbar-item.has-dropdown.is-active .navbar-link,
+.navbar-item.has-dropdown:focus .navbar-link,
+.navbar-item.has-dropdown:focus-within .navbar-link {
+  background-color: #3273dc !important;
+  color: #fff !important;
+}
+
+/* 添加这个规则，确保鼠标悬停在下拉菜单项上时父级链接保持蓝色背景 */
+.navbar-item.has-dropdown:hover .navbar-link {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* 添加这个特定的样式规则，确保搜索框区域在悬停时背景不变 */
+.navbar-item.search.hide-for-print:hover {
+  background-color: transparent !important;  /* 使背景透明，保持原来的背景色 */
+}
+
+/* 确保搜索框内的输入框在悬停时也不改变背景 */
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input {
+  background-color: inherit !important;
+}
+</style> 
+<div class="body">
+<div class="nav-container" data-component="epic-eye-sdk" data-version="4.0.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Epic Eye SDK Developer Guide</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Welcome</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Quick Start</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">Quick Start</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/examples.html">Examples</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">User Guide</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/discovery.html">Camera Discovery and Connection</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/capture.html">Shooting and EpicRaw Decoding</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/config.html">Camera Configuration &amp; Parameters</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/intrinsic-calibration.html">Quoted</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/hand-eye-calibration.html">Hand-eye-marked.</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/line-scan.html">Wire-sweeping</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/stream2d.html">Stream2D Live video</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API References</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">C# — Overview and integration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/device.html">C# — Devices and Networks</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/capture.html">C# — Photography and data acquisition</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/epicraw.html">C# — EpicRaw Parsing</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/camera-config.html">C# — Camera Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/intrinsics.html">C# — Internal participation in deformation LUT</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/intrinsic-calibration.html">C# — Quoted</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/hand-eye-calibration.html">C# — Hand-eye-marked.</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/line-scan.html">C# — Wire sweep</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/stream2d.html">C# — Stream2D</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/alignment.html">C# — Texture Alignment</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/data-models.html">C# — Data type and field</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python — Overview and installation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">Python — Request to run configuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/device.html">Python — Devices and Networks</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/capture.html">Python — Photography and data acquisition</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/epicraw.html">Python — EpicRaw Parsing</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/camera-config.html">Python — Camera Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/intrinsics.html">Python — Internal participation in deformation LUT</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/intrinsic-calibration.html">Python — Quoted</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/hand-eye-calibration.html">Python — Hand-eye-marked.</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/line-scan.html">Python — Wire sweep</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/stream2d.html">Python — Stream2D</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/alignment.html">Python — Texture Alignment</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/data-models.html">Python — Data type and field</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="overview.html">C++ — Overview and integration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="device.html">C++ — Devices and Networks</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="capture.html">C++ — Photography and data acquisition</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="epicraw.html">C++ — EpicRaw Parsing</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="camera-config.html">C++ — Camera Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="intrinsics.html">C++ — Internal participation in deformation LUT</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="intrinsic-calibration.html">C++ — Quoted</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="hand-eye-calibration.html">C++ — Hand-eye-marked.</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="line-scan.html">C++ — Wire sweep</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="stream2d.html">C++ — Stream2D</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="alignment.html">C++ — Texture Alignment and Completion</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="data-models.html">C++ — Data type and field</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Epic Eye SDK Developer Guide</span>
+    <span class="version">4.0.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Epic Eye SDK Developer Guide</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">4.0.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Epic Eye SDK Developer Guide</a></li>
+    <li>API References</li>
+    <li>C++ SDK</li>
+    <li><a href="data-models.html">C++ — Data type and field</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Content"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside><article class="doc">
+<h1 class="page">C++ — Data type and field</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Note to this page <code>TFTech</code> Open Structures, Enumeration and Quantification in Naming Space JSON The contract.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="epiceye-info"><a class="anchor" href="#epiceye-info"></a><code>EpicEyeInfo</code></h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 66.6668%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Version</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Camera service end version.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SN</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Camera serial number.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IP</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Camera access address.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>model</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Camera type name.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>alias</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Could not close temporary folder: %s</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>width</code> / <code>height</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>uint32_t</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Default image width, unit pixels.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="reconstructor-type"><a class="anchor" href="#reconstructor-type"></a><code>ReconstructorType</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>Mono=0</code> (b) Expressing a single depth source;`BinoWithoutColor=1` (b) Expressing a double-deep source with no separate colour source;`BinoWithColor=2` (a) Express a dual depth source with an independent colour source;`Unknown=999` This indicates that it is not recognized.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="simple-camera-parameter"><a class="anchor" href="#simple-camera-parameter"></a><code>SimpleCameraParameter</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>getParameterList</code> It&#8217;s through. <code>std::vector&lt;SimpleCameraParameter&gt;&amp;</code> Returns the default parameters.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 66.6668%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Non-empty parameter preset unique identifier, which can be passed directly to <code>setParameter</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">parameter preset name.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Full Current Configuration Passed <code>getConfig</code> Get in.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="ip-config"><a class="anchor" href="#ip-config"></a><code>EpicEyeIPConfig</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>ip</code> New for manual mode IPv4; <code>netMask</code> The subnet mask, default <code>255.255.255.0</code>; <code>type</code> Yes. <code>"DHCP"</code> or <code>"Manual"</code>; <code>sn</code> The current serial number of the target camera must be consistent with the current number of the camera to prevent error in other devices. The target camera is currently IP It&#8217;s through. <code>setEpicEyeIPConfig</code> It&#8217;s&#8230;&#8203; <code>destinationIP</code> Parameter in;`CameraIPConfig` Example will be from the search result or <code>getInfo</code> Autofill SN, the order line does not need to be imported.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="temperature-info"><a class="anchor" href="#temperature-info"></a>Temperature JSON</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>timestamp_ms</code> (b) For sampling times stamp;`cpu_celsius`, <code>gpu_celsius</code>, <code>npu_celsius</code> Is the temperature of a degree Celsius or JSON <code>null</code>. Sensors, lasers, power sources and cavity measurements randomly appear with extra keys.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="camera-config-params"><a class="anchor" href="#camera-config-params"></a>Camera Configuration JSON</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Configure Object contains at least <code>id</code>, <code>name</code>, <code>selected</code>, <code>profileType</code>, <code>captureMode`and `structuredLightParams</code>, <code>swingLineScanParams</code>, <code>passiveBinocularParams</code>, <code>videoStreamParams</code> , the grouping associated with the current model.<code>captureMode</code>: <code>0</code> Video stream,<code>1</code> Structure light,<code>2</code> Passive binary,<code>3</code> Swinging the wires,<code>4</code> Fixed-line sweep.</p>
+</div>
+<div class="paragraph">
+<p>Public Configuration Fields: Depth/Colour Source 2D Exposure time (%1)ms) &amp; Gains ( )dBExposure mode ( )0 Manual/1 Auto.<code>paramsBatch3D</code> Multiple exposure parameters,<code>textureSource</code>(0 None/1 Depth Source/2 Colour source, light patch,2D/3D Resolution mode, smoothing and filtering level. Structured optical fields also include exposed partitions, projecting mode, project brightness, hole filling and 3D ROI;wirescanning fields contain Z Scopemm, the angle (degrees), cloud density, laser brightness; the video stream field contains a three-road map source switch.</p>
+</div>
+<div class="paragraph">
+<p>Parameter Styles JSON Press <code>common</code>, <code>structuredLight</code>, <code>swingLineScan</code>, <code>passiveBinocular</code>, <code>videoStream</code> grouping;per argument description contains <code>displayText</code>, <code>dataType</code>, <code>bounds</code>, <code>step</code>, <code>default</code>, <code>priority</code>, <code>componentType</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="epicraw-types"><a class="anchor" href="#epicraw-types"></a>EpicRaw Type</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>EpicRaw3DataType</code>: <code>DepthSrcImg1=0</code>, <code>DepthSrcImg2=1</code>, <code>TextureBGR=2</code>, <code>Depth=3</code>, <code>PointCloud=4</code>, <code>PointCloudNormal=5</code>.</p>
+</div>
+<div class="paragraph">
+<p><code>EpicRawDocument</code>: <code>fileType</code> (b) The form of the instruction;`raw1/raw2/raw3` (a) Saves the contents of the formats;`hasRaw1/hasRaw2/hasRaw3` And one of them is&#8230;&#8203; <code>true</code>.</p>
+</div>
+<div class="paragraph">
+<p><code>EpicRawImage</code> contains <code>dataType</code>, <code>width</code>, <code>height</code>, OpenCV <code>matType</code>, and <code>std::string_view data</code>. The <code>data</code> view references the input EpicRaw data, which must remain valid while the image is in use.</p>
+</div>
+<div class="paragraph">
+<p><code>EpicRaw3</code>: <code>headerLength</code>, <code>elementsCount</code>, <code>elementLengths</code>, <code>headerMetaLength</code>, <code>headerMeta</code>, <code>elements`Every one. `EpicRaw3Element</code> Organisation <code>headerLength</code>, <code>dataType</code>, <code>dataLength</code>, <code>width</code>, <code>height</code>, <code>matType</code>, <code>metaLength</code>, <code>meta</code>, <code>data</code>.</p>
+</div>
+<div class="paragraph">
+<p><code>EpicRaw2</code>: width, type of data, length of segments,<code>cameraMatrix</code>, <code>distortion</code>, <code>configData</code>, <code>depthData</code>, <code>imageData</code>.<code>EpicRaw1</code>: kangaroo,<code>cameraMatrix[9]</code>, <code>distortion[5]</code>, `cameraConfig`Type of data, length and depth of data/Image data.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="line-scan-types"><a class="anchor" href="#line-scan-types"></a><code>LineScanStatus</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This count corresponds to the stage string returned by the camera end:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 28.5714%;">
+<col style="width: 71.4286%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Enumeration values</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Idle</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The service is idle, has not yet begun to clear the line and has not yet produced a recent result.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Starting</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Checking configuration and starting scanning device.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>WaitingForConnection</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Device activated, waiting SDK Create line sweeps WebSocket.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Streaming</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">WebSocket Connected, data are being collected and transmitted.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Finalizing</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Received EOT, is in the process of collating the data for this line sweep.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Saving</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Combining strips and generating and publishing EpicRaw.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Completed</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Wire sweeps EpicRaw The processing was successfully completed.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Stopping</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Responding to the request for a voluntary cessation.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Stopped</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">It has been stopped on its own initiative and has not been accomplished naturally.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Failed</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Failed at start-up, transmission, closing or storage.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Unknown</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SDK A status name for the current version was received.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>stopLineScan</code> It&#8217;s&#8230;&#8203; <code>statusHex</code> The hexadecimal string that is associated with the service end state code.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="stream2d-types"><a class="anchor" href="#stream2d-types"></a>Stream2D Type</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 66.6668%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Type/Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Stream2DStatus.isStreaming</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bool</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">There is no flow of activity.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>peerCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Activities peer Number.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cameraCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The number of graphs that are involved in the flow.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Stream2DWebRtcOfferResult.peerId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Camera distribution. peer ID.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>answerSdp</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">WebRTC Answer SDP.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Stream2DRtcSessionOptions.fps</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Request frame rate, default 60.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cameraIndex</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Source Index, Default 0.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Stream2DRtcFrame.frameIndex</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">From 1 Starts the frame number.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>timestamp</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>uint32_t</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RTP Time stamp.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>payloadType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RTP payload type.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>codec</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Encoding Name,Stream2D Yes. H264.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>sample</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::vector&lt;uint8_t&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RTP Reorganization H264 Annex-B Encoding frame, uncoded, uncoded.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Stream2DRtcSession::frameCount()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The number of frames that are currently delivered to reverse the call.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Stream2DRtcSession::peerId()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">From this session. peer ID.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Stream2DRtcSession::isRunning()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bool</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Local RTC Whether the session is still running.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="intrinsic-calibration-types"><a class="anchor" href="#intrinsic-calibration-types"></a>Quoted JSON</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>IntrinsicIdentifyBoardResult</code>: <code>boardType</code>, <code>boardHint</code>, <code>previewImages</code>.<code>previewImages</code> contains each object <code>dataUri: string</code>(Can be used directly as a picture) <code>src</code> It&#8217;s&#8230;&#8203; Data URI Or relative URL), <code>name: string</code>(Identification of the source of images)<code>width: int</code> and <code>height: int</code>(Pixels sizes).</p>
+</div>
+<div class="paragraph">
+<p><code>IntrinsicAddCalibImageResult</code>: <code>detectSuccess</code>, <code>pairIndex</code>, <code>pairCount</code>, <code>boardPose=[tx,ty,tz,qx,qy,qz,qw]</code>(Camera Coordinates System, Diversion Unit) mm, estimated to have failed <code>null</code>), <code>boardTiltAngle</code>(degrees)<code>boardTiltWarning</code>, <code>previewImages</code>.<code>IntrinsicRemoveCalibImageResult</code>: <code>removedIndex</code>, <code>pairCount</code>.</p>
+</div>
+<div class="paragraph">
+<p><code>IntrinsicCalculateResult</code> Include:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>cameraParameters</code>, <code>parameterErrors</code>: <code>DepthSrc1 → DepthSrc2</code> The flat-altitude results and errors.</p>
+</li>
+<li>
+<p><code>colorCameraParameters</code>, <code>colorParameterErrors</code>: <code>BinoWithColor</code> It&#8217;s&#8230;&#8203; <code>DepthSrc1 → TextureSrc</code> The flat-altitude results and errors, other types are <code>null</code>.</p>
+</li>
+<li>
+<p><code>cameraParametersConfig`_: with `CameraParameters.json</code> The complete configuration of the corresponding configuration is the only one allowed to pass on <code>setCameraIntrinsicParameters</code> .</p>
+</li>
+<li>
+<p><code>stereoRms</code>, <code>colorStereoRms</code>, `shouldWarnRms`Depth: RMS, optional colour RMS, and any RMS Whether or not the safety threshold is exceeded.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><code>cameraParameters</code> Include image width, current/Lord/From the camera. 9 Internistur et al. 5 Metamorphosis, Numerical Matrix <code>E[9]`Basic matrix `F[9]</code>, Lord rotates from camera <code>R[9]</code> Peace move. <code>T[3]</code>(mm).<code>parameterErrors</code> Include Master/From/Master of stereo error and each gesture/From the error array.</p>
+</div>
+<div class="sect2">
+<h3 id="camera-parameters-config"><a class="anchor" href="#camera-parameters-config"></a><code>CameraParametersConfig</code></h3>
+<div class="paragraph">
+<p><code>cameraParametersConfig</code> JSON It&#8217;s through. <code>json.get&lt;TFTech::CameraParametersConfig&gt;()</code> Convert to SDK Strong type of object. Writing interfaces only accept this type, not accept <code>nlohmann::json</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 22.2222%;">
+<col style="width: 22.2222%;">
+<col style="width: 55.5556%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>reconstructorType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ReconstructorType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Mono</code>, <code>BinoWithoutColor</code>, <code>BinoWithColor</code> or <code>Unknown</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>transformationReference</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TransformationReference</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">External reference source:`DepthSrc1`, <code>DepthSrc2</code> or <code>TextureSrc</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depthSrc1</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IntrinsicParams</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">First deep camera, always there.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>depthSrc2</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::optional&lt;IntrinsicParams&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The second depth camera or secondary parameter required for the current builder; all supported reconstruction types must exist at the time of writing.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textureSrc</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::optional&lt;IntrinsicParams&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(b) Independent colour cameras;`BinoWithColor` It must exist.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>swingLineScanLightPlaneParams</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::optional&lt;SwingLineScanLightPlaneParams&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Swing the line sweeps the plane parameters and keeps them as they are when written.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>IntrinsicParams</code> Use <code>width</code>, <code>height</code>, <code>cameraMatrix: std::array&lt;double,9&gt;</code>, <code>distortion: std::array&lt;double,5&gt;</code>, <code>rotation: std::array&lt;double,9&gt;</code> and <code>translation: std::array&lt;double,3&gt;</code>. The rotation matrix is OpenCV Line First Storage, Column Vector Right Multiplication; square units as mm.<code>SwingLineScanLightPlaneParams</code> Organisation <code>startAngle</code>, <code>endAngle</code> and <code>lightPlaneParams</code>.</p>
+</div>
+<div class="paragraph">
+<p>Laser M V3 It&#8217;s&#8230;&#8203; <code>depthSrc1/depthSrc2</code> From <code>cameraParameters</code> Lord./From the camera,<code>textureSrc</code> From <code>colorCameraParameters</code> From the camera.</p>
+</div>
+<div id="intrinsic-accuracy" class="paragraph">
+<p><code>IntrinsicAccuracyCheckResult</code> Include structured previews <code>previewImages</code>, <code>boardTypeDetected</code>, <code>boardHint</code>, <code>boardPose=[tx,ty,tz,qx,qy,qz,qw]</code>( camera coordinates system,mm), <code>boardPositionValid`depth/Colour Board Size Ratio, Average/Maximum pixel error, pairing through mark,`stereoMetricsValid</code>, <code>boardTiltAngle</code>, <code>boardTiltWarning</code>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="hand-eye-types"><a class="anchor" href="#hand-eye-types"></a>Hand-eye-marked type</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>boardPoseArray</code> Fixed to <code>[x,y,z,qx,qy,qz,qw]`Location Unit mm.`robotPose</code> by <code>RobotParameters</code> Decision: Four dollars 7 value, the rest of the expression is 6 a value.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 22.2222%;">
+<col style="width: 22.2222%;">
+<col style="width: 55.5556%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Main field</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RobotInfo</code> / <code>RobotLibrary</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Map of brand to model list</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(a) Full-size information on the robotic reservoir;`RobotInfo` Succession <code>RobotParameters</code>, and contains ID, pictures, creation times, attitude signs,IK Type, load and arm show.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RobotParameters</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>brand</code>, <code>model</code>, <code>rotationType</code>, <code>eulerType</code>, <code>angleUnit</code>, <code>axisNumber</code>, <code>marks</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rules for robotic position; must pass first <code>configureHandEyeCalibration</code> Write the camera.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HandEyeInstallationType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>EyeToHand</code>, <code>EyeInHand</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Cameras are fixed externally or installed at the end of a robot.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HandEyePoint</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code>, <code>boardPoseArray</code>, <code>robotPose</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A set of pair positions at the same collection time.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HandEyeSpecialParams</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>offset</code>, <code>boardPosition</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3/4 Additional parameters required for axle robotics.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HandEyeCalculationRequest</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>installationType</code>, <code>handEyePoints</code>, <code>specialParams</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A hand-marked calculation request.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CalibrationBoardPose</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>boardPoseArray</code>, <code>cameraInternalAccuracy</code>, <code>gridSize</code>, images and clouds Base64</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Results of a plate test.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HandEyeCalibrationResult</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>success</code>, <code>pose</code>, <code>matrix4x4</code>, <code>hecError</code>, <code>hecWarnData</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>hecError</code> Yes. <code>rotMean/rotMax/transMean/transMax</code>, the average for rotation and offset, respectively/Max.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HandEyeCalibrationData</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>installationType</code>, <code>robotParams</code>, historical points, supplementary parameters, calculations</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The context of the hand-eye that the camera currently saves is used for query status only.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RobotAccuracyRequest</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>directionPoseData</code>, <code>direction</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Starting point/Endpoints include position matching and internal camera accuracy; direction is <code>x/y/z</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RobotAccuracyResult</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Distance, position accuracy, three-axis attitude accuracy</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The robot moves the precision result.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HandEyeAccuracyRequest</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>boardPoseArray</code>, <code>robotPose</code>, <code>gridSize</code>, <code>directionZ</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Use a authentication request that saves the result of the hand-eye.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HandEyeAccuracyResult</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Convert position, camera/The robot matrix and plane diagnostic coordinates.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Conversion and validation of the plate in the robotic coordinate system.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="alignment.html">C++ — Texture Alignment and Completion</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

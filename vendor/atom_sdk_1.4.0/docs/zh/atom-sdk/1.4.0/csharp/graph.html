@@ -1,0 +1,2017 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>GraphService（C#） :: Atom SDK 开发手册</title>
+    <link rel="prev" href="params.html">
+    <link rel="next" href="node.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          在线产品文档        </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="输入关键词搜索"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              仅本手册
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            切换手册
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK 开发手册</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          下载中心
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          官网
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            简体中文
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK 开发手册</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">欢迎</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">快速开始</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">快速开始</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">示例样本</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">入门使用</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK 入门使用</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService 入门使用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService 入门使用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService 入门使用</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">使用指南</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">选择合适的 Service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">图与节点操作</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">错误处理与排查</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">常见问题解答</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">基础概念</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/what-is-atom-sdk.html">什么是 Atom SDK</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-node-subgraph.html">图、节点、子图</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-vs-runtime.html">Graph 与 Runtime 的区别</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/timestamp.html">Timestamp 是什么</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/runtime-frame.html">运行时输入帧（RuntimeFrame / RuntimePassiveBinoFrame）</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/point-cloud-protocol.html">点云类型输入输出的二进制协议</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/param-binding.html">参数类型与绑定名</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API 参考</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API 参考总览</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python 概览与安装</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/params.html">Python 参数对象</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/public_api.html">Python 公共工具 API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ 版 — 使用指南</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ 参数对象</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="overview.html">Atom SDK — C# 版本</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="params.html">C# 参数对象</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK 开发手册</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK 开发手册</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK 开发手册</a></li>
+    <li>API 参考</li>
+    <li>C# SDK</li>
+    <li><a href="graph.html">GraphService（C#）</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="本页内容"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">GraphService（C#）</h1>
+<div class="sect1">
+<h2 id="_服务简介"><a class="anchor" href="#_服务简介"></a>服务简介</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>GraphService</code> 是 Atom SDK 中负责*主图完整生命周期管理*的服务。它提供了图的创建、复制、删除、导入（LoadGraph）、导出（ExportGraph）、打开、释放、运行、清空、时间戳管理以及节点信息查询等全套接口。所有方法均为异步，返回 <code>Task&lt;JsonElement&gt;</code>（原始 JSON）或具体强类型模型。</p>
+</div>
+<div class="paragraph">
+<p><strong>命名空间</strong>：<code>AtomSdk.Services</code></p>
+</div>
+<div class="paragraph">
+<p><strong>入口</strong>：<code>client.Graph</code></p>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_适用场景"><a class="anchor" href="#_适用场景"></a>适用场景</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>在编辑器模式下创建、复制、删除图；</p>
+</li>
+<li>
+<p>将本地 <code>.atom</code> 文件导入服务器（<code>LoadGraphAsync</code>）；</p>
+</li>
+<li>
+<p>将图导出为文件以供备份或迁移（<code>ExportGraphAsync</code>）；</p>
+</li>
+<li>
+<p>打开图后对节点进行编辑，最后通过 <code>RunGraphAsync</code> 触发执行；</p>
+</li>
+<li>
+<p>获取和维护图的时间戳（用于一致性校验）。</p>
+</li>
+</ul>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_推荐调用顺序"><a class="anchor" href="#_推荐调用顺序"></a>推荐调用顺序</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">CreateGraphAsync          （新建图）
+        ↓
+OpenGraphAsync            （打开图，获取时间戳）
+        ↓
+[使用 NodeService 编辑节点]
+        ↓
+RunGraphAsync             （运行图，轮询等待完成）
+        ↓
+ReleaseGraphAsync         （释放资源）</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_接口详解"><a class="anchor" href="#_接口详解"></a>接口详解</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_creategraphasync"><a class="anchor" href="#_creategraphasync"></a>CreateGraphAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; CreateGraphAsync(
+    CreateGraphParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本（自动反序列化到指定类型）
+Task&lt;T&gt; CreateGraphAsync&lt;T&gt;(
+    CreateGraphParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 强类型便捷版本
+Task&lt;GraphReference&gt; CreateGraphInfoAsync(
+    CreateGraphParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：在 Atom 平台上创建一张新的主图。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.GraphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>图名称，在平台内唯一</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.Description</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string?</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>图的描述，可选，默认为 <code>null</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，关键字段：</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>新创建图的唯一 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>timestamp</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>double</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>创建时间戳</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+// 方式一：原始 JsonElement
+var raw = await client.Graph.CreateGraphAsync(
+    new CreateGraphParams("detection_graph", "目标检测流水线"));
+string graphId = raw.GetProperty("graphId").GetString()!;
+Console.WriteLine($"创建成功，图 ID: {graphId}");
+Console.WriteLine($"请求状态: {raw.GetProperty("status").GetInt32()}");
+
+// 方式二：强类型模型（推荐）
+var info = await client.Graph.CreateGraphInfoAsync(new CreateGraphParams("detection_graph"));
+Console.WriteLine($"图 ID: {info.GraphId}，图名: {info.GraphName}");
+Console.WriteLine($"请求状态: {info.Status}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_listgraphsasync"><a class="anchor" href="#_listgraphsasync"></a>ListGraphsAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; ListGraphsAsync(
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; ListGraphsAsync&lt;T&gt;(
+    CancellationToken cancellationToken = default)
+
+// 强类型便捷版本
+Task&lt;GraphSummary[]&gt; ListGraphSummariesAsync(
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：获取平台上所有图的列表摘要（不含缩略图）。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，为一个数组，每个元素包含图的基本信息（<code>graphName</code>、<code>graphId</code> 等）。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+// 原始版本：遍历 JsonElement 数组
+var raw = await client.Graph.ListGraphsAsync();
+foreach (var item in raw.EnumerateArray())
+{
+    Console.WriteLine(item.GetProperty("graphName").GetString());
+}
+
+// 强类型版本
+var summaries = await client.Graph.ListGraphSummariesAsync();
+Console.WriteLine($"共有 {summaries.Length} 个图");
+foreach (var s in summaries)
+{
+    Console.WriteLine($"- {s.GraphName} ({s.GraphId})");
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getallcustomsubgraphsnothumbnailasync"><a class="anchor" href="#_getallcustomsubgraphsnothumbnailasync"></a>GetAllCustomSubgraphsNoThumbnailAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; GetAllCustomSubgraphsNoThumbnailAsync(
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; GetAllCustomSubgraphsNoThumbnailAsync&lt;T&gt;(
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：读取所有自定义子图概要列表，不包含缩略图。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var customSubgraphs = await client.Graph.GetAllCustomSubgraphsNoThumbnailAsync();
+foreach (var item in customSubgraphs.EnumerateArray())
+{
+    Console.WriteLine(item);
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_copygraphasync"><a class="anchor" href="#_copygraphasync"></a>CopyGraphAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; CopyGraphAsync(
+    CopyGraphParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; CopyGraphAsync&lt;T&gt;(
+    CopyGraphParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：将指定图完整复制为一张新图。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.GraphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>源图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.NewGraphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>复制后的新图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，返回新图的基本信息（<code>graphId</code>、<code>graphName</code>）。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+var result = await client.Graph.CopyGraphAsync(
+    new CopyGraphParams("original_graph", "backup_graph"));
+Console.WriteLine($"复制成功，新图 ID: {result.GetProperty("graphId").GetString()}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_editgraphnameasync"><a class="anchor" href="#_editgraphnameasync"></a>EditGraphNameAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; EditGraphNameAsync(
+    EditGraphNameParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; EditGraphNameAsync&lt;T&gt;(
+    EditGraphNameParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：修改图名称。服务端当前通常返回布尔结果或状态对象，建议调用方按原始 <code>JsonElement</code> 判断。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">await client.Graph.EditGraphNameAsync(
+    new EditGraphNameParams("demo_graph", "demo_graph_v2"));</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_editgraphcommentasync"><a class="anchor" href="#_editgraphcommentasync"></a>EditGraphCommentAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; EditGraphCommentAsync(
+    EditGraphCommentParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; EditGraphCommentAsync&lt;T&gt;(
+    EditGraphCommentParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：修改图备注。SDK 会自动带上当前缓存的 <code>timestamp</code>。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">await client.Graph.EditGraphCommentAsync(
+    new EditGraphCommentParams("demo_graph", "新的流程备注"));</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_deletegraphasync"><a class="anchor" href="#_deletegraphasync"></a>DeleteGraphAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; DeleteGraphAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; DeleteGraphAsync&lt;T&gt;(
+    string graphName,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：永久删除指定图（同时清除客户端内部缓存的时间戳）。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>要删除的图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，操作状态信息。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+var result = await client.Graph.DeleteGraphAsync("old_graph");
+Console.WriteLine("图已删除");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getallnodesinfoasync"><a class="anchor" href="#_getallnodesinfoasync"></a>GetAllNodesInfoAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; GetAllNodesInfoAsync(
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; GetAllNodesInfoAsync&lt;T&gt;(
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：获取平台上所有可用节点类型的定义信息（节点名、端口、参数描述等）。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，为节点类型定义的数组。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+var nodes = await client.Graph.GetAllNodesInfoAsync();
+foreach (var node in nodes.EnumerateArray())
+{
+    Console.WriteLine(node.GetProperty("nodeName").GetString());
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getgraphdlnodesmodelinfoasync"><a class="anchor" href="#_getgraphdlnodesmodelinfoasync"></a>GetGraphDlNodesModelInfoAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; GetGraphDlNodesModelInfoAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; GetGraphDlNodesModelInfoAsync&lt;T&gt;(
+    string graphName,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：读取图里深度学习节点依赖的模型信息，通常在导出图前调用。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var dlModels = await client.Graph.GetGraphDlNodesModelInfoAsync("demo_graph");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getgraphcustomnodesasync"><a class="anchor" href="#_getgraphcustomnodesasync"></a>GetGraphCustomNodesAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; GetGraphCustomNodesAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; GetGraphCustomNodesAsync&lt;T&gt;(
+    string graphName,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：读取图里引用到的自定义节点信息，通常在导出图前调用。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var customNodes = await client.Graph.GetGraphCustomNodesAsync("demo_graph");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getgraphworkcellmodelsinfoasync"><a class="anchor" href="#_getgraphworkcellmodelsinfoasync"></a>GetGraphWorkcellModelsInfoAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; GetGraphWorkcellModelsInfoAsync(
+    string graphName,
+    string? graphNodeId = null,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; GetGraphWorkcellModelsInfoAsync&lt;T&gt;(
+    string graphName,
+    string? graphNodeId = null,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：读取主图或指定 graph node 对应的 workcell 模型信息。<code>graphNodeId</code> 为空时查询主图级信息。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var graphWorkcell = await client.Graph.GetGraphWorkcellModelsInfoAsync("demo_graph");
+var subgraphWorkcell = await client.Graph.GetGraphWorkcellModelsInfoAsync(
+    "demo_graph", "graph-node-id");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getgraphbindingsasync"><a class="anchor" href="#_getgraphbindingsasync"></a>GetGraphBindingsAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; GetGraphBindingsAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; GetGraphBindingsAsync&lt;T&gt;(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 强类型便捷版本
+Task&lt;GraphBindingsInfo&gt; GetGraphBindingsInfoAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：查询指定图的绑定端口信息（用于 Runtime 阶段的输入输出对接）。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，包含输入/输出绑定端口列表。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+var bindings = await client.Graph.GetGraphBindingsInfoAsync("my_graph");
+Console.WriteLine($"输入绑定数量: {bindings.Inputs?.Length ?? 0}");
+Console.WriteLine($"输出绑定数量: {bindings.Outputs?.Length ?? 0}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getgraphjsondataasync"><a class="anchor" href="#_getgraphjsondataasync"></a>GetGraphJsonDataAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; GetGraphJsonDataAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; GetGraphJsonDataAsync&lt;T&gt;(
+    string graphName,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：读取图的原始 JSON 结构，返回对象里会补充请求状态信息。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var graphJson = await client.Graph.GetGraphJsonDataAsync("demo_graph");
+Console.WriteLine(graphJson.GetProperty("status").GetInt32());</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_loadgraphasync"><a class="anchor" href="#_loadgraphasync"></a>LoadGraphAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; LoadGraphAsync(
+    LoadGraphParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; LoadGraphAsync&lt;T&gt;(
+    LoadGraphParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 强类型便捷版本
+Task&lt;GraphLoadResult&gt; LoadGraphResultAsync(
+    LoadGraphParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：将本地图文件（<code>.atom</code> 格式）上传并导入到 Atom 平台，以 multipart/form-data 方式传输。
+导入前 SDK 会先读取当前图列表；如果 <code>paramsData.GraphName</code> 已经存在，会抛出 <code>InvalidOperationException</code>，不会调用 <code>/Graph/LoadGraph</code>，也不会覆盖已有图，需要用新的图名字或者删除已有图后重试。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.GraphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>导入后在平台上的图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.FilePath</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>本地文件的绝对路径或相对路径</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，导入结果信息（<code>graphId</code>、<code>graphName</code>）。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+var result = await client.Graph.LoadGraphResultAsync(
+    new LoadGraphParams("imported_graph", "/data/graphs/my_pipeline.atom"));
+Console.WriteLine($"导入成功，图 ID: {result.GraphId}");
+Console.WriteLine($"请求状态: {result.Status}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_importextensionnodesbypathasync"><a class="anchor" href="#_importextensionnodesbypathasync"></a>ImportExtensionNodesByPathAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; ImportExtensionNodesByPathAsync(
+    ImportExtensionNodesByPathParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; ImportExtensionNodesByPathAsync&lt;T&gt;(
+    ImportExtensionNodesByPathParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：导入 <code>LoadGraphAsync</code> 解压出来的扩展节点文件。这个接口通常在
+<code>LoadGraphAsync</code> 后调用，参数传 <code>LoadGraphAsync</code> 返回值里的
+<code>ExtensionNodes</code> 字段，不要传整个 <code>LoadGraphAsync</code> 返回对象。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.ExtensionNodes</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonElement</code> 或 <code>IReadOnlyDictionary&lt;string, object?&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>LoadGraphAsync</code> 返回值中的 <code>ExtensionNodes</code> 字段</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var loadResult = await client.Graph.LoadGraphResultAsync(
+    new LoadGraphParams("imported_graph", "/data/graphs/my_pipeline.atom"));
+
+if (loadResult.ExtensionNodes.ValueKind == JsonValueKind.Object &amp;&amp;
+    loadResult.ExtensionNodes.EnumerateObject().Any())
+{
+    var importResult = await client.Graph.ImportExtensionNodesByPathAsync(
+        new ImportExtensionNodesByPathParams(loadResult.ExtensionNodes));
+    Console.WriteLine(importResult);
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_exportgraphasync"><a class="anchor" href="#_exportgraphasync"></a>ExportGraphAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; ExportGraphAsync(
+    ExportGraphParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; ExportGraphAsync&lt;T&gt;(
+    ExportGraphParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 强类型便捷版本
+Task&lt;GraphExportResult&gt; ExportGraphResultAsync(
+    ExportGraphParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：将平台上的图导出为文件，可附带深度学习模型信息和自定义节点信息。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.GraphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>要导出的图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.DlModelsInfo</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, object?&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>深度学习模型信息，可选，默认为空字典</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.CustomNodes</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, object?&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>自定义节点信息，可选，默认为空字典</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，导出结果（含文件路径或下载信息）。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+// 基本导出（不附带额外信息）
+var result = await client.Graph.ExportGraphResultAsync(new ExportGraphParams("my_graph"));
+Console.WriteLine($"导出路径: {result.FilePath}");
+
+// 携带模型信息导出
+var dlModels = new Dictionary&lt;string, object?&gt;
+{
+    ["ResNet50"] = new { version = "1.0", path = "/models/resnet50.onnx" }
+};
+var exportResult = await client.Graph.ExportGraphAsync(new ExportGraphParams("my_graph", dlModels));</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_opengraphasync"><a class="anchor" href="#_opengraphasync"></a>OpenGraphAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; OpenGraphAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; OpenGraphAsync&lt;T&gt;(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 强类型便捷版本
+Task&lt;GraphOpenResult&gt; OpenGraphInfoAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：打开指定图，获取最新时间戳（后续编辑操作需要携带此时间戳以保证一致性）。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，包含 <code>timestamp</code> 等信息，SDK 会自动将时间戳保存到 <code>TimestampStore</code>。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+var openResult = await client.Graph.OpenGraphInfoAsync("my_graph");
+Console.WriteLine($"已打开图，时间戳: {openResult.Timestamp}");
+
+// 打开后即可使用 NodeService 进行节点编辑
+var nodeInfo = await client.Node.CreateNodeInfoAsync(
+    new CreateNodeParams("my_graph", "ResizeImage"));
+Console.WriteLine($"节点创建请求状态: {nodeInfo.Status}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_releasegraphasync"><a class="anchor" href="#_releasegraphasync"></a>ReleaseGraphAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; ReleaseGraphAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; ReleaseGraphAsync&lt;T&gt;(
+    string graphName,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：释放图资源（同时清除客户端内部缓存的时间戳），释放后图回到未打开状态。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，操作状态信息。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Graph.ReleaseGraphAsync("my_graph");
+Console.WriteLine("图资源已释放");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_rungraphasync"><a class="anchor" href="#_rungraphasync"></a>RunGraphAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; RunGraphAsync(
+    string graphName,
+    CancellationToken cancellationToken = default,
+    TimeSpan? timeout = null)
+
+// 泛型版本
+Task&lt;T&gt; RunGraphAsync&lt;T&gt;(
+    string graphName,
+    CancellationToken cancellationToken = default,
+    TimeSpan? timeout = null)
+
+// 强类型便捷版本
+Task&lt;GraphRunResult&gt; RunGraphResultAsync(
+    string graphName,
+    CancellationToken cancellationToken = default,
+    TimeSpan? timeout = null)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：触发指定图的完整运行，SDK 内部会轮询直到运行完成后返回结果。默认最多等待 30 秒；如果超过 <code>timeout</code>，抛出 <code>AtomTimeoutException</code>，异常中包含最后一次响应。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，用于调用方主动取消</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>timeout</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>TimeSpan?</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>SDK 轮询等待超时；<code>null</code> 使用默认 30 秒，<code>Timeout.InfiniteTimeSpan</code> 表示一直等待</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，运行完成后的结果数据，包含各输出端口的值。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+var result = await client.Graph.RunGraphResultAsync(
+    "my_graph",
+    timeout: TimeSpan.FromSeconds(60));
+Console.WriteLine($"运行完成，请求状态: {result.Status}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_cleargraphasync"><a class="anchor" href="#_cleargraphasync"></a>ClearGraphAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; ClearGraphAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; ClearGraphAsync&lt;T&gt;(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 强类型便捷版本
+Task&lt;GraphTimestampInfo&gt; ClearGraphTimestampAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：清空图的运行状态（重置中间数据），但保留图结构。同步更新时间戳。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，包含清空后的时间戳信息。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+var tsInfo = await client.Graph.ClearGraphTimestampAsync("my_graph");
+Console.WriteLine($"清空完成，新时间戳: {tsInfo.Timestamp}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_gettimestampasync"><a class="anchor" href="#_gettimestampasync"></a>GetTimestampAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; GetTimestampAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; GetTimestampAsync&lt;T&gt;(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 强类型便捷版本
+Task&lt;GraphTimestampInfo&gt; GetTimestampInfoAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：主动获取图的当前时间戳，并更新到 SDK 内部的 <code>TimestampStore</code>（可在断线重连后重新同步状态）。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，<code>timestamp</code> 字段为当前时间戳。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+var tsInfo = await client.Graph.GetTimestampInfoAsync("my_graph");
+Console.WriteLine($"当前时间戳: {tsInfo.Timestamp}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_完整业务流程示例"><a class="anchor" href="#_完整业务流程示例"></a>完整业务流程示例</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>以下示例演示了从创建图到运行图的完整编辑器流程：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Core;
+
+class GraphWorkflowExample
+{
+    static async Task Main()
+    {
+        var client = new AtomClient("http://localhost:8080");
+        const string graphName = "my_pipeline";
+
+        try
+        {
+            // 1. 创建图
+            var graphInfo = await client.Graph.CreateGraphInfoAsync(graphName, "图像处理流水线");
+            Console.WriteLine($"[1] 图已创建: {graphInfo.GraphId}, 请求状态: {graphInfo.Status}");
+
+            // 2. 列出所有图，确认创建成功
+            var summaries = await client.Graph.ListGraphSummariesAsync();
+            Console.WriteLine($"[2] 当前图数量: {summaries.Length}");
+
+            // 3. 打开图（获取时间戳，后续编辑均需要时间戳）
+            await client.Graph.OpenGraphAsync(graphName);
+            Console.WriteLine("[3] 图已打开");
+
+            // 4. 在图中创建节点（使用 NodeService）
+            var node1 = await client.Node.CreateNodeInfoAsync(graphName, "ResizeImage");
+            var node2 = await client.Node.CreateNodeInfoAsync(graphName, "DetectAndSegment");
+            Console.WriteLine($"[4] 创建了 2 个节点: {node1.NodeId}, {node2.NodeId}, 请求状态={node2.Status}");
+
+            // 5. 连接节点
+            await client.Node.ConnectNodesAsync(
+                graphName,
+                inputNodeId: node2.NodeId, inputPortName: "image",
+                outputNodeId: node1.NodeId, outputPortName: "resized_image");
+            Console.WriteLine("[5] 节点已连接");
+
+            // 6. 运行图，最多等待 30 秒
+            var runResult = await client.Graph.RunGraphResultAsync(
+                graphName,
+                timeout: TimeSpan.FromSeconds(30));
+            Console.WriteLine($"[6] 运行完成，请求状态: {runResult.Status}");
+
+            // 7. 导出图
+            var exportResult = await client.Graph.ExportGraphResultAsync(graphName);
+            Console.WriteLine($"[7] 图已导出: {exportResult.FilePath}");
+
+            // 8. 释放图
+            await client.Graph.ReleaseGraphAsync(graphName);
+            Console.WriteLine("[8] 图已释放");
+        }
+        catch (AtomApiException ex)
+        {
+            Console.WriteLine($"服务端错误 {ex.Status}: {ex.Message}");
+        }
+        catch (AtomHttpException ex)
+        {
+            Console.WriteLine($"HTTP 错误 {ex.StatusCode}: {ex.Message}");
+        }
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="params.html">C# 参数对象</a></span>
+  <span class="next"><a href="node.html">NodeService（C#）</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

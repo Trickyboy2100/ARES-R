@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Atom SDK C++ version — User Guide :: Atom SDK Developer Guide</title>
+    <link rel="prev" href="../python/runtime.html">
+    <link rel="next" href="params.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          Online Product Documentation
+                  </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="Search documentation"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              This manual only
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            Switch manual
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK Developer Guide</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          Download Center
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          Official Website
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            English
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK Developer Guide</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">welcome</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">quick start</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">quick start</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">sample sample</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Getting Started</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK Getting Started</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService Getting Started</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService Getting Started</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService Getting Started</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">User Guide</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">Select the appropriate Service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">Graph and node operations</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">Error handling and troubleshooting</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">FAQ</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">basic concepts</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/what-is-atom-sdk.html">What is Atom SDK</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-node-subgraph.html">graph, node, subgraph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-vs-runtime.html">The difference between Graph and Runtime</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/timestamp.html">What is Timestamp</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/runtime-frame.html">Runtime input frames (RuntimeFrame / RuntimePassiveBinoFrame)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/point-cloud-protocol.html">Binary protocol for point cloud type input and output</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/param-binding.html">Parameter types and binding names</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API Reference</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API Reference Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python Overview and Installation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/params.html">Python parameter object</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/public_api.html">Python Public Utility API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="overview.html">Atom SDK C++ version — User Guide</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="params.html">C++ parameter object</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">Atom SDK — C# Version</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/params.html">C# Parameter object</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK Developer Guide</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK Developer Guide</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK Developer Guide</a></li>
+    <li>API Reference</li>
+    <li>C++ SDK</li>
+    <li><a href="overview.html">Atom SDK C++ version — User Guide</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="On this page"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Atom SDK C++ version — User Guide</h1>
+<div class="sect1">
+<h2 id="_overview"><a class="anchor" href="#_overview"></a>Overview</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Atom SDK C++ version is a high-performance native SDK for robotics and vision applications, providing type-safe API to drive Atom Server-side graph (Graph) management, node (Node) editing, subgraph node (GraphNode) orchestration, and inference runtime (Runtime) execution capabilities.</p>
+</div>
+<div class="paragraph">
+<p><strong>Core Features:</strong>
+* <strong>High performance</strong>: native C++17, no GIL overhead, supports multi-threaded concurrent calls
+* <strong>Type safety</strong>: All API are strongly typed, and parameter errors can be caught at compile time
+* <strong>Bundled JSON</strong>: the JSON implementation ships with the SDK; no Boost or separately configured JSON library is required
+* <strong>RAII Resource Management</strong>: Automatically manage graph resources to avoid leakage
+* <strong>Exception-driven error handling</strong>: Unified error reporting through <code>atom::sdk::AtomError</code> and its subclasses
+The normal <code>JsonObject</code> return value will automatically bring the <code>status</code> field of this request; list, Boolean value, original <code>ByteBuffer</code>, parsed point cloud, bound raw value and node parameter snapshot maintain the original data shape.</p>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_structured_parameter_naming"><a class="anchor" href="#_structured_parameter_naming"></a>Structured parameter naming</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The complex interface maintains the same set of parameter object naming as Python SDK:
+* <code>*Ref</code>: refers to an existing object and is only responsible for locating resources, such as <code>NodeRef</code>, <code>PortRef</code>, <code>BindingRef</code>
+* <code>*Params</code>: Complete input parameters of an interface call, such as <code>CreateGraphParams</code>, <code>RuntimeRunParams</code>
+* <code>*Update</code>: Modify existing configurations or values, such as <code>NodeParamUpdate</code>, <code>RuntimeParamsUpdate</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto graph = client.graph().create_graph({"my_graph"});
+auto node = client.node().create_node({"my_graph", "ResizeImage"});
+// Normal mode example;passive_bino Please use mode RuntimeRunParams::passive_bino_from_file/bytes/images.
+auto run_result = client.runtime().run_graph({"my_graph", {frame}});
+std::cout &lt;&lt; "Run request status:" &lt;&lt; run_result.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For more information on the field order, file uploading and error-prone points of parameter objects, see <a href="params.html" class="xref page">参数对象</a>.</p>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_installation"><a class="anchor" href="#_installation"></a>Installation</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_prerequisites"><a class="anchor" href="#_prerequisites"></a>Prerequisites</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>CMake 3.16+</p>
+</li>
+<li>
+<p>C+17 compatible compiler (GCC 9 / Clang 10+ / MSVC 2019+)</p>
+</li>
+<li>
+<p>System thread library</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The SDK does not depend on a system or Conan Boost package. The release includes <code>httplib.h</code> and
+<code>nlohmann_json.hpp</code> under <code>include/atom_sdk/thirdparty/</code>; consumer projects only need
+the SDK&#8217;s <code>include</code> directory.</p>
+</div>
+<div class="paragraph">
+<p>First download <code>atom_sdk_&lt;version&gt;.zip</code> from the <a href="https://docs.transfertech.cn/app/#/downloadCenter">Download Center</a> and extract it. No Conan remote or login is required. Inside the archive, <code>cpp/</code> is split into three platform subdirectories — <code>linux-x86_64</code>, <code>linux-arm64</code>, and <code>windows-x64</code>; the C++ SDK is at <code>&lt;SDK_DIR&gt;/cpp/&lt;platform&gt;/atom_sdk-&lt;version&gt;</code> under whichever one matches your build target.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_step_1_configure_cmakelists_txt"><a class="anchor" href="#_step_1_configure_cmakelists_txt"></a>Step 1: Configure CMakeLists.txt</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cmake hljs" data-lang="cmake">cmake_minimum_required(VERSION 3.16)
+project(my_project CXX)
+
+# The Windows package only ships a Release build; lock the configuration here.
+# You still need to pass --config Release explicitly when building — omitting
+# it fails at compile time with MSB8013 instead of crashing at runtime.
+if(WIN32)
+    set(CMAKE_CONFIGURATION_TYPES "Release" CACHE STRING "" FORCE)
+endif()
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# cpp/ is split into linux-x86_64/linux-arm64/windows-x64 subdirectories;
+# auto-select the one matching the current build platform.
+if(WIN32)
+    set(ATOM_SDK_PLATFORM_DIR "windows-x64")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64")
+    set(ATOM_SDK_PLATFORM_DIR "linux-arm64")
+else()
+    set(ATOM_SDK_PLATFORM_DIR "linux-x86_64")
+endif()
+set(ATOM_SDK_ROOT "&lt;SDK_DIR&gt;/cpp/${ATOM_SDK_PLATFORM_DIR}/atom_sdk-&lt;version&gt;")
+
+find_package(Threads REQUIRED)
+
+find_library(ATOM_SDK_LIBRARY
+    NAMES atom_sdk_cpp
+    PATHS "${ATOM_SDK_ROOT}/lib"
+    NO_DEFAULT_PATH
+)
+
+if(NOT ATOM_SDK_LIBRARY)
+    message(FATAL_ERROR "Cannot find atom_sdk_cpp under ${ATOM_SDK_ROOT}/lib")
+endif()
+
+add_executable(my_app main.cpp)
+target_include_directories(my_app PRIVATE
+    "${ATOM_SDK_ROOT}/include"
+)
+target_link_libraries(my_app PRIVATE
+    "${ATOM_SDK_LIBRARY}"
+    Threads::Threads
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_step_2_build"><a class="anchor" href="#_step_2_build"></a>Step 2: Build</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># Set ATOM_SDK_ROOT in CMakeLists.txt to the extracted SDK path first
+cmake -S . -B build
+
+# --config Release is required on Windows; omitting it fails with MSB8013
+cmake --build build --config Release</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_quick_start"><a class="anchor" href="#_quick_start"></a>quick start</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following example shows the minimum usable code for SDK, connecting to the server and listing all graphs:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;cstdint&gt;
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+int main() {
+    try {
+        // Create client,Connect locally Atom service(Default port 10026)
+        atom::sdk::AtomClient client("http://127.0.0.1:10026");
+
+        // List all images on the server
+        atom::sdk::JsonArray graphs = client.graph().list_graphs();
+
+        std::cout &lt;&lt; "Current number of pictures:" &lt;&lt; graphs.size() &lt;&lt; std::endl;
+
+        for (const auto&amp; g : graphs) {
+            const auto&amp; obj = g;
+            std::string name = obj.at("name").get&lt;std::string&gt;();
+            std::cout &lt;&lt; "  - " &lt;&lt; name &lt;&lt; std::endl;
+        }
+
+    } catch (const atom::sdk::AtomError&amp; e) {
+        std::cerr &lt;&lt; "SDK Error:" &lt;&lt; e.what() &lt;&lt; std::endl;
+        return 1;
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_service_overview"><a class="anchor" href="#_service_overview"></a>Service overview</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>AtomClient</code> provides 4 subservices, accessed through member methods:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Service</th>
+<th class="tableblock halign-left valign-top">Access method</th>
+<th class="tableblock halign-left valign-top">Responsibilities</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>GraphService</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>client.graph()</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Picture creation, deletion, import and export, and entire picture operation</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>NodeService</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>client.node()</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Add and delete nodes in the main graph, connect them, set parameters, and read ports</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>GraphNodeService</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>client.graph_node()</code>
+Node editing and operation of the internal subgraph of the</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>subgraph node (GraphNode)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>RuntimeService</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>client.runtime()</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Load existing graphs, set parameters, perform inference, and read results</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_core_type_description"><a class="anchor" href="#_core_type_description"></a>Core type description</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">C++ type</th>
+<th class="tableblock halign-left valign-top">Underlying type</th>
+<th class="tableblock halign-left valign-top">Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nlohmann::json</code> (bundled with the SDK)</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>atom::sdk::JsonObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>JSON object, collection of key-value pairs</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nlohmann::json</code> (bundled with the SDK)</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>atom::sdk::JsonValue</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Any JSON value (object/array/string/number/bool/null)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>nlohmann::json</code> (bundled with the SDK)</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>atom::sdk::JsonArray</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>JSON array</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>atom::sdk::ByteBuffer</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::vector&lt;uint8_t&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Raw binary data (image/point cloud)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>atom::sdk::PortDataResult</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>structure</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>port data, including <code>data</code> (JsonObject) and <code>attachments</code> (attachment map)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>atom::sdk::SingleNodeResult</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::variant&lt;JsonValue, ByteBuffer&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Single node running result, may be JSON or binary</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="sect2">
+<h3 id="_json_field_access_idioms"><a class="anchor" href="#_json_field_access_idioms"></a>JSON field access idioms</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">atom::sdk::JsonObject result = /* ... */;
+
+// Read string field
+std::string name = result.at("name").get&lt;std::string&gt;();
+
+// Read floating point number
+double score = result.at("score").get&lt;double&gt;();
+
+// Read integer
+std::int64_t node_id = result.at("nodeId").get&lt;std::int64_t&gt;();
+
+// Read Boolean value
+bool ok = result.at("success").get&lt;bool&gt;();
+
+// Read request status
+int status = static_cast&lt;int&gt;(result.at("status").get&lt;std::int64_t&gt;());
+
+// Determine whether the field exists
+if (result.contains("optional_field")) {
+    // Process when field exists
+}
+
+// Read nested objects
+const auto&amp; nested = result.at("nested");
+
+// Traverse array
+const auto&amp; arr = result.at("items");
+for (const auto&amp; item : arr) {
+    // item for JsonValue
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_error_handling"><a class="anchor" href="#_error_handling"></a>Error handling</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>All SDK methods throw an <code>atom::sdk::AtomError</code> or its subclass exception on failure, it is recommended to always use the try/catch wrapper:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+
+try {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto result = client.graph().run_graph("my_graph");
+    std::cout &lt;&lt; "Request status:" &lt;&lt; result.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+} catch (const atom::sdk::AtomError&amp; e) {
+    std::cerr &lt;&lt; "Atom SDK Error:" &lt;&lt; e.what() &lt;&lt; std::endl;
+} catch (const std::exception&amp; e) {
+    std::cerr &lt;&lt; "Standard library exception:" &lt;&lt; e.what() &lt;&lt; std::endl;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_next_step"><a class="anchor" href="#_next_step"></a>Next step</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="graph.html" class="xref page">GraphService 文档</a> — graph management and operation</p>
+</li>
+<li>
+<p><a href="node.html" class="xref page">NodeService 文档</a> — Main graph node operation</p>
+</li>
+<li>
+<p><a href="graph_node.html" class="xref page">GraphNodeService 文档</a> — subgraph node operations</p>
+</li>
+<li>
+<p><a href="runtime.html" class="xref page">RuntimeService 文档</a> — inference runtime</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="../python/runtime.html">RuntimeService（Python）</a></span>
+  <span class="next"><a href="params.html">C++ parameter object</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

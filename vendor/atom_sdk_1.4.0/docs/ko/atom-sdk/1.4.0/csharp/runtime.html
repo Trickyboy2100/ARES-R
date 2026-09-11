@@ -1,0 +1,2972 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>RuntimeService（C#） :: Atom SDK 개발자 가이드</title>
+    <link rel="prev" href="graph_node.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          온라인 제품 문서
+                  </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="문서 검색"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              이 매뉴얼만
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            매뉴얼 전환
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK 개발자 가이드</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          다운로드 센터
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          공식 웹사이트
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            한국어
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK 개발자 가이드</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">환영합니다</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">빠른 시작</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">빠른 시작</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">샘플 샘플</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">입문 사용</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK 입문 사용</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">사용자 가이드</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">적절한 Service을 선택합니다.</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">그래프 및 노드 작업</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">오류 처리 및 문제 해결</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">FAQ</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">기본 개념</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/what-is-atom-sdk.html">Atom SDK 란 무엇입니까?</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-node-subgraph.html">그래프, 노드, 하위 그래프</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-vs-runtime.html">Graph과 Runtime의 차이점</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/timestamp.html">Timestamp이 무엇인가요?</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/runtime-frame.html">런타임 입력 프레임(RuntimeFrame / RuntimePassiveBinoFrame)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/point-cloud-protocol.html">포인트 클라우드 유형 입출력을 위한 바이너리 프로토콜</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/param-binding.html">매개변수 유형 및 바인딩 이름</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API 참조</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API 참조 개요</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python 개요 및 설치</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/params.html">Python 매개변수 객체</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/public_api.html">Python 공용 유틸리티 API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ 버전 — 사용자 가이드</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ 매개변수 객체</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="overview.html">Atom SDK — C# 버전</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="params.html">C# 매개변수 객체</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK 개발자 가이드</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK 개발자 가이드</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK 개발자 가이드</a></li>
+    <li>API 참조</li>
+    <li>C# SDK</li>
+    <li><a href="runtime.html">RuntimeService（C#）</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="이 페이지의 내용"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">RuntimeService（C#）</h1>
+<div class="sect1">
+<h2 id="_서비스_소개"><a class="anchor" href="#_서비스_소개"></a>서비스 소개</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>`RuntimeService`은 Atom SDK의 추론 엔진(Runtime) 단계*를 위한 서비스입니다. 편집기 단계(GraphService / NodeService)와 달리 Runtime 단계의 그래프는 컴파일 및 최적화되었으며 노드별 편집이 필요하지 않습니다. 호출자는 일반 프레임 데이터(이미지 + 포인트 클라우드) 또는 수동 쌍안경 EPICRAW3 데이터를 그래프에 직접 제출하고 공유 매개변수를 설정하고 바인딩 출력 결과를 얻을 수도 있습니다. 또한 이 서비스는 빠른 추론 및 일괄 처리 시나리오에 적합한 단일 노드 실행(그래프 작성 필요 없음)을 지원합니다. 모든 메서드는 비동기식입니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>네임스페이스</strong>: <code>AtomSdk.Services</code></p>
+</div>
+<div class="paragraph">
+<p><strong>입구</strong>: <code>client.Runtime</code></p>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_적용_가능한_시나리오"><a class="anchor" href="#_적용_가능한_시나리오"></a>적용 가능한 시나리오</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>에디터 단계에서 구성한 그래프를 Runtime 환경에 로드하고 실행합니다.</p>
+</li>
+<li>
+<p>추론을 위해 일반 카메라 데이터(이미지 + 포인트 클라우드 + 카메라 내부 및 외부 매개변수) 또는 수동 쌍안경EPICRAW3 데이터를 그래프에 제출합니다.</p>
+</li>
+<li>
+<p>바인딩 이름(JSON 값 또는 포인트 클라우드 바이너리)으로 추론 결과를 읽습니다.</p>
+</li>
+<li>
+<p>공유 매개변수(<code>SetSharedParamsAsync</code>) 또는 작동 매개변수(<code>SetRunParamsAsync</code>)를 동적으로 조정합니다.</p>
+</li>
+<li>
+<p>그래프를 작성하지 않고 단일 노드를 직접 실행하고, 출력을 자동으로 구문 분석하는 `RunSingleNodeNoGraphParsedAsync`에 우선순위를 부여합니다.</p>
+</li>
+<li>
+<p>Runtime 단계에서는 노드 매개변수 정책 정보를 획득하고 추론 동작을 세밀하게 제어합니다.</p>
+</li>
+</ul>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_권장_호출_순서"><a class="anchor" href="#_권장_호출_순서"></a>권장 호출 순서</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">LoadGraphAsync(graphName)          （다음 위치에 이미지 로드 Runtime）
+        ↓
+GetMetaInfoAsync(graphName)        （선택사항：로딩이 성공했는지 확인하기 위해 요소 정보를 얻습니다.）
+        ↓
+SetSharedParamsAsync(...)          （선택사항：공유 매개변수 설정）
+SetRunParamsAsync(...)             （선택사항：작동 매개변수 설정）
+        ↓
+RunGraphAsync(RuntimeRunParams)    （입력 데이터 제출 및 실행）
+        ↓
+GetBindedOutputValueAsync(...)     （읽다 JSON 출력）
+GetBindedPointCloudParsedAsync(...)（추천：포인트 클라우드 출력 읽기 및 구문 분석）
+GetBindedPointCloudAsync(...)      （선택사항：포인트 클라우드 바이너리 출력 읽기）
+        ↓
+ReleaseGraphAsync(graphName)       （릴리스 Runtime 그래픽 리소스）</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_run_graph_두_가지_입력_모드"><a class="anchor" href="#_run_graph_두_가지_입력_모드"></a>run_graph 두 가지 입력 모드</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>`RunGraphAsync`은 `RuntimeRunParams`을 기반으로 입력 구조를 선택합니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">모드</th>
+<th class="tableblock halign-left valign-top">시공방법</th>
+<th class="tableblock halign-left valign-top">입력 내용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>일반 모드</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>new RuntimeRunParams(graphName, frames)</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>하나 이상의 <code>RuntimeFrame</code>, 각 프레임에는 완전한 EPICRAW + `Cam2Base`가 포함됩니다.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>패시브 쌍안경 모드</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>권장 <code>RuntimeRunParams.PassiveBinoFromFile/Bytes/Images(&#8230;&#8203;)</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>a <code>RuntimePassiveBinoFrame</code>, 완전한 EPICRAW3 + <code>Cam2Base</code> 포함</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>두 가지 모드를 혼합하지 마십시오. 일반 모드는 EPICRAW2 또는 표준 레이아웃 EPICRAW3을 캡슐화할 수 있습니다. 수동 쌍안경 모드는 `RuntimePassiveBinoFrame`를 사용해야 합니다.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_일반_모드_runtimeframe_모델"><a class="anchor" href="#_일반_모드_runtimeframe_모델"></a>일반 모드: RuntimeFrame 모델</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>일반 모드에서 `RunGraphAsync`은 `IReadOnlyList&lt;RuntimeFrame&gt;`을 허용합니다. EPICRAW bytes 또는 파일이 이미 존재하는 경우:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using AtomSdk.Models;
+
+var bytesFrame = RuntimeFrame.FromBytes(epicRawBytes, cam2BaseJson, roi);
+var fileFrame = RuntimeFrame.FromFile("frame.epicraw", cam2BaseJson, roi);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>원본 배열에서 생성:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var points = new RuntimePointData(pointValues, width, height);
+var image = new RuntimeImageData(imageBytes, width, height);
+var frame = RuntimeFrame.FromData(points, image, cam2BaseJson, intrinsic, distortion);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>버전이 지정되지 않은 경우 일반 내부 매개변수/왜곡은 EPICRAW2을 생성합니다. <code>cameraParams`에 `TextureSrc</code>, <code>DepthSrc1</code> 또는 `DepthSrc2`가 포함되면 EPICRAW3가 생성됩니다. 표준 EPICRAW3은 전체 PointCloud이 아닌 `Depth + TextureBGR`만 씁니다.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_수동_쌍안경_모드_runtimepassivebinoframe"><a class="anchor" href="#_수동_쌍안경_모드_runtimepassivebinoframe"></a>수동 쌍안경 모드: RuntimePassiveBinoFrame</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>다이어그램의 <code>EpicProInput</code> 노드가 `passive_bino`로 구성된 경우 EPICRAW3 원본 바이트의 전체 복사본을 제출하세요. 서버는 EPICRAW3에서 세 가지 이미지, 내부 매개변수, 왜곡 및 `passive_bino_params`를 구문 분석합니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var result = await client.Runtime.RunGraphAsync(
+    RuntimeRunParams.PassiveBinoFromFile(
+        "detection_graph",
+        "/data/passive_bino.epicraw",
+        cam2BaseJson));</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>비즈니스 레이어가 EPICRAW3 bytes을 획득한 경우 <code>RuntimeRunParams.PassiveBinoFromBytes(&#8230;&#8203;)`를 사용할 수 있습니다. 비즈니스 레이어가 3개의 원본 사진을 얻으면 `RuntimeRunParams.PassiveBinoFromImages(&#8230;&#8203;)`를 사용할 수 있으며 사진은 `new RuntimePassiveBinoImage(data, width, height, matType)`로 표시됩니다. `matType`는 OpenCV Mat type 인코딩입니다(예: `CV_8UC1=0</code>, <code>CV_16UC1=2</code>, <code>CV_8UC3=16</code>).
+<code>PassiveBinoFromImages(&#8230;&#8203;)`의 `passiveBinoParams`은 `DepthSrc1</code>, <code>DepthSrc2</code>, <code>TextureSrc</code> 및 metadata를 포함해야 하며, 각각은 다음 4개 필드를 포함해야 합니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var cameraParams = new Dictionary&lt;string, object?&gt;
+{
+    ["CameraMatrix"] = new[]
+    {
+        2113.997971632298, 0, 1956.222038925553,
+        0, 2113.7299751270057, 1505.0473199581195,
+        0, 0, 1,
+    },
+    ["CameraDistortion"] = new[]
+    {
+        0.049901632334, -0.037810281265, -0.00048319461,
+        -0.000276258172, -0.026886293015,
+    },
+    ["CameraRotation"] = new[]
+    {
+        0.9995132330503337, -0.005059159488191983, -0.030784766728731865,
+        0.004951704878090689, 0.9999813828533568, -0.003565748937897527,
+        0.030802233296787017, 0.003411576169582241, 0.999519676430619,
+    },
+    ["CameraTranslation"] = new[]
+    {
+        -25.837377992238334, -0.6852264771262435, -4.372034519324568,
+    },
+};
+
+var passiveBinoParams = new Dictionary&lt;string, object?&gt;
+{
+    ["DepthSrc1"] = cameraParams,
+    ["DepthSrc2"] = cameraParams,
+    ["TextureSrc"] = cameraParams,
+};</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_인터페이스_상세_설명"><a class="anchor" href="#_인터페이스_상세_설명"></a>인터페이스 상세 설명</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_loadgraphasync"><a class="anchor" href="#_loadgraphasync"></a>LoadGraphAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 원본 JsonElement 버전
+Task&lt;JsonElement&gt; LoadGraphAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 일반 버전
+Task&lt;T&gt; LoadGraphAsync&lt;T&gt;(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 강력한 형식의 편의 버전
+Task&lt;RuntimeGraphReference&gt; LoadGraphInfoAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: 지정된 그래프를 Runtime 추론 환경에 로드합니다(편집기 그래프에서 실행 가능 상태로 변환).</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>로드할 이미지 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>취소 토큰, 선택사항</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환 값</strong>: <code>Task&lt;JsonElement&gt;</code>, 키 필드:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>그림 고유 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+// 다음 위치에 이미지 로드 Runtime
+var graphRef = await client.Runtime.LoadGraphInfoAsync("detection_graph");
+Console.WriteLine($"그림이 로드되었습니다. Runtime，ID: {graphRef.GraphId}");
+Console.WriteLine($"요청 상태: {graphRef.Status}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_listgraphsasync"><a class="anchor" href="#_listgraphsasync"></a>ListGraphsAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 원본 JsonElement 버전
+Task&lt;JsonElement&gt; ListGraphsAsync(
+    CancellationToken cancellationToken = default)
+
+// 일반 버전
+Task&lt;T&gt; ListGraphsAsync&lt;T&gt;(
+    CancellationToken cancellationToken = default)
+
+// 강력한 형식의 편의 버전
+Task&lt;RuntimeGraphSummary[]&gt; ListGraphSummariesAsync(
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: Runtime 환경에 로드된 모든 그래프에 대한 요약 정보를 나열합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>취소 토큰, 선택사항</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환 값</strong>: <code>Task&lt;JsonElement&gt;</code>, 로드된 그래프의 배열.</p>
+</div>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+var summaries = await client.Runtime.ListGraphSummariesAsync();
+Console.WriteLine($"Runtime CCP {summaries.Length} 그림");
+foreach (var s in summaries)
+{
+    Console.WriteLine($"  - {s.GraphName}");
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getallnodesinfoasync"><a class="anchor" href="#_getallnodesinfoasync"></a>GetAllNodesInfoAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 원본 JsonElement 버전
+Task&lt;JsonElement&gt; GetAllNodesInfoAsync(
+    CancellationToken cancellationToken = default)
+
+// 일반 버전
+Task&lt;T&gt; GetAllNodesInfoAsync&lt;T&gt;(
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: Runtime 환경에서 사용 가능한 모든 노드 유형에 대한 설명 정보(노드 이름, 포트 정의 등)를 가져옵니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>취소 토큰, 선택사항</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환 값</strong>: <code>Task&lt;JsonElement&gt;</code>, 노드 유형 정의 배열.</p>
+</div>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+var nodes = await client.Runtime.GetAllNodesInfoAsync();
+foreach (var node in nodes.EnumerateArray())
+{
+    Console.WriteLine(node.GetProperty("nodeName").GetString());
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_releasegraphasync"><a class="anchor" href="#_releasegraphasync"></a>ReleaseGraphAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 원본 JsonElement 버전
+Task&lt;JsonElement&gt; ReleaseGraphAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 일반 버전
+Task&lt;T&gt; ReleaseGraphAsync&lt;T&gt;(
+    string graphName,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: Runtime 환경에서 그래프를 언로드하고 관련 리소스(모델, 메모리 등)를 해제합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>취소 토큰, 선택사항</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환값</strong>: <code>Task&lt;JsonElement&gt;</code>, 작동 상태 정보.</p>
+</div>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Runtime.ReleaseGraphAsync("detection_graph");
+Console.WriteLine("사진은 다음에서 촬영되었습니다. Runtime 제거");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getmetainfoasync"><a class="anchor" href="#_getmetainfoasync"></a>GetMetaInfoAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 원본 JsonElement 버전
+Task&lt;JsonElement&gt; GetMetaInfoAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 일반 버전
+Task&lt;T&gt; GetMetaInfoAsync&lt;T&gt;(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 강력한 형식의 편의 버전
+Task&lt;RuntimeMetaInfo&gt; GetMetaInfoModelAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: Runtime 그래프의 메타 정보(입력 포트 구성, 출력 바인딩 구성, 그래프 구조 설명 등)를 가져옵니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>취소 토큰, 선택사항</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환 값</strong>: <code>Task&lt;JsonElement&gt;</code>, 기본 정보.</p>
+</div>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+var meta = await client.Runtime.GetMetaInfoModelAsync("detection_graph");
+Console.WriteLine($"그래프 요소 정보: {meta}");
+Console.WriteLine($"요청 상태: {meta.Status}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getbindedoutputvalueasync"><a class="anchor" href="#_getbindedoutputvalueasync"></a>GetBindedOutputValueAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 원본 JsonElement 버전
+Task&lt;JsonElement&gt; GetBindedOutputValueAsync(
+    BindingRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// 일반 버전
+Task&lt;T&gt; GetBindedOutputValueAsync&lt;T&gt;(
+    BindingRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: 바인딩 이름(<code>RunGraphAsync</code> 이후 호출)을 통해 그래프 출력 포트의 현재 JSON 값을 읽습니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>bindingName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>출력 포트의 바인딩 이름(`SetBindingNameAsync`을 통해 편집기 단계에서 설정)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>취소 토큰, 선택사항</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환 값</strong>: <code>Task&lt;JsonElement&gt;</code>, 이 바인딩 출력의 현재 값입니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+// 명명된 읽기 "result" 바인딩 출력
+var value = await client.Runtime.GetBindedOutputValueAsync(new BindingRef("detection_graph", "result"));
+Console.WriteLine($"테스트 결과: {value}");
+
+// 일반 버전：사용자 정의 유형으로 자동 역직렬화
+// var detection = await client.Runtime.GetBindedOutputValueAsync&lt;DetectionResult&gt;(
+//     new BindingRef("detection_graph", "result"));</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getbindedoutputsinfoasync"><a class="anchor" href="#_getbindedoutputsinfoasync"></a>GetBindedOutputsInfoAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 원본 JsonElement 버전
+Task&lt;JsonElement&gt; GetBindedOutputsInfoAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 일반 버전
+Task&lt;T&gt; GetBindedOutputsInfoAsync&lt;T&gt;(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 강력한 형식의 편의 버전
+Task&lt;RuntimeBindedOutputsInfo&gt; GetBindedOutputsInfoModelAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: 그래프에서 바인딩된 모든 출력 포트의 정보 목록(포트 이름, 바인딩 이름, 데이터 유형 등)을 가져옵니다. 일반적으로 출력 구조를 자동으로 검색하는 데 사용됩니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>취소 토큰, 선택사항</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환 값</strong>: <code>Task&lt;JsonElement&gt;</code>, 바인딩 출력 정보 목록.</p>
+</div>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+var outputsInfo = await client.Runtime.GetBindedOutputsInfoModelAsync("detection_graph");
+Console.WriteLine($"바인딩 출력 수량: {outputsInfo.Outputs?.Length ?? 0}");
+foreach (var output in outputsInfo.Outputs ?? Array.Empty&lt;object&gt;())
+{
+    Console.WriteLine($"  - {output}");
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getbindedpointcloudparsedasync"><a class="anchor" href="#_getbindedpointcloudparsedasync"></a>GetBindedPointCloudParsedAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">Task&lt;IReadOnlyList&lt;ParsedPointCloud&gt;&gt; GetBindedPointCloudParsedAsync(
+    PointCloudRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: 런타임에 바인딩된 포인트 클라우드를 직접 읽고 구문 분석합니다. 먼저 사용하는 것이 좋습니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var clouds = await client.Runtime.GetBindedPointCloudParsedAsync(
+    new PointCloudRef("detection_graph", "pointcloud_output", pointDim: 3));
+Console.WriteLine($"포인트 클라우드 shape: {string.Join(" x ", clouds[0].Shape)}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getbindedpointcloudasync"><a class="anchor" href="#_getbindedpointcloudasync"></a>GetBindedPointCloudAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">Task&lt;byte[]&gt; GetBindedPointCloudAsync(
+    BindingRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: 바인딩 이름을 통해 그래프의 특정 출력 포트의 포인트 클라우드 바이너리 데이터를 읽고 원본 `byte[]`을 반환합니다(포인트 클라우드 결과 출력에 적합).</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>bindingName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>포인트 클라우드 출력 포트의 바인딩 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>취소 토큰, 선택사항</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환 값</strong>: <code>Task&lt;byte[]&gt;</code>, 포인트 클라우드 원시 바이너리 데이터.
+참고:
+* `GetBindedPointCloudAsync(&#8230;&#8203;)`은 서버 측에서 원본 `byte[]`을 반환합니다.
+* `Runtime/GetBindedPointCloud`의 헤더 정보에는 각 포인트의 크기가 포함되어 있지 않습니다.
+* 일반적인 시나리오에서는 위의 `GetBindedPointCloudParsedAsync(new PointCloudRef(&#8230;&#8203;, pointDim: 3))`을 먼저 사용하는 것이 좋습니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.IO;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+byte[] pcdBytes = await client.Runtime.GetBindedPointCloudAsync(
+    new BindingRef("detection_graph", "pointcloud_output"));
+Console.WriteLine($"raw bytes: {pcdBytes.Length}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_setsharedparamsasync"><a class="anchor" href="#_setsharedparamsasync"></a>SetSharedParamsAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 원본 JsonElement 버전
+Task&lt;JsonElement&gt; SetSharedParamsAsync(
+    RuntimeParamsUpdate paramsData,
+    CancellationToken cancellationToken = default)
+
+// 일반 버전
+Task&lt;T&gt; SetSharedParamsAsync&lt;T&gt;(
+    RuntimeParamsUpdate paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: Runtime 단계에서 그래프의 공유 매개변수(모든 노드에 액세스할 수 있는 전역 매개변수)를 설정합니다. 일반적으로 <code>LoadGraphAsync</code> 이후 및 <code>RunGraphAsync</code> 이전에 호출됩니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>object</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>공유 매개변수 객체(익명 객체, 사전 또는 사용자 정의 클래스를 사용할 수 있음)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>취소 토큰, 선택사항</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환값</strong>: <code>Task&lt;JsonElement&gt;</code>, 작동 상태 정보.</p>
+</div>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Runtime.SetSharedParamsAsync(new RuntimeParamsUpdate("detection_graph", new
+{
+    confidence_threshold = 0.5,
+    nms_threshold = 0.45,
+    max_detections = 100
+}));
+
+Console.WriteLine("공유 매개변수가 설정되었습니다.");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_setrunparamsasync"><a class="anchor" href="#_setrunparamsasync"></a>SetRunParamsAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 원본 JsonElement 버전
+Task&lt;JsonElement&gt; SetRunParamsAsync(
+    RuntimeParamsUpdate paramsData,
+    CancellationToken cancellationToken = default)
+
+// 일반 버전
+Task&lt;T&gt; SetRunParamsAsync&lt;T&gt;(
+    RuntimeParamsUpdate paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: Runtime 단계에서 그래프의 작동 매개변수를 동적으로 업데이트합니다(각 <code>RunGraphAsync</code> 전에 수정하여 기본 구성을 덮어쓸 수 있음).</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.GraphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.ParamsData</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>object</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>매개변수 객체 실행</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>취소 토큰, 선택사항</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환값</strong>: <code>Task&lt;JsonElement&gt;</code>, 작동 상태 정보.</p>
+</div>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+// 작동 매개변수를 동적으로 수정（그래프를 다시 로드할 필요가 없습니다.）
+await client.Runtime.SetRunParamsAsync(new RuntimeParamsUpdate("detection_graph", new
+{
+    batch_size = 4,
+    use_fp16 = true
+}));
+
+Console.WriteLine("작동 매개변수가 업데이트되었습니다.");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_rungraphasync"><a class="anchor" href="#_rungraphasync"></a>RunGraphAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 원본 JsonElement 버전
+Task&lt;JsonElement&gt; RunGraphAsync(
+    RuntimeRunParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 일반 버전
+Task&lt;T&gt; RunGraphAsync&lt;T&gt;(
+    RuntimeRunParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 강력한 형식의 편의 버전
+Task&lt;RuntimeRunGraphResult&gt; RunGraphResultAsync(
+    RuntimeRunParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: 입력 데이터를 그래프에 제출하고 추론을 트리거합니다. Runtime 모드의 핵심 인터페이스입니다. 일반 모드는 이미지 + 포인트 클라우드 + 카메라 매개변수를 제출하고, 수동 쌍안경 모드는 완전한 EPICRAW3을 제출합니다. 데이터는 바이너리 프로토콜(<code>application/octet-stream</code>)을 통해 효율적으로 전송됩니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>참고</strong>:
+runtime.run_graph을 사용하는 경우 현재 버전에서는 그래프에 <code>EpicPro输入</code> 또는 <code>EpicPro输入(单组数据)</code> 노드와 <code>EpicPro输出</code> 노드가 있어야 합니다. 그렇지 않으면 실행할 수 없으며 오류가 보고됩니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.GraphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.Frames</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyList&lt;RuntimeFrame&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>일반 모드 입력; 각 프레임에는 이미지, 포인트 클라우드 및 카메라 매개변수가 포함됩니다.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.RunMode</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>일반 모드는 `"others"`입니다. 수동 쌍안경 모드는 `"passive_bino"`입니다.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.PassiveBinoFrame</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>RuntimePassiveBinoFrame?</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>수동 쌍안 모드 입력; 일반 모드로 전송할 필요가 없습니다.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>발신자가 적극적으로 취소하기 위해 사용하는 취소 토큰</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>모드 선택</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">모드</th>
+<th class="tableblock halign-left valign-top">시공방법</th>
+<th class="tableblock halign-left valign-top">필수데이터</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>일반 모드</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>new RuntimeRunParams(graphName, frames)</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>`Frames`에는 `RuntimeFrame`가 하나 이상 포함되어 있습니다.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>패시브 쌍안경 모드</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>RuntimeRunParams.PassiveBinoFromFile/Bytes/Images(&#8230;&#8203;)</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PassiveBinoFrame.EpicRaw3</code> 및 <code>PassiveBinoFrame.Cam2Base</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>일반 모드 RuntimeFrame 필드 설명</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">필수인가요?</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>EpicRaw</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>byte[]</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>필수(비워둘 수 없음)</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>전체 EPICRAW 원시 바이트</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Cam2Base</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>object?</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>필수</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>카메라를 기본 좌표계로 변환, 회전 벡터 형식, 길이가 6인 <code>[x, y, z, rx, ry, rz]</code>(변환 + Rodrigues 회전 벡터); 서버는 현재 이 형식만 지원하며 행렬은 지원하지 않습니다. 길이가 올바르지 않으면 `ArgumentException`이 발생합니다.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Roi</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>object?</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>선택사항</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>관심 영역; <code>cam2ROIFrame</code> 또한 길이가 6인 회전 벡터 형식만 지원합니다.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>EPICRAW bytes/ 파일이 있는 경우 <code>RuntimeFrame.FromBytes(&#8230;&#8203;)</code> / <code>FromFile(&#8230;&#8203;)`를 사용합니다. 원본 이미지와 포인트 클라우드만 있는 경우 `RuntimeFrame.FromData(&#8230;&#8203;)`를 사용하여 로컬로 인코딩하고 `RuntimePointData</code>, <code>RuntimeImageData</code>, 카메라 고유 매개변수/왜곡(선택 사항 <code>cameraParams</code> 확장 매개변수)을 수신합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>패시브 쌍안경 모드 RuntimePassiveBinoFrame 필드 설명</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">필수인가요?</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>EpicRaw3</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>byte[]</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>필수(비워둘 수 없음)</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>전체 EPICRAW3 원시 바이트</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Cam2Base</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>object?</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>필수</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>카메라를 기본 좌표계로 변환, 회전 벡터 형식, 길이가 6인 <code>[x, y, z, rx, ry, rz]</code>(변환 + Rodrigues 회전 벡터); 서버는 현재 이 형식만 지원하며 행렬은 지원하지 않습니다.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Roi</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>object?</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>선택사항</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>관심분야</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>`PassiveBinoFromImages(&#8230;&#8203;)`을 사용하는 경우 각 이미지는 `RuntimePassiveBinoImage`로 표시됩니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Data</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>byte[]</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>원시 픽셀 바이트</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Width</code> / <code>Height</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>int</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>이미지 너비 및 높이</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>MatType</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>int</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>OpenCV Mat type, 예: <code>CV_8UC1=0</code>, <code>CV_16UC1=2</code>, <code>CV_8UC3=16</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환값</strong>: <code>Task&lt;JsonElement&gt;</code>, 추론이 완료된 후의 요약 결과(특정 필드는 그래프 구조에 따라 결정됨)</p>
+</div>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+// 이미 완료됨 EPICRAW 파일/bytes 시간，직접 캡슐화：
+byte[] epicRawBytes = await File.ReadAllBytesAsync("/data/camera/frame_001.epicraw");
+
+var frames = new List&lt;RuntimeFrame&gt;
+{
+    // cam2Base 서버는 현재 회전 벡터 형식만 지원합니다.：[x, y, z, rx, ry, rz]（팬 + Rodrigues 회전 벡터）
+    RuntimeFrame.FromBytes(epicRawBytes, cam2Base: new[] { 0.0, 0.0, 0.5, 0.0, 0.0, 0.0 })
+};
+
+// 차트 실행（20초 시간 초과）
+using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(20));
+var result = await client.Runtime.RunGraphResultAsync(
+    new RuntimeRunParams("detection_graph", frames), cts.Token);
+Console.WriteLine($"추론 완료，요청 상태: {result.Status}");
+
+// 바인딩 출력 읽기
+var detections = await client.Runtime.GetBindedOutputValueAsync(new BindingRef("detection_graph", "result"));
+Console.WriteLine($"테스트 결과: {detections}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_setgraphbindingdataasync"><a class="anchor" href="#_setgraphbindingdataasync"></a>SetGraphBindingDataAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 원본 JsonElement 버전
+Task&lt;JsonElement&gt; SetGraphBindingDataAsync(
+    RuntimeBindingDataUpdate paramsData,
+    CancellationToken cancellationToken = default)
+
+// 일반 버전
+Task&lt;T&gt; SetGraphBindingDataAsync&lt;T&gt;(
+    RuntimeBindingDataUpdate paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: 그래프의 입력 포트에 데이터를 주입하는 데 사용되는 그래프의 바인딩 입력 데이터를 일괄적으로 설정합니다(바인딩 이름 매핑을 통해).</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.GraphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.BindingData</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, object?&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>데이터 매핑 사전에 이름 바인딩</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>취소 토큰, 선택사항</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환값</strong>: <code>Task&lt;JsonElement&gt;</code>, 작동 상태 정보.</p>
+</div>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Runtime.SetGraphBindingDataAsync(new RuntimeBindingDataUpdate("detection_graph",
+    new Dictionary&lt;string, object?&gt;
+    {
+        ["input_width"] = 640,
+        ["input_height"] = 480,
+        ["class_filter"] = "person",
+    }));
+
+Console.WriteLine("바인딩 입력 데이터가 설정되었습니다.");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getnodeparamsinfowithstrategyasync"><a class="anchor" href="#_getnodeparamsinfowithstrategyasync"></a>GetNodeParamsInfoWithStrategyAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 원본 JsonElement 버전
+Task&lt;JsonElement&gt; GetNodeParamsInfoWithStrategyAsync(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// 일반 버전
+Task&lt;T&gt; GetNodeParamsInfoWithStrategyAsync&lt;T&gt;(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// 강력한 형식의 편의 버전
+Task&lt;RuntimeNodeParamsInfoWithStrategy&gt; GetNodeParamsInfoWithStrategyModelAsync(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: Runtime 다이어그램의 정책 매개변수와 해당 정책 구성(매개변수 값 범위, 기본값, 조정 가능한 정책 등 포함)을 지원하는 노드 정보를 얻습니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>지원 범위</strong>: 현재는 <code>PoseListFilter</code>, <code>PickPointFilter`만 지원합니다.
+`PoseListSorterInXOY</code>、<code>PickPointSorterInXOY</code>、<code>PickPointSorterNew</code>、
+<code>PoseListSorter</code> 노드에는 6가지 유형이 있습니다.
+반환 값의 `paramsData`은 일반적으로 `SetParamsInStrategyAsync(&#8230;&#8203;)`의 입력 템플릿으로 사용됩니다.
+먼저 조정해야 하는 필드를 수정한 다음 전체 `paramsData`을 반환합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.GraphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.NodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>노드 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>취소 토큰, 선택사항</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환 값</strong>: <code>Task&lt;JsonElement&gt;</code>, 노드 매개변수 정책 정보.</p>
+</div>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+var strategyInfo = await client.Runtime.GetNodeParamsInfoWithStrategyModelAsync(
+    new NodeRef("detection_graph", "detect-node-001"));
+Console.WriteLine($"매개변수 전략 정보: {strategyInfo}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_setparamsinstrategyasync"><a class="anchor" href="#_setparamsinstrategyasync"></a>SetParamsInStrategyAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 원본 JsonElement 버전
+Task&lt;JsonElement&gt; SetParamsInStrategyAsync(
+    RuntimeStrategyParamsUpdate paramsData,
+    CancellationToken cancellationToken = default)
+
+// 일반 버전
+Task&lt;T&gt; SetParamsInStrategyAsync&lt;T&gt;(
+    RuntimeStrategyParamsUpdate paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: 전략에 따라 Runtime 단계에서 전략 매개변수를 지원하는 노드 매개변수를 수정합니다(`GetNodeParamsInfoWithStrategyAsync`과 함께 사용됨).</p>
+</div>
+<div class="paragraph">
+<p><strong>지원 범위</strong>: 현재는 <code>PoseListFilter</code>, <code>PickPointFilter`만 지원합니다.
+`PoseListSorterInXOY</code>、<code>PickPointSorterInXOY</code>、<code>PickPointSorterNew</code>、
+<code>PoseListSorter</code> 노드에는 6가지 유형이 있습니다. 다른 노드의 경우 공통 매개변수 인터페이스를 사용하여 매개변수를 설정하십시오.
+`RuntimeStrategyParamsUpdate.ParamsData`은 일반적으로 다음에서 비롯됩니다.
+`GetNodeParamsInfoWithStrategyAsync(&#8230;&#8203;)`은 값으로 `paramsData`을 반환합니다. 짧은 문단만 손으로 쓰지 마세요
+로컬 매개변수 서버에서 반환된 전체 구조를 유지하고 수정해야 하는 필드만 바꾸는 것이 좋습니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.GraphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.NodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>노드 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.ParamsData</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>object</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>서버에서 반환된 `paramsData`에서 수정된 전체 매개변수 구조</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>취소 토큰, 선택사항</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환값</strong>: <code>Task&lt;JsonElement&gt;</code>, 작동 상태 정보.</p>
+</div>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Text.Json.Nodes;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+var strategyInfo = await client.Runtime.GetNodeParamsInfoWithStrategyAsync(
+    new NodeRef("detection_graph", "detect-node-001"));
+var paramsData = JsonNode.Parse(
+    strategyInfo.GetProperty("paramsData").GetRawText())!.AsObject();
+
+paramsData["run_params"]!.AsObject()["strategies_config"] = new JsonObject
+{
+    ["value"] = new JsonArray
+    {
+        new JsonObject
+        {
+            ["BY_SCORE"] = new JsonObject
+            {
+                ["order"] = "HIGHEST",
+                ["differenceThreshold"] = 1,
+                ["groupInterval"] = 0.75,
+            },
+        },
+    },
+};
+
+await client.Runtime.SetParamsInStrategyAsync(
+    new RuntimeStrategyParamsUpdate(
+        "detection_graph",
+        "detect-node-001",
+        paramsData));
+
+Console.WriteLine("전략 매개변수가 업데이트되었습니다.");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getfileparammd5async"><a class="anchor" href="#_getfileparammd5async"></a>GetFileParamMd5Async(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 원본 JsonElement 버전
+Task&lt;JsonElement&gt; GetFileParamMd5Async(
+    FileParamRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// 일반 버전
+Task&lt;T&gt; GetFileParamMd5Async&lt;T&gt;(
+    FileParamRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// 강력한 형식의 편의 버전
+Task&lt;RuntimeFileParamMd5Info&gt; GetFileParamMd5InfoAsync(
+    FileParamRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: 사진에서 파일 매개변수(예: 모델 파일)의 MD5 검사 값을 가져옵니다. 이는 파일이 이미 존재하는지, 업로드하기 전에 업데이트해야 하는지 확인하는 데 사용됩니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.GraphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.ParamName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>파일 매개변수 매핑 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.ParamType</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>매개변수 유형, 기본값은 <code>"init_params"</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>취소 토큰, 선택사항</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환 값</strong>: <code>Task&lt;JsonElement&gt;</code>, <code>md5</code> 필드 포함.</p>
+</div>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Security.Cryptography;
+using System.IO;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+// 서버 파일 받기 MD5
+var md5Info = await client.Runtime.GetFileParamMd5InfoAsync(
+    new FileParamRef("detection_graph", "model_file"));
+string serverMd5 = md5Info.Md5;
+Console.WriteLine($"MD5 요청 상태: {md5Info.Status}");
+
+// 로컬 파일 계산 MD5
+byte[] localBytes = await File.ReadAllBytesAsync("/models/detector.onnx");
+string localMd5 = Convert.ToHexString(MD5.HashData(localBytes)).ToLowerInvariant();
+
+if (serverMd5 == localMd5)
+{
+    Console.WriteLine("모델 파일이 서버와 일치합니다.，업데이트가 필요하지 않습니다");
+}
+else
+{
+    Console.WriteLine("모델 파일이 변경되었습니다.，재업로드가 필요합니다");
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_runsinglenodenographparsedasync_권장"><a class="anchor" href="#_runsinglenodenographparsedasync_권장"></a>RunSingleNodeNoGraphParsedAsync(&#8230;&#8203;) (권장)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">Task&lt;SingleNodeParsedResult&gt; RunSingleNodeNoGraphParsedAsync(
+    SingleNodeParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: 그래프 구조에 의존하지 않고 단일 노드를 직접 실행하며 <code>outputs`의 포인트 클라우드와 이미지를 직접 사용 가능한 데이터 구조로 자동 구문 분석합니다. 일반 사용자는 이 인터페이스를 먼저 사용하는 것이 좋습니다. 반환된 사전 key은 서버 `outputs</code> key와 일치하지만 포인트 클라우드 및 이미지 값은 구문 분석됩니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.NodeName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>노드 유형 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.Inputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, object?&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>입력 포트 데이터 사전; <code>FileInfo</code>/`byte[]`는 노드 포트 유형에 따라 자동으로 처리됩니다.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.RunParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, object?&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>매개변수 사전 실행</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.InitParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, object?&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>파라미터 사전 초기화</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.InputDataTypes</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, string&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>선택 사항입니다. 입력 포트 유형 매핑; 일반적으로 생략되며, SDK은 필요할 때 자동으로 쿼리합니다.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.InputPointDims</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, int&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>선택 사항입니다. 포인트 클라우드 입력 차원 힌트; 포트 유형에서 자동으로 추론되는 경우가 많습니다.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.OutputDataTypes</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, string&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>선택 사항입니다. 출력 포트 유형 매핑; 생략하면 SDK은 노드 이름으로 노드 출력 정의를 쿼리합니다.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.OutputPointDims</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, int&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>선택 사항입니다. 출력 포인트 클라우드 치수 프롬프트; <code>XYZPoints`의 기본값은 3이고, `NormalPoints</code>/`RGBPoints`의 기본값은 6입니다.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>취소 토큰, 선택사항</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환 값</strong>: <code>Task&lt;SingleNodeParsedResult&gt;</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">public sealed class SingleNodeParsedResult
+{
+    public JsonElement? RawJsonData { get; init; }
+    public byte[]? RawBinaryData { get; init; }
+    public IReadOnlyDictionary&lt;string, object?&gt; Outputs { get; init; }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>구문 분석 규칙:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">출력 포트 유형</th>
+<th class="tableblock halign-left valign-top"><code>Outputs[name]</code> 유형</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Points</code> / <code>XYZPoints</code> / <code>NormalPoints</code> / <code>RGBPoints</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyList&lt;ParsedPointCloud&gt;</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Image</code> / <code>MonoImage</code> / <code>ColorImage</code> / <code>BinaryImage</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyList&lt;ParsedImage&gt;</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>기타 유형</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonElement</code>, 원래 JSON 값을 서버에 유지합니다.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>실패 처리</strong>: 서버의 최상위 수준이 <code>status=0`이지만 단일 노드 결과가 `status_queue`인 경우
+`success:false</code>, <code>activate failed</code>, <code>error</code> 또는 부정적인 상태를 포함하며 SDK이 구문 분석됩니다.
+<code>Outputs</code> 앞에 <code>AtomApiException`을 던집니다. 예외적으로 `Payload`는 원래 결과를 그대로 유지합니다.
+`status_queue</code>, <code>outputs</code> 및 `status`는 계속해서 볼 수 있습니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+var result = await client.Runtime.RunSingleNodeNoGraphParsedAsync(
+    new SingleNodeParams(
+        "EstimateNormal",
+        inputs: new Dictionary&lt;string, object?&gt;
+        {
+            ["points"] = new FileInfo("/data/input.ply"),
+        },
+        outputDataTypes: new Dictionary&lt;string, string&gt;
+        {
+            ["points"] = "XYZPoints",
+        },
+        outputPointDims: new Dictionary&lt;string, int&gt;
+        {
+            ["points"] = 3,
+        }));
+
+var clouds = (IReadOnlyList&lt;ParsedPointCloud&gt;)result.Outputs["points"]!;
+Console.WriteLine($"포인트 클라우드 수: {clouds.Count}");
+Console.WriteLine($"첫 번째 포인트 클라우드 shape: {string.Join(" x ", clouds[0].Shape)}");</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>SDK이 `NodeName`을 통해 노드 출력 정의를 쿼리할 수 있는 경우 `OutputDataTypes`를 채울 필요가 없습니다. 서버가 raw bytes를 반환하거나 하나의 노드 정보 쿼리를 저장하려는 경우 명시적으로 입력하는 것이 좋습니다. raw bytes 결과를 자동으로 구문 분석하려면 유일한 포인트 클라우드 출력 포트를 결정해야 합니다.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_runsinglenodenographasync_선택사항_원시_반환"><a class="anchor" href="#_runsinglenodenographasync_선택사항_원시_반환"></a>RunSingleNodeNoGraphAsync(&#8230;&#8203;) (선택사항: 원시 반환)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 반환 SingleNodeResult（포함 JSON 또는 바이너리）
+Task&lt;SingleNodeResult&gt; RunSingleNodeNoGraphAsync(
+    SingleNodeParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 지정된 유형을 반환합니다.（JSON 출력）
+Task&lt;T&gt; RunSingleNodeNoGraphJsonAsync&lt;T&gt;(
+    SingleNodeParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: 그래프 구조에 의존하지 않고 단일 노드를 직접 실행하여 서버의 원본 결과를 얻습니다. JSON/raw bytes을 직접 처리해야 하는 경우에만 사용하세요. 일반적인 시나리오에서는 <code>RunSingleNodeNoGraphParsedAsync`를 먼저 사용하는 것이 좋습니다.
+parsed 인터페이스와 마찬가지로 `status_queue`이 노드의 내부 작업이 실패했음을 나타내는 경우 raw 인터페이스도 오류를 발생시킵니다.
+`AtomApiException</code>, 전체 원시 결과를 예외의 `Payload`에 배치합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.NodeName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>노드 유형 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.Inputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, object?&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>입력 포트 데이터 사전; <code>FileInfo</code>/`byte[]`는 노드 포트 유형에 따라 자동으로 처리됩니다.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.RunParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, object?&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>매개변수 사전 실행</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.InitParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, object?&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>파라미터 사전 초기화</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.InputDataTypes</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, string&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>선택 사항입니다. 입력 포트 유형 매핑; 일반적으로 생략되며 SDK이 자동으로 쿼리됩니다.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.InputPointDims</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, int&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>선택 사항입니다. 포인트 클라우드 입력 차원 힌트; 입력 유형에서 자동으로 추론되는 경우가 많습니다.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>취소 토큰, 선택사항</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환값</strong>: <code>Task&lt;SingleNodeResult&gt;</code>, JSON 결과는 <code>.JsonData</code> / `.DeserializeJson&lt;T&gt;()`를 통해 읽거나, `.BinaryData`를 통해 바이너리 결과를 얻을 수 있습니다.
+공통 입력은 포트 유형에 따라 자동으로 처리됩니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">포트 유형</th>
+<th class="tableblock halign-left valign-top">C# 입력값</th>
+<th class="tableblock halign-left valign-top">SDK 동작</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>File</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>FileInfo</code> / UTF-8 <code>byte[]</code> / <code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>이 JSON에 경로 문자열로 들어가고 파일 내용을 읽지 않습니다.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Image</code> / <code>MonoImage</code> / <code>ColorImage</code> / <code>BinaryImage</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>FileInfo</code> / <code>byte[]</code> / base64 문자열</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>은 <code>data:image/&#8230;&#8203;;base64,&#8230;&#8203;</code> 문자열 목록으로 변환됩니다.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Points</code> / <code>XYZPoints</code> / <code>NormalPoints</code> / <code>RGBPoints</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>.ply</code> of <code>FileInfo</code> / 인코딩된 <code>byte[]</code> / 숫자 배열</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>`.ply`은 Atom 포인트 클라우드 바이너리로 변환됩니다. 인코딩된 바이트는 변경되지 않고 업로드됩니다.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>기타 유형</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>모든 JSON 값 / <code>byte[]</code> / <code>FileInfo</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>은 이전 동작을 유지합니다. JSON을 `inputs`로, 바이트 또는 파일 내용이 파일 필드에 의해 업로드됩니다.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>C# SDK은 현재 단일 노드 직접 작업에서 ASCII PLY의 <code>vertex</code> 속성 읽기를 지원합니다. <code>XYZPoints</code>/`Points`는 `x,y,z`을 읽고, `NormalPoints`는 `x,y,z,nx,ny,nz`를 읽고, `RGBPoints`은 `x,y,z,red,green,blue`을 읽습니다.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+// 예 1：들어오는 byte[]。포트인 경우 ColorImage，SDK 으로 변환됩니다 base64 사진 목록；
+// 포트인 경우 XYZPoints，SDK 이미 인코딩되었다고 생각할 것입니다. Atom 포인트 클라우드 바이너리。
+byte[] imageBytes = await File.ReadAllBytesAsync("/data/test.jpg");
+var result1 = await client.Runtime.RunSingleNodeNoGraphAsync(
+    new SingleNodeParams(
+        "ResizeImage",
+        new Dictionary&lt;string, object?&gt;
+        {
+            ["image"] = imageBytes
+        },
+        new Dictionary&lt;string, object?&gt;
+        {
+            ["scale_factor"] = 0.5
+        }));
+
+// 역직렬화 JSON 결과
+// var typed = result1.DeserializeJson&lt;MyOutputType&gt;();
+Console.WriteLine($"단일 노드 운영 완료");
+
+// 예 2：사용 FileInfo 로컬 파일로 전달。SDK 포트 유형에 따라 판단됩니다.：
+// File 포트는 경로 문자열만 전송합니다.，ColorImage 항구 이동 base64，XYZPoints 의 .ply 포인트 클라우드 경로 payload。
+var result2 = await client.Runtime.RunSingleNodeNoGraphAsync(
+    new SingleNodeParams(
+        "ModelInferenceNode",
+        new Dictionary&lt;string, object?&gt;
+        {
+            ["input_image"] = new FileInfo("/data/test.jpg"),
+        },
+        initParams: new Dictionary&lt;string, object?&gt;
+        {
+            ["model_path"] = "/models/detector.onnx"
+        }));
+Console.WriteLine("파일 입력 단일 노드 작업이 완료되었습니다.");
+
+// 예 3：일반 버전은 결과를 직접 역직렬화합니다.
+// var typedResult = await client.Runtime.RunSingleNodeNoGraphJsonAsync&lt;MyResult&gt;(
+//     new SingleNodeParams("ResizeImage", inputs: ..., runParams: ...));</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_완전한_추론_과정_예시"><a class="anchor" href="#_완전한_추론_과정_예시"></a>완전한 추론 과정 예시</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>다음 예에서는 그래프 로드부터 추론 결과 읽기까지 전체 Runtime 워크플로를 보여줍니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Core;
+using AtomSdk.Models;
+
+class RuntimeWorkflowExample
+{
+    static async Task Main()
+    {
+        var client = new AtomClient("http://localhost:8080");
+        const string graphName = "detection_graph";
+
+        try
+        {
+            // 1. 다음 위치에 이미지 로드 Runtime
+            var graphRef = await client.Runtime.LoadGraphInfoAsync(graphName);
+            Console.WriteLine($"[1] 이미지가 로드되었습니다.，ID: {graphRef.GraphId}, 요청 상태: {graphRef.Status}");
+
+            // 2. 원시적인 정보 얻기（구성 확인）
+            var meta = await client.Runtime.GetMetaInfoModelAsync(graphName);
+            Console.WriteLine($"[2] 그래프 요소 정보를 성공적으로 얻었습니다.，요청 상태: {meta.Status}");
+
+            // 3. 공유 매개변수 설정
+            await client.Runtime.SetSharedParamsAsync(
+                new RuntimeParamsUpdate(graphName, new
+                {
+                    confidence_threshold = 0.5,
+                    nms_threshold = 0.45,
+                }));
+            Console.WriteLine("[3] 공유 매개변수가 설정되었습니다.");
+
+            // 4. 파일 매개변수 확인 MD5（모델을 반복적으로 업로드하지 마세요.）
+            var md5Info = await client.Runtime.GetFileParamMd5InfoAsync(
+                new FileParamRef(graphName, "model_file"));
+            Console.WriteLine($"[4] 서버 모델 MD5: {md5Info.Md5}, 요청 상태: {md5Info.Status}");
+
+            // 5. 프레임 데이터 준비：이미 완료됨 EPICRAW 파일을 직접 캡슐화
+            byte[] epicRawBytes = await File.ReadAllBytesAsync("/data/frame.epicraw");
+
+            var frames = new List&lt;RuntimeFrame&gt;
+            {
+                // cam2Base 서버는 현재 회전 벡터 형식만 지원합니다.：[x, y, z, rx, ry, rz]（팬 + Rodrigues 회전 벡터）
+                RuntimeFrame.FromBytes(epicRawBytes, cam2Base: new[] { 0.0, 0.0, 0.5, 0.0, 0.0, 0.0 })
+            };
+
+            // 6. 차트 실행，발신자는 최대로 기다립니다. 30 몇 초 후에 자동으로 취소
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+            var runResult = await client.Runtime.RunGraphResultAsync(
+                new RuntimeRunParams(graphName, frames), cts.Token);
+            Console.WriteLine($"[6] 추론 완료，요청 상태: {runResult.Status}");
+
+            // 7. 읽다 JSON 출력（바인딩 이름으로）
+            var jsonOutput = await client.Runtime.GetBindedOutputValueAsync(
+                new BindingRef(graphName, "result"));
+            Console.WriteLine($"[7] 테스트 결과: {jsonOutput}");
+
+            // 8. 포인트 클라우드 출력 읽기（있다면）
+            // var pointClouds = await client.Runtime.GetBindedPointCloudParsedAsync(
+            //     new PointCloudRef(graphName, "pointcloud_result", pointDim: 3));
+
+            // 9. 모든 바인딩 출력에 대한 정보 가져오기
+            var outputsInfo = await client.Runtime.GetBindedOutputsInfoModelAsync(graphName);
+            Console.WriteLine($"[9] 출력 포트 수: {outputsInfo.Outputs?.Length ?? 0}");
+
+            // 10. 릴리스 Runtime 그래픽 리소스
+            await client.Runtime.ReleaseGraphAsync(graphName);
+            Console.WriteLine("[10] Runtime 이미지가 공개되었습니다");
+        }
+        catch (AtomApiException ex)
+        {
+            Console.WriteLine($"서버 오류 {ex.Status}: {ex.Message}");
+        }
+        catch (AtomHttpException ex)
+        {
+            Console.WriteLine($"HTTP 오류 {ex.StatusCode}: {ex.Message}");
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_예외_설명"><a class="anchor" href="#_예외_설명"></a>예외 설명</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">예외 유형</th>
+<th class="tableblock halign-left valign-top">트리거 조건</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>AtomApiException</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>서버가 비즈니스 오류를 반환합니다(사진이 로드되지 않았으며 매개변수가 잘못되었습니다).</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>AtomHttpException</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>HTTP 계층 오류(연결 실패, 시간 초과, 4xx/5xx 상태 코드)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>AtomProtocolException</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>응답 형식 구문 분석에 실패했습니다.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>ArgumentException</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>RuntimeFrame.Image</code> 또는 `PointCloud`가 빈 바이트 배열인 경우 발생합니다.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="graph_node.html">GraphNodeService（C#）</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

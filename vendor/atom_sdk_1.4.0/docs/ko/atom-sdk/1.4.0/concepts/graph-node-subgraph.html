@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>그래프, 노드, 하위 그래프 :: Atom SDK 개발자 가이드</title>
+    <link rel="prev" href="what-is-atom-sdk.html">
+    <link rel="next" href="graph-vs-runtime.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          온라인 제품 문서
+                  </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="문서 검색"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              이 매뉴얼만
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            매뉴얼 전환
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK 개발자 가이드</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          다운로드 센터
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          공식 웹사이트
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            한국어
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK 개발자 가이드</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">환영합니다</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">빠른 시작</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">빠른 시작</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">샘플 샘플</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">입문 사용</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK 입문 사용</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">사용자 가이드</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">적절한 Service을 선택합니다.</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">그래프 및 노드 작업</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">오류 처리 및 문제 해결</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">FAQ</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">기본 개념</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="what-is-atom-sdk.html">Atom SDK 란 무엇입니까?</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="graph-node-subgraph.html">그래프, 노드, 하위 그래프</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="graph-vs-runtime.html">Graph과 Runtime의 차이점</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="timestamp.html">Timestamp이 무엇인가요?</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="runtime-frame.html">런타임 입력 프레임(RuntimeFrame / RuntimePassiveBinoFrame)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="point-cloud-protocol.html">포인트 클라우드 유형 입출력을 위한 바이너리 프로토콜</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="param-binding.html">매개변수 유형 및 바인딩 이름</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API 참조</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API 참조 개요</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python 개요 및 설치</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/params.html">Python 매개변수 객체</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/public_api.html">Python 공용 유틸리티 API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ 버전 — 사용자 가이드</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ 매개변수 객체</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">Atom SDK — C# 버전</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/params.html">C# 매개변수 객체</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK 개발자 가이드</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK 개발자 가이드</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK 개발자 가이드</a></li>
+    <li>기본 개념</li>
+    <li><a href="graph-node-subgraph.html">그래프, 노드, 하위 그래프</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="이 페이지의 내용"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">그래프, 노드, 하위 그래프</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>ATOM SDK을 사용하려면 이 세 가지 개념을 이해하는 것이 기본입니다.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_그림graph"><a class="anchor" href="#_그림graph"></a>그림(Graph)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>그림은 ATOM의 핵심 조직 단위입니다. 그래프는 여러 개의 *노드*와 그 사이의 *연결*로 구성되어 일련의 데이터 처리 프로세스를 설명합니다.</p>
+</div>
+<div class="paragraph">
+<p>그래프를 "처리 흐름도"로 생각할 수 있습니다. 데이터는 특정 노드에서 입력되고 일련의 컴퓨팅 노드에 의해 처리되며 최종적으로 출력 노드에서 흘러나옵니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>[입력 노드] ──→ [처리 노드 A] ──→ [처리 노드 B] ──→ [출력 노드]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>그래프에는 고유한 이름(<code>graph_name</code>)이 있으며 SDK에 대한 대부분의 작업에는 그래프 이름을 지정해야 합니다.</p>
+</div>
+<div class="paragraph">
+<p>그래프 상태:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>열리지 않음</strong>: 그래프가 서버에 있지만 메모리에 로드되지 않아 편집할 수 없습니다.</p>
+</li>
+<li>
+<p><strong>열림(편집 상태)</strong>: <code>open_graph</code> 호출 후 입장, 노드 추가 또는 삭제, 매개변수 수정 가능</p>
+</li>
+<li>
+<p><strong>런타임</strong>: <code>runtime.run_graph</code> 또는 <code>graph.run_graph</code> 호출 후 입력, 편집 전용이 아닌 실행 전용</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_노드node"><a class="anchor" href="#_노드node"></a>노드(Node)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>노드는 그래프의 계산 단위입니다. 각 노드:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>수행할 수 있는 계산을 결정하는 <strong>노드 유형</strong>(node_name/node_type)이 있습니다.</p>
+</li>
+<li>
+<p><strong>입력 포트</strong>(inputs)가 있습니다: 업스트림 노드에서 데이터를 수신합니다.</p>
+</li>
+<li>
+<p><strong>출력 포트</strong>(outputs)가 있습니다: 다운스트림 노드로 데이터를 보냅니다.</p>
+</li>
+<li>
+<p><strong>초기화 매개변수</strong>(init_params)가 있습니다: 모델 로드와 같은 일회성 구성</p>
+</li>
+<li>
+<p><strong>실행 매개변수</strong>(run_params)가 있습니다: 실행될 때마다 변경될 수 있는 구성입니다.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>노드는 ID (<code>node_id</code>)로 고유하게 식별됩니다. 이 ID는 노드를 생성할 때 서버에 의해 할당됩니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>             ┌──────────────┐
+입력 포트 ──▶ │     노드     │ ──▶ 출력 포트
+             │ (FilterNode) │
+             │ init_params  │
+             │  run_params  │
+             └──────────────┘</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_하위_그래프_노드graphnode"><a class="anchor" href="#_하위_그래프_노드graphnode"></a>하위 그래프 노드(GraphNode)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>기본 그래프에는 <strong>하위 그래프 노드</strong>(GraphNode)라는 특수 노드가 있습니다. 메인 그래프의 관점에서 보면 이는 일반 노드입니다. 하지만 내부에는 자체 노드와 연결이 있는 완전한 하위 그래프가 포함되어 있습니다.</p>
+</div>
+<div class="paragraph">
+<p>이 중첩 구조는 재사용 가능한 처리 논리를 캡슐화하는 데 사용됩니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>메인 사진
+├── 일반 노드 A
+├── 일반 노드 B
+└── 하위 그래프 노드 C ← 이 노드 내부에 하위 그래프가 있습니다.
+    └── 하위 그래프 내부
+        ├── 하위 그래프 노드 c1
+        └── 하위 그래프 노드 c2</pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_두_가지_노드_유형_id의_차이점"><a class="anchor" href="#_두_가지_노드_유형_id의_차이점"></a>두 가지 노드 유형 ID의 차이점</h3>
+<div class="paragraph">
+<p>하위 그래프 노드를 작동할 때 구별해야 하는 두 개의 레이어ID가 있습니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 40%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">ID</th>
+<th class="tableblock halign-left valign-top">의미</th>
+<th class="tableblock halign-left valign-top">소스</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">메인 그래프 자체의 "하위 그래프 노드 C" ID</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>client.node.create_node(CreateNodeParams(&#8230;&#8203;))</code> 또는 `open_graph()`에 대한 노드 목록</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code>
+노드(c1/c2)의 ID *</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">하위 그래프 <strong>내부</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>client.graph_node.create_node(SubGraphCreateNodeParams(&#8230;&#8203;))</code> 반환</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>오류ID를 전달한다고 반드시 오류가 보고되는 것은 아니지만, 잘못된 노드에서 동작하게 되므로 반드시 구별하시기 바랍니다.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_3개의_service_작동_범위"><a class="anchor" href="#_3개의_service_작동_범위"></a>3개의 Service 작동 범위</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 33.3333%;">
+<col style="width: 50.0001%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Service</th>
+<th class="tableblock halign-left valign-top">동작범위</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GraphService</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">메인 이미지 레벨</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">전체 이미지 생성/삭제/열기/내보내기/실행</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeService</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">메인 그래프의 노드</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">노드 추가 및 삭제, 연결, 매개변수 설정, 데이터 읽기</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GraphNodeService</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">하위 그래프 노드 내부</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">은 NodeService과 유사하지만 <code>graph_node_id</code> 매개변수가 하나 더 있습니다.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>어떤 Service을 사용해야 할지 확실하지 않은 경우 <a href="../guides/how-to-choose-service.html" class="xref page">적절한 Service을 선택합니다.</a>을 참조하세요.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_와이어edge"><a class="anchor" href="#_와이어edge"></a>와이어(Edge)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>연결은 "소스 노드의 출력 포트"에서 "대상 노드의 입력 포트"까지 두 노드 사이의 데이터 흐름을 설명합니다.</p>
+</div>
+<div class="paragraph">
+<p>ID 대신 포트 이름을 사용하여 포트를 지정하려면 다음을 연결하십시오.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeConnectionParams
+
+# 연결하다：노드 A 의 "output_image" 출력 → 노드 B 의 "input_image" 입력
+client.node.connect_nodes(
+    NodeConnectionParams(
+        "my_graph",
+        output_node_id=node_a_id,       # 노드 전송 데이터
+        output_port_name="output_image",
+        input_node_id=node_b_id,        # 데이터를 수신하는 노드
+        input_port_name="input_image",
+    )
+)</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>`input_node_id`은 데이터를 수신(데이터 유입)하는 노드이고, `output_node_id`은 데이터를 전송(데이터 유출)하는 노드입니다. 문자 그대로의 의미가 반직관적일 수 있으므로 주의 깊게 확인하시기 바랍니다.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sdk에서_판단하는_방법"><a class="anchor" href="#_sdk에서_판단하는_방법"></a>SDK에서 판단하는 방법</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>당신이하고있는 일이 다음과 같은 경우 :</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>새 사진 만들기</p>
+</li>
+<li>
+<p>노드를 기본 그래프에 배치</p>
+</li>
+<li>
+<p>메인 그래프의 노드 연결</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>그런 다음 <code>graph</code>, `node`을 먼저 사용하십시오.</p>
+</div>
+<div class="paragraph">
+<p>당신이하고있는 일이 다음과 같은 경우 :</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>graph node의 내부를 엽니다.</p>
+</li>
+<li>
+<p>하위 그래프에 노드 생성</p>
+</li>
+<li>
+<p>서브플롯의 선 연결</p>
+</li>
+<li>
+<p>하위 그래프 실행</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>그런 다음 `graph_node`을 사용합니다.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="what-is-atom-sdk.html">Atom SDK 란 무엇입니까?</a></span>
+  <span class="next"><a href="graph-vs-runtime.html">Graph과 Runtime의 차이점</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

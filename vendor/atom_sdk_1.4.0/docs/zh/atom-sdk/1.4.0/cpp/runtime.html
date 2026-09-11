@@ -1,0 +1,2900 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>RuntimeService（C++） :: Atom SDK 开发手册</title>
+    <link rel="prev" href="graph_node.html">
+    <link rel="next" href="../csharp/overview.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          在线产品文档        </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="输入关键词搜索"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              仅本手册
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            切换手册
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK 开发手册</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          下载中心
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          官网
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            简体中文
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK 开发手册</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">欢迎</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">快速开始</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">快速开始</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">示例样本</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">入门使用</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK 入门使用</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService 入门使用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService 入门使用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService 入门使用</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">使用指南</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">选择合适的 Service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">图与节点操作</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">错误处理与排查</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">常见问题解答</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">基础概念</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/what-is-atom-sdk.html">什么是 Atom SDK</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-node-subgraph.html">图、节点、子图</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-vs-runtime.html">Graph 与 Runtime 的区别</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/timestamp.html">Timestamp 是什么</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/runtime-frame.html">运行时输入帧（RuntimeFrame / RuntimePassiveBinoFrame）</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/point-cloud-protocol.html">点云类型输入输出的二进制协议</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/param-binding.html">参数类型与绑定名</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API 参考</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API 参考总览</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python 概览与安装</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/params.html">Python 参数对象</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/public_api.html">Python 公共工具 API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="overview.html">Atom SDK C++ 版 — 使用指南</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="params.html">C++ 参数对象</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">Atom SDK — C# 版本</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/params.html">C# 参数对象</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK 开发手册</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK 开发手册</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK 开发手册</a></li>
+    <li>API 参考</li>
+    <li>C++ SDK</li>
+    <li><a href="runtime.html">RuntimeService（C++）</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="本页内容"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">RuntimeService（C++）</h1>
+<div class="sect1">
+<h2 id="_服务简介"><a class="anchor" href="#_服务简介"></a>服务简介</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>RuntimeService</code> 是 Atom SDK 的推理运行时服务，专为*生产环境高频推理*设计。与 <code>GraphService</code>/<code>NodeService</code> 的图编辑流程不同，<code>RuntimeService</code> 面向已配置好的图，提供加载图、设置参数、批量推理执行、读取绑定输出等完整推理闭环。支持普通图像 + 点云多帧输入、被动双目 EPICRAW3 输入、策略节点参数以及不依赖图的单节点直跑模式。</p>
+</div>
+<div class="paragraph">
+<p><strong>头文件：</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+// 或单独引用（通过 client.hpp 自动包含）
+#include "atom_sdk/services/runtime.hpp"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>入口：</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">atom::sdk::AtomClient client("http://127.0.0.1:10026");
+atom::sdk::RuntimeService&amp; rs = client.runtime();</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_适用场景"><a class="anchor" href="#_适用场景"></a>适用场景</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>将已配置/编辑好的图加载为运行时图并循环推理</p>
+</li>
+<li>
+<p>普通模式传入图像 + 点云数据，或被动双目模式传入 EPICRAW3，读取检测/分割结果</p>
+</li>
+<li>
+<p>动态更新运行参数（不重建图）</p>
+</li>
+<li>
+<p>读取绑定输出（JSON 结果或点云字节）</p>
+</li>
+<li>
+<p>快速测试单个节点，不依赖图结构</p>
+</li>
+<li>
+<p>查询文件型参数的 MD5，避免重复上传</p>
+</li>
+</ul>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_核心类型"><a class="anchor" href="#_核心类型"></a>核心类型</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_run_graph_两种输入模式"><a class="anchor" href="#_run_graph_两种输入模式"></a>run_graph 两种输入模式</h3>
+<div class="paragraph">
+<p><code>run_graph(const RuntimeRunParams&amp;)</code> 根据 <code>RuntimeRunParams::run_mode</code> 区分两种输入结构：</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">模式</th>
+<th class="tableblock halign-left valign-top"><code>run_mode</code></th>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">输入内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>普通模式</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>"others"</code> 或不填</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>frames</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>一个或多个 <code>RuntimeFrame</code>，每帧包含完整 EPICRAW + <code>cam_to_base</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>被动双目模式</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>"passive_bino"</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>passive_bino_frame</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>一个 <code>RuntimePassiveBinoFrame</code>，包含完整 EPICRAW3 + <code>cam_to_base</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>cam_to_base</code> 服务端目前只支持旋转矢量形式：长度为 6 的 <code>[x, y, z, rx, ry, rz]</code>（平移 + Rodrigues 旋转向量），不支持 4x4/3x4 矩阵；不满足长度会在构造时抛出 <code>std::invalid_argument</code>。<code>roi["cam2ROIFrame"]</code>（若提供）同样只支持长度为 6 的旋转矢量形式。
+两种模式不要混用。普通模式可封装 EPICRAW2 或标准布局 EPICRAW3；被动双目模式必须使用 <code>RuntimePassiveBinoFrame</code>。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_普通模式runtimeframe_结构体"><a class="anchor" href="#_普通模式runtimeframe_结构体"></a>普通模式：RuntimeFrame 结构体</h3>
+<div class="paragraph">
+<p><code>RuntimeFrame</code> 封装普通模式的一份完整 EPICRAW，是 <code>run_mode="others"</code> 时的核心参数：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">namespace atom::sdk {
+
+struct RuntimeFrame {
+    ByteBuffer epicraw;
+    JsonValue cam_to_base;
+    std::optional&lt;JsonValue&gt; roi;
+};
+
+}  // namespace atom::sdk</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>已有 EPICRAW bytes 或文件时直接封装：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto bytes_frame = atom::sdk::RuntimeFrame::from_bytes(epicraw_bytes, cam2base_json);
+auto file_frame = atom::sdk::RuntimeFrame::from_file("frame.epicraw", cam2base_json);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>从原始图像和点云生成：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">atom::sdk::RuntimePointData points{point_values, width, height, 3};
+atom::sdk::RuntimeImageData image{image_bytes, width, height, 3, 1};
+auto frame = atom::sdk::RuntimeFrame::from_data(
+    points, image, cam2base_json, intrinsic_json, distortion_json);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>未指定版本时，普通内参/畸变生成 EPICRAW2；<code>camera_params</code> 含 <code>TextureSrc</code>、<code>DepthSrc1</code> 或 <code>DepthSrc2</code> 时生成 EPICRAW3。标准 EPICRAW3 只写 <code>Depth + TextureBGR</code>，不写完整 PointCloud。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_被动双目模式runtimepassivebinoframe"><a class="anchor" href="#_被动双目模式runtimepassivebinoframe"></a>被动双目模式：RuntimePassiveBinoFrame</h3>
+<div class="paragraph">
+<p>如果图里的 <code>EpicProInput</code> 节点配置为 <code>passive_bino</code>，请传一份完整 EPICRAW3 原始字节。服务端会从 EPICRAW3 中解析三张图、内参、畸变和 <code>passive_bino_params</code>。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto params = atom::sdk::RuntimeRunParams::passive_bino_from_file(
+    "detection_graph",
+    "/data/passive_bino.epicraw",
+    cam2base_json);
+
+auto result = client.runtime().run_graph(params);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>如果业务层已经拿到 EPICRAW3 bytes，可用 <code>RuntimeRunParams::passive_bino_from_bytes(&#8230;&#8203;)</code>。如果业务层拿到三张原始图，可用 <code>RuntimeRunParams::passive_bino_from_images(&#8230;&#8203;)</code>，图片用 <code>RuntimePassiveBinoImage{data, width, height, mat_type}</code> 表示；<code>mat_type</code> 是 OpenCV Mat type 编码，例如 <code>CV_8UC1=0</code>、<code>CV_16UC1=2</code>、<code>CV_8UC3=16</code>。
+<code>passive_bino_from_images(&#8230;&#8203;)</code> 的 <code>params</code> 需要包含 <code>DepthSrc1</code>、<code>DepthSrc2</code>、<code>TextureSrc</code> 三路 metadata，每一路都必须包含下面四个字段：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">json::object camera_params;
+camera_params["CameraMatrix"] = json::array{
+    2113.997971632298, 0, 1956.222038925553,
+    0, 2113.7299751270057, 1505.0473199581195,
+    0, 0, 1};
+camera_params["CameraDistortion"] = json::array{
+    0.049901632334, -0.037810281265, -0.00048319461,
+    -0.000276258172, -0.026886293015};
+camera_params["CameraRotation"] = json::array{
+    0.9995132330503337, -0.005059159488191983, -0.030784766728731865,
+    0.004951704878090689, 0.9999813828533568, -0.003565748937897527,
+    0.030802233296787017, 0.003411576169582241, 0.999519676430619};
+camera_params["CameraTranslation"] = json::array{
+    -25.837377992238334, -0.6852264771262435, -4.372034519324568};
+
+json::object passive_bino_params;
+passive_bino_params["DepthSrc1"] = camera_params;
+passive_bino_params["DepthSrc2"] = camera_params;
+passive_bino_params["TextureSrc"] = camera_params;</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top"><code>RuntimePassiveBinoImage</code> 字段</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>data</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>原始像素字节</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>width</code> / <code>height</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>图像宽高</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>mat_type</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>OpenCV Mat type，例如 <code>CV_8UC1=0</code>、<code>CV_16UC1=2</code>、<code>CV_8UC3=16</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_singlenodeparsedresult_类型推荐"><a class="anchor" href="#_singlenodeparsedresult_类型推荐"></a>SingleNodeParsedResult 类型（推荐）</h3>
+<div class="paragraph">
+<p><code>run_single_node_no_graph_parsed</code> 返回 <code>SingleNodeParsedResult</code>。它会保留服务端原始返回，并把 <code>outputs</code> 中可识别的点云、图像解析好：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">using SingleNodeParsedOutput =
+    std::variant&lt;JsonValue, std::vector&lt;ParsedPointCloud&gt;, std::vector&lt;ParsedImage&gt;&gt;;
+
+struct SingleNodeParsedResult {
+    JsonValue raw;
+    std::unordered_map&lt;std::string, SingleNodeParsedOutput&gt; outputs;
+};</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>读取方法：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">atom::sdk::SingleNodeParsedResult result =
+    client.runtime().run_single_node_no_graph_parsed(params);
+
+const auto&amp; clouds = std::get&lt;std::vector&lt;atom::sdk::ParsedPointCloud&gt;&gt;(
+    result.outputs.at("points"));</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_singlenoderesult_类型可选"><a class="anchor" href="#_singlenoderesult_类型可选"></a>SingleNodeResult 类型（可选）</h3>
+<div class="paragraph">
+<p><code>run_single_node_no_graph</code> 返回原始 <code>SingleNodeResult</code>，它是一个 variant：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">using SingleNodeResult = std::variant&lt;JsonValue, ByteBuffer&gt;;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>需要自己判断和读取：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">atom::sdk::SingleNodeResult result = client.runtime().run_single_node_no_graph(params);
+
+if (std::holds_alternative&lt;atom::sdk::JsonValue&gt;(result)) {
+    const auto&amp; json_result = std::get&lt;atom::sdk::JsonValue&gt;(result);
+    // 处理 JSON 结果
+} else {
+    const auto&amp; bin_result = std::get&lt;atom::sdk::ByteBuffer&gt;(result);
+    // 处理二进制结果
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_singlenodeinputs_类型"><a class="anchor" href="#_singlenodeinputs_类型"></a>SingleNodeInputs 类型</h3>
+<div class="paragraph">
+<p>单节点输入支持三种类型（通过 variant 统一）：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">using SingleNodeInput = std::variant&lt;JsonValue, ByteBuffer, std::filesystem::path&gt;;
+using SingleNodeInputs = std::unordered_map&lt;std::string, SingleNodeInput&gt;;</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_推荐调用顺序"><a class="anchor" href="#_推荐调用顺序"></a>推荐调用顺序</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">load_graph(graph_name)           ← 加载已配置的图
+       ↓
+get_meta_info(graph_name)        ← 了解图暴露的参数和绑定（可选）
+       ↓
+set_shared_params(graph_name)    ← 设置多帧复用的共享参数（可选）
+       ↓
+  ┌────────────────────────────────────┐
+  │   每帧推理循环                       │
+  │                                    │
+  │   set_run_params(graph_name)       │  ← 每帧运行参数（可选）
+  │          ↓                         │
+  │   run_graph(graph_name, frame)     │  ← 执行推理
+  │          ↓                         │
+  │   get_binded_output_value /        │
+  │   get_binded_point_cloud           │  ← 读取绑定输出
+  └────────────────────────────────────┘
+       ↓
+release_graph(graph_name)        ← 释放资源</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_接口详解"><a class="anchor" href="#_接口详解"></a>接口详解</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_load_graph"><a class="anchor" href="#_load_graph"></a>load_graph</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject load_graph(const std::string&amp; graph_name) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途：</strong> 加载服务端已存在的图到运行时，供后续 <code>run_graph</code> 使用。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">参数</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>要加载的图名称（服务端已有）</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值：</strong> <code>JsonObject</code>，包含加载状态信息。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例：</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+
+    auto result = client.runtime().load_graph("detection_graph");
+    std::cout &lt;&lt; "图加载成功" &lt;&lt; std::endl;
+    std::cout &lt;&lt; "请求状态：" &lt;&lt; result.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_list_graphs"><a class="anchor" href="#_list_graphs"></a>list_graphs</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonArray list_graphs() const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途：</strong> 列出服务端当前所有可见的图。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数：</strong> 无</p>
+</div>
+<div class="paragraph">
+<p><strong>返回值：</strong> <code>JsonArray</code>，每个元素为图的基础信息对象。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例：</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+
+    auto graphs = client.runtime().list_graphs();
+    std::cout &lt;&lt; "可用图数量：" &lt;&lt; graphs.size() &lt;&lt; std::endl;
+
+    for (const auto&amp; g : graphs) {
+        std::string name = g.at("name").get&lt;std::string&gt;();
+        std::cout &lt;&lt; "  - " &lt;&lt; name &lt;&lt; std::endl;
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_all_nodes_info"><a class="anchor" href="#_get_all_nodes_info"></a>get_all_nodes_info</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject get_all_nodes_info() const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途：</strong> 读取服务端注册的所有节点类型定义，用于了解可用节点。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数：</strong> 无</p>
+</div>
+<div class="paragraph">
+<p><strong>返回值：</strong> <code>JsonObject</code>，以节点类型名为 key，节点定义为 value。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例：</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+
+    auto info = client.runtime().get_all_nodes_info();
+    std::cout &lt;&lt; "注册节点类型数：" &lt;&lt; info.size() &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_release_graph"><a class="anchor" href="#_release_graph"></a>release_graph</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject release_graph(const std::string&amp; graph_name) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途：</strong> 释放已加载的运行时图资源，通常在推理完成后调用。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">参数</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>要释放的图名称</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值：</strong> <code>JsonObject</code>，释放结果。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例：</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+
+    auto loaded = client.runtime().load_graph("detection_graph");
+    std::cout &lt;&lt; "加载请求状态：" &lt;&lt; loaded.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    // ... 推理 ...
+
+    client.runtime().release_graph("detection_graph");
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_meta_info"><a class="anchor" href="#_get_meta_info"></a>get_meta_info</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject get_meta_info(const std::string&amp; graph_name) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途：</strong> 读取图暴露出的 shared/runtime 参数元信息，包括参数名称、类型和默认值描述。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">参数</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>图名称</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值：</strong> <code>JsonObject</code>，包含参数元信息和绑定描述。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例：</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto loaded = client.runtime().load_graph("detection_graph");
+    std::cout &lt;&lt; "加载请求状态：" &lt;&lt; loaded.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    auto meta = client.runtime().get_meta_info("detection_graph");
+    std::cout &lt;&lt; "元信息请求状态：" &lt;&lt; meta.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    // 查看图有哪些可配置参数
+    if (meta.contains("shared_params")) {
+        const auto&amp; sp = meta.at("shared_params");
+        for (const auto&amp; [k, v] : sp) {
+            std::cout &lt;&lt; "共享参数：" &lt;&lt; k &lt;&lt; std::endl;
+        }
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_binded_output_value"><a class="anchor" href="#_get_binded_output_value"></a>get_binded_output_value</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonValue get_binded_output_value(const BindingRef&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途：</strong> 按绑定名读取图的单个输出值（JSON 格式），通常在 <code>run_graph</code> 后调用。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">参数</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>binding_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>输出绑定名（在图编辑时通过 <code>set_binding_name</code> 设置）</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值：</strong> <code>JsonValue</code>，绑定端口的输出值。</p>
+</div>
+<div class="paragraph">
+<p><strong>从返回值读取数据：</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">atom::sdk::JsonValue output = client.runtime().get_binded_output_value(
+    {"detection_graph", "result"});
+
+// 作为对象读取
+const auto&amp; obj = output;
+
+// 读取检测框
+if (obj.contains("boxes")) {
+    const auto&amp; boxes = obj.at("boxes");
+    for (const auto&amp; box : boxes) {
+        const auto&amp; b = box;
+        double x1 = b.at("x1").get&lt;double&gt;();
+        double y1 = b.at("y1").get&lt;double&gt;();
+        double conf = b.at("confidence").get&lt;double&gt;();
+        // ...
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>示例：</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("detection_graph");
+
+    // 从原始图像和点云在本地生成 EPICRAW；cam_to_base 是旋转矢量形式 [x, y, z, rx, ry, rz]
+    atom::sdk::RuntimePointData points{point_values, 640, 480, 3};
+    atom::sdk::RuntimeImageData image{image_bytes, 640, 480, 3, 1};
+    auto frame = atom::sdk::RuntimeFrame::from_data(
+        points,
+        image,
+        atom::sdk::json::parse("[0,0,0,0,0,0]"),
+        atom::sdk::json::parse(R"([[800,0,320],[0,800,240],[0,0,1]])"),
+        atom::sdk::json::parse("[0,0,0,0,0]"));
+
+    auto run_info = rs.run_graph({"detection_graph", {frame}});
+    std::cout &lt;&lt; "请求状态：" &lt;&lt; run_info.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    // 读取绑定输出
+    auto output = rs.get_binded_output_value({"detection_graph", "detection_result"});
+    const auto&amp; obj = output;
+
+    if (obj.contains("count")) {
+        std::cout &lt;&lt; "检测到目标数：" &lt;&lt; obj.at("count").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+    }
+
+    rs.release_graph("detection_graph");
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_binded_outputs_info"><a class="anchor" href="#_get_binded_outputs_info"></a>get_binded_outputs_info</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject get_binded_outputs_info(const std::string&amp; graph_name) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途：</strong> 读取图当前所有输出绑定的描述信息（名称、类型等），用于动态发现可用输出。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">参数</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>图名称</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值：</strong> <code>JsonObject</code>，包含所有输出绑定的描述。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例：</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto loaded = client.runtime().load_graph("detection_graph");
+    std::cout &lt;&lt; "加载请求状态：" &lt;&lt; loaded.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    auto outputs_info = client.runtime().get_binded_outputs_info("detection_graph");
+
+    std::cout &lt;&lt; "绑定输出数量：" &lt;&lt; outputs_info.size() &lt;&lt; std::endl;
+    for (const auto&amp; [name, info] : outputs_info) {
+        std::cout &lt;&lt; "  输出绑定名：" &lt;&lt; name &lt;&lt; std::endl;
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_binded_point_cloud_parsed"><a class="anchor" href="#_get_binded_point_cloud_parsed"></a>get_binded_point_cloud_parsed</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">std::vector&lt;ParsedPointCloud&gt; get_binded_point_cloud_parsed(
+    const std::string&amp; graph_name,
+    const std::string&amp; binding_name,
+    std::optional&lt;std::size_t&gt; point_dim = std::nullopt) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途：</strong> 直接读取并解析运行时绑定点云，推荐优先使用。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例：</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto clouds = rs.get_binded_point_cloud_parsed(
+    "lidar_graph",
+    "filtered_cloud",
+    3
+);</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_binded_point_cloud"><a class="anchor" href="#_get_binded_point_cloud"></a>get_binded_point_cloud</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">ByteBuffer get_binded_point_cloud(const BindingRef&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途：</strong> 按绑定名读取点云类输出的原始字节。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">参数</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>binding_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>点云输出的绑定名</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值：</strong> <code>ByteBuffer</code>（<code>std::vector&lt;uint8_t&gt;</code>），点云原始二进制数据。
+注意：
+* <code>Runtime/GetBindedPointCloud</code> 的头信息里只有点云份数和元素总数
+* 这里不带每个点的维度，所以不能直接假设一定是 <code>xyz</code>
+* 普通场景建议优先使用上面的 <code>get_binded_point_cloud_parsed(&#8230;&#8203;)</code></p>
+</div>
+<div class="paragraph">
+<p><strong>示例：</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;cstring&gt;
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("lidar_graph");
+
+    // cam_to_base 服务端目前只支持旋转矢量形式：[x, y, z, rx, ry, rz]
+    auto frame = atom::sdk::RuntimeFrame::from_bytes(
+        epicraw_bytes,
+        atom::sdk::json::parse("[0,0,0,0,0,0]"));
+
+    auto run_info = rs.run_graph({"lidar_graph", {frame}});
+    std::cout &lt;&lt; "请求状态：" &lt;&lt; run_info.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    // 读取点云绑定输出
+    atom::sdk::ByteBuffer pc_bytes = rs.get_binded_point_cloud(
+        {"lidar_graph", "filtered_cloud"});
+
+    std::cout &lt;&lt; "raw bytes: " &lt;&lt; pc_bytes.size() &lt;&lt; std::endl;
+
+    rs.release_graph("lidar_graph");
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_set_shared_params"><a class="anchor" href="#_set_shared_params"></a>set_shared_params</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonValue set_shared_params(const RuntimeParamsUpdate&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途：</strong> 写入多次运行可复用的共享参数，这些参数在多帧推理过程中保持不变（如模型阈值、类别列表）。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">参数</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params_data</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>const JsonObject&amp;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>参数键值对，key 为参数名，value 为参数值</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值：</strong> <code>JsonValue</code>，操作结果。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例：</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include "atom_sdk/core/json.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("detection_graph");
+
+    // 设置共享参数（整个会话有效）
+    atom::sdk::JsonObject shared;
+    shared["confidence_threshold"] = 0.5;
+    shared["nms_threshold"] = 0.4;
+
+    // 设置类别列表（JSON 数组）
+    atom::sdk::JsonArray classes;
+    classes.push_back("person");
+    classes.push_back("car");
+    classes.push_back("truck");
+    shared["class_names"] = classes;
+
+    rs.set_shared_params({"detection_graph", shared});
+
+    std::cout &lt;&lt; "共享参数设置完成" &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_set_run_params"><a class="anchor" href="#_set_run_params"></a>set_run_params</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonValue set_run_params(const RuntimeParamsUpdate&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途：</strong> 写入本次执行使用的运行参数，每次 <code>run_graph</code> 前可按需调整。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">参数</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params_data</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>const JsonObject&amp;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>本次运行的参数键值对</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值：</strong> <code>JsonValue</code>，操作结果。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例：</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("detection_graph");
+
+    // 每次推理前可以调整运行参数
+    atom::sdk::JsonObject run_params;
+    run_params["score_threshold"] = 0.6;
+    run_params["max_detections"] = 50;
+
+    rs.set_run_params({"detection_graph", run_params});
+
+    // 然后执行推理...
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_run_graph普通模式单帧"><a class="anchor" href="#_run_graph普通模式单帧"></a>run_graph（普通模式单帧）</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject run_graph(const RuntimeRunParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途：</strong> 使用普通模式单帧输入执行图，是最常用的图像 + 点云推理接口。被动双目模式请使用 <code>RuntimeRunParams::passive_bino_from_file/bytes/images(&#8230;&#8203;)</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">参数</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>图名称（已通过 <code>load_graph</code> 加载）</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>frame</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>const RuntimeFrame&amp;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>单帧输入数据</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值：</strong> <code>JsonObject</code>，包含运行状态信息。通常结果通过 <code>get_binded_output_value</code> 读取。</p>
+</div>
+<div class="paragraph">
+<p><strong>注意点：</strong>
+用runtime.run_graph时，当前版本要求图里面有`EpicPro输入`或者`EpicPro输入(单组数据)`节点和`EpicPro输出`节点，否则无法运行，会报错</p>
+</div>
+<div class="paragraph">
+<p><strong>示例：</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include "atom_sdk/core/json.hpp"
+
+// 假设 load_image 和 load_points 是你自己实现的数据加载函数
+atom::sdk::ByteBuffer load_image(const std::string&amp; path);
+std::vector&lt;float&gt; load_points(const std::string&amp; path);
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("detection_graph");
+
+    // 构造相机内参（3x3 矩阵，行优先）
+    auto intrinsic = atom::sdk::json::parse(
+        "[[800.0, 0.0, 320.0], [0.0, 800.0, 240.0], [0.0, 0.0, 1.0]]"
+    );
+    auto distortion = atom::sdk::json::parse("[0.0, 0.0, 0.0, 0.0, 0.0]");
+    // cam_to_base 服务端目前只支持旋转矢量形式：[x, y, z, rx, ry, rz]
+    auto cam_to_base = atom::sdk::json::parse("[0,0,0,0,0,0]");
+
+    // 使用工厂方法从原始图像和点云本地生成 EPICRAW
+    atom::sdk::RuntimeImageData image{load_image("/data/frame_001.bin"), 640, 480, 3, 1};
+    atom::sdk::RuntimePointData points{load_points("/data/pc_001.bin"), 640, 480, 3};
+    auto frame = atom::sdk::RuntimeFrame::from_data(
+        points,
+        image,
+        cam_to_base,
+        intrinsic,
+        distortion
+    );
+
+    // 执行推理
+    auto run_info = rs.run_graph({"detection_graph", {frame}});
+    std::cout &lt;&lt; "请求状态：" &lt;&lt; run_info.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    // 读取绑定输出
+    auto result = rs.get_binded_output_value({"detection_graph", "detection_result"});
+    const auto&amp; obj = result;
+
+    if (obj.contains("detections")) {
+        const auto&amp; dets = obj.at("detections");
+        for (const auto&amp; det : dets) {
+            const auto&amp; d = det;
+            std::string label = d.at("label").get&lt;std::string&gt;();
+            double conf = d.at("confidence").get&lt;double&gt;();
+            // ...
+        }
+    }
+
+    rs.release_graph("detection_graph");
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_run_graph普通模式多帧"><a class="anchor" href="#_run_graph普通模式多帧"></a>run_graph（普通模式多帧）</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject run_graph(const RuntimeRunParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途：</strong> 使用普通模式多帧输入批量执行图，适用于多相机或多帧融合场景。<code>passive_bino</code> 模式只传一个 <code>RuntimePassiveBinoFrame</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">参数</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>frames</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>const std::vector&lt;RuntimeFrame&gt;&amp;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>多帧输入数据，按顺序排列</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值：</strong> <code>JsonObject</code>，包含运行状态信息。</p>
+</div>
+<div class="paragraph">
+<p><strong>注意点：</strong>
+用runtime.run_graph时，当前版本要求图里面有`EpicPro输入`或者`EpicPro输入(单组数据)`节点和`EpicPro输出`节点，否则无法运行，会报错</p>
+</div>
+<div class="paragraph">
+<p><strong>示例：</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include "atom_sdk/core/json.hpp"
+#include &lt;vector&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("multi_cam_graph");
+
+    // cam_to_base 服务端目前只支持旋转矢量形式：[x, y, z, rx, ry, rz]
+    std::vector&lt;atom::sdk::JsonValue&gt; cam_to_base_per_camera = {
+        atom::sdk::json::parse("[0,0,0,0,0,0]"),
+        atom::sdk::json::parse("[100,0,0,0,0,0]"),
+    };
+
+    // 构造两帧输入（如双目相机）。每个相机各自的完整 EPICRAW bytes 放进一个 RuntimeFrame。
+    std::vector&lt;atom::sdk::RuntimeFrame&gt; frames;
+
+    for (int i = 0; i &lt; 2; ++i) {
+        frames.push_back(atom::sdk::RuntimeFrame::from_bytes(
+            camera_epicraws.at(i),
+            cam_to_base_per_camera.at(i)));
+    }
+
+    auto run_info = rs.run_graph({"multi_cam_graph", frames});
+    std::cout &lt;&lt; "请求状态：" &lt;&lt; run_info.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    auto result = rs.get_binded_output_value({"multi_cam_graph", "fused_result"});
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_set_graph_binding_data"><a class="anchor" href="#_set_graph_binding_data"></a>set_graph_binding_data</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonValue set_graph_binding_data(
+    const RuntimeBindingDataUpdate&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途：</strong> 直接按绑定名写入图的输入数据，适用于非图像/点云类型的输入（如纯 JSON 数据流）。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">参数</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>binding_data</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>const JsonObject&amp;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>输入数据，key 为绑定名，value 为 JSON 值</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值：</strong> <code>JsonValue</code>，操作结果。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例：</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("pose_graph");
+
+    // 直接写入绑定输入数据
+    atom::sdk::JsonObject binding_data;
+    atom::sdk::JsonObject pose;
+    pose["x"] = 1.5;
+    pose["y"] = 2.3;
+    pose["theta"] = 0.45;
+    binding_data["robot_pose"] = pose;
+
+    rs.set_graph_binding_data({"pose_graph", binding_data});
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_node_params_info_with_strategy"><a class="anchor" href="#_get_node_params_info_with_strategy"></a>get_node_params_info_with_strategy</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject get_node_params_info_with_strategy(const NodeRef&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途：</strong> 读取支持策略参数的节点描述信息，包括参数名称、类型和取值范围。</p>
+</div>
+<div class="paragraph">
+<p><strong>支持范围：</strong> 当前仅支持 <code>PoseListFilter</code>、<code>PickPointFilter</code>、
+<code>PoseListSorterInXOY</code>、<code>PickPointSorterInXOY</code>、<code>PickPointSorterNew</code>、
+<code>PoseListSorter</code> 这 6 类节点。
+返回值中的 <code>paramsData</code> 通常作为 <code>set_params_in_strategy(&#8230;&#8203;)</code> 的输入模板：
+先修改其中需要调整的字段，再把完整 <code>paramsData</code> 传回。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">参数</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>策略节点的 ID</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值：</strong> <code>JsonObject</code>，包含策略节点的参数元信息。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例：</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("strategy_graph");
+
+    auto params_info = rs.get_node_params_info_with_strategy(
+        {"strategy_graph", "strategy_node_001"}
+    );
+
+    for (const auto&amp; [key, val] : params_info) {
+        std::cout &lt;&lt; "策略参数：" &lt;&lt; key &lt;&lt; std::endl;
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_set_params_in_strategy"><a class="anchor" href="#_set_params_in_strategy"></a>set_params_in_strategy</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonValue set_params_in_strategy(
+    const RuntimeStrategyParamsUpdate&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途：</strong> 向支持策略参数的节点批量写入参数，用于调整节点行为。</p>
+</div>
+<div class="paragraph">
+<p><strong>支持范围：</strong> 当前仅支持 <code>PoseListFilter</code>、<code>PickPointFilter</code>、
+<code>PoseListSorterInXOY</code>、<code>PickPointSorterInXOY</code>、<code>PickPointSorterNew</code>、
+<code>PoseListSorter</code> 这 6 类节点。其它节点请使用普通参数接口设置参数。
+<code>RuntimeStrategyParamsUpdate.params_data</code> 一般来自
+<code>get_node_params_info_with_strategy(&#8230;&#8203;).at("paramsData")</code>。不要只手写一小段局部
+参数；建议保留服务端返回的完整结构，只替换需要修改的字段。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">参数</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>策略节点 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params_data</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>const JsonObject&amp;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>从服务端返回的 <code>paramsData</code> 修改而来的完整参数结构</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值：</strong> <code>JsonValue</code>，操作结果。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例：</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("strategy_graph");
+
+    auto params_info = rs.get_node_params_info_with_strategy(
+        {"strategy_graph", "strategy_node_001"}
+    );
+    atom::sdk::JsonObject params_data =
+        params_info.at("paramsData");
+
+    atom::sdk::JsonObject by_score_config;
+    by_score_config["order"] = "HIGHEST";
+    by_score_config["differenceThreshold"] = 1;
+    by_score_config["groupInterval"] = 0.75;
+
+    atom::sdk::JsonObject by_score;
+    by_score["BY_SCORE"] = by_score_config;
+
+    atom::sdk::JsonArray strategies;
+    strategies.emplace_back(by_score);
+
+    atom::sdk::JsonObject strategies_config;
+    strategies_config["value"] = strategies;
+    params_data["run_params"]["strategies_config"] = strategies_config;
+
+    rs.set_params_in_strategy(
+        {"strategy_graph", "strategy_node_001", params_data}
+    );
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_file_param_md5"><a class="anchor" href="#_get_file_param_md5"></a>get_file_param_md5</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject get_file_param_md5(const FileParamRef&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途：</strong> 查询文件型参数在服务端记录的 MD5 值，用于判断文件是否需要重新上传（避免重复传输大型模型文件）。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">参数</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>param_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>文件型参数名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>param_type</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>参数类别，默认为 <code>"init_params"</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值：</strong> <code>JsonObject</code>，包含 MD5 信息：</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>md5</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>服务端记录的文件 MD5 值</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>示例：</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("detection_graph");
+
+    // 查询模型文件的 MD5
+    auto md5_info = rs.get_file_param_md5(
+        "detection_graph",
+        "model_file",
+        "init_params"
+    );
+    std::cout &lt;&lt; "请求状态：" &lt;&lt; md5_info.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    if (md5_info.contains("md5")) {
+        std::string server_md5 = md5_info.at("md5").get&lt;std::string&gt;();
+        std::cout &lt;&lt; "服务端模型 MD5：" &lt;&lt; server_md5 &lt;&lt; std::endl;
+
+        // 与本地文件 MD5 对比，决定是否需要重新上传
+        std::string local_md5 = "..."; // 计算本地文件 MD5
+        if (server_md5 == local_md5) {
+            std::cout &lt;&lt; "模型已是最新，无需上传" &lt;&lt; std::endl;
+        }
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_run_single_node_no_graph_parsed推荐"><a class="anchor" href="#_run_single_node_no_graph_parsed推荐"></a>run_single_node_no_graph_parsed（推荐）</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">SingleNodeParsedResult run_single_node_no_graph_parsed(
+    const SingleNodeParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途：</strong> 不依赖任何图，直接运行单个节点，并自动把 <code>outputs</code> 里的点云和图像解析成可直接使用的数据结构。普通用户建议优先使用这个接口；返回字典的 key 会和服务端 <code>outputs</code> 的 key 保持一致，只是点云、图像值会被解析。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">参数</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>node_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>节点类型名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>inputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SingleNodeInputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>输入数据 map，key 为端口名，value 为 <code>JsonValue</code>/<code>ByteBuffer</code>/<code>filesystem::path</code> 之一</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>run_params</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>运行参数</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>init_params</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>初始化参数</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>input_data_types</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>unordered_map&lt;string, string&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>可选。输入端口类型映射；通常省略，SDK 会在需要时按节点名查询</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>input_point_dims</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>unordered_map&lt;string, size_t&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>可选。点云输入维度提示；通常可由端口类型自动推断</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>output_data_types</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>unordered_map&lt;string, string&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>可选。输出端口类型映射；省略时 SDK 会按节点名查询节点输出定义</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>output_point_dims</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>unordered_map&lt;string, size_t&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>可选。输出点云维度提示；<code>XYZPoints</code> 默认 3，<code>NormalPoints</code>/<code>RGBPoints</code> 默认 6</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值：</strong> <code>SingleNodeParsedResult</code>：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">using SingleNodeParsedOutput =
+    std::variant&lt;JsonValue, std::vector&lt;ParsedPointCloud&gt;, std::vector&lt;ParsedImage&gt;&gt;;
+
+struct SingleNodeParsedResult {
+    JsonValue raw;  // 服务端原始 JSON；如果服务端返回 raw bytes，则为 null
+    std::unordered_map&lt;std::string, SingleNodeParsedOutput&gt; outputs;
+};</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>解析规则：</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">输出端口类型</th>
+<th class="tableblock halign-left valign-top"><code>outputs[name]</code> 的类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Points</code> / <code>XYZPoints</code> / <code>NormalPoints</code> / <code>RGBPoints</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::vector&lt;ParsedPointCloud&gt;</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Image</code> / <code>MonoImage</code> / <code>ColorImage</code> / <code>BinaryImage</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::vector&lt;ParsedImage&gt;</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>其他类型</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonValue</code>，保持服务端原始 JSON 值</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>失败处理：</strong> 如果服务端顶层 <code>status=0</code>，但单节点结果里的 <code>status_queue</code>
+包含 <code>success:false</code>、<code>activate failed</code>、<code>error</code> 或负数状态，SDK 会在解析
+<code>outputs</code> 前抛出 <code>AtomApiError</code>，异常信息里会带上节点名和 <code>status_queue</code>
+中的失败原因。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例：</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;filesystem&gt;
+#include &lt;iostream&gt;
+#include &lt;variant&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    atom::sdk::SingleNodeParams params;
+    params.node_name = "EstimateNormal";
+    params.inputs["points"] = std::filesystem::path("/data/input.ply");
+
+    // 可省略，让 SDK 根据节点名自动查询；显式填写可以少一次节点信息查询。
+    params.output_data_types = {{"points", "XYZPoints"}};
+    params.output_point_dims = {{"points", 3}};
+
+    auto result = rs.run_single_node_no_graph_parsed(params);
+    const auto&amp; clouds = std::get&lt;std::vector&lt;atom::sdk::ParsedPointCloud&gt;&gt;(
+        result.outputs.at("points"));
+
+    std::cout &lt;&lt; "点云数量：" &lt;&lt; clouds.size() &lt;&lt; std::endl;
+    std::cout &lt;&lt; "第一份点云 shape: ";
+    for (auto dim : clouds.front().shape) {
+        std::cout &lt;&lt; dim &lt;&lt; " ";
+    }
+    std::cout &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>!!! tip "什么时候需要显式填写 output_data_types"
+如果 SDK 能通过 <code>node_name</code> 查询到节点输出定义，可以不填；如果服务端返回的是 raw bytes，或者你希望少一次 <code>get_all_nodes_info()</code> 查询，就建议显式填写 <code>output_data_types</code>。raw bytes 结果要能自动解析，必须能确定唯一一个点云输出端口。</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_run_single_node_no_graph可选原始返回"><a class="anchor" href="#_run_single_node_no_graph可选原始返回"></a>run_single_node_no_graph（可选：原始返回）</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">SingleNodeResult run_single_node_no_graph(
+    const SingleNodeParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途：</strong> 不依赖任何图，直接运行单个节点并获取原始结果，支持 JSON 或二进制两种输出。只有在你需要自己处理服务端原始 JSON/raw bytes 时使用；普通场景建议优先用 <code>run_single_node_no_graph_parsed</code>。
+和 parsed 接口一样，如果 <code>status_queue</code> 表示节点内部运行失败，raw 接口也会抛
+<code>AtomApiError</code>，避免把失败时的空 <code>outputs</code> 当成正常结果返回。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">参数</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>node_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>节点类型名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>inputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SingleNodeInputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>输入数据 map，key 为端口名，value 为 <code>JsonValue</code>/<code>ByteBuffer</code>/<code>filesystem::path</code> 之一</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>run_params</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>运行参数</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>init_params</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>初始化参数</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>input_data_types</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>unordered_map&lt;string, string&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>可选。输入端口类型映射；通常省略，SDK 会在遇到路径或字节输入时按节点名查询</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>input_point_dims</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>unordered_map&lt;string, size_t&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>可选。点云输入维度提示；通常可由 <code>XYZPoints</code>/<code>NormalPoints</code> 等类型自动推断</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值：</strong> <code>SingleNodeResult</code>（<code>std::variant&lt;JsonValue, ByteBuffer&gt;</code>），需用 <code>std::holds_alternative</code> 判断类型后用 <code>std::get</code> 取值。
+<code>inputs</code> 会按节点输入端口类型自动处理常见数据：</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">端口类型</th>
+<th class="tableblock halign-left valign-top">C++ 输入值</th>
+<th class="tableblock halign-left valign-top">SDK 行为</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>File</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::filesystem::path</code> / UTF-8 <code>ByteBuffer</code> / JSON 字符串</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>作为路径字符串放进 JSON，不读取文件内容</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Image</code> / <code>MonoImage</code> / <code>ColorImage</code> / <code>BinaryImage</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::filesystem::path</code> / <code>ByteBuffer</code> / base64 字符串</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>转成 <code>data:image/&#8230;&#8203;;base64,&#8230;&#8203;</code> 字符串列表</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Points</code> / <code>XYZPoints</code> / <code>NormalPoints</code> / <code>RGBPoints</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>.ply</code> 路径 / 已编码 <code>ByteBuffer</code> / JSON 数字数组</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>.ply</code> 会转成 Atom 点云二进制；已编码字节会原样上传</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>其他类型</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonValue</code> / <code>ByteBuffer</code> / <code>path</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>保持旧行为：JSON 进 <code>inputs</code>，字节或路径内容按文件字段上传</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>!!! note "PLY 支持范围"
+C++ SDK 当前在单节点直跑里支持 ASCII PLY 的 <code>vertex</code> 属性读取；<code>XYZPoints</code>/<code>Points</code> 读取 <code>x,y,z</code>，<code>NormalPoints</code> 读取 <code>x,y,z,nx,ny,nz</code>，<code>RGBPoints</code> 读取 <code>x,y,z,red,green,blue</code>。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例：</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;filesystem&gt;
+#include &lt;iostream&gt;
+#include &lt;variant&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    // 构造输入：混合 JSON、二进制、文件路径
+    atom::sdk::SingleNodeInputs inputs;
+
+    // JSON 类型输入
+    atom::sdk::JsonObject img_meta;
+    img_meta["width"] = 640;
+    img_meta["height"] = 480;
+    inputs["image_meta"] = atom::sdk::JsonValue(img_meta);
+
+    // 二进制类型输入（图像字节）
+    atom::sdk::ByteBuffer image_bytes = /* 图像字节 */;
+    inputs["image"] = image_bytes;
+
+    // 路径输入：SDK 会按节点端口类型自动处理。
+    // 如果端口是 File，会只传路径字符串；如果是 ColorImage，会转成 base64 图片列表；
+    // 如果是 XYZPoints 且路径是 .ply，会转成 Atom 点云二进制。
+    inputs["model_config"] = std::filesystem::path("/configs/yolo.yaml");
+
+    // 运行参数
+    atom::sdk::JsonObject run_params;
+    run_params["score_threshold"] = 0.5;
+
+    // 初始化参数
+    atom::sdk::JsonObject init_params;
+    init_params["device"] = "cuda:0";
+
+    // 执行单节点，获取服务端原始返回
+    atom::sdk::SingleNodeParams params;
+    params.node_name = "YoloDetectionNode";
+    params.inputs = inputs;
+    params.run_params = run_params;
+    params.init_params = init_params;
+    atom::sdk::SingleNodeResult result = rs.run_single_node_no_graph(params);
+
+    // 判断原始返回类型
+    if (std::holds_alternative&lt;atom::sdk::JsonValue&gt;(result)) {
+        const auto&amp; json_out = std::get&lt;atom::sdk::JsonValue&gt;(result);
+        const auto&amp; obj = json_out;
+
+        if (obj.contains("detections")) {
+            const auto&amp; dets = obj.at("detections");
+            std::cout &lt;&lt; "检测结果数：" &lt;&lt; dets.size() &lt;&lt; std::endl;
+
+            for (const auto&amp; det : dets) {
+                const auto&amp; d = det;
+                std::string label = d.at("label").get&lt;std::string&gt;();
+                double conf = d.at("confidence").get&lt;double&gt;();
+                std::cout &lt;&lt; "  " &lt;&lt; label &lt;&lt; "：" &lt;&lt; conf &lt;&lt; std::endl;
+            }
+        }
+    } else {
+        const auto&amp; bin_out = std::get&lt;atom::sdk::ByteBuffer&gt;(result);
+        std::cout &lt;&lt; "二进制结果大小：" &lt;&lt; bin_out.size() &lt;&lt; " bytes" &lt;&lt; std::endl;
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_run_single_node_json"><a class="anchor" href="#_run_single_node_json"></a>run_single_node_json</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonValue run_single_node_json(const SingleNodeParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途：</strong> <code>run_single_node_no_graph</code> 的便捷版本，强制期望 JSON 输出，若节点返回二进制则抛出异常。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">参数</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>node_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>节点类型名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>inputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SingleNodeInputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>输入数据</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>run_params</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>运行参数</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>init_params</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>初始化参数</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值：</strong> <code>JsonValue</code>，节点的 JSON 输出结果。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例：</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    atom::sdk::JsonObject run_params;
+    run_params["threshold"] = 0.5;
+
+    atom::sdk::SingleNodeParams params;
+    params.node_name = "ClassificationNode";
+    params.run_params = run_params;
+
+    // 直接获取 JSON 结果，无需 variant 判断
+    auto json_result = rs.run_single_node_json(params);
+
+    const auto&amp; obj = json_result;
+    if (obj.contains("top1")) {
+        std::string top1 = obj.at("top1").get&lt;std::string&gt;();
+        std::cout &lt;&lt; "分类结果：" &lt;&lt; top1 &lt;&lt; std::endl;
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_run_single_node_binary"><a class="anchor" href="#_run_single_node_binary"></a>run_single_node_binary</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">ByteBuffer run_single_node_binary(const SingleNodeParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途：</strong> <code>run_single_node_no_graph</code> 的便捷版本，强制期望二进制输出（如点云、原始图像），若节点返回 JSON 则抛出异常。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">参数</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>node_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>节点类型名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>inputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SingleNodeInputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>输入数据</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>run_params</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>运行参数</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>init_params</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>初始化参数</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值：</strong> <code>ByteBuffer</code>（<code>std::vector&lt;uint8_t&gt;</code>），节点的二进制输出数据。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例：</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;cstring&gt;
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    atom::sdk::SingleNodeInputs inputs;
+    inputs["raw_cloud"] = atom::sdk::ByteBuffer(/* 原始点云字节 */);
+
+    atom::sdk::SingleNodeParams params;
+    params.node_name = "PointCloudFilterNode";
+    params.inputs = inputs;
+
+    // 直接获取二进制结果
+    atom::sdk::ByteBuffer filtered = rs.run_single_node_binary(params);
+
+    auto clouds = atom::sdk::decode_point_cloud_payload(filtered, false, 3);
+    std::cout &lt;&lt; "过滤后点云 shape: ";
+    for (const auto dim : clouds.front().shape) {
+        std::cout &lt;&lt; dim &lt;&lt; " ";
+    }
+    std::cout &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_完整示例"><a class="anchor" href="#_完整示例"></a>完整示例</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>以下展示一个完整的生产级推理循环：加载图、设置参数、循环推理、读取输出、释放资源。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include "atom_sdk/core/json.hpp"
+#include &lt;cstring&gt;
+#include &lt;filesystem&gt;
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+// 模拟数据加载（实际项目中替换为真实实现）
+atom::sdk::ByteBuffer capture_image() {
+    // 从相机采集图像，返回原始像素字节
+    return atom::sdk::ByteBuffer(640 * 480 * 3, 0);
+}
+
+std::vector&lt;float&gt; capture_point_cloud() {
+    // 从激光雷达采集点云
+    return std::vector&lt;float&gt;(640 * 480 * 3, 0.0F);
+}
+
+int main() {
+    try {
+        atom::sdk::AtomClient client("http://127.0.0.1:10026");
+        auto&amp; rs = client.runtime();
+
+        // ─── 1. 加载图 ──────────────────────────────────────
+        auto loaded = rs.load_graph("robot_perception");
+        std::cout &lt;&lt; "图加载完成，请求状态：" &lt;&lt; loaded.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+        // ─── 2. 查询图参数元信息 ────────────────────────────
+        auto meta = rs.get_meta_info("robot_perception");
+        std::cout &lt;&lt; "图元信息字段数：" &lt;&lt; meta.size()
+                  &lt;&lt; "，请求状态：" &lt;&lt; meta.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+        // ─── 3. 设置共享参数（整个会话有效）────────────────
+        atom::sdk::JsonObject shared_params;
+        shared_params["confidence_threshold"] = 0.5;
+        shared_params["nms_threshold"] = 0.45;
+
+        atom::sdk::JsonArray class_names;
+        class_names.push_back("person");
+        class_names.push_back("car");
+        shared_params["class_names"] = class_names;
+
+        rs.set_shared_params({"robot_perception", shared_params});
+
+        // ─── 4. 准备相机参数 ────────────────────────────────
+        auto intrinsic = atom::sdk::json::parse(
+            "[[800.0, 0.0, 320.0], [0.0, 800.0, 240.0], [0.0, 0.0, 1.0]]"
+        );
+        auto distortion = atom::sdk::json::parse(
+            "[-0.1, 0.05, 0.001, 0.001, -0.02]"
+        );
+        // cam_to_base 服务端目前只支持旋转矢量形式：[x, y, z, rx, ry, rz]
+        auto cam_to_base = atom::sdk::json::parse("[0.15, 0.0, 0.5, 0.012, 0.049, -0.045]");
+
+        // ─── 5. 推理主循环 ──────────────────────────────────
+        for (int frame_idx = 0; frame_idx &lt; 10; ++frame_idx) {
+            std::cout &lt;&lt; "\n─── 帧 " &lt;&lt; frame_idx &lt;&lt; " ───" &lt;&lt; std::endl;
+
+            // 5.1 设置本帧运行参数（可选，每帧调整）
+            atom::sdk::JsonObject run_params;
+            run_params["frame_id"] = frame_idx;
+            rs.set_run_params({"robot_perception", run_params});
+
+            // 5.2 构造输入帧：从原始图像和点云在本地生成 EPICRAW
+            atom::sdk::RuntimeImageData image{capture_image(), 640, 480, 3, 1};
+            atom::sdk::RuntimePointData points{capture_point_cloud(), 640, 480, 3};
+            auto frame = atom::sdk::RuntimeFrame::from_data(
+                points,
+                image,
+                cam_to_base,
+                intrinsic,
+                distortion
+            );
+
+            // 5.3 执行单帧推理
+            auto run_info = rs.run_graph({"robot_perception", {frame}});
+            std::cout &lt;&lt; "请求状态：" &lt;&lt; run_info.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+            // 5.4 读取 JSON 绑定输出
+            auto det_result = rs.get_binded_output_value(
+                {"robot_perception", "detection_result"});
+            const auto&amp; det_obj = det_result;
+
+            if (det_obj.contains("detections")) {
+                const auto&amp; dets = det_obj.at("detections");
+                std::cout &lt;&lt; "检测到 " &lt;&lt; dets.size() &lt;&lt; " 个目标" &lt;&lt; std::endl;
+
+                for (const auto&amp; det : dets) {
+                    const auto&amp; d = det;
+                    if (d.contains("label") &amp;&amp; d.contains("confidence")) {
+                        std::string label = d.at("label").get&lt;std::string&gt;();
+                        double conf = d.at("confidence").get&lt;double&gt;();
+                        std::cout &lt;&lt; "  [" &lt;&lt; label &lt;&lt; "] 置信度=" &lt;&lt; conf &lt;&lt; std::endl;
+                    }
+                }
+            }
+
+            // 5.5 读取点云绑定输出（若有）
+            try {
+                auto pc_bytes = rs.get_binded_point_cloud(
+                    {"robot_perception", "filtered_cloud"});
+                std::size_t n = pc_bytes.size() / sizeof(float);
+                std::cout &lt;&lt; "过滤后点云点数：" &lt;&lt; n / 3 &lt;&lt; std::endl;
+            } catch (const atom::sdk::AtomError&amp;) {
+                // 该图可能没有点云绑定输出，忽略
+            }
+        }
+
+        // ─── 6. 释放图资源 ───────────────────────────────────
+        rs.release_graph("robot_perception");
+        std::cout &lt;&lt; "\n图资源已释放，推理完成" &lt;&lt; std::endl;
+
+    } catch (const atom::sdk::AtomError&amp; e) {
+        std::cerr &lt;&lt; "SDK 错误：" &lt;&lt; e.what() &lt;&lt; std::endl;
+        return 1;
+    } catch (const std::exception&amp; e) {
+        std::cerr &lt;&lt; "异常：" &lt;&lt; e.what() &lt;&lt; std::endl;
+        return 1;
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="graph_node.html">GraphNodeService（C++）</a></span>
+  <span class="next"><a href="../csharp/overview.html">Atom SDK — C# 版本</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

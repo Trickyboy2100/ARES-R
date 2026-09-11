@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Atom SDK — C# 版本 :: Atom SDK 开发手册</title>
+    <link rel="prev" href="../cpp/runtime.html">
+    <link rel="next" href="params.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          在线产品文档        </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="输入关键词搜索"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              仅本手册
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            切换手册
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK 开发手册</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          下载中心
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          官网
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            简体中文
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK 开发手册</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">欢迎</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">快速开始</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">快速开始</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">示例样本</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">入门使用</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK 入门使用</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService 入门使用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService 入门使用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService 入门使用</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">使用指南</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">选择合适的 Service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">图与节点操作</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">错误处理与排查</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">常见问题解答</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">基础概念</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/what-is-atom-sdk.html">什么是 Atom SDK</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-node-subgraph.html">图、节点、子图</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-vs-runtime.html">Graph 与 Runtime 的区别</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/timestamp.html">Timestamp 是什么</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/runtime-frame.html">运行时输入帧（RuntimeFrame / RuntimePassiveBinoFrame）</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/point-cloud-protocol.html">点云类型输入输出的二进制协议</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/param-binding.html">参数类型与绑定名</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API 参考</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API 参考总览</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python 概览与安装</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/params.html">Python 参数对象</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/public_api.html">Python 公共工具 API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ 版 — 使用指南</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ 参数对象</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="overview.html">Atom SDK — C# 版本</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="params.html">C# 参数对象</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK 开发手册</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK 开发手册</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK 开发手册</a></li>
+    <li>API 参考</li>
+    <li>C# SDK</li>
+    <li><a href="overview.html">Atom SDK — C# 版本</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="本页内容"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Atom SDK — C# 版本</h1>
+<div class="sect1">
+<h2 id="_简介"><a class="anchor" href="#_简介"></a>简介</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Atom SDK C# 版本是面向 .NET 开发者的官方客户端库，基于 async/await 模式设计，提供对 Atom 平台全部 REST 接口的强类型封装。所有网络调用均为非阻塞异步方法，天然支持高并发场景。目标框架为 .NET 6 及以上版本。</p>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sdk_核心特性"><a class="anchor" href="#_sdk_核心特性"></a>SDK 核心特性</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">特性</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>全异步 API</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>所有 Service 方法均返回 <code>Task&lt;T&gt;</code>，支持 <code>async/await</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>强类型重载</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>每个接口提供 <code>JsonElement</code>（原始）和具体模型类两套返回值</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>CancellationToken</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>所有方法均接受可选的 <code>CancellationToken</code>，用于调用方主动取消</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>轮询超时</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>图运行和节点激活接口支持 <code>timeout</code> 命名参数，默认 30 秒，超时抛出 <code>AtomTimeoutException</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>统一异常体系</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>AtomApiException</code> / <code>AtomHttpException</code> / <code>AtomProtocolException</code> / <code>AtomTimeoutException</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>目标框架</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>普通对象结果会自动带上本次请求的 <code>status</code> 字段，强类型结果可直接读取 <code>result.Status</code>。列表、布尔值、原始 <code>byte[]</code>、解析点云、绑定裸值以及节点参数快照保持原数据形状。</p>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_安装"><a class="anchor" href="#_安装"></a>安装</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>前置条件：.NET 6 SDK 或更高版本。</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+压缩包里自带一键安装脚本，<code>./install.sh --csharp</code>（Windows 用 <code>.\install.ps1 -CSharp</code>）会自动注册本地 NuGet 源，细节见 <a href="../get-started/quickstart.html#quickstart-one-click-install" class="xref page">快速开始 → 一键安装脚本</a>。下面是手动安装的方式。
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>请先从 <a href="https://docs.transfertech.cn/app/<mark>/downloadCenter">下载中心</a> 下载 <code>atom_sdk_&lt;版本&gt;.zip</code> 并解压。C</mark> 安装包位于 <code>&lt;SDK_DIR&gt;/csharp/AtomSdk.&lt;版本&gt;.nupkg</code>，无需额外配置 NuGet 源。</p>
+</div>
+<div class="sect2">
+<h3 id="_第一步安装包"><a class="anchor" href="#_第一步安装包"></a>第一步：安装包</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">dotnet add package AtomSdk --version &lt;版本&gt; \
+  --source &lt;SDK_DIR&gt;/csharp</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>也可以在 <code>.csproj</code> 中添加：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;PackageReference Include="AtomSdk" Version="&lt;版本&gt;" /&gt;</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>如果提示找不到包，请确认 <code>&lt;SDK_DIR&gt;/csharp</code> 目录中存在 <code>AtomSdk.&lt;版本&gt;.nupkg</code>，并且 <code>--version</code> 与文件名中的版本一致。</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_命名空间"><a class="anchor" href="#_命名空间"></a>命名空间</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using AtomSdk;                // AtomClient
+using AtomSdk.Services;      // GraphService, NodeService, GraphNodeService, RuntimeService
+using AtomSdk.Models;        // RuntimeFrame、RuntimePassiveBinoFrame、RuntimePassiveBinoImage 及各种模型类
+using AtomSdk.Core;          // 异常类型
+using System.Text.Json;      // JsonElement</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_四大_service_职责概览"><a class="anchor" href="#_四大_service_职责概览"></a>四大 Service 职责概览</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Service</th>
+<th class="tableblock halign-left valign-top">访问入口</th>
+<th class="tableblock halign-left valign-top">职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>GraphService</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>client.Graph</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>主图的完整生命周期管理（创建、删除、复制、加载、运行、导出等）</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>NodeService</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>client.Node</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>主图内节点的增删改查、连接断开、参数读写、单节点运行</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>GraphNodeService</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>client.GraphNode</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>子图节点（GraphNode）内部的节点操作，接口与 NodeService 对应但多一层 <code>graphNodeId</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>RuntimeService</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>client.Runtime</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Runtime 环境下的图加载、帧推理、参数设置、绑定值读取</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_结构化参数命名"><a class="anchor" href="#_结构化参数命名"></a>结构化参数命名</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>复杂接口与 Python SDK 保持同一套参数对象命名：
+* <code>*Ref</code>：引用已有对象，只负责定位资源，例如 <code>NodeRef</code>、<code>PortRef</code>、<code>BindingRef</code>
+* <code>*Params</code>：一次接口调用的完整入参，例如 <code>CreateGraphParams</code>、<code>RuntimeRunParams</code>
+* <code>*Update</code>：修改已有配置或值，例如 <code>NodeParamUpdate</code>、<code>RuntimeParamsUpdate</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">await client.Graph.CreateGraphInfoAsync(new CreateGraphParams("my_graph"));
+await client.Node.CreateNodeInfoAsync(new CreateNodeParams("my_graph", "ResizeImage"));
+// 普通模式示例；passive_bino 模式请用 RuntimeRunParams.PassiveBinoFromFile/Bytes/Images。
+await client.Runtime.RunGraphAsync(new RuntimeRunParams("my_graph", new[] { frame }));</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>更多参数对象的构造方式、文件上传和易错点，见 <a href="params.html" class="xref page">参数对象</a>。</p>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_快速开始"><a class="anchor" href="#_快速开始"></a>快速开始</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_创建客户端"><a class="anchor" href="#_创建客户端"></a>创建客户端</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using AtomSdk;
+
+// baseUrl 为 Atom 平台服务地址，例如 "http://localhost:8080"
+var client = new AtomClient("http://localhost:8080");</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_完整的_async_main_示例"><a class="anchor" href="#_完整的_async_main_示例"></a>完整的 async Main 示例</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Core;
+using AtomSdk.Models;
+
+class Program
+{
+    static async Task Main(string[] args)
+    {
+        var client = new AtomClient("http://localhost:8080");
+
+        try
+        {
+            // 1. 创建一个图
+            var graphInfo = await client.Graph.CreateGraphInfoAsync(new CreateGraphParams("my_graph"));
+            Console.WriteLine($"图已创建，ID: {graphInfo.GraphId}, 请求状态: {graphInfo.Status}");
+
+            // 2. 列出所有图
+            var graphs = await client.Graph.ListGraphSummariesAsync();
+            Console.WriteLine($"当前共有 {graphs.Length} 个图");
+
+            // 3. 打开图（获取时间戳）
+            await client.Graph.OpenGraphAsync("my_graph");
+
+            // 4. 在图中创建节点
+            var nodeInfo = await client.Node.CreateNodeInfoAsync(new CreateNodeParams("my_graph", "ResizeImage"));
+            Console.WriteLine($"节点已创建，ID: {nodeInfo.NodeId}, 请求状态: {nodeInfo.Status}");
+
+            // 5. 运行图
+            var runResult = await client.Graph.RunGraphResultAsync("my_graph");
+            Console.WriteLine($"运行完成，请求状态: {runResult.Status}");
+
+            // 6. 释放图
+            await client.Graph.ReleaseGraphAsync("my_graph");
+        }
+        catch (AtomApiException ex)
+        {
+            Console.WriteLine($"服务端错误 {ex.Status}: {ex.Message}");
+        }
+        catch (AtomHttpException ex)
+        {
+            Console.WriteLine($"HTTP 错误 {ex.StatusCode}: {ex.Message}");
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_在同步代码中调用"><a class="anchor" href="#_在同步代码中调用"></a>在同步代码中调用</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>若项目不支持 async/await（例如 Unity 非主线程、旧框架），可以用以下方式同步等待：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 方式一：GetAwaiter().GetResult()（推荐，保留堆栈信息）
+var result = client.Graph.CreateGraphAsync(new CreateGraphParams("my_graph")).GetAwaiter().GetResult();
+
+// 方式二：Task.Run().Result（适合控制台或测试）
+var result = Task.Run(() =&gt; client.Graph.CreateGraphAsync(new CreateGraphParams("my_graph"))).Result;</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>注意：在 ASP.NET 或 WinForms/WPF 的 SynchronizationContext 中使用 <code>.Result</code> 或 <code>.GetAwaiter().GetResult()</code> 可能导致死锁，建议始终使用 <code>await</code>。</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_统一错误处理"><a class="anchor" href="#_统一错误处理"></a>统一错误处理</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">try
+{
+    var result = await client.Graph.CreateGraphAsync(new CreateGraphParams("my_graph"));
+}
+catch (AtomApiException ex)
+{
+    // 服务端返回了业务错误（如图已存在、参数非法等）
+    Console.WriteLine($"服务端错误 {ex.Status}: {ex.Message}");
+    if (ex.Payload.HasValue)
+    {
+        Console.WriteLine($"错误详情: {ex.Payload.Value}");
+    }
+}
+catch (AtomTimeoutException ex)
+{
+    // 图运行或节点激活一直未完成，SDK 轮询等待超时
+    Console.WriteLine($"等待接口完成超时: {ex.Path}, attempts={ex.Attempts}");
+    Console.WriteLine($"最后一次响应: {ex.LastData}");
+}
+catch (AtomHttpException ex)
+{
+    // HTTP 层错误（如 404、500、连接被拒绝等）
+    Console.WriteLine($"HTTP 错误 {ex.StatusCode}: {ex.Message}");
+}
+catch (AtomProtocolException ex)
+{
+    // 响应协议解析失败
+    Console.WriteLine($"协议错误: {ex.Message}");
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_jsonelement_字段访问快速参考"><a class="anchor" href="#_jsonelement_字段访问快速参考"></a>JsonElement 字段访问快速参考</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>SDK 的原始返回值为 <code>System.Text.Json.JsonElement</code>，访问方式如下：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var result = await client.Graph.CreateGraphAsync(new CreateGraphParams("my_graph"));
+
+// 读取字符串（加 ! 断言非空）
+string id = result.GetProperty("graphId").GetString()!;
+
+// 读取数字
+double ts = result.GetProperty("timestamp").GetDouble();
+
+// 读取整数
+int count = result.GetProperty("count").GetInt32();
+
+// 读取请求状态
+int status = result.GetProperty("status").GetInt32();
+
+// 遍历数组
+foreach (var item in result.GetProperty("nodes").EnumerateArray())
+{
+    string name = item.GetProperty("nodeName").GetString()!;
+}
+
+// 判断字段是否存在（可选字段）
+if (result.TryGetProperty("description", out var desc))
+{
+    Console.WriteLine(desc.GetString());
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_文档导航"><a class="anchor" href="#_文档导航"></a>文档导航</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="graph.html" class="xref page">GraphService</a> — 主图管理</p>
+</li>
+<li>
+<p><a href="node.html" class="xref page">NodeService</a> — 主图节点操作</p>
+</li>
+<li>
+<p><a href="graph_node.html" class="xref page">GraphNodeService</a> — 子图节点操作</p>
+</li>
+<li>
+<p><a href="runtime.html" class="xref page">RuntimeService</a> — Runtime 推理引擎</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="../cpp/runtime.html">RuntimeService（C++）</a></span>
+  <span class="next"><a href="params.html">C# 参数对象</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

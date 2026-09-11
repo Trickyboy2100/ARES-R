@@ -1,0 +1,2971 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>RuntimeService（C#） :: Atom SDK 开发手册</title>
+    <link rel="prev" href="graph_node.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          在线产品文档        </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="输入关键词搜索"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              仅本手册
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            切换手册
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK 开发手册</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          下载中心
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          官网
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            简体中文
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK 开发手册</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">欢迎</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">快速开始</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">快速开始</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">示例样本</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">入门使用</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK 入门使用</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService 入门使用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService 入门使用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService 入门使用</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">使用指南</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">选择合适的 Service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">图与节点操作</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">错误处理与排查</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">常见问题解答</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">基础概念</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/what-is-atom-sdk.html">什么是 Atom SDK</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-node-subgraph.html">图、节点、子图</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-vs-runtime.html">Graph 与 Runtime 的区别</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/timestamp.html">Timestamp 是什么</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/runtime-frame.html">运行时输入帧（RuntimeFrame / RuntimePassiveBinoFrame）</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/point-cloud-protocol.html">点云类型输入输出的二进制协议</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/param-binding.html">参数类型与绑定名</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API 参考</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API 参考总览</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python 概览与安装</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/params.html">Python 参数对象</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/public_api.html">Python 公共工具 API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ 版 — 使用指南</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ 参数对象</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="overview.html">Atom SDK — C# 版本</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="params.html">C# 参数对象</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK 开发手册</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK 开发手册</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK 开发手册</a></li>
+    <li>API 参考</li>
+    <li>C# SDK</li>
+    <li><a href="runtime.html">RuntimeService（C#）</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="本页内容"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">RuntimeService（C#）</h1>
+<div class="sect1">
+<h2 id="_服务简介"><a class="anchor" href="#_服务简介"></a>服务简介</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>RuntimeService</code> 是 Atom SDK 中面向*推理引擎（Runtime）阶段*的服务。与编辑器阶段（GraphService / NodeService）不同，Runtime 阶段的图已经过编译优化，无需逐节点编辑——调用方直接向图提交普通帧数据（图像 + 点云）或被动双目 EPICRAW3 数据，也可以设置共享参数、获取绑定输出结果。该服务还支持运行单个节点（无需建图），适合快速推理和批量处理场景。所有方法均为异步。</p>
+</div>
+<div class="paragraph">
+<p><strong>命名空间</strong>：<code>AtomSdk.Services</code></p>
+</div>
+<div class="paragraph">
+<p><strong>入口</strong>：<code>client.Runtime</code></p>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_适用场景"><a class="anchor" href="#_适用场景"></a>适用场景</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>将编辑器阶段配置好的图加载到 Runtime 环境并运行；</p>
+</li>
+<li>
+<p>向图提交普通相机数据（图像 + 点云 + 相机内外参）或被动双目 EPICRAW3 数据进行推理；</p>
+</li>
+<li>
+<p>通过绑定名读取推理结果（JSON 值或点云二进制）；</p>
+</li>
+<li>
+<p>动态调整共享参数（<code>SetSharedParamsAsync</code>）或运行参数（<code>SetRunParamsAsync</code>）；</p>
+</li>
+<li>
+<p>不建图直接运行单个节点，优先使用自动解析输出的 <code>RunSingleNodeNoGraphParsedAsync</code>；</p>
+</li>
+<li>
+<p>获取节点参数策略信息，在 Runtime 阶段精细控制推理行为。</p>
+</li>
+</ul>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_推荐调用顺序"><a class="anchor" href="#_推荐调用顺序"></a>推荐调用顺序</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">LoadGraphAsync(graphName)          （加载图到 Runtime）
+        ↓
+GetMetaInfoAsync(graphName)        （可选：获取图元信息确认加载成功）
+        ↓
+SetSharedParamsAsync(...)          （可选：设置共享参数）
+SetRunParamsAsync(...)             （可选：设置运行参数）
+        ↓
+RunGraphAsync(RuntimeRunParams)    （提交输入数据并运行）
+        ↓
+GetBindedOutputValueAsync(...)     （读取 JSON 输出）
+GetBindedPointCloudParsedAsync(...)（推荐：读取并解析点云输出）
+GetBindedPointCloudAsync(...)      （可选：读取点云二进制输出）
+        ↓
+ReleaseGraphAsync(graphName)       （释放 Runtime 图资源）</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_run_graph_两种输入模式"><a class="anchor" href="#_run_graph_两种输入模式"></a>run_graph 两种输入模式</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>RunGraphAsync</code> 根据 <code>RuntimeRunParams</code> 选择输入结构：</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">模式</th>
+<th class="tableblock halign-left valign-top">构造方式</th>
+<th class="tableblock halign-left valign-top">输入内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>普通模式</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>new RuntimeRunParams(graphName, frames)</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>一个或多个 <code>RuntimeFrame</code>，每帧包含完整 EPICRAW + <code>Cam2Base</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>被动双目模式</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>推荐 <code>RuntimeRunParams.PassiveBinoFromFile/Bytes/Images(&#8230;&#8203;)</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>一个 <code>RuntimePassiveBinoFrame</code>，包含完整 EPICRAW3 + <code>Cam2Base</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>两种模式不要混用。普通模式可封装 EPICRAW2 或标准布局 EPICRAW3；被动双目模式必须使用 <code>RuntimePassiveBinoFrame</code>。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_普通模式runtimeframe_模型"><a class="anchor" href="#_普通模式runtimeframe_模型"></a>普通模式：RuntimeFrame 模型</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>普通模式下，<code>RunGraphAsync</code> 接受 <code>IReadOnlyList&lt;RuntimeFrame&gt;</code>。已有 EPICRAW bytes 或文件时：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using AtomSdk.Models;
+
+var bytesFrame = RuntimeFrame.FromBytes(epicRawBytes, cam2BaseJson, roi);
+var fileFrame = RuntimeFrame.FromFile("frame.epicraw", cam2BaseJson, roi);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>从原始数组生成：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var points = new RuntimePointData(pointValues, width, height);
+var image = new RuntimeImageData(imageBytes, width, height);
+var frame = RuntimeFrame.FromData(points, image, cam2BaseJson, intrinsic, distortion);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>未指定版本时，普通内参/畸变生成 EPICRAW2；<code>cameraParams</code> 含 <code>TextureSrc</code>、<code>DepthSrc1</code> 或 <code>DepthSrc2</code> 时生成 EPICRAW3。标准 EPICRAW3 只写 <code>Depth + TextureBGR</code>，不写完整 PointCloud。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_被动双目模式runtimepassivebinoframe"><a class="anchor" href="#_被动双目模式runtimepassivebinoframe"></a>被动双目模式：RuntimePassiveBinoFrame</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>如果图里的 <code>EpicProInput</code> 节点配置为 <code>passive_bino</code>，请传一份完整 EPICRAW3 原始字节。服务端会从 EPICRAW3 中解析三张图、内参、畸变和 <code>passive_bino_params</code>。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var result = await client.Runtime.RunGraphAsync(
+    RuntimeRunParams.PassiveBinoFromFile(
+        "detection_graph",
+        "/data/passive_bino.epicraw",
+        cam2BaseJson));</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>如果业务层已经拿到 EPICRAW3 bytes，可用 <code>RuntimeRunParams.PassiveBinoFromBytes(&#8230;&#8203;)</code>。如果业务层拿到三张原始图，可用 <code>RuntimeRunParams.PassiveBinoFromImages(&#8230;&#8203;)</code>，图片用 <code>new RuntimePassiveBinoImage(data, width, height, matType)</code> 表示；<code>matType</code> 是 OpenCV Mat type 编码，例如 <code>CV_8UC1=0</code>、<code>CV_16UC1=2</code>、<code>CV_8UC3=16</code>。
+<code>PassiveBinoFromImages(&#8230;&#8203;)</code> 的 <code>passiveBinoParams</code> 需要包含 <code>DepthSrc1</code>、<code>DepthSrc2</code>、<code>TextureSrc</code> 三路 metadata，每一路都必须包含下面四个字段：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var cameraParams = new Dictionary&lt;string, object?&gt;
+{
+    ["CameraMatrix"] = new[]
+    {
+        2113.997971632298, 0, 1956.222038925553,
+        0, 2113.7299751270057, 1505.0473199581195,
+        0, 0, 1,
+    },
+    ["CameraDistortion"] = new[]
+    {
+        0.049901632334, -0.037810281265, -0.00048319461,
+        -0.000276258172, -0.026886293015,
+    },
+    ["CameraRotation"] = new[]
+    {
+        0.9995132330503337, -0.005059159488191983, -0.030784766728731865,
+        0.004951704878090689, 0.9999813828533568, -0.003565748937897527,
+        0.030802233296787017, 0.003411576169582241, 0.999519676430619,
+    },
+    ["CameraTranslation"] = new[]
+    {
+        -25.837377992238334, -0.6852264771262435, -4.372034519324568,
+    },
+};
+
+var passiveBinoParams = new Dictionary&lt;string, object?&gt;
+{
+    ["DepthSrc1"] = cameraParams,
+    ["DepthSrc2"] = cameraParams,
+    ["TextureSrc"] = cameraParams,
+};</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_接口详解"><a class="anchor" href="#_接口详解"></a>接口详解</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_loadgraphasync"><a class="anchor" href="#_loadgraphasync"></a>LoadGraphAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; LoadGraphAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; LoadGraphAsync&lt;T&gt;(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 强类型便捷版本
+Task&lt;RuntimeGraphReference&gt; LoadGraphInfoAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：将指定图加载到 Runtime 推理环境（从编辑器图转为可执行状态）。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>要加载的图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，关键字段：</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>图的唯一 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>图名称</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+// 加载图到 Runtime
+var graphRef = await client.Runtime.LoadGraphInfoAsync("detection_graph");
+Console.WriteLine($"图已加载到 Runtime，ID: {graphRef.GraphId}");
+Console.WriteLine($"请求状态: {graphRef.Status}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_listgraphsasync"><a class="anchor" href="#_listgraphsasync"></a>ListGraphsAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; ListGraphsAsync(
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; ListGraphsAsync&lt;T&gt;(
+    CancellationToken cancellationToken = default)
+
+// 强类型便捷版本
+Task&lt;RuntimeGraphSummary[]&gt; ListGraphSummariesAsync(
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：列出 Runtime 环境中所有已加载图的摘要信息。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，已加载图的数组。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+var summaries = await client.Runtime.ListGraphSummariesAsync();
+Console.WriteLine($"Runtime 中共有 {summaries.Length} 个图");
+foreach (var s in summaries)
+{
+    Console.WriteLine($"  - {s.GraphName}");
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getallnodesinfoasync"><a class="anchor" href="#_getallnodesinfoasync"></a>GetAllNodesInfoAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; GetAllNodesInfoAsync(
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; GetAllNodesInfoAsync&lt;T&gt;(
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：获取 Runtime 环境中所有可用节点类型的描述信息（节点名、端口定义等）。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，节点类型定义数组。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+var nodes = await client.Runtime.GetAllNodesInfoAsync();
+foreach (var node in nodes.EnumerateArray())
+{
+    Console.WriteLine(node.GetProperty("nodeName").GetString());
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_releasegraphasync"><a class="anchor" href="#_releasegraphasync"></a>ReleaseGraphAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; ReleaseGraphAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; ReleaseGraphAsync&lt;T&gt;(
+    string graphName,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：从 Runtime 环境中卸载图，释放相关资源（模型、内存等）。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，操作状态信息。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Runtime.ReleaseGraphAsync("detection_graph");
+Console.WriteLine("图已从 Runtime 卸载");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getmetainfoasync"><a class="anchor" href="#_getmetainfoasync"></a>GetMetaInfoAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; GetMetaInfoAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; GetMetaInfoAsync&lt;T&gt;(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 强类型便捷版本
+Task&lt;RuntimeMetaInfo&gt; GetMetaInfoModelAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：获取 Runtime 图的元信息（输入端口配置、输出绑定配置、图结构描述等）。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，图元信息。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+var meta = await client.Runtime.GetMetaInfoModelAsync("detection_graph");
+Console.WriteLine($"图元信息: {meta}");
+Console.WriteLine($"请求状态: {meta.Status}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getbindedoutputvalueasync"><a class="anchor" href="#_getbindedoutputvalueasync"></a>GetBindedOutputValueAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; GetBindedOutputValueAsync(
+    BindingRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; GetBindedOutputValueAsync&lt;T&gt;(
+    BindingRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：通过绑定名读取图某个输出端口的当前 JSON 值（在 <code>RunGraphAsync</code> 之后调用）。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>bindingName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>输出端口的绑定名（在编辑器阶段通过 <code>SetBindingNameAsync</code> 设置）</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，该绑定输出的当前值。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+// 读取名为 "result" 的绑定输出
+var value = await client.Runtime.GetBindedOutputValueAsync(new BindingRef("detection_graph", "result"));
+Console.WriteLine($"检测结果: {value}");
+
+// 泛型版本：自动反序列化为自定义类型
+// var detection = await client.Runtime.GetBindedOutputValueAsync&lt;DetectionResult&gt;(
+//     new BindingRef("detection_graph", "result"));</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getbindedoutputsinfoasync"><a class="anchor" href="#_getbindedoutputsinfoasync"></a>GetBindedOutputsInfoAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; GetBindedOutputsInfoAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; GetBindedOutputsInfoAsync&lt;T&gt;(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 强类型便捷版本
+Task&lt;RuntimeBindedOutputsInfo&gt; GetBindedOutputsInfoModelAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：获取图所有绑定输出端口的信息列表（端口名、绑定名、数据类型等），通常用于自动发现输出结构。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，绑定输出信息列表。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+var outputsInfo = await client.Runtime.GetBindedOutputsInfoModelAsync("detection_graph");
+Console.WriteLine($"绑定输出数量: {outputsInfo.Outputs?.Length ?? 0}");
+foreach (var output in outputsInfo.Outputs ?? Array.Empty&lt;object&gt;())
+{
+    Console.WriteLine($"  - {output}");
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getbindedpointcloudparsedasync"><a class="anchor" href="#_getbindedpointcloudparsedasync"></a>GetBindedPointCloudParsedAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">Task&lt;IReadOnlyList&lt;ParsedPointCloud&gt;&gt; GetBindedPointCloudParsedAsync(
+    PointCloudRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：直接读取并解析运行时绑定点云，推荐优先使用。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var clouds = await client.Runtime.GetBindedPointCloudParsedAsync(
+    new PointCloudRef("detection_graph", "pointcloud_output", pointDim: 3));
+Console.WriteLine($"点云 shape: {string.Join(" x ", clouds[0].Shape)}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getbindedpointcloudasync"><a class="anchor" href="#_getbindedpointcloudasync"></a>GetBindedPointCloudAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">Task&lt;byte[]&gt; GetBindedPointCloudAsync(
+    BindingRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：通过绑定名读取图某个输出端口的点云二进制数据，返回原始 <code>byte[]</code>（适合点云结果输出）。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>bindingName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>点云输出端口的绑定名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;byte[]&gt;</code>，点云原始二进制数据。
+注意：
+* <code>GetBindedPointCloudAsync(&#8230;&#8203;)</code> 返回的是服务端原始 <code>byte[]</code>
+* <code>Runtime/GetBindedPointCloud</code> 的头信息里没有每个点的维度
+* 普通场景建议优先使用上面的 <code>GetBindedPointCloudParsedAsync(new PointCloudRef(&#8230;&#8203;, pointDim: 3))</code></p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.IO;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+byte[] pcdBytes = await client.Runtime.GetBindedPointCloudAsync(
+    new BindingRef("detection_graph", "pointcloud_output"));
+Console.WriteLine($"raw bytes: {pcdBytes.Length}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_setsharedparamsasync"><a class="anchor" href="#_setsharedparamsasync"></a>SetSharedParamsAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; SetSharedParamsAsync(
+    RuntimeParamsUpdate paramsData,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; SetSharedParamsAsync&lt;T&gt;(
+    RuntimeParamsUpdate paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：在 Runtime 阶段设置图的共享参数（所有节点均可访问的全局参数），通常在 <code>LoadGraphAsync</code> 之后、<code>RunGraphAsync</code> 之前调用。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>object</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>共享参数对象（匿名对象、字典或自定义类均可）</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，操作状态信息。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Runtime.SetSharedParamsAsync(new RuntimeParamsUpdate("detection_graph", new
+{
+    confidence_threshold = 0.5,
+    nms_threshold = 0.45,
+    max_detections = 100
+}));
+
+Console.WriteLine("共享参数已设置");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_setrunparamsasync"><a class="anchor" href="#_setrunparamsasync"></a>SetRunParamsAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; SetRunParamsAsync(
+    RuntimeParamsUpdate paramsData,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; SetRunParamsAsync&lt;T&gt;(
+    RuntimeParamsUpdate paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：在 Runtime 阶段动态更新图的运行参数（每次 <code>RunGraphAsync</code> 前可修改，覆盖默认配置）。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.GraphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.ParamsData</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>object</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>运行参数对象</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，操作状态信息。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+// 动态修改运行参数（无需重新加载图）
+await client.Runtime.SetRunParamsAsync(new RuntimeParamsUpdate("detection_graph", new
+{
+    batch_size = 4,
+    use_fp16 = true
+}));
+
+Console.WriteLine("运行参数已更新");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_rungraphasync"><a class="anchor" href="#_rungraphasync"></a>RunGraphAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; RunGraphAsync(
+    RuntimeRunParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; RunGraphAsync&lt;T&gt;(
+    RuntimeRunParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 强类型便捷版本
+Task&lt;RuntimeRunGraphResult&gt; RunGraphResultAsync(
+    RuntimeRunParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：向图提交输入数据并触发推理。这是 Runtime 模式下的核心接口，普通模式提交图像 + 点云 + 相机参数，被动双目模式提交完整 EPICRAW3。数据以二进制协议（<code>application/octet-stream</code>）高效传输。</p>
+</div>
+<div class="paragraph">
+<p><strong>注意点</strong>：
+用runtime.run_graph时，当前版本要求图里面有`EpicPro输入`或者`EpicPro输入(单组数据)`节点和`EpicPro输出`节点，否则无法运行，会报错</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.GraphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.Frames</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyList&lt;RuntimeFrame&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>普通模式输入；每帧包含图像、点云及相机参数</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.RunMode</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>普通模式为 <code>"others"</code>；被动双目模式为 <code>"passive_bino"</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.PassiveBinoFrame</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>RuntimePassiveBinoFrame?</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>被动双目模式输入；普通模式不用传</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，用于调用方主动取消</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>模式选择</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">模式</th>
+<th class="tableblock halign-left valign-top">构造方式</th>
+<th class="tableblock halign-left valign-top">必填数据</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>普通模式</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>new RuntimeRunParams(graphName, frames)</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Frames</code> 至少包含一个 <code>RuntimeFrame</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>被动双目模式</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>RuntimeRunParams.PassiveBinoFromFile/Bytes/Images(&#8230;&#8203;)</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PassiveBinoFrame.EpicRaw3</code> 和 <code>PassiveBinoFrame.Cam2Base</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>普通模式 RuntimeFrame 字段说明</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">是否必填</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>EpicRaw</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>byte[]</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>必填（不能为空）</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>完整 EPICRAW 原始字节</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Cam2Base</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>object?</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>必填</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>相机到基座坐标系的变换，旋转矢量形式，长度为 6 的 <code>[x, y, z, rx, ry, rz]</code>（平移 + Rodrigues 旋转向量）；服务端目前只支持这一种形式，不支持矩阵，长度不对会抛出 <code>ArgumentException</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Roi</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>object?</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>可选</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>感兴趣区域；其中 <code>cam2ROIFrame</code> 同样只支持长度为 6 的旋转矢量形式</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>已有 EPICRAW bytes/文件时用 <code>RuntimeFrame.FromBytes(&#8230;&#8203;)</code> / <code>FromFile(&#8230;&#8203;)</code>；只有原始图像和点云时用 <code>RuntimeFrame.FromData(&#8230;&#8203;)</code> 在本地编码，接收 <code>RuntimePointData</code>、<code>RuntimeImageData</code>、相机内参/畸变（可选 <code>cameraParams</code> 扩展参数）。</p>
+</div>
+<div class="paragraph">
+<p><strong>被动双目模式 RuntimePassiveBinoFrame 字段说明</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">是否必填</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>EpicRaw3</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>byte[]</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>必填（不能为空）</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>完整 EPICRAW3 原始字节</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Cam2Base</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>object?</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>必填</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>相机到基座坐标系的变换，旋转矢量形式，长度为 6 的 <code>[x, y, z, rx, ry, rz]</code>（平移 + Rodrigues 旋转向量）；服务端目前只支持这一种形式，不支持矩阵</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Roi</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>object?</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>可选</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>感兴趣区域</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>使用 <code>PassiveBinoFromImages(&#8230;&#8203;)</code> 时，每张图用 <code>RuntimePassiveBinoImage</code> 表示：</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Data</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>byte[]</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>原始像素字节</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Width</code> / <code>Height</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>int</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>图像宽高</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>MatType</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>int</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>OpenCV Mat type，例如 <code>CV_8UC1=0</code>、<code>CV_16UC1=2</code>、<code>CV_8UC3=16</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，推理完成后的汇总结果（具体字段由图结构决定）。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+// 已有完整 EPICRAW 文件/bytes 时，直接封装：
+byte[] epicRawBytes = await File.ReadAllBytesAsync("/data/camera/frame_001.epicraw");
+
+var frames = new List&lt;RuntimeFrame&gt;
+{
+    // cam2Base 服务端目前只支持旋转矢量形式：[x, y, z, rx, ry, rz]（平移 + Rodrigues 旋转向量）
+    RuntimeFrame.FromBytes(epicRawBytes, cam2Base: new[] { 0.0, 0.0, 0.5, 0.0, 0.0, 0.0 })
+};
+
+// 运行图（20秒超时）
+using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(20));
+var result = await client.Runtime.RunGraphResultAsync(
+    new RuntimeRunParams("detection_graph", frames), cts.Token);
+Console.WriteLine($"推理完成，请求状态: {result.Status}");
+
+// 读取绑定输出
+var detections = await client.Runtime.GetBindedOutputValueAsync(new BindingRef("detection_graph", "result"));
+Console.WriteLine($"检测结果: {detections}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_setgraphbindingdataasync"><a class="anchor" href="#_setgraphbindingdataasync"></a>SetGraphBindingDataAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; SetGraphBindingDataAsync(
+    RuntimeBindingDataUpdate paramsData,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; SetGraphBindingDataAsync&lt;T&gt;(
+    RuntimeBindingDataUpdate paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：批量设置图的绑定输入数据（通过绑定名映射），用于向图的输入端口注入数据。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.GraphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.BindingData</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, object?&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>绑定名到数据的映射字典</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，操作状态信息。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Runtime.SetGraphBindingDataAsync(new RuntimeBindingDataUpdate("detection_graph",
+    new Dictionary&lt;string, object?&gt;
+    {
+        ["input_width"] = 640,
+        ["input_height"] = 480,
+        ["class_filter"] = "person",
+    }));
+
+Console.WriteLine("绑定输入数据已设置");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getnodeparamsinfowithstrategyasync"><a class="anchor" href="#_getnodeparamsinfowithstrategyasync"></a>GetNodeParamsInfoWithStrategyAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; GetNodeParamsInfoWithStrategyAsync(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; GetNodeParamsInfoWithStrategyAsync&lt;T&gt;(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// 强类型便捷版本
+Task&lt;RuntimeNodeParamsInfoWithStrategy&gt; GetNodeParamsInfoWithStrategyModelAsync(
+    NodeRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：获取 Runtime 图中支持策略参数的节点信息及其策略配置（包含参数取值范围、默认值、可调策略等）。</p>
+</div>
+<div class="paragraph">
+<p><strong>支持范围</strong>：当前仅支持 <code>PoseListFilter</code>、<code>PickPointFilter</code>、
+<code>PoseListSorterInXOY</code>、<code>PickPointSorterInXOY</code>、<code>PickPointSorterNew</code>、
+<code>PoseListSorter</code> 这 6 类节点。
+返回值中的 <code>paramsData</code> 通常作为 <code>SetParamsInStrategyAsync(&#8230;&#8203;)</code> 的输入模板：
+先修改其中需要调整的字段，再把完整 <code>paramsData</code> 传回。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.GraphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.NodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>节点 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，节点参数策略信息。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+var strategyInfo = await client.Runtime.GetNodeParamsInfoWithStrategyModelAsync(
+    new NodeRef("detection_graph", "detect-node-001"));
+Console.WriteLine($"参数策略信息: {strategyInfo}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_setparamsinstrategyasync"><a class="anchor" href="#_setparamsinstrategyasync"></a>SetParamsInStrategyAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; SetParamsInStrategyAsync(
+    RuntimeStrategyParamsUpdate paramsData,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; SetParamsInStrategyAsync&lt;T&gt;(
+    RuntimeStrategyParamsUpdate paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：按策略在 Runtime 阶段修改支持策略参数的节点参数（配合 <code>GetNodeParamsInfoWithStrategyAsync</code> 使用）。</p>
+</div>
+<div class="paragraph">
+<p><strong>支持范围</strong>：当前仅支持 <code>PoseListFilter</code>、<code>PickPointFilter</code>、
+<code>PoseListSorterInXOY</code>、<code>PickPointSorterInXOY</code>、<code>PickPointSorterNew</code>、
+<code>PoseListSorter</code> 这 6 类节点。其它节点请使用普通参数接口设置参数。
+<code>RuntimeStrategyParamsUpdate.ParamsData</code> 一般来自
+<code>GetNodeParamsInfoWithStrategyAsync(&#8230;&#8203;)</code> 返回值中的 <code>paramsData</code>。不要只手写一小段
+局部参数；建议保留服务端返回的完整结构，只替换需要修改的字段。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.GraphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.NodeId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>节点 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.ParamsData</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>object</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>从服务端返回的 <code>paramsData</code> 修改而来的完整参数结构</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，操作状态信息。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Text.Json.Nodes;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+var strategyInfo = await client.Runtime.GetNodeParamsInfoWithStrategyAsync(
+    new NodeRef("detection_graph", "detect-node-001"));
+var paramsData = JsonNode.Parse(
+    strategyInfo.GetProperty("paramsData").GetRawText())!.AsObject();
+
+paramsData["run_params"]!.AsObject()["strategies_config"] = new JsonObject
+{
+    ["value"] = new JsonArray
+    {
+        new JsonObject
+        {
+            ["BY_SCORE"] = new JsonObject
+            {
+                ["order"] = "HIGHEST",
+                ["differenceThreshold"] = 1,
+                ["groupInterval"] = 0.75,
+            },
+        },
+    },
+};
+
+await client.Runtime.SetParamsInStrategyAsync(
+    new RuntimeStrategyParamsUpdate(
+        "detection_graph",
+        "detect-node-001",
+        paramsData));
+
+Console.WriteLine("策略参数已更新");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getfileparammd5async"><a class="anchor" href="#_getfileparammd5async"></a>GetFileParamMd5Async(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 原始 JsonElement 版本
+Task&lt;JsonElement&gt; GetFileParamMd5Async(
+    FileParamRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// 泛型版本
+Task&lt;T&gt; GetFileParamMd5Async&lt;T&gt;(
+    FileParamRef paramsData,
+    CancellationToken cancellationToken = default)
+
+// 强类型便捷版本
+Task&lt;RuntimeFileParamMd5Info&gt; GetFileParamMd5InfoAsync(
+    FileParamRef paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：获取图中某个文件参数（如模型文件）的 MD5 校验值，用于在上传前判断文件是否已存在、是否需要更新。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.GraphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>图名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.ParamName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>文件参数映射名称</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.ParamType</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>参数类型，默认为 <code>"init_params"</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;JsonElement&gt;</code>，包含 <code>md5</code> 字段。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Security.Cryptography;
+using System.IO;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+// 获取服务端文件的 MD5
+var md5Info = await client.Runtime.GetFileParamMd5InfoAsync(
+    new FileParamRef("detection_graph", "model_file"));
+string serverMd5 = md5Info.Md5;
+Console.WriteLine($"MD5 请求状态: {md5Info.Status}");
+
+// 计算本地文件的 MD5
+byte[] localBytes = await File.ReadAllBytesAsync("/models/detector.onnx");
+string localMd5 = Convert.ToHexString(MD5.HashData(localBytes)).ToLowerInvariant();
+
+if (serverMd5 == localMd5)
+{
+    Console.WriteLine("模型文件与服务端一致，无需更新");
+}
+else
+{
+    Console.WriteLine("模型文件已变更，需要重新上传");
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_runsinglenodenographparsedasync推荐"><a class="anchor" href="#_runsinglenodenographparsedasync推荐"></a>RunSingleNodeNoGraphParsedAsync(&#8230;&#8203;)（推荐）</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">Task&lt;SingleNodeParsedResult&gt; RunSingleNodeNoGraphParsedAsync(
+    SingleNodeParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：不依赖图结构，直接运行单个节点，并自动把 <code>outputs</code> 里的点云和图像解析成可直接使用的数据结构。普通用户建议优先使用这个接口；返回字典的 key 会和服务端 <code>outputs</code> 的 key 保持一致，只是点云、图像值会被解析。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.NodeName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>节点类型名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.Inputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, object?&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>输入端口数据字典；<code>FileInfo</code>/<code>byte[]</code> 会按节点端口类型自动处理</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.RunParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, object?&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>运行参数字典</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.InitParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, object?&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>初始化参数字典</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.InputDataTypes</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, string&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>可选。输入端口类型映射；通常省略，SDK 会在需要时自动查询</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.InputPointDims</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, int&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>可选。点云输入维度提示；通常可由端口类型自动推断</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.OutputDataTypes</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, string&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>可选。输出端口类型映射；省略时 SDK 会按节点名查询节点输出定义</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.OutputPointDims</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, int&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>可选。输出点云维度提示；<code>XYZPoints</code> 默认 3，<code>NormalPoints</code>/<code>RGBPoints</code> 默认 6</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;SingleNodeParsedResult&gt;</code>：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">public sealed class SingleNodeParsedResult
+{
+    public JsonElement? RawJsonData { get; init; }
+    public byte[]? RawBinaryData { get; init; }
+    public IReadOnlyDictionary&lt;string, object?&gt; Outputs { get; init; }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>解析规则：</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">输出端口类型</th>
+<th class="tableblock halign-left valign-top"><code>Outputs[name]</code> 的类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Points</code> / <code>XYZPoints</code> / <code>NormalPoints</code> / <code>RGBPoints</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyList&lt;ParsedPointCloud&gt;</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Image</code> / <code>MonoImage</code> / <code>ColorImage</code> / <code>BinaryImage</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyList&lt;ParsedImage&gt;</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>其他类型</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonElement</code>，保持服务端原始 JSON 值</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>失败处理</strong>：如果服务端顶层 <code>status=0</code>，但单节点结果里的 <code>status_queue</code>
+包含 <code>success:false</code>、<code>activate failed</code>、<code>error</code> 或负数状态，SDK 会在解析
+<code>Outputs</code> 前抛出 <code>AtomApiException</code>。异常的 <code>Payload</code> 会保留完整原始结果，
+里面仍可查看 <code>status_queue</code>、<code>outputs</code> 和 <code>status</code>。</p>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+var result = await client.Runtime.RunSingleNodeNoGraphParsedAsync(
+    new SingleNodeParams(
+        "EstimateNormal",
+        inputs: new Dictionary&lt;string, object?&gt;
+        {
+            ["points"] = new FileInfo("/data/input.ply"),
+        },
+        outputDataTypes: new Dictionary&lt;string, string&gt;
+        {
+            ["points"] = "XYZPoints",
+        },
+        outputPointDims: new Dictionary&lt;string, int&gt;
+        {
+            ["points"] = 3,
+        }));
+
+var clouds = (IReadOnlyList&lt;ParsedPointCloud&gt;)result.Outputs["points"]!;
+Console.WriteLine($"点云数量: {clouds.Count}");
+Console.WriteLine($"第一份点云 shape: {string.Join(" x ", clouds[0].Shape)}");</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>如果 SDK 能通过 <code>NodeName</code> 查询到节点输出定义，可以不填 <code>OutputDataTypes</code>；如果服务端返回的是 raw bytes，或者你希望少一次节点信息查询，就建议显式填写。raw bytes 结果要能自动解析，必须能确定唯一一个点云输出端口。</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_runsinglenodenographasync可选原始返回"><a class="anchor" href="#_runsinglenodenographasync可选原始返回"></a>RunSingleNodeNoGraphAsync(&#8230;&#8203;)（可选：原始返回）</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 返回 SingleNodeResult（包含 JSON 或二进制）
+Task&lt;SingleNodeResult&gt; RunSingleNodeNoGraphAsync(
+    SingleNodeParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 返回指定类型（JSON 输出）
+Task&lt;T&gt; RunSingleNodeNoGraphJsonAsync&lt;T&gt;(
+    SingleNodeParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>用途</strong>：不依赖图结构，直接运行单个节点并获取服务端原始结果。只有在你需要自己处理 JSON/raw bytes 时使用；普通场景建议优先用 <code>RunSingleNodeNoGraphParsedAsync</code>。
+和 parsed 接口一样，如果 <code>status_queue</code> 表示节点内部运行失败，raw 接口也会抛
+<code>AtomApiException</code>，并把完整原始结果放在异常的 <code>Payload</code> 里。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.NodeName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>节点类型名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.Inputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, object?&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>输入端口数据字典；<code>FileInfo</code>/<code>byte[]</code> 会按节点端口类型自动处理</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.RunParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, object?&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>运行参数字典</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.InitParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, object?&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>初始化参数字典</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.InputDataTypes</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, string&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>可选。输入端口类型映射；通常省略，SDK 会自动查询</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.InputPointDims</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, int&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>可选。点云输入维度提示；通常可由输入类型自动推断</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>取消令牌，可选</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>Task&lt;SingleNodeResult&gt;</code>，可通过 <code>.JsonData</code> / <code>.DeserializeJson&lt;T&gt;()</code> 读取 JSON 结果，或通过 <code>.BinaryData</code> 获取二进制结果。
+常见输入会按端口类型自动处理：</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">端口类型</th>
+<th class="tableblock halign-left valign-top">C# 输入值</th>
+<th class="tableblock halign-left valign-top">SDK 行为</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>File</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>FileInfo</code> / UTF-8 <code>byte[]</code> / <code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>作为路径字符串放进 JSON，不读取文件内容</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Image</code> / <code>MonoImage</code> / <code>ColorImage</code> / <code>BinaryImage</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>FileInfo</code> / <code>byte[]</code> / base64 字符串</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>转成 <code>data:image/&#8230;&#8203;;base64,&#8230;&#8203;</code> 字符串列表</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Points</code> / <code>XYZPoints</code> / <code>NormalPoints</code> / <code>RGBPoints</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>.ply</code> 的 <code>FileInfo</code> / 已编码 <code>byte[]</code> / 数字数组</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>.ply</code> 会转成 Atom 点云二进制；已编码字节会原样上传</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>其他类型</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>任意 JSON 值 / <code>byte[]</code> / <code>FileInfo</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>保持旧行为：JSON 进 <code>inputs</code>，字节或文件内容按文件字段上传</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>C# SDK 当前在单节点直跑里支持 ASCII PLY 的 <code>vertex</code> 属性读取；<code>XYZPoints</code>/<code>Points</code> 读取 <code>x,y,z</code>，<code>NormalPoints</code> 读取 <code>x,y,z,nx,ny,nz</code>，<code>RGBPoints</code> 读取 <code>x,y,z,red,green,blue</code>。</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><strong>示例</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+// 示例 1：传入 byte[]。如果端口是 ColorImage，SDK 会转成 base64 图片列表；
+// 如果端口是 XYZPoints，SDK 会认为这是已经编码好的 Atom 点云二进制。
+byte[] imageBytes = await File.ReadAllBytesAsync("/data/test.jpg");
+var result1 = await client.Runtime.RunSingleNodeNoGraphAsync(
+    new SingleNodeParams(
+        "ResizeImage",
+        new Dictionary&lt;string, object?&gt;
+        {
+            ["image"] = imageBytes
+        },
+        new Dictionary&lt;string, object?&gt;
+        {
+            ["scale_factor"] = 0.5
+        }));
+
+// 反序列化 JSON 结果
+// var typed = result1.DeserializeJson&lt;MyOutputType&gt;();
+Console.WriteLine($"单节点运行完成");
+
+// 示例 2：使用 FileInfo 传入本地文件。SDK 会按端口类型判断：
+// File 端口只传路径字符串，ColorImage 端口转 base64，XYZPoints 的 .ply 路径转点云 payload。
+var result2 = await client.Runtime.RunSingleNodeNoGraphAsync(
+    new SingleNodeParams(
+        "ModelInferenceNode",
+        new Dictionary&lt;string, object?&gt;
+        {
+            ["input_image"] = new FileInfo("/data/test.jpg"),
+        },
+        initParams: new Dictionary&lt;string, object?&gt;
+        {
+            ["model_path"] = "/models/detector.onnx"
+        }));
+Console.WriteLine("文件输入单节点运行完成");
+
+// 示例 3：泛型版本直接反序列化结果
+// var typedResult = await client.Runtime.RunSingleNodeNoGraphJsonAsync&lt;MyResult&gt;(
+//     new SingleNodeParams("ResizeImage", inputs: ..., runParams: ...));</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_完整推理流程示例"><a class="anchor" href="#_完整推理流程示例"></a>完整推理流程示例</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>以下示例展示从图加载到推理结果读取的完整 Runtime 工作流：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Core;
+using AtomSdk.Models;
+
+class RuntimeWorkflowExample
+{
+    static async Task Main()
+    {
+        var client = new AtomClient("http://localhost:8080");
+        const string graphName = "detection_graph";
+
+        try
+        {
+            // 1. 加载图到 Runtime
+            var graphRef = await client.Runtime.LoadGraphInfoAsync(graphName);
+            Console.WriteLine($"[1] 图已加载，ID: {graphRef.GraphId}, 请求状态: {graphRef.Status}");
+
+            // 2. 获取图元信息（确认配置）
+            var meta = await client.Runtime.GetMetaInfoModelAsync(graphName);
+            Console.WriteLine($"[2] 图元信息获取成功，请求状态: {meta.Status}");
+
+            // 3. 设置共享参数
+            await client.Runtime.SetSharedParamsAsync(
+                new RuntimeParamsUpdate(graphName, new
+                {
+                    confidence_threshold = 0.5,
+                    nms_threshold = 0.45,
+                }));
+            Console.WriteLine("[3] 共享参数已设置");
+
+            // 4. 检查文件参数 MD5（避免重复上传模型）
+            var md5Info = await client.Runtime.GetFileParamMd5InfoAsync(
+                new FileParamRef(graphName, "model_file"));
+            Console.WriteLine($"[4] 服务端模型 MD5: {md5Info.Md5}, 请求状态: {md5Info.Status}");
+
+            // 5. 准备帧数据：已有完整 EPICRAW 文件时直接封装
+            byte[] epicRawBytes = await File.ReadAllBytesAsync("/data/frame.epicraw");
+
+            var frames = new List&lt;RuntimeFrame&gt;
+            {
+                // cam2Base 服务端目前只支持旋转矢量形式：[x, y, z, rx, ry, rz]（平移 + Rodrigues 旋转向量）
+                RuntimeFrame.FromBytes(epicRawBytes, cam2Base: new[] { 0.0, 0.0, 0.5, 0.0, 0.0, 0.0 })
+            };
+
+            // 6. 运行图，调用方最多等待 30 秒后主动取消
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+            var runResult = await client.Runtime.RunGraphResultAsync(
+                new RuntimeRunParams(graphName, frames), cts.Token);
+            Console.WriteLine($"[6] 推理完成，请求状态: {runResult.Status}");
+
+            // 7. 读取 JSON 输出（通过绑定名）
+            var jsonOutput = await client.Runtime.GetBindedOutputValueAsync(
+                new BindingRef(graphName, "result"));
+            Console.WriteLine($"[7] 检测结果: {jsonOutput}");
+
+            // 8. 读取点云输出（如有）
+            // var pointClouds = await client.Runtime.GetBindedPointCloudParsedAsync(
+            //     new PointCloudRef(graphName, "pointcloud_result", pointDim: 3));
+
+            // 9. 获取所有绑定输出的信息
+            var outputsInfo = await client.Runtime.GetBindedOutputsInfoModelAsync(graphName);
+            Console.WriteLine($"[9] 输出端口数量: {outputsInfo.Outputs?.Length ?? 0}");
+
+            // 10. 释放 Runtime 图资源
+            await client.Runtime.ReleaseGraphAsync(graphName);
+            Console.WriteLine("[10] Runtime 图已释放");
+        }
+        catch (AtomApiException ex)
+        {
+            Console.WriteLine($"服务端错误 {ex.Status}: {ex.Message}");
+        }
+        catch (AtomHttpException ex)
+        {
+            Console.WriteLine($"HTTP 错误 {ex.StatusCode}: {ex.Message}");
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_异常说明"><a class="anchor" href="#_异常说明"></a>异常说明</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">异常类型</th>
+<th class="tableblock halign-left valign-top">触发条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>AtomApiException</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>服务端返回业务错误（如图未加载、参数非法）</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>AtomHttpException</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>HTTP 层错误（连接失败、超时、4xx/5xx 状态码）</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>AtomProtocolException</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>响应格式解析失败</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>ArgumentException</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>RuntimeFrame.Image</code> 或 <code>PointCloud</code> 为空字节数组时抛出</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="graph_node.html">GraphNodeService（C#）</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

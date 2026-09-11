@@ -1,0 +1,2018 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>GraphService（C#） :: Atom SDK 개발자 가이드</title>
+    <link rel="prev" href="params.html">
+    <link rel="next" href="node.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          온라인 제품 문서
+                  </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="문서 검색"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              이 매뉴얼만
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            매뉴얼 전환
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK 개발자 가이드</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          다운로드 센터
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          공식 웹사이트
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            한국어
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK 개발자 가이드</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">환영합니다</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">빠른 시작</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">빠른 시작</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">샘플 샘플</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">입문 사용</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK 입문 사용</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">사용자 가이드</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">적절한 Service을 선택합니다.</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">그래프 및 노드 작업</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">오류 처리 및 문제 해결</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">FAQ</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">기본 개념</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/what-is-atom-sdk.html">Atom SDK 란 무엇입니까?</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-node-subgraph.html">그래프, 노드, 하위 그래프</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-vs-runtime.html">Graph과 Runtime의 차이점</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/timestamp.html">Timestamp이 무엇인가요?</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/runtime-frame.html">런타임 입력 프레임(RuntimeFrame / RuntimePassiveBinoFrame)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/point-cloud-protocol.html">포인트 클라우드 유형 입출력을 위한 바이너리 프로토콜</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/param-binding.html">매개변수 유형 및 바인딩 이름</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API 참조</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API 참조 개요</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python 개요 및 설치</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/params.html">Python 매개변수 객체</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/public_api.html">Python 공용 유틸리티 API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ 버전 — 사용자 가이드</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ 매개변수 객체</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="overview.html">Atom SDK — C# 버전</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="params.html">C# 매개변수 객체</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK 개발자 가이드</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK 개발자 가이드</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK 개발자 가이드</a></li>
+    <li>API 참조</li>
+    <li>C# SDK</li>
+    <li><a href="graph.html">GraphService（C#）</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="이 페이지의 내용"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">GraphService（C#）</h1>
+<div class="sect1">
+<h2 id="_서비스_소개"><a class="anchor" href="#_서비스_소개"></a>서비스 소개</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>GraphService`은 Atom SDK에 있는 메인 이미지의 전체 라이프사이클 관리를 담당하는 서비스입니다. 그래프 생성, 복사, 삭제, 가져오기(LoadGraph), 내보내기(ExportGraph), 열기, 해제, 실행, 지우기, 타임스탬프 관리 및 노드 정보 쿼리를 위한 완전한 인터페이스 세트를 제공합니다. 모든 메서드는 비동기식이며 `Task&lt;JsonElement&gt;</code>(원본 JSON) 또는 구체적이고 강력한 형식의 모델을 반환합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>네임스페이스</strong>: <code>AtomSdk.Services</code></p>
+</div>
+<div class="paragraph">
+<p><strong>입구</strong>: <code>client.Graph</code></p>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_적용_가능한_시나리오"><a class="anchor" href="#_적용_가능한_시나리오"></a>적용 가능한 시나리오</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>편집기 모드에서 다이어그램을 생성, 복사 및 삭제합니다.</p>
+</li>
+<li>
+<p>로컬 <code>.atom</code> 파일을 서버(<code>LoadGraphAsync</code>)로 가져옵니다.</p>
+</li>
+<li>
+<p>백업 또는 마이그레이션을 위해 그래프를 파일로 내보냅니다(<code>ExportGraphAsync</code>).</p>
+</li>
+<li>
+<p>그래프를 연 후 노드를 편집하고 마지막으로 `RunGraphAsync`을 통해 실행을 트리거합니다.</p>
+</li>
+<li>
+<p>그래프 타임스탬프를 얻고 유지합니다(일관성 검사용).</p>
+</li>
+</ul>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_권장_호출_순서"><a class="anchor" href="#_권장_호출_순서"></a>권장 호출 순서</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">CreateGraphAsync          （새 사진 만들기）
+        ↓
+OpenGraphAsync            （오픈 다이어그램，타임스탬프 가져오기）
+        ↓
+[사용 NodeService 노드 편집]
+        ↓
+RunGraphAsync             （차트 실행，완료를 기다리는 폴링）
+        ↓
+ReleaseGraphAsync         （리소스 해제）</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_인터페이스_상세_설명"><a class="anchor" href="#_인터페이스_상세_설명"></a>인터페이스 상세 설명</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_creategraphasync"><a class="anchor" href="#_creategraphasync"></a>CreateGraphAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 원본 JsonElement 버전
+Task&lt;JsonElement&gt; CreateGraphAsync(
+    CreateGraphParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 일반 버전（지정된 유형으로 자동 역직렬화）
+Task&lt;T&gt; CreateGraphAsync&lt;T&gt;(
+    CreateGraphParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 강력한 형식의 편의 버전
+Task&lt;GraphReference&gt; CreateGraphInfoAsync(
+    CreateGraphParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: Atom 플랫폼에 새 메인 이미지를 생성합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.GraphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>플랫폼 내에서 고유한 사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.Description</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string?</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>그래프 설명, 선택 사항, 기본값은 <code>null</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>취소 토큰, 선택사항</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환 값</strong>: <code>Task&lt;JsonElement&gt;</code>, 키 필드:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphId</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>새로 생성된 그래프의 고유한 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>timestamp</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>double</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>생성 타임스탬프</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Models;
+
+var client = new AtomClient("http://localhost:8080");
+
+// 방법 1：원본 JsonElement
+var raw = await client.Graph.CreateGraphAsync(
+    new CreateGraphParams("detection_graph", "표적 탐지 파이프라인"));
+string graphId = raw.GetProperty("graphId").GetString()!;
+Console.WriteLine($"성공적으로 생성되었습니다，그림 ID: {graphId}");
+Console.WriteLine($"요청 상태: {raw.GetProperty("status").GetInt32()}");
+
+// 방법 2：강력한 형식의 모델（추천）
+var info = await client.Graph.CreateGraphInfoAsync(new CreateGraphParams("detection_graph"));
+Console.WriteLine($"그림 ID: {info.GraphId}，사진 제목: {info.GraphName}");
+Console.WriteLine($"요청 상태: {info.Status}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_listgraphsasync"><a class="anchor" href="#_listgraphsasync"></a>ListGraphsAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 원본 JsonElement 버전
+Task&lt;JsonElement&gt; ListGraphsAsync(
+    CancellationToken cancellationToken = default)
+
+// 일반 버전
+Task&lt;T&gt; ListGraphsAsync&lt;T&gt;(
+    CancellationToken cancellationToken = default)
+
+// 강력한 형식의 편의 버전
+Task&lt;GraphSummary[]&gt; ListGraphSummariesAsync(
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: 플랫폼에 있는 모든 이미지의 목록 요약을 가져옵니다(썸네일 제외).</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>취소 토큰, 선택사항</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환값</strong>: 배열인 <code>Task&lt;JsonElement&gt;</code>, 각 요소에는 그래프의 기본 정보(<code>graphName</code>, <code>graphId</code> 등)가 포함됩니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+// 원래 버전：트래버스 JsonElement 배열
+var raw = await client.Graph.ListGraphsAsync();
+foreach (var item in raw.EnumerateArray())
+{
+    Console.WriteLine(item.GetProperty("graphName").GetString());
+}
+
+// 강력한 형식의 버전
+var summaries = await client.Graph.ListGraphSummariesAsync();
+Console.WriteLine($"공유 {summaries.Length} 그림");
+foreach (var s in summaries)
+{
+    Console.WriteLine($"- {s.GraphName} ({s.GraphId})");
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getallcustomsubgraphsnothumbnailasync"><a class="anchor" href="#_getallcustomsubgraphsnothumbnailasync"></a>GetAllCustomSubgraphsNoThumbnailAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 원본 JsonElement 버전
+Task&lt;JsonElement&gt; GetAllCustomSubgraphsNoThumbnailAsync(
+    CancellationToken cancellationToken = default)
+
+// 일반 버전
+Task&lt;T&gt; GetAllCustomSubgraphsNoThumbnailAsync&lt;T&gt;(
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: 썸네일을 제외한 모든 사용자 정의 하위 이미지의 요약 목록을 읽습니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var customSubgraphs = await client.Graph.GetAllCustomSubgraphsNoThumbnailAsync();
+foreach (var item in customSubgraphs.EnumerateArray())
+{
+    Console.WriteLine(item);
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_copygraphasync"><a class="anchor" href="#_copygraphasync"></a>CopyGraphAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 원본 JsonElement 버전
+Task&lt;JsonElement&gt; CopyGraphAsync(
+    CopyGraphParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 일반 버전
+Task&lt;T&gt; CopyGraphAsync&lt;T&gt;(
+    CopyGraphParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: 지정된 사진을 새 사진으로 완전히 복사합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.GraphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>소스 이미지 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.NewGraphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>복사 후 새 이미지의 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>취소 토큰, 선택사항</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환 값</strong>: <code>Task&lt;JsonElement&gt;</code>, 새 이미지(<code>graphId</code>, <code>graphName</code>)의 기본 정보를 반환합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+var result = await client.Graph.CopyGraphAsync(
+    new CopyGraphParams("original_graph", "backup_graph"));
+Console.WriteLine($"성공적으로 복사되었습니다，새 사진 ID: {result.GetProperty("graphId").GetString()}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_editgraphnameasync"><a class="anchor" href="#_editgraphnameasync"></a>EditGraphNameAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 원본 JsonElement 버전
+Task&lt;JsonElement&gt; EditGraphNameAsync(
+    EditGraphNameParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 일반 버전
+Task&lt;T&gt; EditGraphNameAsync&lt;T&gt;(
+    EditGraphNameParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: 사진 이름을 수정합니다. 현재 서버는 일반적으로 Boolean 결과나 상태 객체를 반환하는데, 호출자는 원본 `JsonElement`을 기준으로 판단하는 것이 좋습니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">await client.Graph.EditGraphNameAsync(
+    new EditGraphNameParams("demo_graph", "demo_graph_v2"));</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_editgraphcommentasync"><a class="anchor" href="#_editgraphcommentasync"></a>EditGraphCommentAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 원본 JsonElement 버전
+Task&lt;JsonElement&gt; EditGraphCommentAsync(
+    EditGraphCommentParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 일반 버전
+Task&lt;T&gt; EditGraphCommentAsync&lt;T&gt;(
+    EditGraphCommentParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: 도면 메모를 수정합니다. SDK은 현재 캐시된 `timestamp`을 자동으로 가져옵니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">await client.Graph.EditGraphCommentAsync(
+    new EditGraphCommentParams("demo_graph", "새로운 프로세스 노트"));</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_deletegraphasync"><a class="anchor" href="#_deletegraphasync"></a>DeleteGraphAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 원본 JsonElement 버전
+Task&lt;JsonElement&gt; DeleteGraphAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 일반 버전
+Task&lt;T&gt; DeleteGraphAsync&lt;T&gt;(
+    string graphName,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: 지정된 그래프를 영구적으로 삭제합니다(클라이언트 내부 캐시의 타임스탬프도 지웁니다).</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>삭제할 이미지의 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>취소 토큰, 선택사항</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환값</strong>: <code>Task&lt;JsonElement&gt;</code>, 작동 상태 정보.</p>
+</div>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+var result = await client.Graph.DeleteGraphAsync("old_graph");
+Console.WriteLine("사진이 삭제되었습니다");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getallnodesinfoasync"><a class="anchor" href="#_getallnodesinfoasync"></a>GetAllNodesInfoAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 원본 JsonElement 버전
+Task&lt;JsonElement&gt; GetAllNodesInfoAsync(
+    CancellationToken cancellationToken = default)
+
+// 일반 버전
+Task&lt;T&gt; GetAllNodesInfoAsync&lt;T&gt;(
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: 플랫폼에서 사용 가능한 모든 노드 유형의 정의 정보(노드 이름, 포트, 매개변수 설명 등)를 가져옵니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>취소 토큰, 선택사항</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환 값</strong>: <code>Task&lt;JsonElement&gt;</code>, 노드 유형에 따라 정의된 배열입니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+var nodes = await client.Graph.GetAllNodesInfoAsync();
+foreach (var node in nodes.EnumerateArray())
+{
+    Console.WriteLine(node.GetProperty("nodeName").GetString());
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getgraphdlnodesmodelinfoasync"><a class="anchor" href="#_getgraphdlnodesmodelinfoasync"></a>GetGraphDlNodesModelInfoAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 원본 JsonElement 버전
+Task&lt;JsonElement&gt; GetGraphDlNodesModelInfoAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 일반 버전
+Task&lt;T&gt; GetGraphDlNodesModelInfoAsync&lt;T&gt;(
+    string graphName,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: 일반적으로 그래프를 내보내기 전에 호출되는 그래프의 딥러닝 노드가 의존하는 모델 정보를 읽습니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var dlModels = await client.Graph.GetGraphDlNodesModelInfoAsync("demo_graph");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getgraphcustomnodesasync"><a class="anchor" href="#_getgraphcustomnodesasync"></a>GetGraphCustomNodesAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 원본 JsonElement 버전
+Task&lt;JsonElement&gt; GetGraphCustomNodesAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 일반 버전
+Task&lt;T&gt; GetGraphCustomNodesAsync&lt;T&gt;(
+    string graphName,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: 일반적으로 그래프를 내보내기 전에 호출되는 그래프에서 참조되는 사용자 정의 노드 정보를 읽습니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var customNodes = await client.Graph.GetGraphCustomNodesAsync("demo_graph");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getgraphworkcellmodelsinfoasync"><a class="anchor" href="#_getgraphworkcellmodelsinfoasync"></a>GetGraphWorkcellModelsInfoAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 원본 JsonElement 버전
+Task&lt;JsonElement&gt; GetGraphWorkcellModelsInfoAsync(
+    string graphName,
+    string? graphNodeId = null,
+    CancellationToken cancellationToken = default)
+
+// 일반 버전
+Task&lt;T&gt; GetGraphWorkcellModelsInfoAsync&lt;T&gt;(
+    string graphName,
+    string? graphNodeId = null,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: 메인 이미지를 읽거나 graph node에 해당하는 workcell 모델 정보를 지정합니다. `graphNodeId`가 비어 있으면 메인 이미지 레벨 정보를 쿼리합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var graphWorkcell = await client.Graph.GetGraphWorkcellModelsInfoAsync("demo_graph");
+var subgraphWorkcell = await client.Graph.GetGraphWorkcellModelsInfoAsync(
+    "demo_graph", "graph-node-id");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getgraphbindingsasync"><a class="anchor" href="#_getgraphbindingsasync"></a>GetGraphBindingsAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 원본 JsonElement 버전
+Task&lt;JsonElement&gt; GetGraphBindingsAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 일반 버전
+Task&lt;T&gt; GetGraphBindingsAsync&lt;T&gt;(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 강력한 형식의 편의 버전
+Task&lt;GraphBindingsInfo&gt; GetGraphBindingsInfoAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: 지정된 그래프의 바인딩 포트 정보를 쿼리합니다(Runtime 단계의 입력 및 출력 도킹에 사용됨).</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>취소 토큰, 선택사항</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환 값</strong>: <code>Task&lt;JsonElement&gt;</code>, 입력/출력 바인딩 포트 목록을 포함합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+var bindings = await client.Graph.GetGraphBindingsInfoAsync("my_graph");
+Console.WriteLine($"제본 수량을 입력하세요.: {bindings.Inputs?.Length ?? 0}");
+Console.WriteLine($"출력 바인딩 수량: {bindings.Outputs?.Length ?? 0}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getgraphjsondataasync"><a class="anchor" href="#_getgraphjsondataasync"></a>GetGraphJsonDataAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 원본 JsonElement 버전
+Task&lt;JsonElement&gt; GetGraphJsonDataAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 일반 버전
+Task&lt;T&gt; GetGraphJsonDataAsync&lt;T&gt;(
+    string graphName,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: 그래프의 원래 JSON 구조를 읽고 요청 상태 정보가 반환된 개체에 추가됩니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var graphJson = await client.Graph.GetGraphJsonDataAsync("demo_graph");
+Console.WriteLine(graphJson.GetProperty("status").GetInt32());</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_loadgraphasync"><a class="anchor" href="#_loadgraphasync"></a>LoadGraphAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 원본 JsonElement 버전
+Task&lt;JsonElement&gt; LoadGraphAsync(
+    LoadGraphParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 일반 버전
+Task&lt;T&gt; LoadGraphAsync&lt;T&gt;(
+    LoadGraphParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 강력한 형식의 편의 버전
+Task&lt;GraphLoadResult&gt; LoadGraphResultAsync(
+    LoadGraphParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: 이 맵 파일(<code>.atom</code> 형식)을 Atom 플랫폼에 업로드하고 가져오고 multipart/form-data 모드로 전송합니다.
+가져오기 전에 SDK은 먼저 현재 그래프 목록을 읽습니다. `paramsData.GraphName`이 이미 존재하는 경우 `InvalidOperationException`가 발생하고 `/Graph/LoadGraph`가 호출되지 않으며 기존 그래프를 덮어쓰지 않습니다. 새 그래프 이름을 사용하거나 기존 그래프를 삭제하고 다시 시도해야 합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.GraphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>가져온 후 플랫폼에 있는 이미지 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.FilePath</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>로컬 파일의 절대 또는 상대 경로</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>취소 토큰, 선택사항</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환값</strong>: <code>Task&lt;JsonElement&gt;</code>, 가져오기 결과 정보(<code>graphId</code>, <code>graphName</code>).</p>
+</div>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+var result = await client.Graph.LoadGraphResultAsync(
+    new LoadGraphParams("imported_graph", "/data/graphs/my_pipeline.atom"));
+Console.WriteLine($"가져오기 성공，그림 ID: {result.GraphId}");
+Console.WriteLine($"요청 상태: {result.Status}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_importextensionnodesbypathasync"><a class="anchor" href="#_importextensionnodesbypathasync"></a>ImportExtensionNodesByPathAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 원본 JsonElement 버전
+Task&lt;JsonElement&gt; ImportExtensionNodesByPathAsync(
+    ImportExtensionNodesByPathParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 일반 버전
+Task&lt;T&gt; ImportExtensionNodesByPathAsync&lt;T&gt;(
+    ImportExtensionNodesByPathParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: <code>LoadGraphAsync`로 압축을 푼 확장 노드 파일을 가져옵니다. 이 인터페이스는 일반적으로
+`LoadGraphAsync</code> 이후에 호출되면 매개변수가 반환 값으로 <code>LoadGraphAsync`에 전달됩니다.
+`ExtensionNodes</code> 필드의 경우 <code>LoadGraphAsync</code> 반환 개체 전체를 전달하지 마세요.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.ExtensionNodes</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonElement</code> 또는 <code>IReadOnlyDictionary&lt;string, object?&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>LoadGraphAsync</code> 반환 값의 <code>ExtensionNodes</code> 필드</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>취소 토큰, 선택사항</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var loadResult = await client.Graph.LoadGraphResultAsync(
+    new LoadGraphParams("imported_graph", "/data/graphs/my_pipeline.atom"));
+
+if (loadResult.ExtensionNodes.ValueKind == JsonValueKind.Object &amp;&amp;
+    loadResult.ExtensionNodes.EnumerateObject().Any())
+{
+    var importResult = await client.Graph.ImportExtensionNodesByPathAsync(
+        new ImportExtensionNodesByPathParams(loadResult.ExtensionNodes));
+    Console.WriteLine(importResult);
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_exportgraphasync"><a class="anchor" href="#_exportgraphasync"></a>ExportGraphAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 원본 JsonElement 버전
+Task&lt;JsonElement&gt; ExportGraphAsync(
+    ExportGraphParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 일반 버전
+Task&lt;T&gt; ExportGraphAsync&lt;T&gt;(
+    ExportGraphParams paramsData,
+    CancellationToken cancellationToken = default)
+
+// 강력한 형식의 편의 버전
+Task&lt;GraphExportResult&gt; ExportGraphResultAsync(
+    ExportGraphParams paramsData,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: 플랫폼의 그래프를 파일로 내보냅니다. 여기에는 딥러닝 모델 정보 및 사용자 정의 노드 정보가 포함될 수 있습니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.GraphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>내보낼 그래프의 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.DlModelsInfo</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, object?&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>딥 러닝 모델 정보, 선택 사항, 기본값은 빈 사전입니다.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>paramsData.CustomNodes</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IReadOnlyDictionary&lt;string, object?&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사용자 정의 노드 정보, 선택 사항, 기본값은 빈 사전입니다.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>취소 토큰, 선택사항</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환 값</strong>: <code>Task&lt;JsonElement&gt;</code>, 내보내기 결과(파일 경로 또는 다운로드 정보 포함).</p>
+</div>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+// 기본 내보내기（추가 정보 없이 제공됨）
+var result = await client.Graph.ExportGraphResultAsync(new ExportGraphParams("my_graph"));
+Console.WriteLine($"내보내기 경로: {result.FilePath}");
+
+// 모델 정보와 함께 내보내기
+var dlModels = new Dictionary&lt;string, object?&gt;
+{
+    ["ResNet50"] = new { version = "1.0", path = "/models/resnet50.onnx" }
+};
+var exportResult = await client.Graph.ExportGraphAsync(new ExportGraphParams("my_graph", dlModels));</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_opengraphasync"><a class="anchor" href="#_opengraphasync"></a>OpenGraphAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 원본 JsonElement 버전
+Task&lt;JsonElement&gt; OpenGraphAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 일반 버전
+Task&lt;T&gt; OpenGraphAsync&lt;T&gt;(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 강력한 형식의 편의 버전
+Task&lt;GraphOpenResult&gt; OpenGraphInfoAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: 지정된 그래프를 열고 최신 타임스탬프를 얻습니다. 일관성을 보장하기 위해 후속 편집 작업에서는 이 타임스탬프를 전달해야 합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>취소 토큰, 선택사항</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환 값</strong>: <code>Task&lt;JsonElement&gt;</code>, <code>timestamp</code> 및 기타 정보 포함, SDK는 자동으로 타임스탬프를 `TimestampStore`에 저장합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+var openResult = await client.Graph.OpenGraphInfoAsync("my_graph");
+Console.WriteLine($"열린 이미지，타임스탬프: {openResult.Timestamp}");
+
+// 개봉 후 바로 사용 가능 NodeService 노드 편집 수행
+var nodeInfo = await client.Node.CreateNodeInfoAsync(
+    new CreateNodeParams("my_graph", "ResizeImage"));
+Console.WriteLine($"노드 생성 요청 상태: {nodeInfo.Status}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_releasegraphasync"><a class="anchor" href="#_releasegraphasync"></a>ReleaseGraphAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 원본 JsonElement 버전
+Task&lt;JsonElement&gt; ReleaseGraphAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 일반 버전
+Task&lt;T&gt; ReleaseGraphAsync&lt;T&gt;(
+    string graphName,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: 그래프 리소스를 해제하고(클라이언트 내부 캐시의 타임스탬프 지우기) 그래프는 해제 후 열리지 않은 상태로 돌아갑니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>취소 토큰, 선택사항</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환값</strong>: <code>Task&lt;JsonElement&gt;</code>, 작동 상태 정보.</p>
+</div>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+await client.Graph.ReleaseGraphAsync("my_graph");
+Console.WriteLine("그래픽 리소스가 공개되었습니다");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_rungraphasync"><a class="anchor" href="#_rungraphasync"></a>RunGraphAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 원본 JsonElement 버전
+Task&lt;JsonElement&gt; RunGraphAsync(
+    string graphName,
+    CancellationToken cancellationToken = default,
+    TimeSpan? timeout = null)
+
+// 일반 버전
+Task&lt;T&gt; RunGraphAsync&lt;T&gt;(
+    string graphName,
+    CancellationToken cancellationToken = default,
+    TimeSpan? timeout = null)
+
+// 강력한 형식의 편의 버전
+Task&lt;GraphRunResult&gt; RunGraphResultAsync(
+    string graphName,
+    CancellationToken cancellationToken = default,
+    TimeSpan? timeout = null)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: 지정된 그래프의 전체 실행을 트리거합니다. SDK은 실행이 완료된 후 결과가 반환될 때까지 내부적으로 폴링합니다. 기본 대기 시간은 최대 30초입니다. `timeout`을 초과하면 `AtomTimeoutException`가 발생하고 예외에는 마지막 응답이 포함됩니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>발신자가 적극적으로 취소하기 위해 사용하는 취소 토큰</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>timeout</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>TimeSpan?</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>SDK 폴링 대기 시간 초과; `null`는 기본 30초를 사용하고, `Timeout.InfiniteTimeSpan`는 영원히 기다리는 것을 의미합니다.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환 값</strong>: <code>Task&lt;JsonElement&gt;</code>, 각 출력 포트의 값을 포함한 작업이 완료된 후의 결과 데이터입니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+var result = await client.Graph.RunGraphResultAsync(
+    "my_graph",
+    timeout: TimeSpan.FromSeconds(60));
+Console.WriteLine($"실행 완료，요청 상태: {result.Status}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_cleargraphasync"><a class="anchor" href="#_cleargraphasync"></a>ClearGraphAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 원본 JsonElement 버전
+Task&lt;JsonElement&gt; ClearGraphAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 일반 버전
+Task&lt;T&gt; ClearGraphAsync&lt;T&gt;(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 강력한 형식의 편의 버전
+Task&lt;GraphTimestampInfo&gt; ClearGraphTimestampAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: 그래프의 실행 상태를 지우고(중간 데이터 재설정) 그래프 구조는 유지합니다. 타임스탬프를 동기적으로 업데이트합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>취소 토큰, 선택사항</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환 값</strong>: <code>Task&lt;JsonElement&gt;</code>, 지워진 타임스탬프 정보를 포함합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+var tsInfo = await client.Graph.ClearGraphTimestampAsync("my_graph");
+Console.WriteLine($"클리어 완료，새로운 타임스탬프: {tsInfo.Timestamp}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_gettimestampasync"><a class="anchor" href="#_gettimestampasync"></a>GetTimestampAsync(&#8230;&#8203;)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 원본 JsonElement 버전
+Task&lt;JsonElement&gt; GetTimestampAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 일반 버전
+Task&lt;T&gt; GetTimestampAsync&lt;T&gt;(
+    string graphName,
+    CancellationToken cancellationToken = default)
+
+// 강력한 형식의 편의 버전
+Task&lt;GraphTimestampInfo&gt; GetTimestampInfoAsync(
+    string graphName,
+    CancellationToken cancellationToken = default)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적</strong>: 그래프의 현재 타임스탬프를 적극적으로 획득하여 SDK 내부의 `TimestampStore`로 업데이트합니다(연결 해제 및 재연결 후 상태를 재동기화할 수 있음).</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">이름</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graphName</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CancellationToken</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>취소 토큰, 선택사항</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환 값</strong>: <code>Task&lt;JsonElement&gt;</code>, <code>timestamp</code> 필드는 현재 타임스탬프입니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>예</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading.Tasks;
+using AtomSdk;
+
+var client = new AtomClient("http://localhost:8080");
+
+var tsInfo = await client.Graph.GetTimestampInfoAsync("my_graph");
+Console.WriteLine($"현재 타임스탬프: {tsInfo.Timestamp}");</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_전체_비즈니스_프로세스_예시"><a class="anchor" href="#_전체_비즈니스_프로세스_예시"></a>전체 비즈니스 프로세스 예시</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>다음 예에서는 그래프 생성부터 실행까지 전체 편집기 흐름을 보여줍니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using System;
+using System.Threading;
+using System.Threading.Tasks;
+using AtomSdk;
+using AtomSdk.Core;
+
+class GraphWorkflowExample
+{
+    static async Task Main()
+    {
+        var client = new AtomClient("http://localhost:8080");
+        const string graphName = "my_pipeline";
+
+        try
+        {
+            // 1. 다이어그램 만들기
+            var graphInfo = await client.Graph.CreateGraphInfoAsync(graphName, "이미지 처리 파이프라인");
+            Console.WriteLine($"[1] 다이어그램이 생성되었습니다.: {graphInfo.GraphId}, 요청 상태: {graphInfo.Status}");
+
+            // 2. 모든 사진 나열，생성이 성공했는지 확인하세요.
+            var summaries = await client.Graph.ListGraphSummariesAsync();
+            Console.WriteLine($"[2] 현재 사진 수: {summaries.Length}");
+
+            // 3. 오픈 다이어그램（타임스탬프 가져오기，후속 편집에는 타임스탬프가 필요합니다.）
+            await client.Graph.OpenGraphAsync(graphName);
+            Console.WriteLine("[3] 이미지가 열려 있습니다.");
+
+            // 4. 그래프에 노드 만들기（사용 NodeService）
+            var node1 = await client.Node.CreateNodeInfoAsync(graphName, "ResizeImage");
+            var node2 = await client.Node.CreateNodeInfoAsync(graphName, "DetectAndSegment");
+            Console.WriteLine($"[4] 생성됨 2 노드: {node1.NodeId}, {node2.NodeId}, 요청 상태={node2.Status}");
+
+            // 5. 노드 연결
+            await client.Node.ConnectNodesAsync(
+                graphName,
+                inputNodeId: node2.NodeId, inputPortName: "image",
+                outputNodeId: node1.NodeId, outputPortName: "resized_image");
+            Console.WriteLine("[5] 노드가 연결되었습니다");
+
+            // 6. 차트 실행，대부분은 기다려 30 초
+            var runResult = await client.Graph.RunGraphResultAsync(
+                graphName,
+                timeout: TimeSpan.FromSeconds(30));
+            Console.WriteLine($"[6] 실행 완료，요청 상태: {runResult.Status}");
+
+            // 7. 그래프 내보내기
+            var exportResult = await client.Graph.ExportGraphResultAsync(graphName);
+            Console.WriteLine($"[7] 그림이 내보내졌습니다.: {exportResult.FilePath}");
+
+            // 8. 릴리스 차트
+            await client.Graph.ReleaseGraphAsync(graphName);
+            Console.WriteLine("[8] 이미지가 공개되었습니다");
+        }
+        catch (AtomApiException ex)
+        {
+            Console.WriteLine($"서버 오류 {ex.Status}: {ex.Message}");
+        }
+        catch (AtomHttpException ex)
+        {
+            Console.WriteLine($"HTTP 오류 {ex.StatusCode}: {ex.Message}");
+        }
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="params.html">C# 매개변수 객체</a></span>
+  <span class="next"><a href="node.html">NodeService（C#）</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Parameter types and binding names :: Atom SDK Developer Guide</title>
+    <link rel="prev" href="point-cloud-protocol.html">
+    <link rel="next" href="../api/index.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          Online Product Documentation
+                  </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="Search documentation"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              This manual only
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            Switch manual
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK Developer Guide</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          Download Center
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          Official Website
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            English
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK Developer Guide</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">welcome</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">quick start</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">quick start</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">sample sample</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Getting Started</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK Getting Started</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService Getting Started</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService Getting Started</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService Getting Started</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">User Guide</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">Select the appropriate Service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">Graph and node operations</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">Error handling and troubleshooting</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">FAQ</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">basic concepts</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="what-is-atom-sdk.html">What is Atom SDK</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="graph-node-subgraph.html">graph, node, subgraph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="graph-vs-runtime.html">The difference between Graph and Runtime</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="timestamp.html">What is Timestamp</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="runtime-frame.html">Runtime input frames (RuntimeFrame / RuntimePassiveBinoFrame)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="point-cloud-protocol.html">Binary protocol for point cloud type input and output</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="param-binding.html">Parameter types and binding names</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API Reference</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API Reference Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python Overview and Installation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/params.html">Python parameter object</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/public_api.html">Python Public Utility API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ version — User Guide</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ parameter object</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">Atom SDK — C# Version</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/params.html">C# Parameter object</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK Developer Guide</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK Developer Guide</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK Developer Guide</a></li>
+    <li>basic concepts</li>
+    <li><a href="param-binding.html">Parameter types and binding names</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="On this page"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Parameter types and binding names</h1>
+<div class="sect1">
+<h2 id="_parameter_type_param_type"><a class="anchor" href="#_parameter_type_param_type"></a>Parameter type (param_type)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The parameters of each node are divided into two categories:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 42.8571%;">
+<col style="width: 42.8572%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top"></th>
+<th class="tableblock halign-left valign-top"><code>init_params</code> (initialization parameters)</th>
+<th class="tableblock halign-left valign-top"><code>run_params</code> (operation parameters)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Features</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">loads once, usually heavier (model files, configuration files, etc.)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Can be different per run, usually lighter (thresholds, switches, etc.)</p>
+<p class="tableblock">When will</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">take effect?
+When</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">calls <code>initial_node()</code>
+When</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">calls <code>activate_node()</code> or <code>run_graph()</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Typical content</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Model file path, network structure configuration, weight file</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Confidence threshold, maximum number of detections, ROI area</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Update cost</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">High: Node needs to be reinitialized after changes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Low: It can be changed at any time and it will take effect next time it is run.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="sect2">
+<h3 id="_usage_in_code"><a class="anchor" href="#_usage_in_code"></a>Usage in code</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeParamUpdate
+
+# Set initialization parameters(model file)
+client.node.set_node_param_data(
+    NodeParamUpdate(
+        "my_graph",
+        node_id,
+        "model",       # Parameter name,from get_node_info_in_graph Check
+        "init_params", # Fixed writing method
+        Path("/models/detector.bin"),  # Path Object automatically uploaded
+    )
+)
+
+# Set operating parameters(threshold)
+client.node.set_node_param_data(
+    NodeParamUpdate(
+        "my_graph",
+        node_id,
+        "confidence_threshold",
+        "run_params",  # Fixed writing method
+        0.85,
+    )
+)</code></pre>
+</div>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><code>param_type</code> has only two legal values: <code>"init_params"</code> and <code>"run_params"</code>. An error will not be reported if written incorrectly, but the parameters will not take effect.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_binding_name_binding_name"><a class="anchor" href="#_binding_name_binding_name"></a>Binding name (binding_name)</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_what_is_a_binding_name"><a class="anchor" href="#_what_is_a_binding_name"></a>What is a binding name</h3>
+<div class="paragraph">
+<p>The binding name is the <strong>externally exposed name</strong> of the node port or parameter, which is the interface for communication between the child graph and the parent graph.</p>
+</div>
+<div class="paragraph">
+<p>In the subgraph node (GraphNode), if the port inside the subgraph is set with a binding name, it can be:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Other nodes in the parent graph are connected to</p>
+</li>
+<li>
+<p>Access by name at runtime via RuntimeService</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If no binding name is set, the port is only visible inside the subgraph and cannot be directly accessed from the outside.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_port_name_vs_binding_name"><a class="anchor" href="#_port_name_vs_binding_name"></a>Port name vs Binding name</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 40%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Concept</th>
+<th class="tableblock halign-left valign-top">Explanation</th>
+<th class="tableblock halign-left valign-top">Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>origin_name</code> / port name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The original port or parameter name inside the node</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"output_image"</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>binding_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Exposed name (can be different)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"rgb_frame"</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The purpose of setting the binding name is to provide a more meaningful interface name to the outside world without exposing internal implementation details.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_binding_type_binding_type"><a class="anchor" href="#_binding_type_binding_type"></a>Binding type (binding_type)</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">value</th>
+<th class="tableblock halign-left valign-top">description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"inputs"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enter the binding name of the port</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"outputs"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Binding name of the output port</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"init_params"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Binding name of initialization parameter</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"run_params"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Binding name of running parameters</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_example_of_setting_a_binding_name"><a class="anchor" href="#_example_of_setting_a_binding_name"></a>Example of setting a binding name</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SubGraphBindingUpdate
+
+# Set the binding name for the output port of the subgraph internal node
+client.graph_node.set_binding_name(
+    SubGraphBindingUpdate(
+        "my_graph",
+        graph_node_id,
+        inner_node_id,
+        "outputs",
+        "output_image",    # The port name inside the node
+        "processed_frame", # External binding name
+    )
+)
+
+# Unbind(Pass empty string)
+client.graph_node.set_binding_name(
+    SubGraphBindingUpdate(
+        "my_graph",
+        graph_node_id,
+        inner_node_id,
+        "outputs",
+        "output_image",
+        "",  # An empty string indicates unbinding
+    )
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_what_binding_names_are_used_for_in_runtimeservice"><a class="anchor" href="#_what_binding_names_are_used_for_in_runtimeservice"></a>What binding names are used for in RuntimeService</h3>
+<div class="paragraph">
+<p>The shared parameter interface of RuntimeService accesses the parameters of the graph through the binding name:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import BindingRef, RuntimeParamsUpdate
+
+# Read the binding metainformation of the graph
+meta = client.runtime.get_meta_info("my_graph")
+print("Meta information request status:", meta["status"])
+# Return {"sharedParams": [...], "runtimeParams": [...]}
+# Each parameter has "bindingName" Field
+
+# Set shared parameters in batches by binding name
+client.runtime.set_shared_params(
+    RuntimeParamsUpdate("my_graph", {
+        "model_path": "/models/new_model.bin",  # bindingName → value
+        "max_detection": 10,
+    })
+)
+
+client.runtime.set_run_params(RuntimeParamsUpdate("my_graph", {"threshold": 0.7}))
+
+# Read output value by binding name
+output_value = client.runtime.get_binded_output_value(
+    BindingRef("my_graph", "processed_frame")  # bindingName
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_how_to_check_what_ports_and_parameters_a_node_has"><a class="anchor" href="#_how_to_check_what_ports_and_parameters_a_node_has"></a>How to check what ports and parameters a node has</h3>
+<div class="paragraph">
+<p>Use <code>get_node_info_in_graph</code> to see the full definition of a node:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeRef
+
+info = client.node.get_node_info_in_graph(NodeRef("my_graph", node_id))
+
+# View init_params
+for param in info["nodeInfo"].get("initParams", []):
+    print(f"  init_params: {param['name']} ({param['type']})")
+
+# View run_params
+for param in info["nodeInfo"].get("runParams", []):
+    print(f"  run_params: {param['name']} ({param['type']})")
+
+# View input ports
+for port in info["nodeInfo"].get("inputs", []):
+    print(f"  input: {port['name']}")
+
+# View output port
+for port in info["nodeInfo"].get("outputs", []):
+    print(f"  output: {port['name']}")</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="point-cloud-protocol.html">Binary protocol for point cloud type input and output</a></span>
+  <span class="next"><a href="../api/index.html">API Reference Overview</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

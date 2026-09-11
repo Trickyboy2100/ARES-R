@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>The difference between Graph and Runtime :: Atom SDK Developer Guide</title>
+    <link rel="prev" href="graph-node-subgraph.html">
+    <link rel="next" href="timestamp.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          Online Product Documentation
+                  </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="Search documentation"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              This manual only
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            Switch manual
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK Developer Guide</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          Download Center
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          Official Website
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            English
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK Developer Guide</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">welcome</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">quick start</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">quick start</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">sample sample</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Getting Started</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK Getting Started</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService Getting Started</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService Getting Started</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService Getting Started</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">User Guide</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">Select the appropriate Service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">Graph and node operations</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">Error handling and troubleshooting</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">FAQ</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">basic concepts</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="what-is-atom-sdk.html">What is Atom SDK</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="graph-node-subgraph.html">graph, node, subgraph</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="graph-vs-runtime.html">The difference between Graph and Runtime</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="timestamp.html">What is Timestamp</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="runtime-frame.html">Runtime input frames (RuntimeFrame / RuntimePassiveBinoFrame)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="point-cloud-protocol.html">Binary protocol for point cloud type input and output</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="param-binding.html">Parameter types and binding names</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API Reference</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API Reference Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python Overview and Installation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/params.html">Python parameter object</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/public_api.html">Python Public Utility API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ version — User Guide</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ parameter object</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">Atom SDK — C# Version</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/params.html">C# Parameter object</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK Developer Guide</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK Developer Guide</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK Developer Guide</a></li>
+    <li>basic concepts</li>
+    <li><a href="graph-vs-runtime.html">The difference between Graph and Runtime</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="On this page"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">The difference between Graph and Runtime</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>ATOM SDK has two ways to operate the graph: <strong>Graph mode (editing state)</strong> and <strong>Runtime mode (executing state)</strong>. Their interfaces are different and their applicable scenarios are also different.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_core_differences"><a class="anchor" href="#_core_differences"></a>Core differences</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 37.5%;">
+<col style="width: 37.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Dimension</th>
+<th class="tableblock halign-left valign-top">Graph Mode</th>
+<th class="tableblock halign-left valign-top">Runtime Mode</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Main purpose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Edit graph structure and debug nodes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">runs the graph as an execution engine</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">uses Service</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GraphService</code>、<code>NodeService</code>、<code>GraphNodeService</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RuntimeService</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Open with</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>client.graph.open_graph("my_graph")</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>client.runtime.load_graph("my_graph")</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parameter settings</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set one by one by node ID</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Batch settings by binding name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Input data</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Read/set port data</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Normal mode sending <code>RuntimeFrame</code>; Passive binocular mode sending EPICRAW3</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether to carry timestamp</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes (versioning required for editing operations)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_graph_mode_for_editing"><a class="anchor" href="#_graph_mode_for_editing"></a>Graph mode: for editing</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Use the Graph pattern when you need to build or modify a graph structure:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Create new graph, open graph, run graph, release graph, query graph list</p>
+</li>
+<li>
+<p>Create, delete, copy nodes</p>
+</li>
+<li>
+<p>Connect and disconnect node ports</p>
+</li>
+<li>
+<p>Set node parameters (init_params, run_params)</p>
+</li>
+<li>
+<p>Upload model file</p>
+</li>
+<li>
+<p>Read node output data</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from pathlib import Path
+from atom_sdk import CreateNodeParams, NodeParamUpdate, RuntimeFrame, RuntimeRunParams
+
+# Graph Pattern example:Create a graph and configure nodes
+client = AtomClient("http://127.0.0.1:10026")
+
+# Open the image and enter editing mode
+client.graph.open_graph("detection_graph")
+
+# Create node
+result = client.node.create_node(CreateNodeParams("detection_graph", "DetectorNode"))
+print("Create node request status:", result["status"])
+node_id = result["nodeId"]
+
+# Set parameters
+client.node.set_node_param_data(
+    NodeParamUpdate(
+        "detection_graph", node_id, "model_path", "init_params",
+        Path("/models/detector.bin"),
+    )
+)
+
+# Run chart
+run_result = client.graph.run_graph("detection_graph")
+print("Run request status:", run_result["status"])</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_runtime_mode_used_for_execution"><a class="anchor" href="#_runtime_mode_used_for_execution"></a>Runtime mode: used for execution</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When you need to use Atom as an execution engine, use Runtime mode:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The picture has been designed on the Atom front-end and the parameters have been configured.</p>
+</li>
+<li>
+<p>In normal mode, your program takes one frame (or multiple frames) of image + point cloud each time and sends it to Atom for execution.</p>
+</li>
+<li>
+<p>In passive binocular <code>passive_bino</code> mode, your program sends complete EPICRAW3 raw data</p>
+</li>
+<li>
+<p>Get the execution results (detection frames, grab points, etc.)</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>When using <code>runtime.run_graph</code>, the current version requires that there are <code>EpicPro输入</code> or <code>EpicPro输入(单组数据)</code> nodes and <code>EpicPro输出</code> nodes in the graph. Otherwise, it cannot run and an error will be reported.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python"># Runtime Pattern example:The picture is ready,Only responsible for execution
+client = AtomClient("http://127.0.0.1:10026")
+
+# Load graph(Not an editor,Is execution state initialization)
+load_result = client.runtime.load_graph("detection_graph")
+print("Load request status:", load_result["status"])
+
+# Normal mode:Package already exists EPICRAW,or use from_data Generate locally
+frame = RuntimeFrame.from_file(
+    "frame.epicraw",
+    cam2_base=[x, y, z, rx, ry, rz],  # Rotate vector form,The length is 6
+)
+result = client.runtime.run_graph(RuntimeRunParams("detection_graph", [frame]))
+print("Run request status:", result["status"])
+
+print(result["instanceList"])</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If <code>EpicProInput</code> in the picture is configured as <code>passive_bino</code>, do not use <code>RuntimeFrame</code> above. Please use <code>RuntimeRunParams.passive_bino_from_file(&#8230;&#8203;)</code> or <code>RuntimeRunParams.passive_bino_from_images(&#8230;&#8203;)</code> to pass EPICRAW3 instead. See <a href="runtime-frame.html" class="xref page">Runtime input frames (RuntimeFrame / RuntimePassiveBinoFrame)</a> for details.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_can_the_same_picture_be_used_in_both_modes_at_the_same_time"><a class="anchor" href="#_can_the_same_picture_be_used_in_both_modes_at_the_same_time"></a>Can the same picture be used in both modes at the same time?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Not recommended, but technically possible</strong>. Graph mode will modify the graph structure, which may lead to unexpected results when executed concurrently with Runtime.</p>
+</div>
+<div class="paragraph">
+<p>Recommended methods in actual projects:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Development phase</strong>: Editing and debugging graphs in Graph mode</p>
+</li>
+<li>
+<p><strong>Production phase</strong>: Fixed graph structure, only executed in Runtime mode</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_why_does_runtimeservice_have_its_own_list_graphs_and_get_all_nodes_info"><a class="anchor" href="#_why_does_runtimeservice_have_its_own_list_graphs_and_get_all_nodes_info"></a>Why does RuntimeService have its own list_graphs and get_all_nodes_info?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>These methods of the Runtime interface return "runtime visible" graphs and nodes, which may be different from the edit state view (for example, some nodes are filtered out in runtime mode). The two are also independent on the API route (<code>/Runtime/</code> vs <code>/Graph/</code>).</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_common_misunderstandings"><a class="anchor" href="#_common_misunderstandings"></a>Common misunderstandings</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Myth 1: run_graph in Graph mode and run_graph in Runtime mode are the same</strong></p>
+</div>
+<div class="paragraph">
+<p>Both can run graphs, but the mechanisms are different:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>GraphService.run_graph</code>: Run in edit mode, requires timestamp, suitable for debugging</p>
+</li>
+<li>
+<p><code>RuntimeService.run_graph</code>: Accepts multi-frame input, sends binary data, and returns structured inference results</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>When using <code>RuntimeService.run_graph</code>, the current version requires that there are <code>EpicPro输入</code> or <code>EpicPro输入(单组数据)</code> nodes and <code>EpicPro输出</code> nodes in the graph. Otherwise, it cannot run and an error will be reported.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><strong>Myth 2: You must first open_graph and then runtime.load_graph</strong></p>
+</div>
+<div class="paragraph">
+<p>The two are independent: <code>open_graph</code> enters the editing state, and <code>load_graph</code> enters the runtime state. There is no need to execute the former before the latter.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="graph-node-subgraph.html">graph, node, subgraph</a></span>
+  <span class="next"><a href="timestamp.html">What is Timestamp</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

@@ -1,0 +1,2909 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>RuntimeService（C++） :: Atom SDK 개발자 가이드</title>
+    <link rel="prev" href="graph_node.html">
+    <link rel="next" href="../csharp/overview.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          온라인 제품 문서
+                  </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="문서 검색"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              이 매뉴얼만
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            매뉴얼 전환
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK 개발자 가이드</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          다운로드 센터
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          공식 웹사이트
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            한국어
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK 개발자 가이드</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">환영합니다</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">빠른 시작</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">빠른 시작</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">샘플 샘플</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">입문 사용</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK 입문 사용</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">사용자 가이드</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">적절한 Service을 선택합니다.</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">그래프 및 노드 작업</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">오류 처리 및 문제 해결</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">FAQ</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">기본 개념</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/what-is-atom-sdk.html">Atom SDK 란 무엇입니까?</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-node-subgraph.html">그래프, 노드, 하위 그래프</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-vs-runtime.html">Graph과 Runtime의 차이점</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/timestamp.html">Timestamp이 무엇인가요?</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/runtime-frame.html">런타임 입력 프레임(RuntimeFrame / RuntimePassiveBinoFrame)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/point-cloud-protocol.html">포인트 클라우드 유형 입출력을 위한 바이너리 프로토콜</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/param-binding.html">매개변수 유형 및 바인딩 이름</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API 참조</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API 참조 개요</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python 개요 및 설치</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/params.html">Python 매개변수 객체</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/public_api.html">Python 공용 유틸리티 API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="overview.html">Atom SDK C++ 버전 — 사용자 가이드</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="params.html">C++ 매개변수 객체</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">Atom SDK — C# 버전</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/params.html">C# 매개변수 객체</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK 개발자 가이드</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK 개발자 가이드</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK 개발자 가이드</a></li>
+    <li>API 참조</li>
+    <li>C++ SDK</li>
+    <li><a href="runtime.html">RuntimeService（C++）</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="이 페이지의 내용"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">RuntimeService（C++）</h1>
+<div class="sect1">
+<h2 id="_서비스_소개"><a class="anchor" href="#_서비스_소개"></a>서비스 소개</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>RuntimeService`은 Atom SDK에 대한 추론 런타임 서비스로, 프로덕션 환경의 고주파 추론을 위해 특별히 설계되었습니다. `GraphService</code>/`NodeService`의 그래프 편집 프로세스와 달리 `RuntimeService`는 그래프 로드, 매개변수 설정, 일괄 추론 실행, 구성된 그래프에 대한 바인딩 출력 읽기 등 완전한 추론 폐쇄 루프를 제공합니다. 일반 이미지 + 포인트 클라우드 다중 프레임 입력, 수동 쌍안경 EPICRAW3 입력, 전략 노드 매개변수 및 그래프에 의존하지 않는 단일 노드 직접 실행 모드를 지원합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>헤더 파일:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+// 또는 개별적으로 인용（패스 client.hpp 자동으로 포함됨）
+#include "atom_sdk/services/runtime.hpp"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>입구:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">atom::sdk::AtomClient client("http://127.0.0.1:10026");
+atom::sdk::RuntimeService&amp; rs = client.runtime();</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_적용_가능한_시나리오"><a class="anchor" href="#_적용_가능한_시나리오"></a>적용 가능한 시나리오</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>구성/편집된 그래프를 런타임 그래프 및 루프 추론으로 로드</p>
+</li>
+<li>
+<p>일반 모드 또는 수동 쌍안 모드 EPICRAW3에서 이미지 + 포인트 클라우드 데이터를 입력하고 감지/분할 결과를 읽습니다.</p>
+</li>
+<li>
+<p>실행 중인 매개변수를 동적으로 업데이트합니다(그래프를 다시 작성하지 않음).</p>
+</li>
+<li>
+<p>바인딩 출력 읽기(JSON 결과 또는 포인트 클라우드 바이트)</p>
+</li>
+<li>
+<p>그래프 구조에 의존하지 않고 개별 노드를 빠르게 테스트</p>
+</li>
+<li>
+<p>반복적인 업로드를 피하기 위해 파일 형식 매개변수에 대해 MD5 쿼리</p>
+</li>
+</ul>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_핵심_유형"><a class="anchor" href="#_핵심_유형"></a>핵심 유형</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_run_graph_두_가지_입력_모드"><a class="anchor" href="#_run_graph_두_가지_입력_모드"></a>run_graph 두 가지 입력 모드</h3>
+<div class="paragraph">
+<p>`run_graph(const RuntimeRunParams&amp;)`은 `RuntimeRunParams::run_mode`을 기반으로 두 개의 입력 구조를 구별합니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">모드</th>
+<th class="tableblock halign-left valign-top"><code>run_mode</code></th>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">입력 내용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>일반 모드</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>"others"</code> 또는 비워두기</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>frames</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>하나 이상의 <code>RuntimeFrame</code>, 각 프레임에는 완전한 EPICRAW + `cam_to_base`가 포함됩니다.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>패시브 쌍안경 모드</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>"passive_bino"</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>passive_bino_frame</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>a <code>RuntimePassiveBinoFrame</code>, 완전한 EPICRAW3 + <code>cam_to_base</code> 포함</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>cam_to_base</code> 서버는 현재 길이 6(변환 + Rodrigues 회전 벡터)의 회전 벡터 형식인 <code>[x, y, z, rx, ry, rz]`만 지원하며 4x4/3x4 행렬은 지원하지 않습니다. 길이가 충족되지 않으면 생성 중에 `std::invalid_argument`가 발생합니다. `roi["cam2ROIFrame"]</code>(제공된 경우)도 길이 6의 회전 벡터 형식만 지원합니다.
+두 가지 모드를 혼합하지 마십시오. 일반 모드는 EPICRAW2 또는 표준 레이아웃 EPICRAW3을 캡슐화할 수 있습니다. 수동 쌍안경 모드는 `RuntimePassiveBinoFrame`를 사용해야 합니다.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_일반_모드_runtimeframe_구조"><a class="anchor" href="#_일반_모드_runtimeframe_구조"></a>일반 모드: RuntimeFrame 구조</h3>
+<div class="paragraph">
+<p>`RuntimeFrame`은 `run_mode="others"`의 핵심 매개변수인 일반 모드에서 EPICRAW의 전체 복사본을 캡슐화합니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">namespace atom::sdk {
+
+struct RuntimeFrame {
+    ByteBuffer epicraw;
+    JsonValue cam_to_base;
+    std::optional&lt;JsonValue&gt; roi;
+};
+
+}  // namespace atom::sdk</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>이미 EPICRAW bytes 또는 파일이 있는 경우 직접 캡슐화합니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto bytes_frame = atom::sdk::RuntimeFrame::from_bytes(epicraw_bytes, cam2base_json);
+auto file_frame = atom::sdk::RuntimeFrame::from_file("frame.epicraw", cam2base_json);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>원시 이미지 및 포인트 클라우드에서 생성:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">atom::sdk::RuntimePointData points{point_values, width, height, 3};
+atom::sdk::RuntimeImageData image{image_bytes, width, height, 3, 1};
+auto frame = atom::sdk::RuntimeFrame::from_data(
+    points, image, cam2base_json, intrinsic_json, distortion_json);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>버전이 지정되지 않은 경우 일반 내부 매개변수/왜곡은 EPICRAW2을 생성합니다. <code>camera_params`에 `TextureSrc</code>, <code>DepthSrc1</code> 또는 `DepthSrc2`가 포함되면 EPICRAW3가 생성됩니다. 표준 EPICRAW3은 전체 PointCloud이 아닌 `Depth + TextureBGR`만 씁니다.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_수동_쌍안경_모드_runtimepassivebinoframe"><a class="anchor" href="#_수동_쌍안경_모드_runtimepassivebinoframe"></a>수동 쌍안경 모드: RuntimePassiveBinoFrame</h3>
+<div class="paragraph">
+<p>다이어그램의 <code>EpicProInput</code> 노드가 `passive_bino`로 구성된 경우 EPICRAW3 원본 바이트의 전체 복사본을 제출하세요. 서버는 EPICRAW3에서 세 가지 이미지, 내부 매개변수, 왜곡 및 `passive_bino_params`를 구문 분석합니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto params = atom::sdk::RuntimeRunParams::passive_bino_from_file(
+    "detection_graph",
+    "/data/passive_bino.epicraw",
+    cam2base_json);
+
+auto result = client.runtime().run_graph(params);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>비즈니스 레이어가 EPICRAW3 bytes을 획득한 경우 <code>RuntimeRunParams::passive_bino_from_bytes(&#8230;&#8203;)`를 사용할 수 있습니다. 비즈니스 레이어가 3개의 원본 사진을 얻으면 `RuntimeRunParams::passive_bino_from_images(&#8230;&#8203;)`를 사용할 수 있으며 사진은 `RuntimePassiveBinoImage{data, width, height, mat_type}`로 표시됩니다. `mat_type`는 OpenCV Mat type 인코딩입니다(예: `CV_8UC1=0</code>, <code>CV_16UC1=2</code>, <code>CV_8UC3=16</code>).
+<code>passive_bino_from_images(&#8230;&#8203;)`의 `params`은 `DepthSrc1</code>, <code>DepthSrc2</code>, <code>TextureSrc</code> 및 metadata를 포함해야 하며, 각각은 다음 4개 필드를 포함해야 합니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">json::object camera_params;
+camera_params["CameraMatrix"] = json::array{
+    2113.997971632298, 0, 1956.222038925553,
+    0, 2113.7299751270057, 1505.0473199581195,
+    0, 0, 1};
+camera_params["CameraDistortion"] = json::array{
+    0.049901632334, -0.037810281265, -0.00048319461,
+    -0.000276258172, -0.026886293015};
+camera_params["CameraRotation"] = json::array{
+    0.9995132330503337, -0.005059159488191983, -0.030784766728731865,
+    0.004951704878090689, 0.9999813828533568, -0.003565748937897527,
+    0.030802233296787017, 0.003411576169582241, 0.999519676430619};
+camera_params["CameraTranslation"] = json::array{
+    -25.837377992238334, -0.6852264771262435, -4.372034519324568};
+
+json::object passive_bino_params;
+passive_bino_params["DepthSrc1"] = camera_params;
+passive_bino_params["DepthSrc2"] = camera_params;
+passive_bino_params["TextureSrc"] = camera_params;</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top"><code>RuntimePassiveBinoImage</code> 필드</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>data</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>원시 픽셀 바이트</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>width</code> / <code>height</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>이미지 너비 및 높이</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>mat_type</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>OpenCV Mat type, 예: <code>CV_8UC1=0</code>, <code>CV_16UC1=2</code>, <code>CV_8UC3=16</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_singlenodeparsedresult_유형권장"><a class="anchor" href="#_singlenodeparsedresult_유형권장"></a>SingleNodeParsedResult 유형(권장)</h3>
+<div class="paragraph">
+<p>`run_single_node_no_graph_parsed`은 `SingleNodeParsedResult`을 반환합니다. 서버의 원본 반환을 유지하고 `outputs`에서 식별 가능한 포인트 클라우드와 이미지를 구문 분석합니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">using SingleNodeParsedOutput =
+    std::variant&lt;JsonValue, std::vector&lt;ParsedPointCloud&gt;, std::vector&lt;ParsedImage&gt;&gt;;
+
+struct SingleNodeParsedResult {
+    JsonValue raw;
+    std::unordered_map&lt;std::string, SingleNodeParsedOutput&gt; outputs;
+};</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>읽기 방법:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">atom::sdk::SingleNodeParsedResult result =
+    client.runtime().run_single_node_no_graph_parsed(params);
+
+const auto&amp; clouds = std::get&lt;std::vector&lt;atom::sdk::ParsedPointCloud&gt;&gt;(
+    result.outputs.at("points"));</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_singlenoderesult_유형선택_사항"><a class="anchor" href="#_singlenoderesult_유형선택_사항"></a>SingleNodeResult 유형(선택 사항)</h3>
+<div class="paragraph">
+<p>`run_single_node_no_graph`은 variant인 원본 `SingleNodeResult`을 반환합니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">using SingleNodeResult = std::variant&lt;JsonValue, ByteBuffer&gt;;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>스스로 판단하고 읽어야 합니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">atom::sdk::SingleNodeResult result = client.runtime().run_single_node_no_graph(params);
+
+if (std::holds_alternative&lt;atom::sdk::JsonValue&gt;(result)) {
+    const auto&amp; json_result = std::get&lt;atom::sdk::JsonValue&gt;(result);
+    // 프로세스 JSON 결과
+} else {
+    const auto&amp; bin_result = std::get&lt;atom::sdk::ByteBuffer&gt;(result);
+    // 바이너리 결과 처리
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_singlenodeinputs_유형"><a class="anchor" href="#_singlenodeinputs_유형"></a>SingleNodeInputs 유형</h3>
+<div class="paragraph">
+<p>단일 노드 입력은 세 가지 유형을 지원합니다(variant으로 통합):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">using SingleNodeInput = std::variant&lt;JsonValue, ByteBuffer, std::filesystem::path&gt;;
+using SingleNodeInputs = std::unordered_map&lt;std::string, SingleNodeInput&gt;;</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_권장_호출_순서"><a class="anchor" href="#_권장_호출_순서"></a>권장 호출 순서</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">load_graph(graph_name)           ← 구성된 그래프 로드
+       ↓
+get_meta_info(graph_name)        ← 그래프에 노출된 매개변수 및 바인딩 이해（선택사항）
+       ↓
+set_shared_params(graph_name)    ← 다중 프레임 다중화를 위한 공유 매개변수 설정（선택사항）
+       ↓
+  ┌────────────────────────────────────┐
+  │   프레임별 추론 루프                       │
+  │                                    │
+  │   set_run_params(graph_name)       │  ← 매개변수를 실행하는 각 프레임（선택사항）
+  │          ↓                         │
+  │   run_graph(graph_name, frame)     │  ← 추론 수행
+  │          ↓                         │
+  │   get_binded_output_value /        │
+  │   get_binded_point_cloud           │  ← 바인딩 출력 읽기
+  └────────────────────────────────────┘
+       ↓
+release_graph(graph_name)        ← 리소스 해제</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_인터페이스_상세_설명"><a class="anchor" href="#_인터페이스_상세_설명"></a>인터페이스 상세 설명</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_load_graph"><a class="anchor" href="#_load_graph"></a>load_graph</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject load_graph(const std::string&amp; graph_name) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 후속 <code>run_graph</code> 사용을 위해 서버의 기존 그래프를 런타임에 로드합니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">매개변수</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>로드할 이미지 이름(서버에 존재)</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*반환 값: * <code>JsonObject</code>, 로딩 상태 정보가 포함됩니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+
+    auto result = client.runtime().load_graph("detection_graph");
+    std::cout &lt;&lt; "사진이 성공적으로 로드되었습니다." &lt;&lt; std::endl;
+    std::cout &lt;&lt; "요청 상태：" &lt;&lt; result.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_list_graphs"><a class="anchor" href="#_list_graphs"></a>list_graphs</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonArray list_graphs() const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 서버에 현재 표시되는 모든 이미지를 나열합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수:</strong> 없음</p>
+</div>
+<div class="paragraph">
+<p>*반환값: * <code>JsonArray</code>, 각 요소는 그래프의 기본 정보 객체입니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+
+    auto graphs = client.runtime().list_graphs();
+    std::cout &lt;&lt; "사용 가능한 이미지 수：" &lt;&lt; graphs.size() &lt;&lt; std::endl;
+
+    for (const auto&amp; g : graphs) {
+        std::string name = g.at("name").get&lt;std::string&gt;();
+        std::cout &lt;&lt; "  - " &lt;&lt; name &lt;&lt; std::endl;
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_all_nodes_info"><a class="anchor" href="#_get_all_nodes_info"></a>get_all_nodes_info</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject get_all_nodes_info() const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 서버에 등록된 모든 노드 유형 정의를 읽어 사용 가능한 노드를 이해합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>매개변수:</strong> 없음</p>
+</div>
+<div class="paragraph">
+<p>*반환 값: * <code>JsonObject</code>, 노드 유형 이름 key 및 노드 정의 value.</p>
+</div>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+
+    auto info = client.runtime().get_all_nodes_info();
+    std::cout &lt;&lt; "등록된 노드 유형 수：" &lt;&lt; info.size() &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_release_graph"><a class="anchor" href="#_release_graph"></a>release_graph</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject release_graph(const std::string&amp; graph_name) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 일반적으로 추론이 완료된 후 호출되는 로드된 런타임 그래프 리소스를 해제합니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">매개변수</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>공개될 이미지 이름</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*반환 값: * <code>JsonObject</code>, 결과를 공개합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+
+    auto loaded = client.runtime().load_graph("detection_graph");
+    std::cout &lt;&lt; "로드 요청 상태：" &lt;&lt; loaded.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    // ... 추론 ...
+
+    client.runtime().release_graph("detection_graph");
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_meta_info"><a class="anchor" href="#_get_meta_info"></a>get_meta_info</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject get_meta_info(const std::string&amp; graph_name) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 매개변수 이름, 유형 및 기본값 설명을 포함하여 그래프에 노출된 shared/runtime 매개변수 메타정보를 읽습니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">매개변수</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*반환 값: * <code>JsonObject</code>, 매개변수 메타 정보 및 바인딩 설명이 포함됩니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto loaded = client.runtime().load_graph("detection_graph");
+    std::cout &lt;&lt; "로드 요청 상태：" &lt;&lt; loaded.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    auto meta = client.runtime().get_meta_info("detection_graph");
+    std::cout &lt;&lt; "메타정보 요청현황：" &lt;&lt; meta.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    // 그래프의 구성 가능한 매개변수 보기
+    if (meta.contains("shared_params")) {
+        const auto&amp; sp = meta.at("shared_params");
+        for (const auto&amp; [k, v] : sp) {
+            std::cout &lt;&lt; "공유 매개변수：" &lt;&lt; k &lt;&lt; std::endl;
+        }
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_binded_output_value"><a class="anchor" href="#_get_binded_output_value"></a>get_binded_output_value</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonValue get_binded_output_value(const BindingRef&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 일반적으로 <code>run_graph</code> 다음에 호출되는 바인딩 이름(JSON 형식)으로 그래프의 단일 출력 값을 읽습니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">매개변수</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>binding_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>출력 바인딩 이름 (그래프 편집 중 `set_binding_name`을 통해 설정)</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*반환값: * <code>JsonValue</code>, 바인드된 포트의 출력값.</p>
+</div>
+<div class="paragraph">
+<p><strong>반환 값에서 데이터 읽기:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">atom::sdk::JsonValue output = client.runtime().get_binded_output_value(
+    {"detection_graph", "result"});
+
+// 객체로 읽다
+const auto&amp; obj = output;
+
+// 감지 프레임 읽기
+if (obj.contains("boxes")) {
+    const auto&amp; boxes = obj.at("boxes");
+    for (const auto&amp; box : boxes) {
+        const auto&amp; b = box;
+        double x1 = b.at("x1").get&lt;double&gt;();
+        double y1 = b.at("y1").get&lt;double&gt;();
+        double conf = b.at("confidence").get&lt;double&gt;();
+        // ...
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("detection_graph");
+
+    // 원시 이미지 및 포인트 클라우드에서 로컬로 생성됨 EPICRAW；cam_to_base 회전 벡터 형식입니다. [x, y, z, rx, ry, rz]
+    atom::sdk::RuntimePointData points{point_values, 640, 480, 3};
+    atom::sdk::RuntimeImageData image{image_bytes, 640, 480, 3, 1};
+    auto frame = atom::sdk::RuntimeFrame::from_data(
+        points,
+        image,
+        atom::sdk::json::parse("[0,0,0,0,0,0]"),
+        atom::sdk::json::parse(R"([[800,0,320],[0,800,240],[0,0,1]])"),
+        atom::sdk::json::parse("[0,0,0,0,0]"));
+
+    auto run_info = rs.run_graph({"detection_graph", {frame}});
+    std::cout &lt;&lt; "요청 상태：" &lt;&lt; run_info.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    // 바인딩 출력 읽기
+    auto output = rs.get_binded_output_value({"detection_graph", "detection_result"});
+    const auto&amp; obj = output;
+
+    if (obj.contains("count")) {
+        std::cout &lt;&lt; "감지된 타겟 수：" &lt;&lt; obj.at("count").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+    }
+
+    rs.release_graph("detection_graph");
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_binded_outputs_info"><a class="anchor" href="#_get_binded_outputs_info"></a>get_binded_outputs_info</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject get_binded_outputs_info(const std::string&amp; graph_name) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 그래프에 있는 모든 현재 출력 바인딩의 설명 정보(이름, 유형 등)를 읽어 사용 가능한 출력을 동적으로 검색합니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">매개변수</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="ulist">
+<ul>
+<li>
+<p>반환 값: * <code>JsonObject</code>, 모든 출력 바인딩에 대한 설명이 포함됩니다.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto loaded = client.runtime().load_graph("detection_graph");
+    std::cout &lt;&lt; "로드 요청 상태：" &lt;&lt; loaded.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    auto outputs_info = client.runtime().get_binded_outputs_info("detection_graph");
+
+    std::cout &lt;&lt; "바인딩 출력 수량：" &lt;&lt; outputs_info.size() &lt;&lt; std::endl;
+    for (const auto&amp; [name, info] : outputs_info) {
+        std::cout &lt;&lt; "  출력 바인딩 이름：" &lt;&lt; name &lt;&lt; std::endl;
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_binded_point_cloud_parsed"><a class="anchor" href="#_get_binded_point_cloud_parsed"></a>get_binded_point_cloud_parsed</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">std::vector&lt;ParsedPointCloud&gt; get_binded_point_cloud_parsed(
+    const std::string&amp; graph_name,
+    const std::string&amp; binding_name,
+    std::optional&lt;std::size_t&gt; point_dim = std::nullopt) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 우선적으로 사용하도록 권장되는 런타임 경계 포인트 클라우드를 직접 읽고 구문 분석합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto clouds = rs.get_binded_point_cloud_parsed(
+    "lidar_graph",
+    "filtered_cloud",
+    3
+);</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_binded_point_cloud"><a class="anchor" href="#_get_binded_point_cloud"></a>get_binded_point_cloud</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">ByteBuffer get_binded_point_cloud(const BindingRef&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 바인딩 이름으로 포인트 클라우드 클래스에서 출력된 원시 바이트를 읽습니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">매개변수</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>binding_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>포인트 클라우드 출력의 바인딩 이름</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*반환 값: * <code>ByteBuffer</code> (<code>std::vector&lt;uint8_t&gt;</code>), 포인트 클라우드 원시 바이너리 데이터.
+참고:
+* `Runtime/GetBindedPointCloud`의 헤더 정보에는 포인트 클라우드 복사본 수와 전체 요소 수만 포함됩니다.
+* 여기에는 각 점의 차원이 없으므로 `xyz`이어야 한다고 직접적으로 가정할 수는 없습니다.
+* 일반적인 시나리오에서는 위의 `get_binded_point_cloud_parsed(&#8230;&#8203;)`을 먼저 사용하는 것이 좋습니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;cstring&gt;
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("lidar_graph");
+
+    // cam_to_base 서버는 현재 회전 벡터 형식만 지원합니다.：[x, y, z, rx, ry, rz]
+    auto frame = atom::sdk::RuntimeFrame::from_bytes(
+        epicraw_bytes,
+        atom::sdk::json::parse("[0,0,0,0,0,0]"));
+
+    auto run_info = rs.run_graph({"lidar_graph", {frame}});
+    std::cout &lt;&lt; "요청 상태：" &lt;&lt; run_info.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    // 포인트 클라우드 바인딩 출력 읽기
+    atom::sdk::ByteBuffer pc_bytes = rs.get_binded_point_cloud(
+        {"lidar_graph", "filtered_cloud"});
+
+    std::cout &lt;&lt; "raw bytes: " &lt;&lt; pc_bytes.size() &lt;&lt; std::endl;
+
+    rs.release_graph("lidar_graph");
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_set_shared_params"><a class="anchor" href="#_set_shared_params"></a>set_shared_params</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonValue set_shared_params(const RuntimeParamsUpdate&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 여러 실행에서 재사용 가능하고 다중 프레임 추론 중에 변경되지 않은 공유 매개변수를 작성합니다(예: 모델 임계값, 범주 목록).</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">매개변수</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params_data</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>const JsonObject&amp;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>매개변수 키-값 쌍, key은 매개변수 이름, value는 매개변수 값</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*반환 값: * <code>JsonValue</code>, 연산 결과.</p>
+</div>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include "atom_sdk/core/json.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("detection_graph");
+
+    // 공유 매개변수 설정（전체 세션에 유효）
+    atom::sdk::JsonObject shared;
+    shared["confidence_threshold"] = 0.5;
+    shared["nms_threshold"] = 0.4;
+
+    // 카테고리 목록 설정（JSON 배열）
+    atom::sdk::JsonArray classes;
+    classes.push_back("person");
+    classes.push_back("car");
+    classes.push_back("truck");
+    shared["class_names"] = classes;
+
+    rs.set_shared_params({"detection_graph", shared});
+
+    std::cout &lt;&lt; "공유 파라미터 설정 완료" &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_set_run_params"><a class="anchor" href="#_set_run_params"></a>set_run_params</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonValue set_run_params(const RuntimeParamsUpdate&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 이 실행에 사용되는 작동 매개변수를 작성합니다. 이는 각 <code>run_graph</code> 전에 필요에 따라 조정될 수 있습니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">매개변수</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params_data</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>const JsonObject&amp;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>이 실행에 대한 매개변수 키-값 쌍</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*반환 값: * <code>JsonValue</code>, 연산 결과.</p>
+</div>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("detection_graph");
+
+    // 각 추론 전에 실행 매개변수를 조정할 수 있습니다.
+    atom::sdk::JsonObject run_params;
+    run_params["score_threshold"] = 0.6;
+    run_params["max_detections"] = 50;
+
+    rs.set_run_params({"detection_graph", run_params});
+
+    // 그런 다음 추론을 수행합니다....
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_run_graph_일반_모드_단일_프레임"><a class="anchor" href="#_run_graph_일반_모드_단일_프레임"></a>run_graph (일반 모드 단일 프레임)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject run_graph(const RuntimeRunParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 가장 일반적으로 사용되는 이미지 + 포인트 클라우드 추론 인터페이스인 일반 모드 단일 프레임 입력 실행 그래프를 사용합니다. 수동 쌍안 모드의 경우 `RuntimeRunParams::passive_bino_from_file/bytes/images(&#8230;&#8203;)`을 사용하십시오.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">매개변수</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>그림 이름(`load_graph`을 통해 로드됨)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>frame</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>const RuntimeFrame&amp;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>단일 프레임 입력 데이터</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*반환 값: * <code>JsonObject</code>, 실행 상태 정보가 포함됩니다. 일반적으로 결과는 `get_binded_output_value`을 통해 읽습니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>참고:</strong>
+runtime.run_graph을 사용하는 경우 현재 버전에서는 그래프에 <code>EpicPro输入</code> 또는 <code>EpicPro输入(单组数据)</code> 노드와 <code>EpicPro输出</code> 노드가 있어야 합니다. 그렇지 않으면 실행할 수 없으며 오류가 보고됩니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include "atom_sdk/core/json.hpp"
+
+// 가설 load_image 그리고 load_points 직접 구현한 데이터 로딩 기능입니다
+atom::sdk::ByteBuffer load_image(const std::string&amp; path);
+std::vector&lt;float&gt; load_points(const std::string&amp; path);
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("detection_graph");
+
+    // 카메라 내부 매개변수 구성（3x3 매트릭스，행 우선순위）
+    auto intrinsic = atom::sdk::json::parse(
+        "[[800.0, 0.0, 320.0], [0.0, 800.0, 240.0], [0.0, 0.0, 1.0]]"
+    );
+    auto distortion = atom::sdk::json::parse("[0.0, 0.0, 0.0, 0.0, 0.0]");
+    // cam_to_base 서버는 현재 회전 벡터 형식만 지원합니다.：[x, y, z, rx, ry, rz]
+    auto cam_to_base = atom::sdk::json::parse("[0,0,0,0,0,0]");
+
+    // 팩토리 메소드를 사용하여 원시 이미지와 포인트 클라우드에서 기본적으로 생성 EPICRAW
+    atom::sdk::RuntimeImageData image{load_image("/data/frame_001.bin"), 640, 480, 3, 1};
+    atom::sdk::RuntimePointData points{load_points("/data/pc_001.bin"), 640, 480, 3};
+    auto frame = atom::sdk::RuntimeFrame::from_data(
+        points,
+        image,
+        cam_to_base,
+        intrinsic,
+        distortion
+    );
+
+    // 추론 수행
+    auto run_info = rs.run_graph({"detection_graph", {frame}});
+    std::cout &lt;&lt; "요청 상태：" &lt;&lt; run_info.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    // 바인딩 출력 읽기
+    auto result = rs.get_binded_output_value({"detection_graph", "detection_result"});
+    const auto&amp; obj = result;
+
+    if (obj.contains("detections")) {
+        const auto&amp; dets = obj.at("detections");
+        for (const auto&amp; det : dets) {
+            const auto&amp; d = det;
+            std::string label = d.at("label").get&lt;std::string&gt;();
+            double conf = d.at("confidence").get&lt;double&gt;();
+            // ...
+        }
+    }
+
+    rs.release_graph("detection_graph");
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_run_graph_일반_모드_다중_프레임"><a class="anchor" href="#_run_graph_일반_모드_다중_프레임"></a>run_graph (일반 모드 다중 프레임)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject run_graph(const RuntimeRunParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 일반 모드를 사용하여 다중 카메라 또는 다중 프레임 융합 시나리오에 적합한 다중 프레임에 대한 일괄 실행 그래프를 입력합니다. <code>passive_bino</code> 모드는 하나의 `RuntimePassiveBinoFrame`만 통과합니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">매개변수</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>frames</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>const std::vector&lt;RuntimeFrame&gt;&amp;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>입력 데이터의 여러 프레임이 순서대로 정렬됨</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*반환 값: * <code>JsonObject</code>, 실행 상태 정보가 포함됩니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>참고:</strong>
+runtime.run_graph을 사용하는 경우 현재 버전에서는 그래프에 <code>EpicPro输入</code> 또는 <code>EpicPro输入(单组数据)</code> 노드와 <code>EpicPro输出</code> 노드가 있어야 합니다. 그렇지 않으면 실행할 수 없으며 오류가 보고됩니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include "atom_sdk/core/json.hpp"
+#include &lt;vector&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("multi_cam_graph");
+
+    // cam_to_base 서버는 현재 회전 벡터 형식만 지원합니다.：[x, y, z, rx, ry, rz]
+    std::vector&lt;atom::sdk::JsonValue&gt; cam_to_base_per_camera = {
+        atom::sdk::json::parse("[0,0,0,0,0,0]"),
+        atom::sdk::json::parse("[100,0,0,0,0,0]"),
+    };
+
+    // 두 개의 입력 프레임 구성（쌍안경 카메라와 같은）。각 카메라에는 고유한 기능이 있습니다. EPICRAW bytes 하나에 넣어 RuntimeFrame。
+    std::vector&lt;atom::sdk::RuntimeFrame&gt; frames;
+
+    for (int i = 0; i &lt; 2; ++i) {
+        frames.push_back(atom::sdk::RuntimeFrame::from_bytes(
+            camera_epicraws.at(i),
+            cam_to_base_per_camera.at(i)));
+    }
+
+    auto run_info = rs.run_graph({"multi_cam_graph", frames});
+    std::cout &lt;&lt; "요청 상태：" &lt;&lt; run_info.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    auto result = rs.get_binded_output_value({"multi_cam_graph", "fused_result"});
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_set_graph_binding_data"><a class="anchor" href="#_set_graph_binding_data"></a>set_graph_binding_data</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonValue set_graph_binding_data(
+    const RuntimeBindingDataUpdate&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 바인딩 이름에 따라 그래프의 입력 데이터를 직접 작성합니다. 비이미지/포인트 클라우드 유형 입력(예: 순수 JSON 데이터 스트림)에 적합합니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">매개변수</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>binding_data</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>const JsonObject&amp;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>입력 데이터, key은 바인딩 이름, value는 JSON 값입니다.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*반환 값: * <code>JsonValue</code>, 연산 결과.</p>
+</div>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("pose_graph");
+
+    // 바인딩 입력 데이터 직접 쓰기
+    atom::sdk::JsonObject binding_data;
+    atom::sdk::JsonObject pose;
+    pose["x"] = 1.5;
+    pose["y"] = 2.3;
+    pose["theta"] = 0.45;
+    binding_data["robot_pose"] = pose;
+
+    rs.set_graph_binding_data({"pose_graph", binding_data});
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_node_params_info_with_strategy"><a class="anchor" href="#_get_node_params_info_with_strategy"></a>get_node_params_info_with_strategy</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject get_node_params_info_with_strategy(const NodeRef&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 매개변수 이름, 유형 및 값 범위를 포함하여 정책 매개변수를 지원하는 노드 설명 정보를 읽습니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>지원 범위:</strong> 현재는 <code>PoseListFilter</code>, <code>PickPointFilter`만 지원합니다.
+`PoseListSorterInXOY</code>、<code>PickPointSorterInXOY</code>、<code>PickPointSorterNew</code>、
+<code>PoseListSorter</code> 노드에는 6가지 유형이 있습니다.
+반환 값의 `paramsData`은 일반적으로 `set_params_in_strategy(&#8230;&#8203;)`의 입력 템플릿으로 사용됩니다.
+먼저 조정해야 하는 필드를 수정한 다음 전체 `paramsData`을 반환합니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">매개변수</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>정책 노드 ID</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*반환 값: * <code>JsonObject</code>, 정책 노드의 매개변수 메타 정보를 포함합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("strategy_graph");
+
+    auto params_info = rs.get_node_params_info_with_strategy(
+        {"strategy_graph", "strategy_node_001"}
+    );
+
+    for (const auto&amp; [key, val] : params_info) {
+        std::cout &lt;&lt; "전략 매개변수：" &lt;&lt; key &lt;&lt; std::endl;
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_set_params_in_strategy"><a class="anchor" href="#_set_params_in_strategy"></a>set_params_in_strategy</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonValue set_params_in_strategy(
+    const RuntimeStrategyParamsUpdate&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 정책 매개변수를 지원하는 노드에 매개변수를 일괄적으로 작성하여 노드 동작을 조정합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>지원 범위:</strong> 현재는 <code>PoseListFilter</code>, <code>PickPointFilter`만 지원합니다.
+`PoseListSorterInXOY</code>、<code>PickPointSorterInXOY</code>、<code>PickPointSorterNew</code>、
+<code>PoseListSorter</code> 노드에는 6가지 유형이 있습니다. 다른 노드의 경우 공통 매개변수 인터페이스를 사용하여 매개변수를 설정하십시오.
+<code>RuntimeStrategyParamsUpdate.params_data`은 일반적으로 다음에서 비롯됩니다.
+`get_node_params_info_with_strategy(&#8230;&#8203;).at("paramsData")</code>. 작은 부분만 손으로 쓰지 마세요.
+매개변수; 서버에서 반환된 전체 구조를 유지하고 수정해야 하는 필드만 바꾸는 것이 좋습니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">매개변수</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>node_id</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>정책 노드 ID</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params_data</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>const JsonObject&amp;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>서버에서 반환된 `paramsData`에서 수정된 전체 매개변수 구조</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*반환 값: * <code>JsonValue</code>, 연산 결과.</p>
+</div>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("strategy_graph");
+
+    auto params_info = rs.get_node_params_info_with_strategy(
+        {"strategy_graph", "strategy_node_001"}
+    );
+    atom::sdk::JsonObject params_data =
+        params_info.at("paramsData");
+
+    atom::sdk::JsonObject by_score_config;
+    by_score_config["order"] = "HIGHEST";
+    by_score_config["differenceThreshold"] = 1;
+    by_score_config["groupInterval"] = 0.75;
+
+    atom::sdk::JsonObject by_score;
+    by_score["BY_SCORE"] = by_score_config;
+
+    atom::sdk::JsonArray strategies;
+    strategies.emplace_back(by_score);
+
+    atom::sdk::JsonObject strategies_config;
+    strategies_config["value"] = strategies;
+    params_data["run_params"]["strategies_config"] = strategies_config;
+
+    rs.set_params_in_strategy(
+        {"strategy_graph", "strategy_node_001", params_data}
+    );
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_get_file_param_md5"><a class="anchor" href="#_get_file_param_md5"></a>get_file_param_md5</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonObject get_file_param_md5(const FileParamRef&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 파일 형식 매개변수에 대해 서버측에 기록된 MD5 값을 쿼리합니다. 이 값은 파일을 다시 업로드해야 하는지 여부를 결정하는 데 사용됩니다(대용량 모델 파일의 반복 전송을 피하기 위해).</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">매개변수</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>사진 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>param_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>파일 매개변수 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>param_type</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>매개변수 범주, 기본값은 <code>"init_params"</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환 값:</strong> <code>JsonObject</code>, MD5 정보 포함:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>md5</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>string</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>서버 녹화 파일 MD5 값</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    rs.load_graph("detection_graph");
+
+    // 쿼리 모델 파일 MD5
+    auto md5_info = rs.get_file_param_md5(
+        "detection_graph",
+        "model_file",
+        "init_params"
+    );
+    std::cout &lt;&lt; "요청 상태：" &lt;&lt; md5_info.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+    if (md5_info.contains("md5")) {
+        std::string server_md5 = md5_info.at("md5").get&lt;std::string&gt;();
+        std::cout &lt;&lt; "서버 모델 MD5：" &lt;&lt; server_md5 &lt;&lt; std::endl;
+
+        // 로컬 파일로 MD5 대비，다시 업로드해야 하는지 결정
+        std::string local_md5 = "..."; // 로컬 파일 수 계산 MD5
+        if (server_md5 == local_md5) {
+            std::cout &lt;&lt; "모델이 최신 상태입니다.，업로드할 필요가 없습니다." &lt;&lt; std::endl;
+        }
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_run_single_node_no_graph_parsed_권장"><a class="anchor" href="#_run_single_node_no_graph_parsed_권장"></a>run_single_node_no_graph_parsed (권장)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">SingleNodeParsedResult run_single_node_no_graph_parsed(
+    const SingleNodeParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 그래프에 의존하지 않고 단일 노드를 직접 실행하며 <code>outputs`의 포인트 클라우드와 이미지를 직접 사용할 수 있는 데이터 구조로 자동 구문 분석합니다. 일반 사용자는 이 인터페이스를 먼저 사용하는 것이 좋습니다. 반환된 사전 key은 서버 `outputs</code> key와 일치하지만 포인트 클라우드 및 이미지 값은 구문 분석됩니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">매개변수</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>node_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>노드 유형 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>inputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SingleNodeInputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>입력 데이터 map, key는 포트 이름이고, value는 <code>JsonValue</code>/<code>ByteBuffer</code>/<code>filesystem::path</code> 중 하나입니다.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>run_params</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>작동 매개변수</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>init_params</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>초기화 매개변수</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>input_data_types</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>unordered_map&lt;string, string&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>선택 사항입니다. 입력 포트 유형 매핑; 일반적으로 생략되며, 필요한 경우 SDK은 노드 이름으로 쿼리됩니다.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>input_point_dims</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>unordered_map&lt;string, size_t&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>선택 사항입니다. 포인트 클라우드 입력 차원 힌트; 포트 유형에서 자동으로 추론되는 경우가 많습니다.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>output_data_types</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>unordered_map&lt;string, string&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>선택 사항입니다. 출력 포트 유형 매핑; 생략하면 SDK은 노드 이름으로 노드 출력 정의를 쿼리합니다.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>output_point_dims</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>unordered_map&lt;string, size_t&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>선택 사항입니다. 출력 포인트 클라우드 치수 프롬프트; <code>XYZPoints`의 기본값은 3이고, `NormalPoints</code>/`RGBPoints`의 기본값은 6입니다.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>반환 값:</strong> <code>SingleNodeParsedResult</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">using SingleNodeParsedOutput =
+    std::variant&lt;JsonValue, std::vector&lt;ParsedPointCloud&gt;, std::vector&lt;ParsedImage&gt;&gt;;
+
+struct SingleNodeParsedResult {
+    JsonValue raw;  // 서버측 원본 JSON；서버가 돌아오면 raw bytes，그렇다면 그것은 null
+    std::unordered_map&lt;std::string, SingleNodeParsedOutput&gt; outputs;
+};</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>구문 분석 규칙:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">출력 포트 유형</th>
+<th class="tableblock halign-left valign-top"><code>outputs[name]</code> 유형</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Points</code> / <code>XYZPoints</code> / <code>NormalPoints</code> / <code>RGBPoints</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::vector&lt;ParsedPointCloud&gt;</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Image</code> / <code>MonoImage</code> / <code>ColorImage</code> / <code>BinaryImage</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::vector&lt;ParsedImage&gt;</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>기타 유형</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonValue</code>, 원래 JSON 값을 서버에 유지합니다.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>실패 처리:</strong> 서버의 최상위 수준이 <code>status=0`이지만 단일 노드 결과가 `status_queue`인 경우
+`success:false</code>, <code>activate failed</code>, <code>error</code> 또는 부정적인 상태를 포함하며 SDK이 구문 분석됩니다.
+<code>AtomApiError`이 `outputs</code> 앞에 발생하면 예외 메시지에는 노드 이름과 `status_queue`가 포함됩니다.
+실패 이유.</p>
+</div>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;filesystem&gt;
+#include &lt;iostream&gt;
+#include &lt;variant&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    atom::sdk::SingleNodeParams params;
+    params.node_name = "EstimateNormal";
+    params.inputs["points"] = std::filesystem::path("/data/input.ply");
+
+    // 생략 가능，하자 SDK 노드 이름을 기반으로 한 자동 쿼리；명시적으로 입력하면 하나의 노드 정보 쿼리를 저장할 수 있습니다.。
+    params.output_data_types = {{"points", "XYZPoints"}};
+    params.output_point_dims = {{"points", 3}};
+
+    auto result = rs.run_single_node_no_graph_parsed(params);
+    const auto&amp; clouds = std::get&lt;std::vector&lt;atom::sdk::ParsedPointCloud&gt;&gt;(
+        result.outputs.at("points"));
+
+    std::cout &lt;&lt; "포인트 클라우드 수：" &lt;&lt; clouds.size() &lt;&lt; std::endl;
+    std::cout &lt;&lt; "첫 번째 포인트 클라우드 shape: ";
+    for (auto dim : clouds.front().shape) {
+        std::cout &lt;&lt; dim &lt;&lt; " ";
+    }
+    std::cout &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>!!! tip "언제 output_data_types을 명시적으로 입력해야 합니까?"
+SDK이 <code>node_name`을 통해 노드 출력 정의를 쿼리할 수 있는 경우 이를 채울 필요가 없습니다. 서버가 raw bytes를 반환하거나 하나의 `get_all_nodes_info()</code> 쿼리를 저장하려는 경우 `output_data_types`를 명시적으로 입력하는 것이 좋습니다. raw bytes 결과를 자동으로 구문 분석하려면 유일한 포인트 클라우드 출력 포트를 결정해야 합니다.</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_run_single_node_no_graph_선택사항_원시_반환"><a class="anchor" href="#_run_single_node_no_graph_선택사항_원시_반환"></a>run_single_node_no_graph (선택사항: 원시 반환)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">SingleNodeResult run_single_node_no_graph(
+    const SingleNodeParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>목적:</strong> 그래프에 의존하지 않고 단일 노드를 직접 실행하고 JSON 또는 바이너리 출력을 지원하여 원래 결과를 얻습니다. 서버의 원본 JSON/raw bytes를 직접 처리해야 하는 경우에만 사용하세요. 일반적인 시나리오에서는 <code>run_single_node_no_graph_parsed`을 먼저 사용하는 것이 좋습니다.
+parsed 인터페이스와 마찬가지로 `status_queue`이 노드의 내부 작업이 실패했음을 나타내는 경우 raw 인터페이스도 오류를 발생시킵니다.
+`AtomApiError</code>, 실패 시 정상적인 결과로 빈 `outputs`이 반환되는 것을 방지합니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">매개변수</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>node_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>노드 유형 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>inputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SingleNodeInputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>입력 데이터 map, key는 포트 이름이고, value는 <code>JsonValue</code>/<code>ByteBuffer</code>/<code>filesystem::path</code> 중 하나입니다.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>run_params</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>작동 매개변수</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>init_params</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>초기화 매개변수</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>input_data_types</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>unordered_map&lt;string, string&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>선택 사항입니다. 입력 포트 유형 매핑; 일반적으로 생략되며, SDK은 경로 또는 바이트 입력이 발생할 때 노드 이름으로 쿼리됩니다.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>input_point_dims</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>unordered_map&lt;string, size_t&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>선택 사항입니다. 포인트 클라우드 입력 치수 프롬프트; 일반적으로 <code>XYZPoints</code>/`NormalPoints`와 같은 유형에서 자동으로 추론됩니다.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*반환 값: * <code>SingleNodeResult</code> (<code>std::variant&lt;JsonValue, ByteBuffer&gt;</code>), `std::holds_alternative`를 사용하여 유형을 결정한 다음 `std::get`를 사용하여 값을 가져와야 합니다.
+`inputs`는 노드 입력 포트 유형별로 공통 데이터를 자동으로 처리합니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">포트 유형</th>
+<th class="tableblock halign-left valign-top">C++ 입력값</th>
+<th class="tableblock halign-left valign-top">SDK 동작</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>File</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::filesystem::path</code> / UTF-8 <code>ByteBuffer</code> / JSON 문자열</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>이 JSON에 경로 문자열로 들어가고 파일 내용을 읽지 않습니다.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Image</code> / <code>MonoImage</code> / <code>ColorImage</code> / <code>BinaryImage</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::filesystem::path</code> / <code>ByteBuffer</code> / base64 문자열</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>은 <code>data:image/&#8230;&#8203;;base64,&#8230;&#8203;</code> 문자열 목록으로 변환됩니다.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Points</code> / <code>XYZPoints</code> / <code>NormalPoints</code> / <code>RGBPoints</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>.ply</code> 경로 / 인코딩된 <code>ByteBuffer</code> / JSON 숫자 배열</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>`.ply`은 Atom 포인트 클라우드 바이너리로 변환됩니다. 인코딩된 바이트는 변경되지 않고 업로드됩니다.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>기타 유형</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonValue</code> / <code>ByteBuffer</code> / <code>path</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>은 이전 동작을 유지합니다. JSON을 `inputs`로, 바이트 또는 경로 내용이 파일 필드로 업로드됩니다.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>!!! note "PLY 지원 범위"
+C++ SDK은 현재 단일 노드 직접 작업에서 ASCII PLY의 <code>vertex</code> 속성 읽기를 지원합니다. <code>XYZPoints</code>/`Points`는 `x,y,z`을 읽고, `NormalPoints`는 `x,y,z,nx,ny,nz`를 읽고, `RGBPoints`은 `x,y,z,red,green,blue`을 읽습니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;filesystem&gt;
+#include &lt;iostream&gt;
+#include &lt;variant&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    // 입력 구성：섞다 JSON、바이너리、파일 경로
+    atom::sdk::SingleNodeInputs inputs;
+
+    // JSON 유형 입력
+    atom::sdk::JsonObject img_meta;
+    img_meta["width"] = 640;
+    img_meta["height"] = 480;
+    inputs["image_meta"] = atom::sdk::JsonValue(img_meta);
+
+    // 바이너리 유형 입력（이미지 바이트）
+    atom::sdk::ByteBuffer image_bytes = /* 이미지 바이트 */;
+    inputs["image"] = image_bytes;
+
+    // 경로 입력：SDK 노드 포트 유형에 따라 자동으로 처리됩니다.。
+    // 포트인 경우 File，경로 문자열만 전달합니다.；그렇다면 ColorImage，으로 변환됩니다 base64 사진 목록；
+    // 그렇다면 XYZPoints 그리고 경로는 .ply，으로 변환됩니다 Atom 포인트 클라우드 바이너리。
+    inputs["model_config"] = std::filesystem::path("/configs/yolo.yaml");
+
+    // 작동 매개변수
+    atom::sdk::JsonObject run_params;
+    run_params["score_threshold"] = 0.5;
+
+    // 초기화 매개변수
+    atom::sdk::JsonObject init_params;
+    init_params["device"] = "cuda:0";
+
+    // 단일 노드 실행，서버에서 원본 반환 받기
+    atom::sdk::SingleNodeParams params;
+    params.node_name = "YoloDetectionNode";
+    params.inputs = inputs;
+    params.run_params = run_params;
+    params.init_params = init_params;
+    atom::sdk::SingleNodeResult result = rs.run_single_node_no_graph(params);
+
+    // 원래 반환 유형 결정
+    if (std::holds_alternative&lt;atom::sdk::JsonValue&gt;(result)) {
+        const auto&amp; json_out = std::get&lt;atom::sdk::JsonValue&gt;(result);
+        const auto&amp; obj = json_out;
+
+        if (obj.contains("detections")) {
+            const auto&amp; dets = obj.at("detections");
+            std::cout &lt;&lt; "테스트 결과 수：" &lt;&lt; dets.size() &lt;&lt; std::endl;
+
+            for (const auto&amp; det : dets) {
+                const auto&amp; d = det;
+                std::string label = d.at("label").get&lt;std::string&gt;();
+                double conf = d.at("confidence").get&lt;double&gt;();
+                std::cout &lt;&lt; "  " &lt;&lt; label &lt;&lt; "：" &lt;&lt; conf &lt;&lt; std::endl;
+            }
+        }
+    } else {
+        const auto&amp; bin_out = std::get&lt;atom::sdk::ByteBuffer&gt;(result);
+        std::cout &lt;&lt; "바이너리 결과 크기：" &lt;&lt; bin_out.size() &lt;&lt; " bytes" &lt;&lt; std::endl;
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_run_single_node_json"><a class="anchor" href="#_run_single_node_json"></a>run_single_node_json</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">JsonValue run_single_node_json(const SingleNodeParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>*사용법: * JSON 출력을 강제로 적용하고 노드가 바이너리를 반환하는 경우 예외를 발생시키는 `run_single_node_no_graph`의 편의 버전입니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">매개변수</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>node_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>노드 유형 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>inputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SingleNodeInputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>입력 데이터</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>run_params</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>작동 매개변수</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>init_params</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>초기화 매개변수</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*반환값: * <code>JsonValue</code>, 노드의 JSON 출력 결과.</p>
+</div>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;iostream&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    atom::sdk::JsonObject run_params;
+    run_params["threshold"] = 0.5;
+
+    atom::sdk::SingleNodeParams params;
+    params.node_name = "ClassificationNode";
+    params.run_params = run_params;
+
+    // 직접 받아보세요 JSON 결과，필요 없음 variant 판사
+    auto json_result = rs.run_single_node_json(params);
+
+    const auto&amp; obj = json_result;
+    if (obj.contains("top1")) {
+        std::string top1 = obj.at("top1").get&lt;std::string&gt;();
+        std::cout &lt;&lt; "분류 결과：" &lt;&lt; top1 &lt;&lt; std::endl;
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_run_single_node_binary"><a class="anchor" href="#_run_single_node_binary"></a>run_single_node_binary</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">ByteBuffer run_single_node_binary(const SingleNodeParams&amp; params) const;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>*용도: * `run_single_node_no_graph`의 편의 버전, 이진 출력(예: 포인트 클라우드, 원시 이미지)을 예상하도록 강제하고 노드가 JSON을 반환하는 경우 예외를 발생시킵니다.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">매개변수</th>
+<th class="tableblock halign-left valign-top">유형</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>node_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>std::string</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>노드 유형 이름</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>inputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SingleNodeInputs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>입력 데이터</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>run_params</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>작동 매개변수</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>init_params</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JsonObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>초기화 매개변수</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="ulist">
+<ul>
+<li>
+<p>반환 값: * <code>ByteBuffer</code> (<code>std::vector&lt;uint8_t&gt;</code>), 노드의 바이너리 출력 데이터입니다.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>예:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include &lt;cstring&gt;
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+int main() {
+    atom::sdk::AtomClient client("http://127.0.0.1:10026");
+    auto&amp; rs = client.runtime();
+
+    atom::sdk::SingleNodeInputs inputs;
+    inputs["raw_cloud"] = atom::sdk::ByteBuffer(/* 원시 포인트 클라우드 바이트 */);
+
+    atom::sdk::SingleNodeParams params;
+    params.node_name = "PointCloudFilterNode";
+    params.inputs = inputs;
+
+    // 바이너리 결과를 직접 가져오기
+    atom::sdk::ByteBuffer filtered = rs.run_single_node_binary(params);
+
+    auto clouds = atom::sdk::decode_point_cloud_payload(filtered, false, 3);
+    std::cout &lt;&lt; "필터링된 포인트 클라우드 shape: ";
+    for (const auto dim : clouds.front().shape) {
+        std::cout &lt;&lt; dim &lt;&lt; " ";
+    }
+    std::cout &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_완전한_예"><a class="anchor" href="#_완전한_예"></a>완전한 예</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>다음은 그래프 로드, 매개변수 설정, 루프 추론, 출력 읽기, 리소스 해제 등 완전한 프로덕션 수준 추론 루프를 보여줍니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include "atom_sdk/client.hpp"
+#include "atom_sdk/core/json.hpp"
+#include &lt;cstring&gt;
+#include &lt;filesystem&gt;
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+// 데이터 로딩 시뮬레이션（실제 프로젝트에서 실제 구현으로 대체）
+atom::sdk::ByteBuffer capture_image() {
+    // 카메라에서 이미지 수집，원시 픽셀 바이트를 반환합니다.
+    return atom::sdk::ByteBuffer(640 * 480 * 3, 0);
+}
+
+std::vector&lt;float&gt; capture_point_cloud() {
+    // LiDAR에서 포인트 클라우드 수집
+    return std::vector&lt;float&gt;(640 * 480 * 3, 0.0F);
+}
+
+int main() {
+    try {
+        atom::sdk::AtomClient client("http://127.0.0.1:10026");
+        auto&amp; rs = client.runtime();
+
+        // ─── 1. 그래프 로드 ──────────────────────────────────────
+        auto loaded = rs.load_graph("robot_perception");
+        std::cout &lt;&lt; "사진 로딩 완료，요청 상태：" &lt;&lt; loaded.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+        // ─── 2. 쿼리 그래프 매개변수 메타정보 ────────────────────────────
+        auto meta = rs.get_meta_info("robot_perception");
+        std::cout &lt;&lt; "기본 정보 필드 수：" &lt;&lt; meta.size()
+                  &lt;&lt; "，요청 상태：" &lt;&lt; meta.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+        // ─── 3. 공유 매개변수 설정（전체 세션에 유효）────────────────
+        atom::sdk::JsonObject shared_params;
+        shared_params["confidence_threshold"] = 0.5;
+        shared_params["nms_threshold"] = 0.45;
+
+        atom::sdk::JsonArray class_names;
+        class_names.push_back("person");
+        class_names.push_back("car");
+        shared_params["class_names"] = class_names;
+
+        rs.set_shared_params({"robot_perception", shared_params});
+
+        // ─── 4. 카메라 매개변수 준비 ────────────────────────────────
+        auto intrinsic = atom::sdk::json::parse(
+            "[[800.0, 0.0, 320.0], [0.0, 800.0, 240.0], [0.0, 0.0, 1.0]]"
+        );
+        auto distortion = atom::sdk::json::parse(
+            "[-0.1, 0.05, 0.001, 0.001, -0.02]"
+        );
+        // cam_to_base 서버는 현재 회전 벡터 형식만 지원합니다.：[x, y, z, rx, ry, rz]
+        auto cam_to_base = atom::sdk::json::parse("[0.15, 0.0, 0.5, 0.012, 0.049, -0.045]");
+
+        // ─── 5. 메인 루프 추론 ──────────────────────────────────
+        for (int frame_idx = 0; frame_idx &lt; 10; ++frame_idx) {
+            std::cout &lt;&lt; "\n─── 프레임 " &lt;&lt; frame_idx &lt;&lt; " ───" &lt;&lt; std::endl;
+
+            // 5.1 이 프레임의 실행 매개변수를 설정합니다.（선택사항，프레임별로 조정）
+            atom::sdk::JsonObject run_params;
+            run_params["frame_id"] = frame_idx;
+            rs.set_run_params({"robot_perception", run_params});
+
+            // 5.2 입력 프레임 구성：원시 이미지 및 포인트 클라우드에서 로컬로 생성됨 EPICRAW
+            atom::sdk::RuntimeImageData image{capture_image(), 640, 480, 3, 1};
+            atom::sdk::RuntimePointData points{capture_point_cloud(), 640, 480, 3};
+            auto frame = atom::sdk::RuntimeFrame::from_data(
+                points,
+                image,
+                cam_to_base,
+                intrinsic,
+                distortion
+            );
+
+            // 5.3 단일 프레임 추론 수행
+            auto run_info = rs.run_graph({"robot_perception", {frame}});
+            std::cout &lt;&lt; "요청 상태：" &lt;&lt; run_info.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+            // 5.4 읽다 JSON 출력 바인딩
+            auto det_result = rs.get_binded_output_value(
+                {"robot_perception", "detection_result"});
+            const auto&amp; det_obj = det_result;
+
+            if (det_obj.contains("detections")) {
+                const auto&amp; dets = det_obj.at("detections");
+                std::cout &lt;&lt; "감지됨 " &lt;&lt; dets.size() &lt;&lt; " 목표" &lt;&lt; std::endl;
+
+                for (const auto&amp; det : dets) {
+                    const auto&amp; d = det;
+                    if (d.contains("label") &amp;&amp; d.contains("confidence")) {
+                        std::string label = d.at("label").get&lt;std::string&gt;();
+                        double conf = d.at("confidence").get&lt;double&gt;();
+                        std::cout &lt;&lt; "  [" &lt;&lt; label &lt;&lt; "] 자신감=" &lt;&lt; conf &lt;&lt; std::endl;
+                    }
+                }
+            }
+
+            // 5.5 포인트 클라우드 바인딩 출력 읽기（그렇다면）
+            try {
+                auto pc_bytes = rs.get_binded_point_cloud(
+                    {"robot_perception", "filtered_cloud"});
+                std::size_t n = pc_bytes.size() / sizeof(float);
+                std::cout &lt;&lt; "필터링 후 포인트 클라우드 포인트：" &lt;&lt; n / 3 &lt;&lt; std::endl;
+            } catch (const atom::sdk::AtomError&amp;) {
+                // 그래프에 포인트 클라우드 바인딩 출력이 없을 수 있습니다.，무시하다
+            }
+        }
+
+        // ─── 6. 그래프 리소스 출시 ───────────────────────────────────
+        rs.release_graph("robot_perception");
+        std::cout &lt;&lt; "\n그래픽 리소스가 공개되었습니다，추론 완료" &lt;&lt; std::endl;
+
+    } catch (const atom::sdk::AtomError&amp; e) {
+        std::cerr &lt;&lt; "SDK 오류：" &lt;&lt; e.what() &lt;&lt; std::endl;
+        return 1;
+    } catch (const std::exception&amp; e) {
+        std::cerr &lt;&lt; "비정상：" &lt;&lt; e.what() &lt;&lt; std::endl;
+        return 1;
+    }
+
+    return 0;
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="graph_node.html">GraphNodeService（C++）</a></span>
+  <span class="next"><a href="../csharp/overview.html">Atom SDK — C# 버전</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

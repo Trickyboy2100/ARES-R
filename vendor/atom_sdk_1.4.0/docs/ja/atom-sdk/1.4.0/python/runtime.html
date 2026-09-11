@@ -1,0 +1,1546 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>RuntimeService（Python） :: Atom SDK 開発者ガイド</title>
+    <link rel="prev" href="graph_node.html">
+    <link rel="next" href="../cpp/overview.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          オンライン製品ドキュメント
+                  </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="ドキュメントを検索"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              このマニュアルのみ
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            マニュアルを切り替え
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK 開発者ガイド</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          ダウンロードセンター
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          公式サイト
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            日本語
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK 開発者ガイド</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">ようこそ</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">クイックスタート</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">クイックスタート</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">サンプルサンプル</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">入門利用</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK 入門利用</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">ユーザーガイド</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">適切な Service を選択します</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">グラフとノードの操作</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">エラー処理とトラブルシューティング</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">よくある質問</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">基本的な概念</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/what-is-atom-sdk.html">Atom SDK とは</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-node-subgraph.html">グラフ、ノード、サブグラフ</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-vs-runtime.html">Graph と Runtime の違い</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/timestamp.html">Timestampとは何ですか</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/runtime-frame.html">ランタイム入力フレーム (RuntimeFrame / RuntimePassiveBinoFrame)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/point-cloud-protocol.html">点群タイプの入出力用のバイナリ プロトコル</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/param-binding.html">パラメータのタイプとバインディング名</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API リファレンス</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API リファレンスの概要</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="overview.html">Python の概要とインストール</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="params.html">Python パラメータ オブジェクト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="public_api.html">Python パブリック ユーティリティ API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ バージョン — ユーザーガイド</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ パラメータ オブジェクト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">Atom SDK — C# バージョン</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/params.html">C# パラメータオブジェクト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK 開発者ガイド</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK 開発者ガイド</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK 開発者ガイド</a></li>
+    <li>API リファレンス</li>
+    <li>Python SDK</li>
+    <li><a href="runtime.html">RuntimeService（Python）</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="このページの内容"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">RuntimeService（Python）</h1>
+<div class="sect1">
+<h2 id="_新しいパラメータ形式"><a class="anchor" href="#_新しいパラメータ形式"></a>新しいパラメータ形式</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>ランタイム インターフェイスは、複雑な入力パラメータをパラメータ オブジェクトにラップするようになりました。
+フィールドの完全な説明については、<a href="params.html" class="xref page">Python 参数对象</a> を参照してください。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import (
+    BindingRef,
+    FileParamRef,
+    NodeRef,
+    PointCloudRef,
+    RuntimeFrame,
+    RuntimePassiveBinoFrame,
+    RuntimeRunParams,
+    RuntimeBindingDataUpdate,
+    RuntimeParamsUpdate,
+    RuntimeStrategyParamsUpdate,
+    SingleNodeParams,
+)</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">メソッド</th>
+<th class="tableblock halign-left valign-top">入力パラメータの形式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>load_graph</code> / <code>release_graph</code> / <code>get_meta_info</code> / <code>get_binded_outputs_info</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>直接転送 <code>graph_name</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>list_graphs</code> / <code>get_all_nodes_info</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>にはパラメーターは必要ありません</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>set_shared_params</code> / <code>set_run_params</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>RuntimeParamsUpdate</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>run_graph</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>RuntimeRunParams</code>、通常モードでは <code>frames</code> は <code>list[RuntimeFrame]</code> です。 <code>passive_bino</code> モードでは、1 つの <code>RuntimePassiveBinoFrame</code> が送信されます</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>get_binded_output_value</code> / <code>get_binded_point_cloud</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>BindingRef</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>get_binded_point_cloud_parsed</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PointCloudRef</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>set_graph_binding_data</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>RuntimeBindingDataUpdate</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>get_node_params_info_with_strategy</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>NodeRef</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>set_params_in_strategy</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>RuntimeStrategyParamsUpdate</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>get_file_param_md5</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>FileParamRef</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>run_single_node_no_graph</code> / <code>run_single_node_no_graph_parsed</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SingleNodeParams</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_推奨される呼び出し順序"><a class="anchor" href="#_推奨される呼び出し順序"></a>推奨される呼び出し順序</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">runtime.load_graph(graph_name)
+        |
+runtime.get_meta_info(graph_name)
+        |
+runtime.set_shared_params(RuntimeParamsUpdate(...))
+runtime.set_run_params(RuntimeParamsUpdate(...))
+        |
+runtime.run_graph(RuntimeRunParams(...))
+        |
+runtime.get_binded_output_value(BindingRef(...))
+runtime.get_binded_point_cloud_parsed(PointCloudRef(...))
+        |
+runtime.release_graph(graph_name)</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_インターフェースの詳細説明"><a class="anchor" href="#_インターフェースの詳細説明"></a>インターフェースの詳細説明</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_load_graphgraph_name"><a class="anchor" href="#_load_graphgraph_name"></a><code>load_graph(graph_name)</code></h3>
+<div class="paragraph">
+<p>実行時にグラフをロードします。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">result = client.runtime.load_graph("my_pipeline")
+print("リクエストステータス：", result["status"])
+print("画像が読み込まれました：", result.get("GraphName"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_release_graphgraph_name"><a class="anchor" href="#_release_graphgraph_name"></a><code>release_graph(graph_name)</code></h3>
+<div class="paragraph">
+<p>実行時にグラフを解放します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">client.runtime.release_graph("my_pipeline")</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_list_graphs"><a class="anchor" href="#_list_graphs"></a><code>list_graphs()</code></h3>
+<div class="paragraph">
+<p>実行時に表示されるグラフのリストを取得します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">graphs = client.runtime.list_graphs()
+print("写真の枚数：", len(graphs))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_all_nodes_info"><a class="anchor" href="#_get_all_nodes_info"></a><code>get_all_nodes_info()</code></h3>
+<div class="paragraph">
+<p>実行時に表示されるすべてのノード定義を取得します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">nodes_info = client.runtime.get_all_nodes_info()
+print("ノードタイプの数：", len(nodes_info))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_meta_infograph_name"><a class="anchor" href="#_get_meta_infograph_name"></a><code>get_meta_info(graph_name)</code></h3>
+<div class="paragraph">
+<p>グラフの実行時に構成可能なバインディング パラメーターを取得します。最初にこのインターフェイスを呼び出してから、返された <code>bindingName</code> に従ってパラメーターを設定することをお勧めします。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">meta = client.runtime.get_meta_info("my_pipeline")
+print("リクエストステータス：", meta["status"])
+print("共有パラメータ：", meta.get("sharedParams"))
+print("動作パラメータ：", meta.get("runtimeParams"))</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>通常、戻り値には次のものが含まれます。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>sharedParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>共有パラメータ、つまり <code>init_params</code> 型バインディング</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>runtimeParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>実行パラメータ、つまり <code>run_params</code> タイプ バインディング</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_set_shared_paramsparams"><a class="anchor" href="#_set_shared_paramsparams"></a><code>set_shared_params(params)</code></h3>
+<div class="paragraph">
+<p>共有パラメータを設定します。通常は、モデル パスやカメラ ID など、複数の実行で再利用されるパラメータです。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ オブジェクト</strong>:<br>
+<code>RuntimeParamsUpdate</code></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>params_data</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>dict[str, Any]</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>は key という名前のパラメータ ディクショナリをバインドします</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import RuntimeParamsUpdate
+
+client.runtime.set_shared_params(
+    RuntimeParamsUpdate(
+        "my_pipeline",
+        {
+            "model_path": "/models/yolov8n.onnx",
+            "camera_id": "cam-01",
+        },
+    )
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_set_run_paramsparams"><a class="anchor" href="#_set_run_paramsparams"></a><code>set_run_params(params)</code></h3>
+<div class="paragraph">
+<p>実行パラメータ (通常はしきい値、数量制限など) を設定します。これらは実行ごとに変更される可能性があります。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ オブジェクト</strong>:<br>
+<code>RuntimeParamsUpdate</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import RuntimeParamsUpdate
+
+client.runtime.set_run_params(
+    RuntimeParamsUpdate("my_pipeline", {"confidence": 0.7, "max_detections": 100})
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_run_graphparams"><a class="anchor" href="#_run_graphparams"></a><code>run_graph(params)</code></h3>
+<div class="paragraph">
+<p>1 つ以上の入力フレームのセットを送信し、グラフを実行します。
+<strong>注意</strong>:
+runtime.run_graph を使用する場合、現在のバージョンでは、グラフ内に <code>EpicPro输入</code> または <code>EpicPro输入(单组数据)</code> ノードと <code>EpicPro输出</code> ノードが必要です。そうしないと実行できず、エラーが報告されます。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ オブジェクト</strong>:<br>
+<code>RuntimeRunParams</code></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>frames</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>list[RuntimeFrame]</code> または <code>list[RuntimePassiveBinoFrame]</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>入力フレームリスト</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>run_mode</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>デフォルト <code>"others"</code>;パッシブ両眼透過`"passive_bino"`</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="sect3">
+<h4 id="_2_つの入力モードを選択する方法"><a class="anchor" href="#_2_つの入力モードを選択する方法"></a>2 つの入力モードを選択する方法</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">モード</th>
+<th class="tableblock halign-left valign-top"><code>run_mode</code></th>
+<th class="tableblock halign-left valign-top"><code>frames</code> 渡すべきもの</th>
+<th class="tableblock halign-left valign-top">バイナリ コンテンツ</th>
+<th class="tableblock halign-left valign-top">該当するシナリオ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>通常モード</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>"others"</code> またはパスしません</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>1 つ以上の <code>RuntimeFrame</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>各フレームの完全なコピー EPICRAW bytes</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像 <code>EpicProInput</code> 通常の入力に従って実行</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>パッシブ双眼モード</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>"passive_bino"</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>、<code>RuntimePassiveBinoFrame</code>、<code>RuntimeRunParams.passive_bino_from_file(&#8230;&#8203;)</code> / <code>passive_bino_from_images(&#8230;&#8203;)</code> 構造の使用を推奨します</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>完全なコピー EPICRAW3 bytes</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>図 <code>EpicProInput</code> は <code>passive_bino</code> として構成されます</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>これら 2 つのモードを混合しないでください。
+* 通常モードでは <code>RuntimeFrame</code> を使用します。これは EPICRAW2 または通常の標準レイアウト EPICRAW3 をカプセル化できます。
+* パッシブ双眼モードにはスタンドアロン <code>RuntimePassiveBinoFrame</code> を使用し、通常の <code>RuntimeFrame</code> と混合しないでください。</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_通常モード_run_modeothers"><a class="anchor" href="#_通常モード_run_modeothers"></a>通常モード (<code>run_mode="others"</code>)</h4>
+<div class="paragraph">
+<p>通常モードでは <code>RuntimeFrame</code> を使用します。これには 3 つの現在のエントリがあります。
+* <code>RuntimeFrame.from_file(&#8230;&#8203;)</code>: 既存の EPICRAW ファイルを読み取ります。
+* <code>RuntimeFrame.from_bytes(&#8230;&#8203;)</code>: 既存の EPICRAW bytes を受信します。
+* <code>RuntimeFrame.from_data(&#8230;&#8203;)</code>: NumPy の画像、点群、カメラ パラメーターから EPICRAW を生成します。
+<code>from_data(&#8230;&#8203;)</code> のバージョン規則は次のとおりです。
+* 通常の`intrinsic`/<code>distortion`のみを送信した場合は、EPICRAW2が自動生成されます。
+* `camera_params</code> に <code>TextureSrc</code>、<code>DepthSrc1</code>、<code>DepthSrc2</code> などの拡張カメラ パラメーターが含まれる場合、EPICRAW3 が自動的に生成されます。
+* <code>version=2</code> または <code>version=3</code> を明示的に渡すと、自動選択をオーバーライドできます。
+* EPICRAW3 標準モードには <code>Depth + TextureBGR</code> のみが含まれます。 Depth は点群 Z の値から生成され、完全な PointCloud は含まれません。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import numpy as np
+from atom_sdk import RuntimeFrame, RuntimeRunParams
+
+height, width = 2, 3
+image = np.zeros((height, width, 3), dtype=np.uint8)
+points = np.zeros((height, width, 3), dtype=np.float32)
+points[:, :, 2] = 1.0
+
+frame = RuntimeFrame.from_data(
+    points=points,
+    image=image,
+    intrinsic=[
+        [600.0, 0.0, width / 2],
+        [0.0, 600.0, height / 2],
+        [0.0, 0.0, 1.0],
+    ],
+    distortion=[0.0, 0.0, 0.0, 0.0, 0.0],
+    camera_params={
+        "TextureSrc": {
+            "CameraMatrix": [600.0, 0.0, 320.0, 0.0, 600.0, 240.0, 0.0, 0.0, 1.0],
+            "CameraDistortion": [0.0, 0.0, 0.0, 0.0, 0.0],
+            "CameraRotation": [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0],
+            "CameraTranslation": [0.0, 0.0, 0.0],
+        }
+    },
+    cam2_base=[0.0, 0.0, 0.5, 0.0, 0.0, 0.0],  # ベクトル形式を回転：[x, y, z, rx, ry, rz]
+    roi={
+        "min": {"x": -0.5, "y": -0.5, "z": 0.1},
+        "max": {"x": 0.5, "y": 0.5, "z": 1.0},
+        "cam2ROIFrame": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    },
+)
+
+result = client.runtime.run_graph(
+    RuntimeRunParams("my_pipeline", frames=[frame])
+)
+print("リクエストステータス：", result["status"])
+print("インスタンスの数：", len(result.get("instanceList", [])))</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>すでにファイルまたは bytes がある場合、エンコードを繰り返す必要はありません。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from pathlib import Path
+
+cam2_base = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]  # ベクトル形式を回転：[x, y, z, rx, ry, rz]
+roi = None
+epicraw_bytes = Path("frame.epicraw").read_bytes()
+
+file_frame = RuntimeFrame.from_file("frame.epicraw", cam2_base=cam2_base, roi=roi)
+bytes_frame = RuntimeFrame.from_bytes(epicraw_bytes, cam2_base=cam2_base, roi=roi)</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>各 <code>RuntimeFrame</code> は、通常モード EPICRAW のコピーを表します。複数のカメラや複数のフレームを入力する場合は、`frames`リストに複数の`RuntimeFrame`を入れてください。</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_パッシブ双眼モード_run_modepassive_bino"><a class="anchor" href="#_パッシブ双眼モード_run_modepassive_bino"></a>パッシブ双眼モード (<code>run_mode="passive_bino"</code>)</h4>
+<div class="paragraph">
+<p>パッシブ双眼モードでは <code>RuntimePassiveBinoFrame</code> を使用します。リクエストには EPICRAW3 bytes および <code>cam2_base</code> の完全なコピーのみが必要です。サーバーは 3 つの画像、内部パラメータ、歪み、および EPICRAW3 からの <code>passive_bino_params</code> を解析します。
+<strong>RuntimePassiveBinoFrameフィールド</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">必須ですか?</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>epicraw3</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>bytes</code> または <code>bytes</code> に変換可能なオブジェクト</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>必須</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>完全なEPICRAW3生バイト</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>cam2_base</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Any</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>必須</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>カメラからベース座標系への変換、回転ベクトル形式、長さ 6 <code>[x, y, z, rx, ry, rz]</code> (平行移動 + Rodrigues 回転ベクトル);サーバーは現在この形式のみをサポートしており、行列はサポートしていません。 SDK はサーバーフィールド <code>cam2Base</code> にパッケージ化されます</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>最も安定した方法は、カメラを直接転送するか、SDK によって生成された完全な EPICRAW3 ファイルをキャプチャすることです。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import RuntimeRunParams
+
+params = RuntimeRunParams.passive_bino_from_file(
+    "my_pipeline",
+    "/data/passive_bino.epicraw",
+    cam2_base=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+)
+
+result = client.runtime.run_graph(params)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>ビジネス層が 3 つのパッシブ両眼画像を取得している場合は、SDK に EPICRAW3 をローカルで生成させることもできます。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">camera_params = {
+    "CameraMatrix": [2113.997971632298, 0.0, 1956.222038925553, 0.0, 2113.7299751270057, 1505.0473199581195, 0.0, 0.0, 1.0],
+    "CameraDistortion": [0.049901632334, -0.037810281265, -0.00048319461, -0.000276258172, -0.026886293015],
+    "CameraRotation": [0.9995132330503337, -0.005059159488191983, -0.030784766728731865, 0.004951704878090689, 0.9999813828533568, -0.003565748937897527, 0.030802233296787017, 0.003411576169582241, 0.999519676430619],
+    "CameraTranslation": [-25.837377992238334, -0.6852264771262435, -4.372034519324568],
+}
+
+params = RuntimeRunParams.passive_bino_from_images(
+    "my_pipeline",
+    image_list=[depth_src1, depth_src2, texture_bgr],
+    params={
+        "DepthSrc1": camera_params,
+        "DepthSrc2": camera_params,
+        "TextureSrc": camera_params,
+    },
+    cam2_base=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>image_list</code> の順序は <code>DepthSrc1</code>、<code>DepthSrc2</code>、<code>TextureSrc</code> に固定されます。各パス metadata には、<code>CameraMatrix</code>、<code>CameraDistortion</code>、<code>CameraRotation</code>、および <code>CameraTranslation</code> が含まれている必要があります。</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_binded_output_valueparams"><a class="anchor" href="#_get_binded_output_valueparams"></a><code>get_binded_output_value(params)</code></h3>
+<div class="paragraph">
+<p>出力バインディングの現在の値を読み取ります。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ オブジェクト</strong>:<br>
+<code>BindingRef</code></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>binding_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>出力バインディング名</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import BindingRef
+
+value = client.runtime.get_binded_output_value(
+    BindingRef("my_pipeline", "detect_result")
+)
+print(value)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_binded_outputs_infograph_name"><a class="anchor" href="#_get_binded_outputs_infograph_name"></a><code>get_binded_outputs_info(graph_name)</code></h3>
+<div class="paragraph">
+<p>グラフ上のすべての出力バインディングの説明情報を取得します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">info = client.runtime.get_binded_outputs_info("my_pipeline")
+for output in info.get("outputs", []):
+    print(output.get("bindingName"), output.get("type"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_binded_point_cloud_parsedparams"><a class="anchor" href="#_get_binded_point_cloud_parsedparams"></a><code>get_binded_point_cloud_parsed(params)</code></h3>
+<div class="paragraph">
+<p>ランタイム境界点群を読み取り、解析します。一般ユーザーはこのインターフェースを優先して使用します。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ オブジェクト</strong>:<br>
+<code>PointCloudRef</code></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>binding_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>点群出力バインディング名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>point_dim</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>int | None</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>各点の寸法、共通の値は <code>3</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>実行時の点群応答ヘッダーには各点の寸法が含まれている必要はないため、<code>point_dim=3</code> を明示的に渡すことをお勧めします。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import PointCloudRef
+
+clouds = client.runtime.get_binded_point_cloud_parsed(
+    PointCloudRef("my_pipeline", "cloud_output", point_dim=3)
+)
+print(clouds[0].shape)
+print(clouds[0].tolist()[:2])</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_binded_point_cloudparams"><a class="anchor" href="#_get_binded_point_cloudparams"></a><code>get_binded_point_cloud(params)</code></h3>
+<div class="paragraph">
+<p>出力バインディングの生の点群バイト ストリームを読み取ります。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ オブジェクト</strong>:<br>
+<code>BindingRef</code>
+<strong>戻り値</strong>: <code>bytes</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import BindingRef
+
+raw = client.runtime.get_binded_point_cloud(
+    BindingRef("my_pipeline", "cloud_output")
+)
+print(len(raw))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_set_graph_binding_dataparams"><a class="anchor" href="#_set_graph_binding_dataparams"></a><code>set_graph_binding_data(params)</code></h3>
+<div class="paragraph">
+<p>バインディング名に従ってグラフ上にバインディングデータを直接一括設定します。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ オブジェクト</strong>:<br>
+<code>RuntimeBindingDataUpdate</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import RuntimeBindingDataUpdate
+
+client.runtime.set_graph_binding_data(
+    RuntimeBindingDataUpdate(
+        "my_pipeline",
+        {
+            "input_image_path": "/data/test.jpg",
+            "confidence": 0.8,
+        },
+    )
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_node_params_info_with_strategyparams"><a class="anchor" href="#_get_node_params_info_with_strategyparams"></a><code>get_node_params_info_with_strategy(params)</code></h3>
+<div class="paragraph">
+<p>ノードパラメータ情報とポリシーパラメータの説明を取得します。
+<strong>サポート範囲</strong>: 現在、<code>PoseListFilter</code>、<code>PickPointFilter</code>、
+<code>PoseListSorterInXOY</code>、<code>PickPointSorterInXOY</code>、<code>PickPointSorterNew</code>、
+<code>PoseListSorter</code> ノードは次の 6 種類です。
+戻り値の <code>paramsData</code> は通常、<code>set_params_in_strategy(&#8230;&#8203;)</code> の入力テンプレートとして使用されます。
+まず調整が必要なフィールドを変更してから、完全な <code>paramsData</code> を返します。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ オブジェクト</strong>:<br>
+<code>NodeRef</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeRef
+
+info = client.runtime.get_node_params_info_with_strategy(
+    NodeRef("my_pipeline", "node_id")
+)
+print(info.get("strategy"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_set_params_in_strategyparams"><a class="anchor" href="#_set_params_in_strategyparams"></a><code>set_params_in_strategy(params)</code></h3>
+<div class="paragraph">
+<p>ノードポリシーでパラメータ値を設定します。
+<strong>サポート範囲</strong>: 現在、<code>PoseListFilter</code>、<code>PickPointFilter</code>、
+<code>PoseListSorterInXOY</code>、<code>PickPointSorterInXOY</code>、<code>PickPointSorterNew</code>、
+<code>PoseListSorter</code> ノードは次の 6 種類です。その他のノードの場合は、共通パラメータインターフェースを使用してパラメータを設定してください。
+<code>RuntimeStrategyParamsUpdate.params_data</code> は通常、次の場所から来ます
+<code>get_node_params_info_with_strategy(&#8230;&#8203;).get("paramsData")</code>。小さなセクションだけを手書きしないでください
+パラメータ;サーバーから返された完全な構造を保持し、変更する必要があるフィールドのみを置き換えることをお勧めします。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ オブジェクト</strong>:<br>
+<code>RuntimeStrategyParamsUpdate</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeRef, RuntimeStrategyParamsUpdate
+
+strategy = client.runtime.get_node_params_info_with_strategy(
+    NodeRef("my_pipeline", "node_id")
+)
+params_data = strategy["paramsData"]
+params_data["run_params"]["strategies_config"] = {
+    "value": [
+        {
+            "BY_SCORE": {
+                "order": "HIGHEST",
+                "differenceThreshold": 1,
+                "groupInterval": 0.75,
+            }
+        }
+    ]
+}
+
+client.runtime.set_params_in_strategy(
+    RuntimeStrategyParamsUpdate(
+        "my_pipeline",
+        "node_id",
+        params_data,
+    )
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_file_param_md5params"><a class="anchor" href="#_get_file_param_md5params"></a><code>get_file_param_md5(params)</code></h3>
+<div class="paragraph">
+<p>ファイル タイプ バインディング パラメーターによって現在参照されているファイルの md5 を取得します。このノードは主に、ノードのファイルデータが更新されたかどうかを判断するために使用されます。更新された場合は、不要な時間の消費を避けるために、パラメータを設定して初期化してください。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ オブジェクト</strong>:<br>
+<code>FileParamRef</code></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">フィールド</th>
+<th class="tableblock halign-left valign-top">タイプ</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>graph_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>画像名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>param_name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>パラメータマッピング名</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>param_type</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>str</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>パラメータ タイプ、デフォルト <code>"init_params"</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import FileParamRef
+
+result = client.runtime.get_file_param_md5(
+    FileParamRef("my_pipeline", "model_path")
+)
+print("リクエストステータス：", result["status"])
+print(result.get("md5"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_run_single_node_no_graph_parsedparams_推奨"><a class="anchor" href="#_run_single_node_no_graph_parsedparams_推奨"></a><code>run_single_node_no_graph_parsed(params)</code> (推奨)</h3>
+<div class="paragraph">
+<p>グラフを作成せずに、単一のノードがランタイム モードで直接実行され、<code>outputs</code> 内の点群と画像がトランスポート フォーマットから構造化オブジェクトに自動的に解析されます。</p>
+</div>
+<div class="paragraph">
+<p><strong>パラメータ オブジェクト</strong>:<br>
+<code>SingleNodeParams</code>
+<strong>最初にこのインターフェイスを使用する理由</strong>:
+* 返された構造はサーバー <code>outputs</code> と一致しており、出力 key は変更されません。
+* 点群出力は <code>list[ParsedPointCloud]</code> に解析され、直接表示 <code>shape</code> または <code>tolist()</code> と呼び出すことができます。
+* 画像出力は <code>list[ParsedImage]</code> に解析され、画像 bytes と形式を直接取得できます。
+* 通常の数値、文字列、検出結果などJSONの値はそのまま保持されます。
+* raw bytes を直接返す一部の点群ノードも、可能な限り出力ポートの種類に従って <code>{"outputs": {&#8230;&#8203;}}</code> に復元されます。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from pathlib import Path
+from atom_sdk import AtomClient, SingleNodeParams
+
+client = AtomClient("http://127.0.0.1:10026")
+
+result = client.runtime.run_single_node_no_graph_parsed(
+    SingleNodeParams(
+        node_name="EstimateNormal",
+        inputs={"points": Path("/data/scan.ply")},
+    )
+)
+
+clouds = result["outputs"]["points"]
+print(clouds[0].shape)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>入力は、ノードの入力ポート タイプによっても自動的に処理されます。
+* <code>File</code>: パス文字列として予約されており、ファイルの内容は読み取られません。
+* <code>ColorImage</code> / <code>Image</code>: ローカル イメージ パスまたはイメージ bytes は、サーバーで解析できる base64 イメージ リストに変換されます。
+* <code>Points</code> / <code>XYZPoints</code> / <code>NormalPoints</code> / <code>RGBPoints</code>: ローカル <code>.ply</code> パスは Atom 点群バイナリにエンコードされます。
+* ユーザーが用意した点群bytesは二次エンコードを行わずにそのまま点群入力としてアップロードされます。
+<strong>障害処理</strong>: サーバーの最上位が <code>status=0</code> であるが、単一ノードの結果が <code>status_queue</code> である場合
+<code>success: false</code>、<code>activate failed</code>、<code>error</code>、または否定的なステータスが含まれている場合、SDK が解析されます
+<code>outputs</code> の前に <code>AtomApiError</code> をスローします。例外的に、<code>payload</code> は完全な元の結果を保持します。
+<code>status_queue</code>、<code>outputs</code>、および <code>status</code> を参照してください。
+ユーザーが点群 payload を自分で準備した場合は、それを直接アップロードすることもできます。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SingleNodeParams, encode_point_cloud_payload, load_ply_points
+
+payload = encode_point_cloud_payload(
+    load_ply_points("/data/scan.ply"),
+    point_dim=3,
+)
+
+result = client.runtime.run_single_node_no_graph_parsed(
+    SingleNodeParams(
+        node_name="EstimateNormal",
+        inputs={"points": payload},
+    )
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>ノード情報を自動的にクエリできない場合は、入力/出力タイプを手動で入力できます。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SingleNodeParams
+
+result = client.runtime.run_single_node_no_graph_parsed(
+    SingleNodeParams(
+        node_name="EstimateNormal",
+        inputs={"points": payload},
+        input_data_types={"points": "XYZPoints"},
+        output_data_types={"points": "NormalPoints"},
+        output_point_dims={"points": 6},
+    )
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_run_single_node_no_graphparams_オプションの_raw_インターフェイス"><a class="anchor" href="#_run_single_node_no_graphparams_オプションの_raw_インターフェイス"></a><code>run_single_node_no_graph(params)</code> (オプションの raw インターフェイス)</h3>
+<div class="paragraph">
+<p>グラフを作成せずに、単一ノードをランタイム モードで直接実行し、サーバーの元の戻り値を保持します。
+<strong>使用する場合</strong>:
+* サーバーから返される実際のコンテンツをデバッグする必要があります。
+* 明らかに、出力解析ロジックを自分で制御したいと考えています。
+* <code>outputs</code> ディクショナリの代わりに、ノードは特別なプリミティブ bytes を返します。
+parsed インターフェイスと同様に、<code>status_queue</code> がノードの内部操作の失敗を示している場合、raw インターフェイスもスローします。
+<code>AtomApiError</code>、完全な生の結果を例外の <code>payload</code> に配置します。
+サーバー側の通常の JSON 出力は通常、次のものから取得されます。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">outputs_dict = {
+    output_name: convertResponse(port.data_type, port.get_val())
+    for output_name, port in node.outputs_map.items()
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>したがって、raw インターフェイスの <code>result["outputs"]</code> key は依然としてノードの出力ポート名ですが、value は SDK によって解決されていません。
+raw の結果を手動で解析して parsed インターフェイスに似た構造にしたい場合は、次のように記述できます。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from pathlib import Path
+from atom_sdk import SingleNodeParams, parse_single_node_result
+from atom_sdk.core.single_node import get_node_info_output_types
+
+node_name = "EstimateNormal"
+raw_result = client.runtime.run_single_node_no_graph(
+    SingleNodeParams(node_name, inputs={"points": Path("/data/scan.ply")})
+)
+
+node_info = client.runtime.get_all_nodes_info().get(node_name, {})
+output_data_types, point_dims = get_node_info_output_types(node_info)
+parsed_result = parse_single_node_result(
+    raw_result,
+    output_data_types=output_data_types,
+    point_dims=point_dims,
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>単一の出力値のみを解析することも可能です。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import parse_single_node_output
+
+clouds = parse_single_node_output("XYZPoints", raw_result["outputs"]["cloud"])
+images = parse_single_node_output("ColorImage", raw_result["outputs"]["preview"])</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>!!! warning "一部のノードの raw インターフェイスは bytes を返します"
+<code>CalculateEdge</code>、<code>CalculateEdgeNew</code>、<code>EstimateNormal</code>、<code>DownSample</code>、<code>DownSampleWithNormal</code>、<code>FilterByNormal</code>、これらのノードは、<code>run_single_node_no_graph(&#8230;&#8203;)</code> の下にカプセル化されていない元の点群バイトを直接返す場合があります。</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_完全な例"><a class="anchor" href="#_完全な例"></a>完全な例</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import numpy as np
+from atom_sdk import AtomClient, RuntimeFrame, RuntimeRunParams, RuntimeParamsUpdate
+from atom_sdk.core.errors import AtomApiError, AtomHttpError
+
+client = AtomClient(base_url="http://127.0.0.1:10026")
+GRAPH_NAME = "detect_pipeline"
+
+try:
+    load_result = client.runtime.load_graph(GRAPH_NAME)
+    print("ロードリクエストステータス：", load_result["status"])
+
+    meta = client.runtime.get_meta_info(GRAPH_NAME)
+    print("メタ情報リクエストのステータス：", meta["status"])
+    print("共有パラメータ：", [p.get("bindingName") for p in meta.get("sharedParams", [])])
+
+    client.runtime.set_shared_params(
+        RuntimeParamsUpdate(GRAPH_NAME, {"model_path": "/models/yolov8n.onnx"})
+    )
+    client.runtime.set_run_params(
+        RuntimeParamsUpdate(GRAPH_NAME, {"confidence": 0.6})
+    )
+
+    height, width = 2, 3
+    image = np.zeros((height, width, 3), dtype=np.uint8)
+    points = np.zeros((height, width, 3), dtype=np.float32)
+    points[:, :, 2] = 1.0
+    frame = RuntimeFrame.from_data(
+        points=points,
+        image=image,
+        intrinsic=[[600.0, 0.0, 320.0], [0.0, 600.0, 240.0], [0.0, 0.0, 1.0]],
+        distortion=[0.0, 0.0, 0.0, 0.0, 0.0],
+        cam2_base=[0.0, 0.0, 0.5, 0.0, 0.0, 0.0],  # ベクトル形式を回転：[x, y, z, rx, ry, rz]
+    )
+
+    result = client.runtime.run_graph(
+        RuntimeRunParams(GRAPH_NAME, frames=[frame])
+    )
+    print("実行リクエストのステータス：", result["status"])
+    print("検出インスタンスの数：", len(result.get("instanceList", [])))
+
+except AtomHttpError as exc:
+    print("ネットワークエラー：", exc)
+except AtomApiError as exc:
+    print("サーバーエラー：", exc)
+finally:
+    client.runtime.release_graph(GRAPH_NAME)</code></pre>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="graph_node.html">GraphNodeService（Python）</a></span>
+  <span class="next"><a href="../cpp/overview.html">Atom SDK C++ バージョン — ユーザーガイド</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>C# — EpicRaw 解析 :: Epic Eye SDK 开发手册</title>
+    <link rel="prev" href="capture.html">
+    <link rel="next" href="camera-config.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+         <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" /> 
+         <span class="navbar-title">在线产品文档</span>
+      </a>
+
+      
+
+
+    </div>
+
+      <div id="topbar-nav" class="navbar-menu">
+        <div class="navbar-end">
+
+          
+            <div class="navbar-item search hide-for-print">
+              <div id="search-field" class="field has-filter">
+                <input id="search-input" type="text" placeholder="输入关键词搜索" >
+                <label class="filter checkbox">
+                  <input type="checkbox" data-facet-filter="component:epic-eye-sdk">仅本手册
+                </label>
+              </div>
+            </div>
+          
+          <button class="navbar-burger" data-target="topbar-nav">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">切换手册</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Epic Eye SDK 开发手册</a>
+          </div>
+        </div>
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">下载中心</a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">官网</a>
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+            <a class="navbar-link" href="#"><span class="globe-icon">🌐</span>简体中文</a>
+            <div class="navbar-dropdown">
+                <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+                <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+                <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+            </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-logo {
+  height: 32px;
+  margin-right: 8px;
+}
+
+.navbar-title {
+  font-size: 18px;
+  color: #333;
+}
+
+.globe-icon {
+  margin-right: 5px;
+}
+
+.navbar-item {
+  color: #000 !important;
+}
+
+.navbar-item:hover {
+  background-color: #3273dc !important;
+  color: #fff !important;
+}
+
+.navbar-item a {
+  color: #000 !important;
+}
+
+.navbar-item a:hover {
+  color: #fff !important;
+}
+
+.navbar-dropdown .navbar-item {
+  color: #000 !important;
+}
+
+.navbar-dropdown .navbar-item:hover {
+  background-color: #3273dc !important;
+  color: #fff !important;
+}
+
+.navbar-link:hover {
+  background-color: #3273dc !important;
+  color: #fff !important;
+}
+
+.navbar-link a {
+  color: #000 !important;
+}
+
+.navbar-link a:hover {
+  color: #fff !important;
+}
+
+.language-selector .navbar-link {
+  display: flex;
+  align-items: center;
+  color: #000 !important;
+}
+
+.navbar-link {
+  color: #000 !important;
+}
+
+/* 添加这个新规则，使下拉菜单激活时保持链接的蓝色背景 */
+.navbar-item.has-dropdown.is-active .navbar-link,
+.navbar-item.has-dropdown:focus .navbar-link,
+.navbar-item.has-dropdown:focus-within .navbar-link {
+  background-color: #3273dc !important;
+  color: #fff !important;
+}
+
+/* 添加这个规则，确保鼠标悬停在下拉菜单项上时父级链接保持蓝色背景 */
+.navbar-item.has-dropdown:hover .navbar-link {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* 添加这个特定的样式规则，确保搜索框区域在悬停时背景不变 */
+.navbar-item.search.hide-for-print:hover {
+  background-color: transparent !important;  /* 使背景透明，保持原来的背景色 */
+}
+
+/* 确保搜索框内的输入框在悬停时也不改变背景 */
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input {
+  background-color: inherit !important;
+}
+</style> <div class="body">
+<div class="nav-container" data-component="epic-eye-sdk" data-version="4.0.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Epic Eye SDK 开发手册</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">欢迎</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">快速开始</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">快速开始</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/examples.html">示例</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">使用指南</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/discovery.html">相机发现与连接</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/capture.html">拍摄与 EpicRaw 解码</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/config.html">相机配置与参数</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/intrinsic-calibration.html">内参标定</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/hand-eye-calibration.html">手眼标定</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/line-scan.html">线扫采集</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/stream2d.html">Stream2D 实时视频</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API 参考</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API 参考总览</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="overview.html">C# — 概览与集成</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="device.html">C# — 设备与网络</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="capture.html">C# — 拍摄与数据获取</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="epicraw.html">C# — EpicRaw 解析</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="camera-config.html">C# — 相机配置</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="intrinsics.html">C# — 内参与去畸变 LUT</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="intrinsic-calibration.html">C# — 内参标定</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="hand-eye-calibration.html">C# — 手眼标定</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="line-scan.html">C# — 线扫</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="stream2d.html">C# — Stream2D</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="alignment.html">C# — 纹理对齐</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="data-models.html">C# — 数据类型与字段</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python — 概览与安装</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">Python — 请求运行配置</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/device.html">Python — 设备与网络</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/capture.html">Python — 拍摄与数据获取</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/epicraw.html">Python — EpicRaw 解析</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/camera-config.html">Python — 相机配置</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/intrinsics.html">Python — 内参与去畸变 LUT</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/intrinsic-calibration.html">Python — 内参标定</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/hand-eye-calibration.html">Python — 手眼标定</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/line-scan.html">Python — 线扫</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/stream2d.html">Python — Stream2D</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/alignment.html">Python — 纹理对齐</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/data-models.html">Python — 数据类型与字段</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">C++ — 概览与集成</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/device.html">C++ — 设备与网络</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/capture.html">C++ — 拍摄与数据获取</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/epicraw.html">C++ — EpicRaw 解析</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/camera-config.html">C++ — 相机配置</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/intrinsics.html">C++ — 内参与去畸变 LUT</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/intrinsic-calibration.html">C++ — 内参标定</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/hand-eye-calibration.html">C++ — 手眼标定</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/line-scan.html">C++ — 线扫</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/stream2d.html">C++ — Stream2D</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/alignment.html">C++ — 纹理对齐与补全</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/data-models.html">C++ — 数据类型与字段</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Epic Eye SDK 开发手册</span>
+    <span class="version">4.0.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Epic Eye SDK 开发手册</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">4.0.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Epic Eye SDK 开发手册</a></li>
+    <li>API 参考</li>
+    <li>C# SDK</li>
+    <li><a href="epicraw.html">C# — EpicRaw 解析</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="本页内容"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside><article class="doc">
+<h1 class="page">C# — EpicRaw 解析</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>对应 <code>EpicEye.EpicRaw.cs</code>。本模块不连接相机；同一份字节只加载一次，然后从同一个 <code>EpicRawDocument</code> 按需解码图像、深度、点云、配置和元数据。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_接口详解"><a class="anchor" href="#_接口详解"></a>接口详解</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_tryloadepicrawdocumentfrombytes"><a class="anchor" href="#_tryloadepicrawdocumentfrombytes"></a><code>TryLoadEpicRawDocumentFromBytes</code></h3>
+<div class="paragraph">
+<p><strong>用途</strong>：识别 EpicRaw 格式并生成完整的 <code>EpicRawDocument</code>。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 30%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>rawData</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>byte[]?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">待解析的 EpicRaw 数据。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>document</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="data-models.html#epicraw-document" class="xref page"><code>EpicRawDocument?</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">EpicRawDocument。</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>bool</code>；成功时得到 <a href="data-models.html#epicraw-document" class="xref page"><code>EpicRawDocument</code></a>。</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_decodeimagefromepicrawdocument"><a class="anchor" href="#_decodeimagefromepicrawdocument"></a><code>DecodeImageFromEpicRaw(document)</code></h3>
+<div class="paragraph">
+<p><strong>用途</strong>：解码用于显示/保存的 BGR 纹理图。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 30%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>epicRaw</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="data-models.html#epicraw-document" class="xref page"><code>EpicRawDocument</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">已加载的 EpicRawDocument。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dataType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="data-models.html#epicraw-data-type" class="xref page"><code>EpicRawDataType</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">要读取的 EpicRaw 数据类型。</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>(byte[]? imageBytes, int? imageWidth, int? imageHeight)</code>。</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_decodeimagefromepicrawdocument_datatype"><a class="anchor" href="#_decodeimagefromepicrawdocument_datatype"></a><code>DecodeImageFromEpicRaw(document, dataType)</code></h3>
+<div class="paragraph">
+<p><strong>用途</strong>：从 EpicRaw3 按元素类型读取原始图像，不做颜色转换或对齐。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 30%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>epicRaw</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="data-models.html#epicraw-document" class="xref page"><code>EpicRawDocument</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">已加载的 EpicRawDocument。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dataType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="data-models.html#epicraw-data-type" class="xref page"><code>EpicRawDataType</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">要读取的 EpicRaw 数据类型。</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<a href="data-models.html#epicraw-image" class="xref page"><code>EpicRawImage?</code></a>。</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_decodedepthfromepicraw"><a class="anchor" href="#_decodedepthfromepicraw"></a><code>DecodeDepthFromEpicRaw</code></h3>
+<div class="paragraph">
+<p><strong>用途</strong>：解码有序深度图。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 30%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>epicRaw</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="data-models.html#epicraw-document" class="xref page"><code>EpicRawDocument</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">已加载的 EpicRawDocument。</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>(byte[]? depthBytes, int? depthWidth, int? depthHeight)</code>；数据为行优先 <code>float32</code>，单位 mm。</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_decodecameraconfigfromepicraw"><a class="anchor" href="#_decodecameraconfigfromepicraw"></a><code>DecodeCameraConfigFromEpicRaw</code></h3>
+<div class="paragraph">
+<p><strong>用途</strong>：读取拍摄该帧时保存的相机配置。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 30%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>epicRaw</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="data-models.html#epicraw-document" class="xref page"><code>EpicRawDocument</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">已加载的 EpicRawDocument。</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<a href="data-models.html#camera-config-params" class="xref page"><code>Hashtable?</code></a>。</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_decodepassivebinocularimagesfromepicraw"><a class="anchor" href="#_decodepassivebinocularimagesfromepicraw"></a><code>DecodePassiveBinocularImagesFromEpicRaw</code></h3>
+<div class="paragraph">
+<p><strong>用途</strong>：读取被动双目的两路深度源图和可选纹理。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 30%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>epicRaw</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="data-models.html#epicraw-document" class="xref page"><code>EpicRawDocument</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">已加载的 EpicRawDocument。</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<a href="data-models.html#epicraw-image" class="xref page"><code>IReadOnlyList&lt;EpicRawImage&gt;?</code></a>，固定顺序为源图 1、源图 2、可选纹理。</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getdepthintrinsicsfromepicraw"><a class="anchor" href="#_getdepthintrinsicsfromepicraw"></a><code>GetDepthIntrinsicsFromEpicRaw</code></h3>
+<div class="paragraph">
+<p><strong>用途</strong>：从 <code>EpicRawDocument</code> 的深度数据中读取深度相机畸变、内参和分辨率。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 30%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>epicRaw</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="data-models.html#epicraw-document" class="xref page"><code>EpicRawDocument</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">已加载的 EpicRawDocument。</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>(double[]? distortion, double[]? cameraMatrix, int depthWidth, int depthHeight)</code>；<code>cameraMatrix</code> 为按行排列的 3×3 相机矩阵，<code>distortion</code> 包含 5 个畸变系数。</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_decodepointcloudfromepicraw"><a class="anchor" href="#_decodepointcloudfromepicraw"></a><code>DecodePointCloudFromEpicRaw</code></h3>
+<div class="paragraph">
+<p><strong>用途</strong>：优先读取已有点云元素；需要由深度重建时使用传入 LUT。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 30%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>epicRaw</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="data-models.html#epicraw-document" class="xref page"><code>EpicRawDocument</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">已加载的 EpicRawDocument。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>undistortLut</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>byte[]?</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">去畸变 LUT；为空时不进行去畸变；默认值为 <code>null</code>。</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>(byte[]? pointCloudBytes, int? pointCloudWidth, int? pointCloudHeight)</code>；数据为交错 <code>float32 XYZ</code>，单位 mm。</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_getmetadatastrfromepicraw"><a class="anchor" href="#_getmetadatastrfromepicraw"></a><code>GetMetaDataStrFromEpicRaw</code></h3>
+<div class="paragraph">
+<p><strong>用途</strong>：读取 EpicRaw3 指定元素的 JSON 元数据文本。</p>
+</div>
+<div class="paragraph">
+<p><strong>参数</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 30%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>epicRaw</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="data-models.html#epicraw-document" class="xref page"><code>EpicRawDocument</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">已加载的 EpicRawDocument。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dataType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="data-models.html#epicraw-data-type" class="xref page"><code>EpicRawDataType</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">要读取的 EpicRaw 数据类型。</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>返回值</strong>：<code>string?</code>；格式不支持或元素不存在时为 <code>null</code>。
+<code>EpicRawImage.Data</code> 引用 <code>EpicRawDocument</code> 中的数据；需要单独保存图像数据时调用 <code>.ToArray()</code> 复制。</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_示例一次加载多项解码"><a class="anchor" href="#_示例一次加载多项解码"></a>示例：一次加载，多项解码</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">if (!EpicEye.TryLoadEpicRawDocumentFromBytes(rawBytes, out var document) || document is null)
+{
+    return;
+}
+
+var (image, imageWidth, imageHeight) = EpicEye.DecodeImageFromEpicRaw(document);
+var (depth, depthWidth, depthHeight) = EpicEye.DecodeDepthFromEpicRaw(document);
+var config = EpicEye.DecodeCameraConfigFromEpicRaw(document);
+
+var (distortion, matrix, lutWidth, lutHeight) =
+    EpicEye.GetDepthIntrinsicsFromEpicRaw(document);
+
+byte[]? lut = matrix is not null &amp;&amp; distortion is not null
+    ? EpicEye.ComputeUndistortLut(lutWidth, lutHeight, matrix, distortion)
+    : null;
+
+var (cloud, cloudWidth, cloudHeight) =
+    EpicEye.DecodePointCloudFromEpicRaw(document, lut);</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_示例被动双目原图"><a class="anchor" href="#_示例被动双目原图"></a>示例：被动双目原图</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var images = EpicEye.DecodePassiveBinocularImagesFromEpicRaw(document);
+if (images is null || images.Count &lt; 2)
+{
+    return;
+}
+
+var left = images[0];
+var right = images[1];
+EpicRawImage? texture = images.Count &gt; 2 ? images[2] : null;
+
+Console.WriteLine($"左图: {left.Width}x{left.Height}, MatType={left.MatType}");
+Console.WriteLine($"右图: {right.Width}x{right.Height}, MatType={right.MatType}");
+Console.WriteLine(texture is null ? "无纹理" : $"纹理: {texture.Width}x{texture.Height}");</code></pre>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="capture.html">C# — 拍摄与数据获取</a></span>
+  <span class="next"><a href="camera-config.html">C# — 相机配置</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

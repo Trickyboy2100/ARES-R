@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>パラメータのタイプとバインディング名 :: Atom SDK 開発者ガイド</title>
+    <link rel="prev" href="point-cloud-protocol.html">
+    <link rel="next" href="../api/index.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          オンライン製品ドキュメント
+                  </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="ドキュメントを検索"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              このマニュアルのみ
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            マニュアルを切り替え
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK 開発者ガイド</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          ダウンロードセンター
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          公式サイト
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            日本語
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK 開発者ガイド</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">ようこそ</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">クイックスタート</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">クイックスタート</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">サンプルサンプル</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">入門利用</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK 入門利用</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService 入門利用</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">ユーザーガイド</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">適切な Service を選択します</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">グラフとノードの操作</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">エラー処理とトラブルシューティング</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">よくある質問</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">基本的な概念</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="what-is-atom-sdk.html">Atom SDK とは</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="graph-node-subgraph.html">グラフ、ノード、サブグラフ</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="graph-vs-runtime.html">Graph と Runtime の違い</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="timestamp.html">Timestampとは何ですか</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="runtime-frame.html">ランタイム入力フレーム (RuntimeFrame / RuntimePassiveBinoFrame)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="point-cloud-protocol.html">点群タイプの入出力用のバイナリ プロトコル</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="param-binding.html">パラメータのタイプとバインディング名</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API リファレンス</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API リファレンスの概要</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python の概要とインストール</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/params.html">Python パラメータ オブジェクト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/public_api.html">Python パブリック ユーティリティ API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ バージョン — ユーザーガイド</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ パラメータ オブジェクト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">Atom SDK — C# バージョン</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/params.html">C# パラメータオブジェクト</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK 開発者ガイド</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK 開発者ガイド</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK 開発者ガイド</a></li>
+    <li>基本的な概念</li>
+    <li><a href="param-binding.html">パラメータのタイプとバインディング名</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="このページの内容"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">パラメータのタイプとバインディング名</h1>
+<div class="sect1">
+<h2 id="_パラメータの種類_param_type"><a class="anchor" href="#_パラメータの種類_param_type"></a>パラメータの種類 (param_type)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>各ノードのパラメータは、次の 2 つのカテゴリに分類されます。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 42.8571%;">
+<col style="width: 42.8572%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top"></th>
+<th class="tableblock halign-left valign-top"><code>init_params</code> (初期化パラメータ)</th>
+<th class="tableblock halign-left valign-top"><code>run_params</code> (動作パラメータ)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">の特徴</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">は 1 回ロードされますが、通常はより重くなります (モデル ファイル、構成ファイルなど)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">実行ごとに異なる可能性があり、通常はより軽くなります (しきい値、スイッチなど)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">はいつ有効になりますか?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">が <code>initial_node()</code> を呼び出すとき</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">が <code>activate_node()</code> または <code>run_graph()</code> を呼び出すとき</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">典型的なコンテンツ</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">モデルファイルパス、ネットワーク構造構成、重みファイル</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">信頼しきい値、最大検出数、ROI エリア</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">アップデートコスト</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">高: 変更後にノードを再初期化する必要があります</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Low: いつでも変更でき、次回の実行時に有効になります。</p></td>
+</tr>
+</tbody>
+</table>
+<div class="sect2">
+<h3 id="_コード内での使用法"><a class="anchor" href="#_コード内での使用法"></a>コード内での使用法</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeParamUpdate
+
+# 初期化パラメータを設定する（モデルファイル）
+client.node.set_node_param_data(
+    NodeParamUpdate(
+        "my_graph",
+        node_id,
+        "model",       # パラメータ名，から get_node_info_in_graph チェックする
+        "init_params", # 固定された書き込み方法
+        Path("/models/detector.bin"),  # Path オブジェクトが自動的にアップロードされました
+    )
+)
+
+# 動作パラメータを設定する（しきい値）
+client.node.set_node_param_data(
+    NodeParamUpdate(
+        "my_graph",
+        node_id,
+        "confidence_threshold",
+        "run_params",  # 固定された書き込み方法
+        0.85,
+    )
+)</code></pre>
+</div>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><code>param_type</code> に有効な値は <code>"init_params"</code> と <code>"run_params"</code> の 2 つだけです。間違って記述してもエラーは報告されませんが、パラメータは有効になりません。</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_バインディング名_binding_name"><a class="anchor" href="#_バインディング名_binding_name"></a>バインディング名 (binding_name)</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_バインディング名とは何ですか"><a class="anchor" href="#_バインディング名とは何ですか"></a>バインディング名とは何ですか</h3>
+<div class="paragraph">
+<p>バインディング名は、子グラフと親グラフ間の通信のインターフェイスであるノード ポートまたはパラメータの <strong>外部公開名</strong> です。</p>
+</div>
+<div class="paragraph">
+<p>サブグラフ ノード (GraphNode) では、サブグラフ内のポートにバインディング名が設定されている場合、次のようになります。</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>親グラフ内の他のノードは、</p>
+</li>
+<li>
+<p>RuntimeService 経由で実行時に名前でアクセスします</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>バインディング名が設定されていない場合、ポートはサブグラフ内でのみ表示され、外部から直接アクセスすることはできません。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_ポート名_vs_バインド名"><a class="anchor" href="#_ポート名_vs_バインド名"></a>ポート名 vs バインド名</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 40%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">概念</th>
+<th class="tableblock halign-left valign-top">説明</th>
+<th class="tableblock halign-left valign-top">例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>origin_name</code> / ポート名</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ノード内の元のポートまたはパラメータ名</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"output_image"</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>binding_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">公開された名前 (異なる場合があります)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"rgb_frame"</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>バインディング名を設定する目的は、内部実装の詳細を公開せずに、より意味のあるインターフェイス名を外部に提供することです。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_バインドタイプ_binding_type"><a class="anchor" href="#_バインドタイプ_binding_type"></a>バインドタイプ (binding_type)</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">値</th>
+<th class="tableblock halign-left valign-top">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"inputs"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ポートのバインド名を入力します</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"outputs"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">出力ポートのバインド名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"init_params"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">初期化パラメータのバインド名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"run_params"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">実行パラメータのバインド名</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_バインディング名の設定例"><a class="anchor" href="#_バインディング名の設定例"></a>バインディング名の設定例</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SubGraphBindingUpdate
+
+# サブグラフ内部ノードの出力ポートのバインディング名を設定します。
+client.graph_node.set_binding_name(
+    SubGraphBindingUpdate(
+        "my_graph",
+        graph_node_id,
+        inner_node_id,
+        "outputs",
+        "output_image",    # ノード内のポート名
+        "processed_frame", # 外部バインディング名
+    )
+)
+
+# バインドを解除する（空の文字列を渡す）
+client.graph_node.set_binding_name(
+    SubGraphBindingUpdate(
+        "my_graph",
+        graph_node_id,
+        inner_node_id,
+        "outputs",
+        "output_image",
+        "",  # 空の文字列はバインドを解除することを示します
+    )
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_runtimeservice_でバインディング名が使用される理由"><a class="anchor" href="#_runtimeservice_でバインディング名が使用される理由"></a>RuntimeService でバインディング名が使用される理由</h3>
+<div class="paragraph">
+<p>RuntimeService の共有パラメーター インターフェイスは、バインディング名を通じてグラフのパラメーターにアクセスします。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import BindingRef, RuntimeParamsUpdate
+
+# グラフのバインディングメタ情報を読み取る
+meta = client.runtime.get_meta_info("my_graph")
+print("メタ情報リクエストのステータス：", meta["status"])
+# 戻る {"sharedParams": [...], "runtimeParams": [...]}
+# 各パラメータには、 "bindingName" フィールド
+
+# バインド名による共有パラメータの一括設定
+client.runtime.set_shared_params(
+    RuntimeParamsUpdate("my_graph", {
+        "model_path": "/models/new_model.bin",  # bindingName → 値
+        "max_detection": 10,
+    })
+)
+
+client.runtime.set_run_params(RuntimeParamsUpdate("my_graph", {"threshold": 0.7}))
+
+# バインド名による出力値の読み取り
+output_value = client.runtime.get_binded_output_value(
+    BindingRef("my_graph", "processed_frame")  # bindingName
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_ノードにどのポートとパラメータがあるかを確認する方法"><a class="anchor" href="#_ノードにどのポートとパラメータがあるかを確認する方法"></a>ノードにどのポートとパラメータがあるかを確認する方法</h3>
+<div class="paragraph">
+<p>ノードの完全な定義を表示するには、<code>get_node_info_in_graph</code> を使用します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeRef
+
+info = client.node.get_node_info_in_graph(NodeRef("my_graph", node_id))
+
+# 見る init_params
+for param in info["nodeInfo"].get("initParams", []):
+    print(f"  init_params: {param['name']} ({param['type']})")
+
+# 見る run_params
+for param in info["nodeInfo"].get("runParams", []):
+    print(f"  run_params: {param['name']} ({param['type']})")
+
+# 入力ポートを表示する
+for port in info["nodeInfo"].get("inputs", []):
+    print(f"  input: {port['name']}")
+
+# 出力ポートを表示する
+for port in info["nodeInfo"].get("outputs", []):
+    print(f"  output: {port['name']}")</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="point-cloud-protocol.html">点群タイプの入出力用のバイナリ プロトコル</a></span>
+  <span class="next"><a href="../api/index.html">API リファレンスの概要</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

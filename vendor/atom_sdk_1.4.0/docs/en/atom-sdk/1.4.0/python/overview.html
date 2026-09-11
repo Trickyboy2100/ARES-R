@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Python Overview and Installation :: Atom SDK Developer Guide</title>
+    <link rel="prev" href="../api/index.html">
+    <link rel="next" href="params.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          Online Product Documentation
+                  </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="Search documentation"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              This manual only
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            Switch manual
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK Developer Guide</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          Download Center
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          Official Website
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            English
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK Developer Guide</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">welcome</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">quick start</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">quick start</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">sample sample</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Getting Started</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK Getting Started</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService Getting Started</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService Getting Started</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService Getting Started</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">User Guide</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">Select the appropriate Service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">Graph and node operations</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">Error handling and troubleshooting</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">FAQ</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">basic concepts</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/what-is-atom-sdk.html">What is Atom SDK</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-node-subgraph.html">graph, node, subgraph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-vs-runtime.html">The difference between Graph and Runtime</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/timestamp.html">What is Timestamp</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/runtime-frame.html">Runtime input frames (RuntimeFrame / RuntimePassiveBinoFrame)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/point-cloud-protocol.html">Binary protocol for point cloud type input and output</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/param-binding.html">Parameter types and binding names</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API Reference</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API Reference Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="overview.html">Python Overview and Installation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="params.html">Python parameter object</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="public_api.html">Python Public Utility API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ version — User Guide</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ parameter object</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">Atom SDK — C# Version</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/params.html">C# Parameter object</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK Developer Guide</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK Developer Guide</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK Developer Guide</a></li>
+    <li>API Reference</li>
+    <li>Python SDK</li>
+    <li><a href="overview.html">Python Overview and Installation</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="On this page"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Python Overview and Installation</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Python version of ATOM SDK is an official client library that interacts with the ATOM background service (<code>atom_vp_interface</code>). It encapsulates the underlying HTTP communication into a clearly typed Python interface. The complete process of graph creation, node configuration, parameter setting, graph running, etc. can be completed with a small amount of code.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_features"><a class="anchor" href="#_features"></a>Features</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>The parameter object uses <code>dataclass</code>, with field names and default values clearly visible.</p>
+</li>
+<li>
+<p>The Service method returns the normal Python type, allowing for direct processing of JSON, list, byte, and point cloud results.</p>
+</li>
+<li>
+<p><code>AtomClient</code> shares timestamp among all Service to reduce editing version conflicts.</p>
+</li>
+<li>
+<p>Runtime supports normal EPICRAW, passive binocular EPICRAW3 and single-node direct running.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_installation"><a class="anchor" href="#_installation"></a>Installation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>First download <code>atom_sdk_&lt;version&gt;.zip</code> from the <a href="https://docs.transfertech.cn/app/#/downloadCenter">Download Center</a> and extract it. The Python wheel is in <code>&lt;SDK_DIR&gt;/python/</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># Optional: create and activate a virtual environment
+python -m venv .venv
+source .venv/bin/activate          # Windows PowerShell: .venv\Scripts\Activate.ps1
+
+# Install the downloaded wheel
+python -m pip install &lt;SDK_DIR&gt;/python/atom_sdk-&lt;version&gt;-*.whl</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Choose a wheel that matches your Python version and operating system. To change versions, download the corresponding archive from the Download Center and install it again.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_big_four_service_at_a_glance"><a class="anchor" href="#_big_four_service_at_a_glance"></a>Big Four Service at a glance</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Service attributes</th>
+<th class="tableblock halign-left valign-top">Class name</th>
+<th class="tableblock halign-left valign-top">Responsibilities</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>client.graph</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GraphService</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Main picture life cycle management: create, open, run, import and export diagrams</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>client.node</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeService</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Main graph node operations: create nodes, connect lines, set parameters, activate nodes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>client.graph_node</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GraphNodeService</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">subgraph node operation: enter a graph node to internally manage the nodes in its subgraph</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>client.runtime</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RuntimeService</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Runtime execution: Load graph in execution engine mode and submit sensor frame data</p></td>
+</tr>
+</tbody>
+</table>
+<div class="sect2">
+<h3 id="_when_to_use_which_service"><a class="anchor" href="#_when_to_use_which_service"></a>When to use which service?</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Build graph structure</strong> (new nodes, connections, parameter adjustments) → <code>client.graph</code> + <code>client.node</code></p>
+</li>
+<li>
+<p><strong>Operation subgraph internal node</strong> → <code>client.graph_node</code></p>
+</li>
+<li>
+<p><strong>Call Atom as an inference engine</strong> (only need to feed data and get results) → <code>client.runtime</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>When doing external business integration, use <code>client.runtime</code> first; only when you need to build a diagram, change nodes, or maintain a template diagram, use <code>client.graph</code> / <code>client.node</code> / <code>client.graph_node</code>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_atomclient"><a class="anchor" href="#_atomclient"></a>AtomClient</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>AtomClient</code> is the unified entrance of SDK. All Service instances are built during initialization and share the same timestamp cache internally.</p>
+</div>
+<div class="sect2">
+<h3 id="_import_method"><a class="anchor" href="#_import_method"></a>Import method</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import AtomClient</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_construction_parameters"><a class="anchor" href="#_construction_parameters"></a>Construction parameters</h3>
+<div class="paragraph">
+<p><code>AtomClient(base_url, transport=None, options=None)</code></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>base_url</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>atom_vp_interface</code> Service address, for example <code><a href="http://127.0.0.1:10026" class="bare">http://127.0.0.1:10026</a></code>. There is no need to add a slash at the end, SDK will be removed automatically.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>transport</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>BaseTransport | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Optional. Custom transport layer. When not passed, <code>RequestsTransport</code> is used by default, implemented based on the <code>requests</code> library. Commonly used to inject mock in unit tests.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>options</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RequestOptions | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Optional. Default request configuration, such as timeouts and common request headers. If not passed, the built-in default value of the library will be used.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>RequestOptions</code> fields:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 50.0002%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Default value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>timeout</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>float</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>30.0</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Timeout seconds for each request</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>headers</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, str]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>{}</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Public request headers that will be included in every request</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_instance_properties"><a class="anchor" href="#_instance_properties"></a>Instance properties</h3>
+<div class="paragraph">
+<p>Access individual services through the following properties:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Attribute</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>client.graph</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GraphService</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Main image management service (create, open, run, import and export images)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>client.node</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeService</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Main graph node service (create node, connect, set parameters, activate)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>client.graph_node</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GraphNodeService</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Subgraph Node Service (operates subgraph nodes inside graph node)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>client.runtime</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RuntimeService</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Runtime execution service (execute graph in inference engine mode)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>client.base_url</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The service address currently used by the client (the trailing slash has been removed)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>client.timestamps</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TimestampStore</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">internal timestamp cache (usually not needed directly)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_advanced_usage"><a class="anchor" href="#_advanced_usage"></a>Advanced usage</h3>
+<div class="sect3">
+<h4 id="_custom_timeout"><a class="anchor" href="#_custom_timeout"></a>Custom timeout</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import AtomClient
+from atom_sdk.core.models import RequestOptions
+
+options = RequestOptions(timeout=60.0)  # The timeout is set to 60 seconds
+client = AtomClient(base_url="http://127.0.0.1:10026", options=options)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_inject_mock_transport_layer_in_test"><a class="anchor" href="#_inject_mock_transport_layer_in_test"></a>Inject mock transport layer in test</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import AtomClient
+from atom_sdk.core.transport import BaseTransport
+
+class MockTransport(BaseTransport):
+    def request(self, method, path, **kwargs):
+        # Return mock response
+        ...
+
+client = AtomClient(base_url="http://localhost", transport=MockTransport())</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_connect_to_remote_service"><a class="anchor" href="#_connect_to_remote_service"></a>Connect to remote service</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python"># Connected to the LAN Atom service
+client = AtomClient(base_url="http://192.168.1.100:10026")
+
+# Verify the connection is normal
+graphs = client.graph.list_graphs()
+print(f"Currently there are {len(graphs)} Picture")</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="ulist">
+<ul>
+<li>
+<p><code>AtomClient</code> is not thread-safe. If used in a multi-threaded environment, it is recommended to create a separate instance for each thread.</p>
+</li>
+<li>
+<p><code>TimestampStore</code> is shared among all services, and operations of the <code>graph_node</code> service update the timestamp cache shared with the <code>node</code> service.</p>
+</li>
+<li>
+<p>The slash at the end of <code>base_url</code> will be automatically removed, and <code><a href="http://127.0.0.1:10026/" class="bare">http://127.0.0.1:10026/</a></code> and <code><a href="http://127.0.0.1:10026" class="bare">http://127.0.0.1:10026</a></code> have the same effect.</p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_things_to_note"><a class="anchor" href="#_things_to_note"></a>Things to note</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><code>AtomClient</code> is not thread-safe, and multi-threaded environments recommend creating a separate instance for each thread.</p>
+</li>
+<li>
+<p><code>TimestampStore</code> is shared among all Service; operations on <code>graph_node</code> update timestamp shared with <code>node</code>.</p>
+</li>
+<li>
+<p>The slash at the end of <code>base_url</code> will be automatically removed, and the effect is the same with or without a slash.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_common_entrances"><a class="anchor" href="#_common_entrances"></a>Common entrances</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Attribute</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>client.graph</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GraphService</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Create, open, import, export and run master images</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>client.node</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeService</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Edit main graph node</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>client.graph_node</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GraphNodeService</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Edit graph node Internal submap</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>client.runtime</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RuntimeService</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Load graph, feed data and read inference results</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>If you are unsure which entry should be used, see <a href="../guides/how-to-choose-service.html" class="xref page">Service 选择</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_return_value_convention"><a class="anchor" href="#_return_value_convention"></a>Return value convention</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>SDK will first check the business <code>status</code> returned by the server: if it is not <code>0</code>, it will throw <code>AtomApiError</code>; if it is successful and the business result is an ordinary dictionary, <code>status</code> will be retained in the returned dictionary, which is convenient for you to record logs or determine whether this request is successful. Lists, Boolean values, strings, primitive <code>bytes</code>, and point cloud analysis results will maintain their original types, and the structure will not be changed to add state.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_quick_example"><a class="anchor" href="#_quick_example"></a>Quick example</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import AtomClient, CreateGraphParams, CreateNodeParams
+
+client = AtomClient(base_url="http://127.0.0.1:10026")
+
+# Create diagram
+graph = client.graph.create_graph(CreateGraphParams("my_graph"))
+print("Create graph request status:", graph["status"])
+
+# open diagram(SDK Automatic caching timestamp)
+client.graph.open_graph("my_graph")
+
+# Create nodes in the graph
+result = client.node.create_node(CreateNodeParams("my_graph", "DetectAndSegment"))
+print("Request status:", result["status"])
+node_id = result["nodeId"]
+
+# Run chart
+run_result = client.graph.run_graph("my_graph")
+print("Run request status:", run_result["status"])</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_next_step"><a class="anchor" href="#_next_step"></a>Next step</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="public_api.html" class="xref page">Python public utility API</a>: point cloud, EPICRAW, PLY, single-node parsing, and errors.</p>
+</li>
+<li>
+<p><a href="params.html" class="xref page">Python parameter object</a></p>
+</li>
+<li>
+<p><a href="graph.html" class="xref page">GraphService（Python）</a></p>
+</li>
+<li>
+<p><a href="node.html" class="xref page">NodeService（Python）</a></p>
+</li>
+<li>
+<p><a href="graph_node.html" class="xref page">GraphNodeService（Python）</a></p>
+</li>
+<li>
+<p><a href="runtime.html" class="xref page">RuntimeService（Python）</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="../api/index.html">API Reference Overview</a></span>
+  <span class="next"><a href="params.html">Python parameter object</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

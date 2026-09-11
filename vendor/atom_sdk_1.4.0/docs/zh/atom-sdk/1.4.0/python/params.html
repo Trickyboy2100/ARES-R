@@ -1,0 +1,2780 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Python 参数对象 :: Atom SDK 开发手册</title>
+    <link rel="prev" href="overview.html">
+    <link rel="next" href="public_api.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          在线产品文档        </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="输入关键词搜索"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              仅本手册
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            切换手册
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK 开发手册</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          下载中心
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          官网
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            简体中文
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK 开发手册</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">欢迎</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">快速开始</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">快速开始</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">示例样本</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">入门使用</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK 入门使用</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService 入门使用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService 入门使用</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService 入门使用</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">使用指南</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/how-to-choose-service.html">选择合适的 Service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/graph-and-node.html">图与节点操作</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/error-handling.html">错误处理与排查</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../guides/faq.html">常见问题解答</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">基础概念</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/what-is-atom-sdk.html">什么是 Atom SDK</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-node-subgraph.html">图、节点、子图</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-vs-runtime.html">Graph 与 Runtime 的区别</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/timestamp.html">Timestamp 是什么</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/runtime-frame.html">运行时输入帧（RuntimeFrame / RuntimePassiveBinoFrame）</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/point-cloud-protocol.html">点云类型输入输出的二进制协议</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/param-binding.html">参数类型与绑定名</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API 参考</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API 参考总览</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="overview.html">Python 概览与安装</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="params.html">Python 参数对象</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="public_api.html">Python 公共工具 API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ 版 — 使用指南</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ 参数对象</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">Atom SDK — C# 版本</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/params.html">C# 参数对象</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK 开发手册</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK 开发手册</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK 开发手册</a></li>
+    <li>API 参考</li>
+    <li>Python SDK</li>
+    <li><a href="params.html">Python 参数对象</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="本页内容"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Python 参数对象</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Python SDK 中很多方法不再直接接收一长串位置参数，而是接收参数对象，例如 <code>CreateNodeParams(&#8230;&#8203;)</code>、<code>NodeConnectionParams(&#8230;&#8203;)</code>、<code>RuntimeRunParams(&#8230;&#8203;)</code>。</p>
+</div>
+<div class="paragraph">
+<p>这样设计是为了让调用代码更清楚，尤其是节点连线、子图操作、运行时帧数据这类参数很多、顺序容易写反、大小写容易写错的场景。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_怎么导入"><a class="anchor" href="#_怎么导入"></a>怎么导入</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>所有公开参数对象都可以直接从 <code>atom_sdk</code> 导入：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import (
+    ChangeNodeIOParams,
+    ChangeSubGraphNodeIOParams,
+    CopyGraphParams,
+    CopyNodeParams,
+    CreateNodeParams,
+    CreateDynamicNodeParams,
+    CreateDynamicSubGraphNodeParams,
+    CreateGraphParams,
+    CreateGraphNodeParams,
+    EditGraphCommentParams,
+    EditGraphNameParams,
+    EditNodeCommentParams,
+    EditSubGraphNameParams,
+    EditSubGraphNodeCommentParams,
+    ExportGraphParams,
+    ExportSubGraphParams,
+    FileParamRef,
+    GenerateGraphNodeByNodesParams,
+    ImportExtensionNodesByPathParams,
+    LoadGraphParams,
+    NodeConnectionParams,
+    NodeBindingUpdate,
+    NodeParamUpdate,
+    NodeRef,
+    PointCloudRef,
+    PortRef,
+    RuntimeBindingDataUpdate,
+    RuntimeFrame,
+    RuntimePassiveBinoFrame,
+    RuntimeParamsUpdate,
+    RuntimeRunParams,
+    RuntimeStrategyParamsUpdate,
+    SetSubgraphAsCustomSubgraphParams,
+    SingleNodeParams,
+    SubGraphBindingUpdate,
+    SubGraphConnectionParams,
+    SubGraphCopyNodeParams,
+    SubGraphCreateNodeParams,
+    SubGraphNodeParamUpdate,
+    SubGraphNodeRef,
+    SubGraphPortRef,
+    SubGraphRef,
+    BindingRef,
+)</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_命名规范"><a class="anchor" href="#_命名规范"></a>命名规范</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>参数对象按用途命名，不按接口动词命名：</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 33.3333%;">
+<col style="width: 50.0001%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">后缀</th>
+<th class="tableblock halign-left valign-top">含义</th>
+<th class="tableblock halign-left valign-top">示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Ref</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">引用已有对象，只负责定位资源</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeRef</code>、<code>PortRef</code>、<code>BindingRef</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Params</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">一次接口调用需要的完整入参</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CreateNodeParams</code>、<code>RuntimeRunParams</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Update</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">修改已有配置或运行时数据</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeParamUpdate</code>、<code>NodeBindingUpdate</code>、<code>RuntimeParamsUpdate</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>因此，<code>NodeRef</code> 这种类名表示"指向某个节点"，<code>NodeBindingUpdate</code> 表示"更新节点绑定"，<code>RuntimeParamsUpdate</code> 表示"更新运行时参数"。旧的动作式命名例如 <code>Set&#8230;&#8203;Data</code> 不再作为公开类名使用。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_什么时候用参数对象"><a class="anchor" href="#_什么时候用参数对象"></a>什么时候用参数对象</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 40%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">场景</th>
+<th class="tableblock halign-left valign-top">推荐写法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">方法只有一个简单值，例如 <code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">直接传字符串，例如 <code>client.graph.open_graph("demo")</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">方法需要多个业务字段</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">传参数对象，例如 <code>client.node.create_node(CreateNodeParams(&#8230;&#8203;))</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">参数顺序容易混淆，例如连线、子图定位、运行时帧</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">必须优先用参数对象</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>如果不确定某个方法需要什么参数，先看对应 Service 页面：</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="graph.html" class="xref page">GraphService</a></p>
+</li>
+<li>
+<p><a href="node.html" class="xref page">NodeService</a></p>
+</li>
+<li>
+<p><a href="graph_node.html" class="xref page">GraphNodeService</a></p>
+</li>
+<li>
+<p><a href="runtime.html" class="xref page">RuntimeService</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_graphservice_参数"><a class="anchor" href="#_graphservice_参数"></a>GraphService 参数</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_creategraphparams"><a class="anchor" href="#_creategraphparams"></a><code>CreateGraphParams</code></h3>
+<div class="paragraph">
+<p>用于 <code>client.graph.create_graph(&#8230;&#8203;)</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">新图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">图备注，可选</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import CreateGraphParams
+
+result = client.graph.create_graph(CreateGraphParams("demo_graph", description="演示图"))
+print("请求状态：", result["status"])</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_copygraphparams"><a class="anchor" href="#_copygraphparams"></a><code>CopyGraphParams</code></h3>
+<div class="paragraph">
+<p>用于 <code>client.graph.copy_graph(&#8230;&#8203;)</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">源图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>new_graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">复制后的新图名称</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import CopyGraphParams
+
+client.graph.copy_graph(CopyGraphParams("demo_graph", "demo_graph_backup"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_loadgraphparams"><a class="anchor" href="#_loadgraphparams"></a><code>LoadGraphParams</code></h3>
+<div class="paragraph">
+<p>用于 <code>client.graph.load_graph(&#8230;&#8203;)</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">导入后在 Atom 中使用的图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>file_path</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str | pathlib.Path</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">本地 <code>.atom</code> 图文件路径</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from pathlib import Path
+from atom_sdk import LoadGraphParams
+
+result = client.graph.load_graph(LoadGraphParams("imported_graph", Path("/data/demo.atom")))
+print("请求状态：", result["status"])</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_importextensionnodesbypathparams"><a class="anchor" href="#_importextensionnodesbypathparams"></a><code>ImportExtensionNodesByPathParams</code></h3>
+<div class="paragraph">
+<p>用于 <code>client.graph.import_extension_nodes_by_path(&#8230;&#8203;)</code>。这个参数通常来自
+<code>client.graph.load_graph(&#8230;&#8203;)</code> 返回值里的 <code>extensionNodes</code> 字段。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>extension_nodes</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>load_graph</code> 返回值中的 <code>extensionNodes</code> 字段</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import ImportExtensionNodesByPathParams
+
+load_result = client.graph.load_graph(LoadGraphParams("imported_graph", Path("/data/demo.atom")))
+extension_nodes = load_result.get("extensionNodes") or {}
+if extension_nodes:
+    client.graph.import_extension_nodes_by_path(
+        ImportExtensionNodesByPathParams(extension_nodes)
+    )</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_exportgraphparams"><a class="anchor" href="#_exportgraphparams"></a><code>ExportGraphParams</code></h3>
+<div class="paragraph">
+<p>用于 <code>client.graph.export_graph(&#8230;&#8203;)</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">要导出的图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dl_models_info</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">导出时需要打包的模型信息，可选</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>custom_nodes</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">导出时需要打包的自定义节点信息，可选</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import ExportGraphParams
+
+client.graph.export_graph(ExportGraphParams("demo_graph"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_editgraphnameparams"><a class="anchor" href="#_editgraphnameparams"></a><code>EditGraphNameParams</code></h3>
+<div class="paragraph">
+<p>用于 <code>client.graph.edit_graph_name(&#8230;&#8203;)</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">当前图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>new_graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">修改后的图名称</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_editgraphcommentparams"><a class="anchor" href="#_editgraphcommentparams"></a><code>EditGraphCommentParams</code></h3>
+<div class="paragraph">
+<p>用于 <code>client.graph.edit_graph_comment(&#8230;&#8203;)</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>comment</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">新备注内容</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_nodeservice_参数"><a class="anchor" href="#_nodeservice_参数"></a>NodeService 参数</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_noderef"><a class="anchor" href="#_noderef"></a><code>NodeRef</code></h3>
+<div class="paragraph">
+<p>主图节点引用，用于定位"某张图里的某个节点"。</p>
+</div>
+<div class="paragraph">
+<p>用于：</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>client.node.delete_node(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.node.get_node_params(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.node.get_node_info_in_graph(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.node.activate_node(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.node.initial_node(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.node.update_node(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.runtime.get_node_params_info_with_strategy(&#8230;&#8203;)</code></p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">节点 ID</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeRef
+
+client.node.activate_node(NodeRef("demo_graph", "node-001"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_createnodeparams"><a class="anchor" href="#_createnodeparams"></a><code>CreateNodeParams</code></h3>
+<div class="paragraph">
+<p>用于 <code>client.node.create_node(&#8230;&#8203;)</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">主图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">节点类名或服务端可识别的节点名称</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import CreateNodeParams
+
+result = client.node.create_node(
+    CreateNodeParams("demo_graph", "DetectAndSegment")
+)
+print("请求状态：", result["status"])
+node_id = result["nodeId"]</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_createdynamicnodeparams"><a class="anchor" href="#_createdynamicnodeparams"></a><code>CreateDynamicNodeParams</code></h3>
+<div class="paragraph">
+<p>用于 <code>client.node.create_dynamic_io_node(&#8230;&#8203;)</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">主图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">节点类名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">动态输入输出定义</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_changenodeioparams"><a class="anchor" href="#_changenodeioparams"></a><code>ChangeNodeIOParams</code></h3>
+<div class="paragraph">
+<p>用于 <code>client.node.change_node_io(&#8230;&#8203;)</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">要修改的节点 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">更新后的动态输入输出定义</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_creategraphnodeparams"><a class="anchor" href="#_creategraphnodeparams"></a><code>CreateGraphNodeParams</code></h3>
+<div class="paragraph">
+<p>用于 <code>client.node.create_graph_node(&#8230;&#8203;)</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">父图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">新 graph node 名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>sub_graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">要包装的子图名称</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_generategraphnodebynodesparams"><a class="anchor" href="#_generategraphnodebynodesparams"></a><code>GenerateGraphNodeByNodesParams</code></h3>
+<div class="paragraph">
+<p>用于 <code>client.node.generate_graph_node_by_nodes(&#8230;&#8203;)</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">父图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">新 graph node 名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_ids</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>list[str]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">要打包进子图的节点 ID 列表</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_copynodeparams"><a class="anchor" href="#_copynodeparams"></a><code>CopyNodeParams</code></h3>
+<div class="paragraph">
+<p>用于 <code>client.node.create_node_by_copy(&#8230;&#8203;)</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">主图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">复制后新节点名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">被复制的目标节点 ID</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_nodeconnectionparams"><a class="anchor" href="#_nodeconnectionparams"></a><code>NodeConnectionParams</code></h3>
+<div class="paragraph">
+<p>用于 <code>client.node.connect_nodes(&#8230;&#8203;)</code> 和 <code>client.node.disconnect_nodes(&#8230;&#8203;)</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>output_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">源节点，也就是产生数据的节点</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>output_port_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">源节点输出端口名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>input_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">目标节点，也就是接收数据的节点</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>input_port_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">目标节点输入端口名</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>记住一个规则：数据流向是 <code>output &#8594; input</code>。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeConnectionParams
+
+client.node.connect_nodes(
+    NodeConnectionParams(
+        graph_name="demo_graph",
+        output_node_id="source_node",
+        output_port_name="image_out",
+        input_node_id="detect_node",
+        input_port_name="image_in",
+    )
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_portref"><a class="anchor" href="#_portref"></a><code>PortRef</code></h3>
+<div class="paragraph">
+<p>主图节点端口引用，用于读取某个节点的某个输入或输出端口。</p>
+</div>
+<div class="paragraph">
+<p>用于：</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>client.node.get_node_port_data(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.node.get_points_data(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.node.get_points_data_parsed(&#8230;&#8203;)</code></p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">节点 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>port_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">端口名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>io_type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">端口方向，通常是 <code>"inputs"</code> 或 <code>"outputs"</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import PortRef
+
+port = PortRef("demo_graph", "detect_node", "results", "outputs")
+data = client.node.get_node_port_data(port)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_nodeparamupdate"><a class="anchor" href="#_nodeparamupdate"></a><code>NodeParamUpdate</code></h3>
+<div class="paragraph">
+<p>用于 <code>client.node.set_node_param_data(&#8230;&#8203;)</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">节点 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>param_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">参数名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>param_type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">参数类型，通常是 <code>"init_params"</code> 或 <code>"run_params"</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">参数值；如果是 <code>PathLike</code>，SDK 会自动按文件上传</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from pathlib import Path
+from atom_sdk import NodeParamUpdate
+
+client.node.set_node_param_data(
+    NodeParamUpdate("demo_graph", "detect_node", "threshold", "run_params", 0.5)
+)
+
+client.node.set_node_param_data(
+    NodeParamUpdate("demo_graph", "detect_node", "model", "init_params", Path("/models/model.onnx"))
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_nodebindingupdate"><a class="anchor" href="#_nodebindingupdate"></a><code>NodeBindingUpdate</code></h3>
+<div class="paragraph">
+<p>用于 <code>client.node.set_binding_name(&#8230;&#8203;)</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">节点 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>binding_type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">绑定类型，如 <code>"inputs"</code>、<code>"outputs"</code>、<code>"init_params"</code>、<code>"run_params"</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>origin_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">原始端口名或参数名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>binding_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">新绑定名；传空字符串通常表示取消绑定</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeBindingUpdate
+
+client.node.set_binding_name(
+    NodeBindingUpdate("demo_graph", "detect_node", "outputs", "results", "detect_result")
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_editnodecommentparams"><a class="anchor" href="#_editnodecommentparams"></a><code>EditNodeCommentParams</code></h3>
+<div class="paragraph">
+<p>用于 <code>client.node.edit_node_comment(&#8230;&#8203;)</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">节点 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>comment</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">新备注内容</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_singlenodeparams"><a class="anchor" href="#_singlenodeparams"></a><code>SingleNodeParams</code></h3>
+<div class="paragraph">
+<p>用于 <code>client.runtime.run_single_node_no_graph(&#8230;&#8203;)</code>
+和 <code>client.runtime.run_single_node_no_graph_parsed(&#8230;&#8203;)</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">节点类名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>inputs</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">输入端口值。常见路径、图片、PLY 点云、数字、字典会按节点输入端口类型自动处理</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>run_params</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">运行参数</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>init_params</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">初始化参数</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>output_data_types</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, str] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">输出端口类型映射，供 <code>run_single_node_no_graph_parsed(&#8230;&#8203;)</code> 按输出名解析 value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>output_point_dims</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, int] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">点云输出维度提示；普通 <code>convertResponse</code> 输出通常自带维度，只有无维度头的点云字节才需要</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>input_data_types</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, str] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">输入端口类型映射。通常可省略，SDK 会在遇到路径或 bytes 输入时按节点名查询</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>input_point_dims</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, int] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">点云输入维度提示；通常可由输入类型自动推断</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>RuntimeService 会尽量根据节点端口类型自动处理输入。例如 <code>File</code> 输入会保留为路径字符串，<code>ColorImage</code> 路径会转成 base64 图片列表，<code>XYZPoints</code> 的 <code>.ply</code> 路径会转成 Atom 点云二进制。</p>
+</div>
+<div class="paragraph">
+<p>推荐优先使用 <code>run_single_node_no_graph_parsed(&#8230;&#8203;)</code>，它会保持 <code>outputs</code> 的 key 不变，只把点云、图像这类传输格式解析成结构化对象：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from pathlib import Path
+from atom_sdk import SingleNodeParams
+
+result = client.runtime.run_single_node_no_graph_parsed(
+    SingleNodeParams(
+        node_name="EstimateNormal",
+        inputs={"points": Path("/data/scan.ply")},
+    )
+)
+
+clouds = result["outputs"]["points"]
+print(clouds[0].shape)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>如果你需要看服务端原始返回，再使用 <code>run_single_node_no_graph(&#8230;&#8203;)</code>：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SingleNodeParams
+
+raw_result = client.runtime.run_single_node_no_graph(
+    SingleNodeParams(
+        node_name="MathAddNode",
+        inputs={"a": 1.0, "b": 2.0},
+        run_params={"threshold": 0.5},
+        init_params={},
+    )
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>自动查询不到节点信息时，也可以手动传 <code>input_data_types</code> 或 <code>output_data_types</code> 作为兜底。</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_graphnodeservice_参数"><a class="anchor" href="#_graphnodeservice_参数"></a>GraphNodeService 参数</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>GraphNodeService</code> 操作的是 graph node 内部的子图，所以这组参数对象通常都会多一个 <code>graph_node_id</code>。</p>
+</div>
+<div class="sect2">
+<h3 id="_subgraphref"><a class="anchor" href="#_subgraphref"></a><code>SubGraphRef</code></h3>
+<div class="paragraph">
+<p>子图引用，用于定位"某张父图里的某个 graph node 内部子图"。</p>
+</div>
+<div class="paragraph">
+<p>用于：</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>client.graph_node.open_graph(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.graph_node.run_graph(&#8230;&#8203;)</code></p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">父图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">父图中的 graph node 节点 ID</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_subgraphcreatenodeparams"><a class="anchor" href="#_subgraphcreatenodeparams"></a><code>SubGraphCreateNodeParams</code></h3>
+<div class="paragraph">
+<p>用于 <code>client.graph_node.create_node(&#8230;&#8203;)</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">父图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node 节点 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">要创建的节点类名</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_createdynamicsubgraphnodeparams"><a class="anchor" href="#_createdynamicsubgraphnodeparams"></a><code>CreateDynamicSubGraphNodeParams</code></h3>
+<div class="paragraph">
+<p>用于 <code>client.graph_node.create_dynamic_io_node(&#8230;&#8203;)</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">父图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node 节点 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">要创建的节点类名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">动态输入输出定义</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_subgraphcopynodeparams"><a class="anchor" href="#_subgraphcopynodeparams"></a><code>SubGraphCopyNodeParams</code></h3>
+<div class="paragraph">
+<p>用于 <code>client.graph_node.create_node_by_copy(&#8230;&#8203;)</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">父图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node 节点 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">复制后新节点名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">被复制的目标节点 ID</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_changesubgraphnodeioparams"><a class="anchor" href="#_changesubgraphnodeioparams"></a><code>ChangeSubGraphNodeIOParams</code></h3>
+<div class="paragraph">
+<p>用于 <code>client.graph_node.change_node_io(&#8230;&#8203;)</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">父图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node 节点 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">子图内节点 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">更新后的动态输入输出定义</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_subgraphnoderef"><a class="anchor" href="#_subgraphnoderef"></a><code>SubGraphNodeRef</code></h3>
+<div class="paragraph">
+<p>子图内节点引用，用于定位"某个 graph node 内部子图里的某个节点"。</p>
+</div>
+<div class="paragraph">
+<p>用于：</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>client.graph_node.delete_node(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.graph_node.get_node_params(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.graph_node.get_node_info_in_graph(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.graph_node.activate_node(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.graph_node.initial_node(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.graph_node.update_node(&#8230;&#8203;)</code></p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">父图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node 节点 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">子图内节点 ID</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_subgraphconnectionparams"><a class="anchor" href="#_subgraphconnectionparams"></a><code>SubGraphConnectionParams</code></h3>
+<div class="paragraph">
+<p>用于 <code>client.graph_node.connect_nodes(&#8230;&#8203;)</code> 和 <code>client.graph_node.disconnect_nodes(&#8230;&#8203;)</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">父图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node 节点 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>output_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">子图内源节点，也就是产生数据的节点</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>output_port_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">源节点输出端口名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>input_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">子图内目标节点，也就是接收数据的节点</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>input_port_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">目标节点输入端口名</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SubGraphConnectionParams
+
+client.graph_node.connect_nodes(
+    SubGraphConnectionParams(
+        "demo_graph",
+        "graph_node_id",
+        "source_sub_node",
+        "image_out",
+        "target_sub_node",
+        "image_in",
+    )
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_subgraphportref"><a class="anchor" href="#_subgraphportref"></a><code>SubGraphPortRef</code></h3>
+<div class="paragraph">
+<p>子图内节点端口引用。</p>
+</div>
+<div class="paragraph">
+<p>用于：</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>client.graph_node.get_node_port_data(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.graph_node.get_points_data(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.graph_node.get_points_data_parsed(&#8230;&#8203;)</code></p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">父图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node 节点 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">子图内节点 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>port_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">端口名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>io_type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">端口方向，通常是 <code>"inputs"</code> 或 <code>"outputs"</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_subgraphnodeparamupdate"><a class="anchor" href="#_subgraphnodeparamupdate"></a><code>SubGraphNodeParamUpdate</code></h3>
+<div class="paragraph">
+<p>用于 <code>client.graph_node.set_node_param_data(&#8230;&#8203;)</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">父图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node 节点 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">子图内节点 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>param_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">参数名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>param_type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">参数类型，通常是 <code>"init_params"</code> 或 <code>"run_params"</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">参数值；如果是 <code>PathLike</code>，SDK 会自动按文件上传</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_subgraphbindingupdate"><a class="anchor" href="#_subgraphbindingupdate"></a><code>SubGraphBindingUpdate</code></h3>
+<div class="paragraph">
+<p>用于 <code>client.graph_node.set_binding_name(&#8230;&#8203;)</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">父图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node 节点 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">子图内节点 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>binding_type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">绑定类型</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>origin_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">原始端口名或参数名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>binding_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">新绑定名；传空字符串通常表示取消绑定</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_editsubgraphnameparams"><a class="anchor" href="#_editsubgraphnameparams"></a><code>EditSubGraphNameParams</code></h3>
+<div class="paragraph">
+<p>用于 <code>client.graph_node.edit_graph_name(&#8230;&#8203;)</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">父图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node 节点 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>new_sub_graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">修改后的子图名称</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_exportsubgraphparams"><a class="anchor" href="#_exportsubgraphparams"></a><code>ExportSubGraphParams</code></h3>
+<div class="paragraph">
+<p>用于 <code>client.graph_node.export_graph(&#8230;&#8203;)</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">父图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node 节点 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dl_models_info</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">可选，需要打包的模型信息</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>custom_nodes</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any] | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">可选，需要打包的自定义节点信息</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_setsubgraphascustomsubgraphparams"><a class="anchor" href="#_setsubgraphascustomsubgraphparams"></a><code>SetSubgraphAsCustomSubgraphParams</code></h3>
+<div class="paragraph">
+<p>用于 <code>client.graph_node.set_subgraph_as_custom_subgraph(&#8230;&#8203;)</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">父图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node 节点 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>custom_subgraph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">导出的自定义子图模板名</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_editsubgraphnodecommentparams"><a class="anchor" href="#_editsubgraphnodecommentparams"></a><code>EditSubGraphNodeCommentParams</code></h3>
+<div class="paragraph">
+<p>用于 <code>client.graph_node.edit_node_comment(&#8230;&#8203;)</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">父图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">graph node 节点 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">子图内节点 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>comment</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">新备注内容</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_runtimeservice_参数"><a class="anchor" href="#_runtimeservice_参数"></a>RuntimeService 参数</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_runtimeparamsupdate"><a class="anchor" href="#_runtimeparamsupdate"></a><code>RuntimeParamsUpdate</code></h3>
+<div class="paragraph">
+<p>用于 <code>client.runtime.set_shared_params(&#8230;&#8203;)</code> 和 <code>client.runtime.set_run_params(&#8230;&#8203;)</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>params_data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">以绑定名为 key 的参数字典</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import RuntimeParamsUpdate
+
+client.runtime.set_run_params(
+    RuntimeParamsUpdate("demo_graph", {"threshold": 0.5})
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_rungraph_两种输入模式"><a class="anchor" href="#_rungraph_两种输入模式"></a>RunGraph 两种输入模式</h3>
+<div class="paragraph">
+<p><code>RuntimeRunParams</code> 按图里 <code>EpicProInput</code> 的配置分成两种模式。两种模式的输入结构不同，不能混用：</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 42.8571%;">
+<col style="width: 28.5715%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">模式</th>
+<th class="tableblock halign-left valign-top"><code>run_mode</code></th>
+<th class="tableblock halign-left valign-top">应该传什么</th>
+<th class="tableblock halign-left valign-top">适合场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">普通模式</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"others"</code> 或不传</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">一个或多个 <code>RuntimeFrame</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">图按普通图像 + 点云输入运行</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">被动双目模式</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"passive_bino"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">一个 <code>RuntimePassiveBinoFrame</code>，推荐用 <code>RuntimeRunParams.passive_bino_from_file(&#8230;&#8203;)</code> 或 <code>passive_bino_from_images(&#8230;&#8203;)</code> 构造</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">图里的 <code>EpicProInput</code> 配置为 <code>passive_bino</code>，输入是一份 EPICRAW3</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>普通模式传一份已编码的 EPICRAW 和 <code>cam2_base</code>，也可以由 SDK 从图像、点云和相机参数生成。被动双目模式只传 EPICRAW3 和 <code>cam2_base</code>；三张图、内参、畸变和 <code>passive_bino_params</code> 会从 EPICRAW3 中解析。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_runtimeframe"><a class="anchor" href="#_runtimeframe"></a><code>RuntimeFrame</code></h3>
+<div class="paragraph">
+<p>普通模式的运行时单帧输入，只用于 <code>run_mode="others"</code> 或省略 <code>run_mode</code> 的情况。请使用三个工厂入口：</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>RuntimeFrame.from_file(&#8230;&#8203;)</code>：读取已有 EPICRAW 文件。</p>
+</li>
+<li>
+<p><code>RuntimeFrame.from_bytes(&#8230;&#8203;)</code>：接收已有 EPICRAW bytes。</p>
+</li>
+<li>
+<p><code>RuntimeFrame.from_data(&#8230;&#8203;)</code>：从 NumPy 图像、点云和相机参数生成 EPICRAW。</p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>epicraw</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">完整 EPICRAW 原始字节，或可被 <code>bytes()</code> 转换的对象</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cam2_base</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">相机到基坐标系的变换，旋转矢量形式，长度为 6 的 <code>[x, y, z, rx, ry, rz]</code>（平移 + Rodrigues 旋转向量）；服务端目前只支持这一种形式，不支持矩阵</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>roi</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">感兴趣区域，可选。其中 <code>cam2ROIFrame</code> 同样只支持长度为 6 的旋转矢量形式</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>from_data(&#8230;&#8203;)</code> 只有普通 <code>intrinsic</code> / <code>distortion</code> 时自动选择 EPICRAW2；<code>camera_params</code> 含 <code>TextureSrc</code>、<code>DepthSrc1</code> 或 <code>DepthSrc2</code> 等扩展参数时自动选择 EPICRAW3。显式传 <code>version=2</code> 或 <code>version=3</code> 可以覆盖自动选择。普通模式的 EPICRAW3 标准布局只包含 <code>Depth + TextureBGR</code>；Depth 从点云 Z 值生成，不包含完整 PointCloud。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import numpy as np
+from atom_sdk import RuntimeFrame
+
+image = np.zeros((2, 3, 3), dtype=np.uint8)
+points = np.zeros((2, 3, 3), dtype=np.float32)
+points[:, :, 2] = 1.0
+
+frame = RuntimeFrame.from_data(
+    points=points,
+    image=image,
+    intrinsic=[[600.0, 0.0, 320.0], [0.0, 600.0, 240.0], [0.0, 0.0, 1.0]],
+    distortion=[0.0, 0.0, 0.0, 0.0, 0.0],
+    cam2_base=[0.0, 0.0, 0.5, 0.0, 0.0, 0.0],  # 旋转矢量形式：[x, y, z, rx, ry, rz]
+    roi={"min": {"x": -0.5, "y": -0.5, "z": 0.1}, "max": {"x": 0.5, "y": 0.5, "z": 2.0}},
+    camera_params={
+        "TextureSrc": {
+            "CameraMatrix": [600.0, 0.0, 320.0, 0.0, 600.0, 240.0, 0.0, 0.0, 1.0],
+            "CameraDistortion": [0.0, 0.0, 0.0, 0.0, 0.0],
+            "CameraRotation": [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0],
+            "CameraTranslation": [0.0, 0.0, 0.0],
+        }
+    },
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_runtimepassivebinoframe"><a class="anchor" href="#_runtimepassivebinoframe"></a><code>RuntimePassiveBinoFrame</code></h3>
+<div class="paragraph">
+<p>被动双目模式的单帧输入，只用于 <code>run_mode="passive_bino"</code>。服务端会从 EPICRAW3 中解析三张图、内参、畸变和 <code>passive_bino_params</code>；SDK 只额外传 <code>cam2_base</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>epicraw3</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">完整 EPICRAW3 原始字节，或可被 <code>bytes()</code> 转换的对象</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cam2_base</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">相机到基坐标系的变换，旋转矢量形式，长度为 6 的 <code>[x, y, z, rx, ry, rz]</code>（平移 + Rodrigues 旋转向量）；服务端目前只支持这一种形式，不支持矩阵</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import RuntimePassiveBinoFrame
+
+frame = RuntimePassiveBinoFrame.from_file(
+    "/data/passive_bino.epicraw",
+    cam2_base=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>也可以从已有 bytes 或三张图构造：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">frame = RuntimePassiveBinoFrame.from_bytes(
+    epicraw3_bytes,
+    cam2_base=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+)
+
+camera_params = {
+    "CameraMatrix": [2113.997971632298, 0.0, 1956.222038925553, 0.0, 2113.7299751270057, 1505.0473199581195, 0.0, 0.0, 1.0],
+    "CameraDistortion": [0.049901632334, -0.037810281265, -0.00048319461, -0.000276258172, -0.026886293015],
+    "CameraRotation": [0.9995132330503337, -0.005059159488191983, -0.030784766728731865, 0.004951704878090689, 0.9999813828533568, -0.003565748937897527, 0.030802233296787017, 0.003411576169582241, 0.999519676430619],
+    "CameraTranslation": [-25.837377992238334, -0.6852264771262435, -4.372034519324568],
+}
+
+frame = RuntimePassiveBinoFrame.from_images(
+    image_list=[depth_src1, depth_src2, texture_bgr],
+    params={
+        "DepthSrc1": camera_params,
+        "DepthSrc2": camera_params,
+        "TextureSrc": camera_params,
+    },
+    cam2_base=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_runtimerunparams"><a class="anchor" href="#_runtimerunparams"></a><code>RuntimeRunParams</code></h3>
+<div class="paragraph">
+<p>用于 <code>client.runtime.run_graph(&#8230;&#8203;)</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>frames</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>list[RuntimeFrame]</code> 或 <code>list[RuntimePassiveBinoFrame]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">输入帧列表</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>run_mode</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">默认 <code>"others"</code>；被动双目传 <code>"passive_bino"</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>RuntimeRunParams</code> 会检查 <code>frames</code> 的元素类型。普通模式必须传 <code>RuntimeFrame</code>；<code>passive_bino</code> 模式必须只传一个 <code>RuntimePassiveBinoFrame</code>。如果传了普通 <code>dict</code>，会直接抛出 <code>TypeError</code>，这样可以尽早发现参数格式错误。</p>
+</div>
+<div class="paragraph">
+<p>普通模式示例：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import RuntimeRunParams
+
+result = client.runtime.run_graph(
+    RuntimeRunParams("demo_graph", frames=[frame])
+)
+print("请求状态：", result["status"])</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>passive_bino</code> 推荐使用工厂方法，避免忘记 <code>run_mode</code>：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">params = RuntimeRunParams.passive_bino_from_file(
+    "demo_graph",
+    "/data/passive_bino.epicraw",
+    cam2_base=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+)
+
+params = RuntimeRunParams.passive_bino_from_images(
+    "demo_graph",
+    image_list=[depth_src1, depth_src2, texture_bgr],
+    params=passive_bino_params,
+    cam2_base=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>passive_bino_from_image(&#8230;&#8203;)</code> 是 <code>passive_bino_from_images(&#8230;&#8203;)</code> 的兼容别名，参数和
+返回值完全相同；新代码建议使用复数形式 <code>passive_bino_from_images(&#8230;&#8203;)</code>。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">params = RuntimeRunParams.passive_bino_from_image(
+    "demo_graph",
+    image_list=[depth_src1, depth_src2, texture_bgr],
+    params=passive_bino_params,
+    cam2_base=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>被动双目模式不要用普通 <code>RuntimeFrame</code>；请使用 <code>RuntimePassiveBinoFrame</code> 或 <code>RuntimeRunParams.passive_bino_*</code> 工厂入口。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_bindingref"><a class="anchor" href="#_bindingref"></a><code>BindingRef</code></h3>
+<div class="paragraph">
+<p>运行时输出绑定引用。</p>
+</div>
+<div class="paragraph">
+<p>用于：</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>client.runtime.get_binded_output_value(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>client.runtime.get_binded_point_cloud(&#8230;&#8203;)</code></p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>binding_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">输出绑定名</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_pointcloudref"><a class="anchor" href="#_pointcloudref"></a><code>PointCloudRef</code></h3>
+<div class="paragraph">
+<p>运行时点云输出绑定引用。</p>
+</div>
+<div class="paragraph">
+<p>用于 <code>client.runtime.get_binded_point_cloud_parsed(&#8230;&#8203;)</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>binding_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">输出绑定名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>point_dim</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int | None</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">每个点的维度，常见值是 <code>3</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>运行时点云响应头里不一定包含每个点的维度。想直接得到二维点表时，建议传 <code>point_dim=3</code>。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import PointCloudRef
+
+clouds = client.runtime.get_binded_point_cloud_parsed(
+    PointCloudRef("demo_graph", "cloud_output", point_dim=3)
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_runtimebindingdataupdate"><a class="anchor" href="#_runtimebindingdataupdate"></a><code>RuntimeBindingDataUpdate</code></h3>
+<div class="paragraph">
+<p>用于 <code>client.runtime.set_graph_binding_data(&#8230;&#8203;)</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>binding_data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">以绑定名为 key 的绑定数据字典</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_runtimestrategyparamsupdate"><a class="anchor" href="#_runtimestrategyparamsupdate"></a><code>RuntimeStrategyParamsUpdate</code></h3>
+<div class="paragraph">
+<p>用于 <code>client.runtime.set_params_in_strategy(&#8230;&#8203;)</code>。</p>
+</div>
+<div class="paragraph">
+<p>当前仅适用于 <code>PoseListFilter</code>、<code>PickPointFilter</code>、<code>PoseListSorterInXOY</code>、
+<code>PickPointSorterInXOY</code>、<code>PickPointSorterNew</code>、<code>PoseListSorter</code> 这 6 类节点。</p>
+</div>
+<div class="paragraph">
+<p><code>params_data</code> 一般从 <code>client.runtime.get_node_params_info_with_strategy(&#8230;&#8203;)</code>
+返回值里的 <code>paramsData</code> 取出，修改需要更新的字段后整体传回。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>node_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">节点 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>params_data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dict[str, Any]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">从服务端返回的 <code>paramsData</code> 修改而来的完整参数结构</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_fileparamref"><a class="anchor" href="#_fileparamref"></a><code>FileParamRef</code></h3>
+<div class="paragraph">
+<p>用于 <code>client.runtime.get_file_param_md5(&#8230;&#8203;)</code>。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">字段</th>
+<th class="tableblock halign-left valign-top">类型</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>graph_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">图名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>param_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">参数绑定名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>param_type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>str</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">参数类型，默认 <code>"init_params"</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_最容易写错的地方"><a class="anchor" href="#_最容易写错的地方"></a>最容易写错的地方</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_连线方向"><a class="anchor" href="#_连线方向"></a>连线方向</h3>
+<div class="paragraph">
+<p>主图和子图连线都遵循同一个方向：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">output_node.output_port -&gt; input_node.input_port</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>也就是说：</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>output_node_id</code> / <code>output_port_name</code> 是数据来源</p>
+</li>
+<li>
+<p><code>input_node_id</code> / <code>input_port_name</code> 是数据接收方</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_主图节点和子图节点不要混用"><a class="anchor" href="#_主图节点和子图节点不要混用"></a>主图节点和子图节点不要混用</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">主图参数对象</th>
+<th class="tableblock halign-left valign-top">子图参数对象</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeRef</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SubGraphNodeRef</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeConnectionParams</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SubGraphConnectionParams</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>PortRef</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SubGraphPortRef</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeParamUpdate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SubGraphNodeParamUpdate</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NodeBindingUpdate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SubGraphBindingUpdate</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>如果方法入口是 <code>client.graph_node</code>，通常就要使用 <code>SubGraph*</code> 参数对象。</p>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="overview.html">Python 概览与安装</a></span>
+  <span class="next"><a href="public_api.html">Python 公共工具 API</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

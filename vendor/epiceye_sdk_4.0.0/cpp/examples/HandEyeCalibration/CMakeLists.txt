@@ -1,0 +1,2 @@
+add_executable(HandEyeCalibration main.cpp)
+target_link_libraries(HandEyeCalibration PRIVATE epiceye_sdk::epiceye_sdk)

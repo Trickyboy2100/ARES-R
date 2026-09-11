@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>FAQ :: Atom SDK 개발자 가이드</title>
+    <link rel="prev" href="error-handling.html">
+    <link rel="next" href="../concepts/what-is-atom-sdk.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+<style>
+.doc code.nobreak {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../../..">
+        <img class="navbar-logo" src="../../../_/img/logo.png" alt="Transfer" />
+        <span class="navbar-title">
+          온라인 제품 문서
+                  </span>
+      </a>
+    </div>
+
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item search hide-for-print">
+          <div id="search-field" class="field has-filter">
+            <input id="search-input" type="text"
+              placeholder="문서 검색"
+              >
+            <label class="filter checkbox">
+              <input type="checkbox" data-facet-filter="component:atom-sdk">
+              이 매뉴얼만
+            </label>
+          </div>
+        </div>
+
+        <button class="navbar-burger" data-target="topbar-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            매뉴얼 전환
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="../index.html">Atom SDK 개발자 가이드</a>
+          </div>
+        </div>
+
+        <a class="navbar-item" href="https://docs.transfertech.cn/app/#/downloadCenter">
+          다운로드 센터
+        </a>
+        <a class="navbar-item" href="https://www.transfertech.cn/#/">
+          공식 웹사이트
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable language-selector">
+          <a class="navbar-link" href="#">
+            <span class="globe-icon">🌐</span>
+            한국어
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://docs.qianyi.ai/en/index.html">English</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ja/index.html">日本語</a>
+            <a class="navbar-item" href="http://docs.qianyi.ai/ko/index.html">한국어</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+.navbar-brand { display: flex; align-items: center; }
+.navbar-logo { height: 32px; margin-right: 8px; }
+.navbar-title { font-size: 18px; color: #333; }
+.globe-icon { margin-right: 5px; }
+.navbar-item, .navbar-item a, .navbar-link { color: #000 !important; }
+.navbar-item:hover, .navbar-dropdown .navbar-item:hover,
+.navbar-link:hover { background-color: #3273dc !important; color: #fff !important; }
+.language-selector .navbar-link { display: flex; align-items: center; }
+.navbar-item.has-dropdown:hover .navbar-link { background-color: #fff !important; color: #000 !important; }
+.navbar-item.search.hide-for-print:hover,
+.navbar-item.search.hide-for-print:hover #search-field,
+.navbar-item.search.hide-for-print:hover #search-input { background-color: inherit !important; }
+
+/* Allow long API names and parameter-object types to wrap in prose and tables. */
+.doc p code,
+.doc td code,
+.doc th code,
+.doc h1 code,
+.doc h2 code,
+.doc h3 code,
+.doc h4 code,
+.doc h5 code,
+.doc h6 code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+</style>
+<div class="body">
+<div class="nav-container" data-component="atom-sdk" data-version="1.4.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Atom SDK 개발자 가이드</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">환영합니다</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">빠른 시작</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/quickstart.html">빠른 시작</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../get-started/samples.html">샘플 샘플</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">입문 사용</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../beginner/index.html">Atom SDK 입문 사용</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/python.html">Python RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/cpp.html">C++ RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C#</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../beginner/csharp.html">C# RuntimeService 입문 사용</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">사용자 가이드</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="how-to-choose-service.html">적절한 Service을 선택합니다.</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="graph-and-node.html">그래프 및 노드 작업</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="error-handling.html">오류 처리 및 문제 해결</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="faq.html">FAQ</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">기본 개념</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/what-is-atom-sdk.html">Atom SDK 란 무엇입니까?</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-node-subgraph.html">그래프, 노드, 하위 그래프</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/graph-vs-runtime.html">Graph과 Runtime의 차이점</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/timestamp.html">Timestamp이 무엇인가요?</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/runtime-frame.html">런타임 입력 프레임(RuntimeFrame / RuntimePassiveBinoFrame)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/point-cloud-protocol.html">포인트 클라우드 유형 입출력을 위한 바이너리 프로토콜</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts/param-binding.html">매개변수 유형 및 바인딩 이름</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">API 참조</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../api/index.html">API 참조 개요</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Python SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/overview.html">Python 개요 및 설치</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/params.html">Python 매개변수 객체</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/public_api.html">Python 공용 유틸리티 API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph.html">GraphService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/node.html">NodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/graph_node.html">GraphNodeService（Python）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../python/runtime.html">RuntimeService（Python）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C++ SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/overview.html">Atom SDK C++ 버전 — 사용자 가이드</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/params.html">C++ 매개변수 객체</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph.html">GraphService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/node.html">NodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/graph_node.html">GraphNodeService（C++）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cpp/runtime.html">RuntimeService（C++）</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">C# SDK</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/overview.html">Atom SDK — C# 버전</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/params.html">C# 매개변수 객체</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph.html">GraphService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/node.html">NodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/graph_node.html">GraphNodeService（C#）</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../csharp/runtime.html">RuntimeService（C#）</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Atom SDK 개발자 가이드</span>
+    <span class="version">1.4.0</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Atom SDK 개발자 가이드</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1.4.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Atom SDK 개발자 가이드</a></li>
+    <li>사용자 가이드</li>
+    <li><a href="faq.html">FAQ</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar"
+  data-title="이 페이지의 내용"
+  data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">FAQ</h1>
+<div class="sect1">
+<h2 id="_연결_및_설치_문제"><a class="anchor" href="#_연결_및_설치_문제"></a>연결 및 설치 문제</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_연결이_거부되었습니다_connection_refused"><a class="anchor" href="#_연결이_거부되었습니다_connection_refused"></a>연결이 거부되었습니다. (Connection refused)</h3>
+<div class="paragraph">
+<p><strong>현상</strong>: 인터페이스를 호출할 때 <code>ConnectionError</code> 또는 `Connection refused`이 보고됩니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>원인</strong>: <code>atom_vp_interface</code> 서비스가 실행되고 있지 않거나 <code>base_url</code> 구성이 잘못되었습니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>해결 단계</strong>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>서비스가 실행 중인지 확인합니다.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl http://127.0.0.1:10026/Graph/GetAllGraphsNoThumbnail</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>서비스가 다른 포트에 있는 경우 `base_url`을 수정합니다.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">client = AtomClient(base_url="http://127.0.0.1:당신의 포트 번호")</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>서비스가 다른 머신에 있는 경우 IP을 바꿉니다.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">client = AtomClient(base_url="http://192.168.1.100:10026")</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_python_패키지를_찾을_수_없습니다"><a class="anchor" href="#_python_패키지를_찾을_수_없습니다"></a>Python 패키지를 찾을 수 없습니다</h3>
+<div class="paragraph">
+<p><strong>현상</strong>: 설치 명령에서 <code>atom_sdk</code> 또는 wheel 파일을 찾을 수 없습니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>해결책</strong>: <a href="https://docs.transfertech.cn/app/#/downloadCenter">다운로드 센터</a>에서 SDK 압축 파일을 다운로드하고 압축을 푼 다음 로컬 wheel을 설치합니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">python -m pip install &lt;SDK_DIR&gt;/python/atom_sdk-&lt;버전&gt;-*.whl</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>wheel이 현재 Python 버전과 운영 체제에 맞는지 확인하세요. 가상 환경을 사용하는 경우 먼저 활성화하세요.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_timestamp_관련"><a class="anchor" href="#_timestamp_관련"></a>Timestamp 관련</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_데이터가_수정되었으므로_동기화해야_합니다_그래프를_다시_얻으시기_바랍니다"><a class="anchor" href="#_데이터가_수정되었으므로_동기화해야_합니다_그래프를_다시_얻으시기_바랍니다"></a>데이터가 수정되었으므로 동기화해야 합니다. 그래프를 다시 얻으시기 바랍니다.</h3>
+<div class="paragraph">
+<p><strong>현상</strong>: <code>create_node</code>, <code>set_node_param_data</code> 등 편집 인터페이스를 호출할 때 오류가 발생합니다. 오류 메시지에는 "데이터가 수정되었습니다" 또는 "동기화가 필요합니다"가 포함됩니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>원인</strong>: 보유하고 있는 그래프 버전(timestamp)이 만료되었습니다. 다른 작업(예: 프런트 엔드 편집, 다른 스크립트 또는 이전 작업 중 하나)으로 인해 다이어그램이 수정되어 버전 불일치가 발생했습니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>해결 단계</strong>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>기본 이미지 작업: <code>open_graph()</code> 불러오기 timestamp 새로 고침</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">client.graph.open_graph("my_graph")
+# 그런 다음 작업을 다시 시도하십시오.</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>하위 그래프 작업: <code>graph_node.open_graph()</code> 호출</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SubGraphRef
+
+client.graph_node.open_graph(SubGraphRef("my_graph", graph_node_id))</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>일반적인 트리거 시나리오</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Atom 프런트엔드 인터페이스와 스크립트에서 동일한 그림을 동시에 수정</p>
+</li>
+<li>
+<p>여러 스크립트가 동일한 그림을 동시에 수정합니다.</p>
+</li>
+<li>
+<p>스크립트는 계속하기 전에 그래프를 연 후 오랜 시간 동안 기다립니다.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_모든_작업에_대해_timestamp을_전달해야_합니까"><a class="anchor" href="#_모든_작업에_대해_timestamp을_전달해야_합니까"></a>모든 작업에 대해 timestamp을 전달해야 합니까?</h3>
+<div class="paragraph">
+<p>불필요한. SDK은 <code>open_graph()</code>, <code>create_node()</code> 등과 같은 작업이 성공한 후 timestamp을 자동으로 캐시하고 수동 전송 없이 후속 작업에서 자동으로 수행됩니다.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_service_및_인터페이스_선택"><a class="anchor" href="#_service_및_인터페이스_선택"></a>Service 및 인터페이스 선택</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_nodeservice과_graphnodeservice의_차이점은_무엇입니까"><a class="anchor" href="#_nodeservice과_graphnodeservice의_차이점은_무엇입니까"></a>NodeService과 GraphNodeService의 차이점은 무엇입니까?</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><code>NodeService</code> (<code>client.node</code>): *메인 그래프*에서 노드를 작동합니다.</p>
+</li>
+<li>
+<p><code>GraphNodeService</code> (<code>client.graph_node</code>): <strong>하위 그래프 노드</strong> 내부의 노드를 작동합니다.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>하위 그래프 노드는 완전한 하위 그래프를 포함하는 기본 그래프의 특수 노드입니다. <code>GraphNodeService`의 모든 메소드에는 입력할 하위 그래프를 지정하는 데 사용되는 `NodeService</code> `graph_node_id`보다 매개변수가 하나 더 많습니다.</p>
+</div>
+<div class="paragraph">
+<p>어떤 것을 사용해야 할지 확실하지 않은 경우 먼저 `open_graph`을 사용하여 노드 목록을 가져오고 노드 유형을 결정합니다.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_graph_node_id과_node_id의_차이점"><a class="anchor" href="#_graph_node_id과_node_id의_차이점"></a>graph_node_id과 node_id의 차이점</h3>
+<div class="paragraph">
+<p>`GraphNodeService`에서 메소드에는 일반적으로 두 개의 ID 매개변수가 있습니다.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>graph_node_id</code>: 메인 그래프에 있는 하위 그래프 노드 자체의 ID(`client.node.create_node`로 생성된 노드)</p>
+</li>
+<li>
+<p><code>node_id</code>: 하위 그래프 <strong>내부</strong> 노드의 ID(`client.graph_node.create_node`로 생성된 노드)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>오류를 전달한다고 해서 반드시 오류가 보고되는 것은 아니지만 잘못된 노드에서 작동하게 됩니다.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_언제_graphservice_run_graph을_사용하고_언제_runtimeservice_run_graph을_사용합니까"><a class="anchor" href="#_언제_graphservice_run_graph을_사용하고_언제_runtimeservice_run_graph을_사용합니까"></a>언제 GraphService.run_graph을 사용하고 언제 RuntimeService.run_graph을 사용합니까?</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 40%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top"></th>
+<th class="tableblock halign-left valign-top"><code>GraphService.run_graph</code></th>
+<th class="tableblock halign-left valign-top"><code>RuntimeService.run_graph</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">적용 가능한 시나리오</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">디버그 단계 편집</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">생산실행단계</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">open_graph 필요</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">은(는)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">아니요(load_graph 필요)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">입력 데이터</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">없음(노드에 이미 데이터가 있음)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">일반 모드: <code>RuntimeFrame</code>; 수동 쌍안경: EPICRAW3</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">결과 반환</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">노드 활성화 상태</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">추론 결과(감지 상자 등)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_매개변수_설정_문제"><a class="anchor" href="#_매개변수_설정_문제"></a>매개변수 설정 문제</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_매개변수를_설정한_후에는_실행_결과에_변화가_없습니다"><a class="anchor" href="#_매개변수를_설정한_후에는_실행_결과에_변화가_없습니다"></a>매개변수를 설정한 후에는 실행 결과에 변화가 없습니다.</h3>
+<div class="paragraph">
+<p><strong>가능한 이유</strong>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>param_type 오타</strong>: `init_params`과 `run_params`는 다릅니다. 노드 정의를 확인하여 다음을 확인하세요.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeRef
+
+info = client.node.get_node_info_in_graph(NodeRef("my_graph", node_id))
+print([p["name"] for p in info["nodeInfo"].get("initParams", [])])
+print([p["name"] for p in info["nodeInfo"].get("runParams", [])])</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p><strong>init_params은 설정되었지만 initial_node은 설정되지 않았습니다.</strong>: init_params를 수정한 후 다시 초기화해야 합니다.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import NodeRef
+
+client.node.initial_node(NodeRef("my_graph", node_id))</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p><strong>param_name 대소문자 오류</strong>: 매개변수 이름은 대소문자를 구분하며 `get_node_info_in_graph`에서 반환된 이름이 우선합니다.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_파일_매개변수를_업로드하는_방법"><a class="anchor" href="#_파일_매개변수를_업로드하는_방법"></a>파일 매개변수를 업로드하는 방법</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python"># Python：통과 pathlib.Path 물체，SDK 자동 업로드
+from pathlib import Path
+from atom_sdk import NodeParamUpdate
+
+client.node.set_node_param_data(
+    NodeParamUpdate(
+        "my_graph", node_id,
+        "model", "init_params",
+        Path("/absolute/path/to/model.bin")  # Path 물체
+    )
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>문자열 경로를 전달하면 파일 업로드가 트리거되지 않으며 일반 문자열 매개변수로 기록됩니다.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_runtimeframe_관련"><a class="anchor" href="#_runtimeframe_관련"></a>RuntimeFrame 관련</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>RuntimeService.run_graph</code> 먼저 입력 모드를 살펴보겠습니다. 일반 모드는 완전한 EPICRAW을 캡슐화하는 <code>RuntimeFrame`를 사용하고, 수동 쌍안경 `passive_bino</code> 모드는 `RuntimePassiveBinoFrame`를 사용합니다.</p>
+</div>
+<div class="sect2">
+<h3 id="_run_graph이_frame에_epicraw가_없다고_보고합니다"><a class="anchor" href="#_run_graph이_frame에_epicraw가_없다고_보고합니다"></a>run_graph이 frame에 EPICRAW가 없다고 보고합니다.</h3>
+<div class="paragraph">
+<p><strong>현상</strong>: <code>ValueError: runtime frame is missing EPICRAW bytes</code></p>
+</div>
+<div class="paragraph">
+<p><strong>원인</strong>: 일반 모드의 모든 `RuntimeFrame`에는 EPICRAW의 비어 있지 않은 복사본이 포함되어야 합니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>올바른 형식</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import RuntimeFrame, RuntimeRunParams
+
+frame = RuntimeFrame.from_file("frame.epicraw", cam2_base=[x, y, z, rx, ry, rz], roi=None)
+result = client.runtime.run_graph(RuntimeRunParams("my_graph", [frame]))
+print("실행 요청 상태：", result["status"])</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>그림의 <code>EpicProInput`이 `passive_bino`로 구성된 경우 `image</code> 또는 <code>point_cloud`를 이 형식으로 채우지 마십시오. Python `RuntimeRunParams.passive_bino_from_file(&#8230;&#8203;)</code> 또는 `passive_bino_from_images(&#8230;&#8203;)`를 사용하세요. C++ `RuntimeRunParams::passive_bino_from_file/bytes/images(&#8230;&#8203;)`을 사용하세요. C# `RuntimeRunParams.PassiveBinoFromFile/Bytes/Images(&#8230;&#8203;)`을 사용하세요.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_image_및_point_cloud은_어떤_형식으로_전송되어야_합니까"><a class="anchor" href="#_image_및_point_cloud은_어떤_형식으로_전송되어야_합니까"></a>image 및 point_cloud은 어떤 형식으로 전송되어야 합니까?</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><code>image</code>: JPEG/PNG이 아닌 원시 비압축 픽셀 바이트입니다. `numpy_array.tobytes()`로 변환:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import numpy as np
+image_bytes = np.zeros((480, 640, 3), dtype=np.uint8).tobytes()</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p><code>point_cloud</code>: float32 원시 바이트, shape는 [H, W, 3]입니다.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">pc_bytes = np.zeros((480, 640, 3), dtype=np.float32).tobytes()</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_points_유형_포인트_클라우드_관련"><a class="anchor" href="#_points_유형_포인트_클라우드_관련"></a>Points 유형 포인트 클라우드 관련</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_run_single_node_no_graph_buffer_size_must_be_a_multiple_of_element_size"><a class="anchor" href="#_run_single_node_no_graph_buffer_size_must_be_a_multiple_of_element_size"></a>run_single_node_no_graph buffer size must be a multiple of element size</h3>
+<div class="paragraph">
+<p><strong>현상</strong>: <code>AtomApiError: buffer size must be a multiple of element size</code></p>
+</div>
+<div class="paragraph">
+<p><strong>이유</strong>: <code>Points</code>/<code>XYZPoints</code>/<code>NormalPoints</code>/<code>RGBPoints</code> 유형의 입력 포트에는 일반 파일이 아닌 서버의 사용자 정의 프로토콜 형식(<code>[点云个数, 每份长度, 数据&#8230;&#8203;]</code>)의 바이너리 데이터 입력이 필요합니다. 새 버전 SDK는 노드 입력 포트 유형에 따라 <code>.ply</code> 경로를 이 바이너리로 자동으로 인코딩합니다. 이전 버전 SDK, SDK을 사용 중이고 노드 입력 유형을 찾을 수 없거나 프로토콜 헤더가 없는 원래 xyz 바이트를 전달한 경우 서버는 `float32`에 따라 구문 분석할 때 이 오류를 보고할 수 있습니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>해결 단계</strong>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><code>.ply</code> 경로를 직접 전달하는 것을 우선순위로 두고 노드 포트 유형에 따라 SDK이 자동으로 처리하도록 합니다.</p>
+</li>
+<li>
+<p>노드 유형을 자동으로 쿼리할 수 없는 경우 `input_data_types={"points": "XYZPoints"}`을 `SingleNodeParams`에 명시적으로 추가합니다.</p>
+</li>
+<li>
+<p>포인트 치수를 수동으로 제어하려면 <code>load_ply_points</code> + `encode_point_cloud_payload`을 사용하여 프로토콜에 필요한 `bytes`를 생성할 수 있습니다.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><code>.ply</code> 경로를 직접 전달합니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SingleNodeParams
+
+result = client.runtime.run_single_node_no_graph(
+    SingleNodeParams("EstimateNormal", inputs={"points": "/data/scan.ply"})
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>수동 코딩:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import SingleNodeParams, encode_point_cloud_payload, load_ply_points
+
+points = load_ply_points("/data/scan.ply")
+payload = encode_point_cloud_payload(points, point_dim=3)
+
+result = client.runtime.run_single_node_no_graph(
+    SingleNodeParams("EstimateNormal", inputs={"points": payload})
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>일반적인 트리거 시나리오</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>이전 SDK에 `inputs={"points": "/data/scan.ply"}`을 직접 작성합니다.</p>
+</li>
+<li>
+<p>노드 유형을 자동으로 쿼리할 수 없으며 <code>input_data_types</code> 수동 채우기가 없습니다.</p>
+</li>
+<li>
+<p>xyz의 원본 float32 바이트를 직접 입력했지만 프로토콜에서 요구하는 <code>[点云个数, 长度]</code> 헤더 정보가 누락되었습니다.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>자세한 프로토콜 형식은 <a href="../concepts/point-cloud-protocol.html" class="xref page">포인트 클라우드 유형 입출력을 위한 바이너리 프로토콜</a>을 참조하세요.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_run_single_node_no_graph은_예상된_dict가_아닌_bytes을_반환합니다"><a class="anchor" href="#_run_single_node_no_graph은_예상된_dict가_아닌_bytes을_반환합니다"></a>run_single_node_no_graph은 예상된 dict가 아닌 bytes을 반환합니다.</h3>
+<div class="paragraph">
+<p><strong>현상</strong>: `run_single_node_no_graph`을 호출한 후 `type(result)`은 `bytes`이고, `result["xxx"]`를 수행하면 `TypeError: byte indices must be integers`가 보고됩니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>이유</strong>: <code>CalculateEdge</code>, <code>CalculateEdgeNew</code>, <code>EstimateNormal</code>, <code>DownSample</code>, <code>DownSampleWithNormal</code>, `FilterByNormal`의 경우 서버는 캡슐화되지 않은 원래 포인트 클라우드 바이트(`content-type: application/octet-stream`를 직접 반환하지만 SDK 기존 바이너리 프로토콜의 "JSON 헤더 + 명명된 첨부 파일" 형식은 반환하지 않음) SDK 기존 방법을 사용하여 디코딩하려는 시도는 실패하므로 설계는 원래 `bytes`로 직접 돌아가는 방식으로 대체됩니다.</p>
+</div>
+<div class="paragraph">
+<p><strong>해결 단계</strong>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>호출하기 전에 노드 이름이 위의 특수 목록에 있는지 확인하십시오. 예상되는 결과는 `bytes`입니다.</p>
+</li>
+<li>
+<p><code>decode_point_cloud_payload`을 사용하여 구문 분석하고, `has_dim_in_header`은 `False`를 고정적으로 전달하고, `point_dim`는 노드 출력 포트의 실제 유형에 따라 선택됩니다(`XYZPoints</code>/<code>Points`는 `3</code>, <code>NormalPoints</code>/`RGBPoints`는 `6`를 전달):</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from atom_sdk import decode_point_cloud_payload
+
+result = client.runtime.run_single_node_no_graph(
+    SingleNodeParams("EstimateNormal", inputs={"points": payload})
+)
+clouds = decode_point_cloud_payload(result, has_dim_in_header=False, point_dim=6)
+print(clouds[0].shape)          # (포인트, 6) -&gt; [x, y, z, nx, ny, nz]</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>일반적인 트리거 시나리오</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>`run_single_node_no_graph`을 일반 노드로 호출하고 반환 값에서 사전 필드를 직접 가져옵니다.</p>
+</li>
+<li>
+<p><code>point_dim`이 잘못 전송되어 `reshape</code> 이후 데이터 정렬이 잘못되었습니다.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_c_관련"><a class="anchor" href="#_c_관련"></a>C++ 관련</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_c_atomsdkjsonvalue_반환_값을_읽는_방법"><a class="anchor" href="#_c_atomsdkjsonvalue_반환_값을_읽는_방법"></a>C++ atom::sdk::JsonValue 반환 값을 읽는 방법</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto result = client.graph().create_graph({"my_graph"});
+std::cout &lt;&lt; "요청 상태：" &lt;&lt; result.at("status").get&lt;std::int64_t&gt;() &lt;&lt; std::endl;
+
+// 문자열 읽기
+std::string graph_id = result.at("graphId").get&lt;std::string&gt;();
+
+// 숫자 읽기
+double ts = result.at("timestamp").get&lt;double&gt;();
+
+// 필드가 존재하는지 확인
+if (result.contains("optional_field")) {
+    // ...
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_set_node_param_data_value_유형_선택_방법"><a class="anchor" href="#_set_node_param_data_value_유형_선택_방법"></a>set_node_param_data value 유형 선택 방법</h3>
+<div class="paragraph">
+<p>C++ `NodeParamUpdate`을 사용하여 전체 매개변수를 전달합니다. `value`는 JSON 값 또는 파일 경로일 수 있습니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">// 통과 JSON 가치（문지방、구성 등）
+client.node().set_node_param_data(
+    {"my_graph", node_id, "threshold", "run_params",
+     atom::sdk::JsonValue(0.7)}
+);
+
+// 패스 파일 경로（모델 파일 등，자동 업로드）
+client.node().set_node_param_data(
+    {"my_graph", node_id, "model", "init_params",
+     std::filesystem::path("/path/to/model.bin")}
+);</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_c_관련_2"><a class="anchor" href="#_c_관련_2"></a>C# 관련</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_c_sdk_동기화_방법이_있나요"><a class="anchor" href="#_c_sdk_동기화_방법이_있나요"></a>C# SDK 동기화 방법이 있나요?</h3>
+<div class="paragraph">
+<p>C# SDK은 모두 async 메소드입니다. async가 지원되지 않는 시나리오(예: 콘솔 동기화 코드)에서는 다음을 수행할 수 있습니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// 방법1：.GetAwaiter().GetResult()（현재 스레드 차단）
+var result = client.Graph.CreateGraphAsync(new CreateGraphParams("my_graph")).GetAwaiter().GetResult();
+
+// 방법2：Task.Run（스레드 풀에서 실행）
+var result = Task.Run(() =&gt; client.Graph.CreateGraphAsync(new CreateGraphParams("my_graph"))).Result;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>ASP.NET 또는 기타 비동기 프레임워크에서는 항상 `await`을 사용하고 위의 동기 쓰기를 사용하지 마십시오(교착 상태가 발생할 수 있음).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_c_jsonelement_필드를_읽는_방법"><a class="anchor" href="#_c_jsonelement_필드를_읽는_방법"></a>C# JsonElement 필드를 읽는 방법</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var result = await client.Graph.CreateGraphAsync(new CreateGraphParams("my_graph"));
+
+// 문자열 읽기
+string graphId = result.GetProperty("graphId").GetString()!;
+
+// 숫자 읽기
+double timestamp = result.GetProperty("timestamp").GetDouble();
+
+// 읽기 요청 상태
+int status = result.GetProperty("status").GetInt32();
+
+// 안전한 독서（필드가 존재하지 않을 수 있습니다.）
+if (result.TryGetProperty("optional", out var field))
+{
+    string val = field.GetString()!;
+}
+
+// 트래버스 배열
+foreach (var item in result.GetProperty("nodes").EnumerateArray())
+{
+    Console.WriteLine(item.GetProperty("nodeId").GetString());
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="error-handling.html">오류 처리 및 문제 해결</a></span>
+  <span class="next"><a href="../concepts/what-is-atom-sdk.html">Atom SDK 란 무엇입니까?</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>COPYRIGHT © 2025 Transfer Technology Co., Ltd..</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/vendor/lunr-languages.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>
