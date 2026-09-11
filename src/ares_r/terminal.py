@@ -17,6 +17,7 @@ from .joint_commands import (current_joint_report, joint_target_report,
 from .worklog import WorkLog
 from .world_geometry import load_world_geometry, render_world, world_snapshot
 from .named_poses import load_named_poses, pose_report
+from . import __version__
 
 try:
     import readline
@@ -41,6 +42,7 @@ HELP = """Commands:
   curobo plan-file FILE      plan from saved start_rad/goal_rad JSON; no SDK
   curobo preview FILE        show trajectory timing, excursion, speed and endpoints
   status                     show device and task state
+  world status               show WorldModel/snapshot lifecycle gates
   epic status                show Epic connection configuration/state
   epic pointcloud capture    trigger one SDK capture; no robot motion
   epic pointcloud inspect FILE  audit PLY units, quality and planning gates
@@ -80,6 +82,7 @@ HELP = """Commands:
 
 JAKA_READONLY_HELP = """JAKA read-only commands:
   status                     show read-only device state
+  world status               show immutable-world lifecycle state
   jaka status left|right     read live SDK diagnostics
   jaka baseline [FILE]       save both-arm diagnostics as JSON
   jaka preflight SIDE FILE   combine live state with offline trajectory gates
@@ -107,7 +110,7 @@ JAKA_MOTION_HELP = """Hardware-enabled commands:
   curobo demo plan-reset         plan current -> fixed start only; preview reset-last
   curobo demo tcp                actual body/world TCP six-dimensional pose; no motion
   curobo demo cycle20            reset -> plan20 -> execute; confirms RUN RIGHT CYCLE20
-  curobo scene load FILE         load static/manual or converted ATOM cuboids
+  curobo scene load FILE         load legacy manual cuboids only
   servo waypoints FILE / servo spline FILE OUT  offline waypoint inspection/geometry
   curobo demo plan20             plan right TCP ~20 cm around a virtual obstacle; no motion
   curobo demo run20 FILE         native supervised demo; confirms RUN RIGHT 20CM
@@ -116,12 +119,13 @@ JAKA_MOTION_HELP = """Hardware-enabled commands:
   curobo execute-micro FILE      BLOCKED pending stable actual-feedback channel
   epic status / epic detect pick / epic detect place [1-6]
   epic pointcloud capture|inspect FILE  capture/audit only; never moves a robot
-  epic obstacles inspect FILE / epic obstacles convert FILE left|right OUT
+  epic obstacles inspect FILE / epic obstacles convert FILE left|right OUT (offline candidate)
   amr status|battery|map|position-types  read the physical AMR
   amr move-position ID NAME [RETRIES] / amr move-relative X Y YAW_DEG [...]
   amr run-task TASK_ID / amr stop
   gripper status|read SIDE / gripper set SIDE VALUE / gripper open|close SIDE
   status / world view / jaka status SIDE / jaka joints SIDE
+  world status                  show snapshot/environment planning gates
   pose list / pose show NAME [left|right]  inspect BODY-frame named poses
   pose go NAME SIDE direct [Ndeg/s]  supervised MoveJ; default 2.86deg/s, range 1..5
   pose go ready right curobo [2x|3x] cuRobo -> ServoJ; stable default 2x
@@ -144,6 +148,7 @@ def _allowed_in_jaka_readonly(args) -> bool:
                         ["jaka", "joints"], ["jaka", "plan"], ["jaka", "step"],
                         ["jaka", "home"], ["jaka", "dual"])
         or args == ["world", "view"]
+        or args == ["world", "status"]
         or args[:2] in (["pose", "list"], ["pose", "show"])
         or args[:2] in (["motion", "inspect"], ["motion", "validate"])
         or args[:2] in (["epic", "pointcloud"], ["epic", "obstacles"])
@@ -189,6 +194,7 @@ def _allowed_in_hardware(args) -> bool:
                         ["jaka", "home"], ["jaka", "dual"], ["jaka", "move"],
                         ["jaka", "move-step"], ["jaka", "abort"])
         or args == ["world", "view"]
+        or args == ["world", "status"]
         or args[:2] in (["pose", "list"], ["pose", "show"], ["pose", "go"])
         or args[:2] in (["motion", "inspect"], ["motion", "validate"])
         or args[:2] in (["curobo", "status"], ["curobo", "plan"], ["curobo", "plan-file"], ["curobo", "preview"])
@@ -233,7 +239,7 @@ def setup_command_history(repository: Path) -> None:
 def render(controller: TaskController) -> None:
     snapshot = controller.snapshot()
     print("\n" + "=" * 72)
-    print("ARES-R TERMINAL  mode=%s  task=%s  arm=%s  carrying=%s" % (snapshot.mode, snapshot.task_state.value, snapshot.active_arm, snapshot.carrying_object))
+    print("ARES-R TERMINAL v%s  mode=%s  task=%s  arm=%s  carrying=%s" % (__version__, snapshot.mode, snapshot.task_state.value, snapshot.active_arm, snapshot.carrying_object))
     print("-" * 72)
     for name, state in snapshot.devices.items():
         if state.detail.startswith("DISABLED:"):
@@ -254,6 +260,10 @@ def render(controller: TaskController) -> None:
     elif snapshot.last_detection and snapshot.last_detection.raw_response:
         print("raw response (parse failed): " + snapshot.last_detection.raw_response)
     if snapshot.last_error: print("ERROR: " + snapshot.last_error)
+    world_status=controller.world.status()
+    print("WORLD MODEL env=%s snapshot=%s lifecycle=%s planner-binding=%s compiler=%s"%(
+        world_status["environment_state"],world_status["snapshot_id"] or "NONE",
+        world_status["snapshot_lifecycle"],world_status["trajectory_v2_binding"],world_status["scene_compiler"]))
     if snapshot.mode in ("jaka-readonly", "jaka-motion", "hardware-enabled"):
         try:
             geometry = load_world_geometry(Path(str(controller.config["world_geometry_file"])))
@@ -282,6 +292,8 @@ def run_terminal(controller: TaskController) -> None:
             if args[0] in ("quit", "exit"): break
             if args[0] == "help": print(help_text)
             elif args[0] == "status": pass
+            elif args == ["world","status"]:
+                print(json.dumps(controller.world.status(),ensure_ascii=False,indent=2))
             elif args == ["pose", "list"]:
                 print(pose_report(load_named_poses(controller.config["named_poses_file"])))
             elif args[:2] == ["pose", "show"] and len(args) in (3, 4):

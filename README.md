@@ -4,6 +4,8 @@
 
 ARES-R 是 BJUT-BBMG 团队用于双臂移动机器人视觉抓放任务的独立工作区。
 
+当前 ART 版本为 `0.2.0`。已建立不可变 `WorldModel → SceneSnapshot` 基础层；详细状态、生命周期与后续 W4–W9 接入边界见 [WorldModel 文档](docs/WORLD_MODEL.md)。
+
 目标流程：
 
 1. 底盘到达取料工位并停稳。
@@ -149,10 +151,9 @@ epic pointcloud capture
 epic pointcloud inspect logs/epic_captures/<capture-id>/pointcloud.ply
 epic obstacles inspect config/epic_atom_obstacles.example.json
 epic obstacles convert config/epic_atom_obstacles.example.json right logs/right-atom-scene.json
-curobo scene load logs/right-atom-scene.json
 ```
 
-`capture` 需要以默认的全实机模式启动，但只触发相机；其余命令可离线运行。示例标定版本是占位符，`convert` 会阻断它，不能作为现场规划输入。完整数据契约、安全门槛和可行性结论见 `docs/EPIC_ATOM_CUROBO_ROUTES.md`。
+`capture` 需要以默认的全实机模式启动，但只触发相机；其余命令可离线运行。示例标定版本是占位符，`convert` 会阻断它，不能作为现场规划输入。转换产物也禁止直接 `curobo scene load`，必须经 WorldModel Observation Epoch 和后续 SceneCompiler。完整数据契约、安全门槛和可行性结论见 `docs/EPIC_ATOM_CUROBO_ROUTES.md`。
 
 终端调试时可随手留痕：
 

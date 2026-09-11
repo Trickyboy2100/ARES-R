@@ -5,12 +5,16 @@ from typing import Dict
 from .event_log import EventLog
 from .interfaces import Arm, Gripper, MobileBase, Perception
 from .models import DetectionResult, SystemSnapshot, TaskState
+from .world import WorldModel
 
 
 class TaskController:
     def __init__(self, mode: str, perception: Perception, arms: Dict[str, Arm], grippers: Dict[str, Gripper], base: MobileBase, config: Dict[str, object], events: EventLog) -> None:
         self.mode, self.perception, self.arms, self.grippers, self.base = mode, perception, arms, grippers, base
         self.config, self.events = config, events
+        world_config=config.get("world_model",{})
+        self.world=WorldModel(events,float(world_config.get("snapshot_ttl_s",5.0)),
+                              float(world_config.get("environment_ttl_s",30.0)))
         self.state = TaskState.IDLE
         self.active_arm = "left"
         self.carrying = False

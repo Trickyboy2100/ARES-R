@@ -47,6 +47,12 @@ class ControllerTest(unittest.TestCase):
         self.assertEqual(self.controller.gripper_position("right"), 600)
         self.assertEqual(self.controller.wait_gripper_position("right", 600), 600)
 
+    def test_world_model_starts_explicitly_empty(self):
+        status=self.controller.world.status()
+        self.assertEqual(status["environment_state"],"EMPTY")
+        self.assertEqual(status["snapshot_lifecycle"],"EMPTY")
+        self.assertEqual(status["trajectory_v2_binding"],"PENDING_W7")
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,4 +1,4 @@
-"""Versioned planning-scene boundary for manual and validated ATOM cuboids."""
+"""Legacy V1 manual-scene boundary; perception must enter via WorldModel."""
 import hashlib
 import json
 import math
@@ -16,13 +16,11 @@ def load_scene(config):
 
 def scene_cuboids(data):
     source=data.get("source")
-    if data.get("schema_version")!=1 or data.get("frame")!="urdf_base_link" or source not in ("manual","epic_atom") or not data.get("revision"):
-        raise ValueError("only explicit manual or validated Epic/ATOM cuboid scenes in urdf_base_link are accepted")
-    allowed={"schema_version","frame","source","revision","cuboids","digest"}
     if source=="epic_atom":
-        allowed.update({"capture_time","calibration_revision","arm"})
-        if not data.get("capture_time") or not data.get("calibration_revision") or data.get("arm") not in ("left","right"):
-            raise ValueError("Epic/ATOM scene provenance and target arm are required")
+        raise ValueError("Epic/ATOM -> cuRobo direct loading is forbidden; register an ObservationEpoch in WorldModel (W4/W6 pending)")
+    if data.get("schema_version")!=1 or data.get("frame")!="urdf_base_link" or source!="manual" or not data.get("revision"):
+        raise ValueError("legacy V1 accepts explicit manual scenes in urdf_base_link only")
+    allowed={"schema_version","frame","source","revision","cuboids","digest"}
     if set(data)-allowed:
         raise ValueError("unsupported scene fields; pointclouds are never silently ignored")
     output={}

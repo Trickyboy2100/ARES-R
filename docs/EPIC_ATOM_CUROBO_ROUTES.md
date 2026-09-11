@@ -58,12 +58,12 @@ epic obstacles convert <atom-obstacles.json> right <scene.json>
   → BODY AABB 转换为右臂 URDF base_link 下的保守包络 AABB
 
 curobo scene load <scene.json>
-  → 冻结带来源信息的 Epic/ATOM cuboid 场景，供下一次 cuRobo 规划使用
+  → 旧直接入口现已阻断；必须先进入 WorldModel，待 W6 SceneCompiler 编译
 ```
 
 原始点云不能直接跨过这条边界。当前现场 PLY 为 `1920×1200`、230.4 万点、有效率约 81%，SDK 数据单位经官方说明和实值复核均为毫米；ARES-R 在清单中显式记录乘数 `0.001`。相机点云尚缺 `T_body_camera` 外参、自体/工具剔除和地面/ROI commissioning，因此只允许采集、审计，不标记为 planning-ready。
 
-ATOM 输出示例见 `config/epic_atom_obstacles.example.json`。示例使用未标定占位版本，`inspect` 可检查格式，但 `convert` 会按预期阻断；现场标定验收后必须把版本号显式加入 `config/system.json` 的 `atom_obstacles.commissioned_calibration_revisions`。第一阶段只接收 AABB；BODY AABB 转入倾斜安装的机械臂基坐标时会取旋转后的轴对齐包络并叠加 `inflation_m`，几何更保守但不会因忽略朝向而缩小障碍。OBB 要在当前锁定 cuRobo 版本的旋转盒链路完成实测后再开放。
+ATOM 输出示例见 `config/epic_atom_obstacles.example.json`。示例使用未标定占位版本，`inspect` 可检查格式，但 `convert` 会按预期阻断；现场标定验收后必须把版本号显式加入 `config/system.json` 的 `atom_obstacles.commissioned_calibration_revisions`。转换结果也不能直接进入 cuRobo，必须在 W4 注册为同一 Observation Epoch，并由 W6 SceneCompiler 编译。第一阶段只接收 AABB；BODY AABB 转入倾斜安装的机械臂基坐标时会取旋转后的轴对齐包络并叠加 `inflation_m`，几何更保守但不会因忽略朝向而缩小障碍。OBB 要在当前锁定 cuRobo 版本的旋转盒链路完成实测后再开放。
 
 ```text
 Epic Pro 拍照
