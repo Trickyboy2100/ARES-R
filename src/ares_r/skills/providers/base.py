@@ -23,7 +23,8 @@ class ProviderHealth(str, Enum):
 @dataclass(frozen=True)
 class ProviderDescriptor:
     provider_id: str
-    version: str
+    implementation_version: str
+    protocol_version: int
     mode: ProviderMode
     capabilities: Tuple[str, ...]
     maturity_ceiling: SkillMaturity
@@ -31,7 +32,8 @@ class ProviderDescriptor:
     health: ProviderHealth
 
     def __post_init__(self) -> None:
-        if not self.provider_id or not self.version or not self.capabilities:
+        if (not self.provider_id or not self.implementation_version or not self.capabilities
+                or type(self.protocol_version) is not int or self.protocol_version < 1):
             raise ValueError("provider identity, version and capabilities are required")
         object.__setattr__(self, "mode", ProviderMode(self.mode))
         object.__setattr__(self, "capabilities", tuple(sorted(set(self.capabilities))))

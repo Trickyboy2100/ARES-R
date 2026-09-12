@@ -77,10 +77,10 @@ class ResourceRequirement:
 @dataclass(frozen=True)
 class CapabilityRequirement:
     capability_id: str
-    minimum_version: str = "1"
+    minimum_protocol_version: int = 1
 
     def __post_init__(self) -> None:
-        if not self.capability_id or not self.minimum_version:
+        if not self.capability_id or type(self.minimum_protocol_version) is not int or self.minimum_protocol_version < 1:
             raise ValueError("capability requirement identity is required")
 
 
@@ -98,13 +98,14 @@ class ObservationRequirement:
 
 
 @dataclass(frozen=True)
-class LockRequirement:
+class LockIntent:
+    intent_id: str
     selector: str
     mode: LockMode
 
     def __post_init__(self) -> None:
-        if not self.selector:
-            raise ValueError("lock selector is required")
+        if not self.intent_id or not self.selector or ":" not in self.selector:
+            raise ValueError("lock intent identity and typed selector are required")
         object.__setattr__(self, "mode", LockMode(self.mode))
 
 
@@ -135,7 +136,7 @@ class SkillDefinition:
     invariants: Tuple[str, ...]
     expected_effects: Tuple[str, ...]
     observation_requirements: Tuple[ObservationRequirement, ...]
-    locks: Tuple[LockRequirement, ...]
+    lock_intents: Tuple[LockIntent, ...]
     timeout: TimeoutPolicy
     failure_codes: Tuple[FailureCode, ...]
     planner_exposure: PlannerExposure
@@ -162,7 +163,10 @@ class SkillDefinition:
         object.__setattr__(self, "invariants", tuple(self.invariants))
         object.__setattr__(self, "expected_effects", tuple(self.expected_effects))
         object.__setattr__(self, "observation_requirements", tuple(self.observation_requirements))
-        object.__setattr__(self, "locks", tuple(self.locks))
+        lock_intents = tuple(self.lock_intents)
+        if len({item.intent_id for item in lock_intents}) != len(lock_intents):
+            raise ValueError("lock intent IDs must be unique")
+        object.__setattr__(self, "lock_intents", lock_intents)
         object.__setattr__(self, "failure_codes", tuple(FailureCode(item) for item in self.failure_codes))
 
 

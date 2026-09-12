@@ -13,7 +13,11 @@ class SchemaExportTests(unittest.TestCase):
         self.assertFalse(schema["parameters"]["additionalProperties"])
         self.assertEqual(schema["parameters"]["properties"]["object"]["type"], "string")
         exported = export_registry_schemas(registry.definitions())
-        self.assertEqual(len(exported), 14)
+        self.assertEqual(len(exported), 7)
+        exported_ids = {item["x-skill-id"] for item in exported}
+        self.assertIn("manipulation.pick", exported_ids)
+        self.assertNotIn("manipulation.grasp", exported_ids)
+        self.assertNotIn("observe.capture_scene", exported_ids)
 
     def test_quantities_are_explicit_typed_objects(self):
         schema = export_function_schema(build_tier_a_registry().get("manipulation.turn"))

@@ -21,6 +21,6 @@ def example_workspace() -> ResourceGraph:
         predicates=(Predicate("vial_7", "sealed", TruthValue.FALSE),),
         occupancies=(Occupancy("tray_1.slot_3", "vial_7"),),
         geometry_bindings=(
-            GeometryBinding("tray_1", "OBJ_tray_1", "station_1/manipulation", "G1", "C1"),
-            GeometryBinding("vial_7", "OBJ_vial_7", "station_1/manipulation", "G1", "C1"),
+            GeometryBinding("tray_1", "OBJ_tray_1", "station_1/manipulation", "G1", (("body_camera", "C1"),)),
+            GeometryBinding("vial_7", "OBJ_vial_7", "station_1/manipulation", "G1", (("body_camera", "C1"),)),
         ))

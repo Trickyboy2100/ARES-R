@@ -24,7 +24,7 @@ class CapabilityRegistry:
 
     def register(self, provider: CapabilityProvider) -> None:
         descriptor = provider.descriptor
-        key = (descriptor.provider_id, descriptor.version)
+        key = (descriptor.provider_id, descriptor.implementation_version)
         if key in self._providers:
             raise ValueError("duplicate provider registration: %s@%s" % key)
         self._providers[key] = provider
@@ -39,8 +39,9 @@ class CapabilityRegistry:
                 and provider.descriptor.health == ProviderHealth.READY
                 and provider.descriptor.maturity_ceiling >= maturity
                 and requirement.capability_id in provider.descriptor.capabilities
-                and provider.descriptor.version >= requirement.minimum_version]
-            candidates.sort(key=lambda item: (item.descriptor.provider_id, item.descriptor.version))
+                and provider.descriptor.protocol_version >= requirement.minimum_protocol_version]
+            candidates.sort(key=lambda item: (item.descriptor.provider_id,
+                                               item.descriptor.implementation_version))
             if not candidates:
                 missing.append(requirement.capability_id)
             elif candidates[0] not in selected:

@@ -6,8 +6,9 @@ from ares_r.skills.providers import (CapabilityRegistry, ProviderDescriptor,
 
 
 class StubProvider:
-    def __init__(self, provider_id, capabilities, ceiling=SkillMaturity.SPECIFIED):
-        self._descriptor = ProviderDescriptor(provider_id, "1", ProviderMode.MOCK,
+    def __init__(self, provider_id, capabilities, ceiling=SkillMaturity.SPECIFIED,
+                 protocol_version=1):
+        self._descriptor = ProviderDescriptor(provider_id, "impl-1", protocol_version, ProviderMode.MOCK,
             capabilities, ceiling, False, ProviderHealth.READY)
         self.calls = 0
 
@@ -37,3 +38,12 @@ class ProviderRegistryTests(unittest.TestCase):
         result = registry.resolve((CapabilityRequirement("one"),), ProviderMode.MOCK,
                                   SkillMaturity.MOCK_VERIFIED)
         self.assertFalse(result.successful)
+
+    def test_integer_protocol_compatibility(self):
+        for provider_version, required_version, expected in (
+                (1, 1, True), (2, 1, True), (1, 2, False), (10, 2, True)):
+            registry = CapabilityRegistry()
+            registry.register(StubProvider("p", ("cap",), protocol_version=provider_version))
+            result = registry.resolve((CapabilityRequirement("cap", required_version),),
+                                      ProviderMode.MOCK)
+            self.assertEqual(result.successful, expected)

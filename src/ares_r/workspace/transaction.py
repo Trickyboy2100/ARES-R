@@ -28,15 +28,28 @@ class WorkspaceTransaction:
     base_revision: str
     predicate_updates: Tuple[Predicate, ...] = ()
     occupancy_updates: Tuple[Occupancy, ...] = ()
+    occupancy_removals: Tuple[str, ...] = ()
     relation_additions: Tuple[Relation, ...] = ()
     relation_removals: Tuple[Relation, ...] = ()
 
     def commit(self, current: ResourceGraph) -> TransactionResult:
         if current.revision != self.base_revision:
             return TransactionResult(TransactionStatus.STALE_REVISION, current, "stale workspace revision")
+        removals = tuple(self.occupancy_removals)
+        update_locations = {item.location_id for item in self.occupancy_updates}
+        if (len(set(removals)) != len(removals)
+                or len(update_locations) != len(self.occupancy_updates)
+                or update_locations.intersection(removals)):
+            return TransactionResult(TransactionStatus.INVALID_CHANGE, current,
+                                     "duplicate or conflicting occupancy mutation")
         predicates = {(item.subject_id, item.name): item for item in current.predicates}
         predicates.update({(item.subject_id, item.name): item for item in self.predicate_updates})
         occupancies = {item.location_id: item for item in current.occupancies}
+        if any(location_id not in occupancies for location_id in removals):
+            return TransactionResult(TransactionStatus.INVALID_CHANGE, current,
+                                     "cannot remove nonexistent occupancy")
+        for location_id in removals:
+            del occupancies[location_id]
         occupancies.update({item.location_id: item for item in self.occupancy_updates})
         relations = set(current.relations)
         relations.difference_update(self.relation_removals)

@@ -1,12 +1,14 @@
 """LLM proposal validation. This module never resolves or calls a provider."""
 
 from dataclasses import dataclass
+from enum import Enum
 import math
 from typing import Any, Mapping, Optional
 
-from .contracts import ParameterSpec, PlannerExposure, SkillLayer
+from .contracts import (ParameterSpec, PlannerExposure, SafetyClass, SkillLayer)
 from .failures import FailureCode
 from .invocation import SkillInvocation
+from .maturity import MaturityEvidence, SkillMaturity
 from .registry import SkillRegistry
 from .schema_export import assert_safe_for_llm
 from ares_r.workspace.resource_graph import ResourceGraph
@@ -21,6 +23,41 @@ class ProposalResult:
     @property
     def accepted(self) -> bool:
         return self.invocation is not None
+
+
+class DeploymentMode(str, Enum):
+    DEVELOPMENT = "DEVELOPMENT"
+    MOCK = "MOCK"
+    PRODUCTION = "PRODUCTION"
+
+
+@dataclass(frozen=True)
+class LlmProposalPolicy:
+    minimum_maturity: SkillMaturity
+    allowed_safety_classes: tuple
+    deployment_mode: DeploymentMode
+    allowlisted_skill_ids: tuple = ()
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "minimum_maturity", SkillMaturity(self.minimum_maturity))
+        object.__setattr__(self, "deployment_mode", DeploymentMode(self.deployment_mode))
+        classes = tuple(sorted((SafetyClass(item) for item in self.allowed_safety_classes), key=lambda item: item.value))
+        if not classes:
+            raise ValueError("at least one safety class must be allowed")
+        object.__setattr__(self, "allowed_safety_classes", classes)
+        object.__setattr__(self, "allowlisted_skill_ids", tuple(sorted(set(self.allowlisted_skill_ids))))
+
+    @classmethod
+    def development(cls):
+        return cls(SkillMaturity.SPECIFIED, tuple(SafetyClass), DeploymentMode.DEVELOPMENT)
+
+    @classmethod
+    def mock(cls):
+        return cls(SkillMaturity.MOCK_VERIFIED, tuple(SafetyClass), DeploymentMode.MOCK)
+
+    @classmethod
+    def production(cls):
+        return cls(SkillMaturity.REAL_COMMISSIONED, tuple(SafetyClass), DeploymentMode.PRODUCTION)
 
 
 def _valid(spec: ParameterSpec, value: Any, workspace: ResourceGraph) -> bool:
@@ -41,9 +78,11 @@ def _valid(spec: ParameterSpec, value: Any, workspace: ResourceGraph) -> bool:
 
 
 def create_llm_proposal(registry: SkillRegistry, workspace: ResourceGraph,
-                        skill_id: str, parameters: Mapping[str, Any],
+                        policy: LlmProposalPolicy, skill_id: str,
+                        parameters: Mapping[str, Any],
                         invocation_id: str, requested_at_unix_ns: int,
-                        idempotency_key: str) -> ProposalResult:
+                        idempotency_key: str,
+                        maturity_evidence: Optional[MaturityEvidence] = None) -> ProposalResult:
     try:
         definition = registry.get(skill_id)
         assert_safe_for_llm(definition)
@@ -51,6 +90,19 @@ def create_llm_proposal(registry: SkillRegistry, workspace: ResourceGraph,
         return ProposalResult(None, FailureCode.SAFETY_REJECTED, str(error))
     if definition.planner_exposure != PlannerExposure.LLM or definition.layer == SkillLayer.L0_HARDWARE:
         return ProposalResult(None, FailureCode.SAFETY_REJECTED, "skill is not LLM exposed")
+    if definition.safety_class not in policy.allowed_safety_classes:
+        return ProposalResult(None, FailureCode.SAFETY_REJECTED, "safety class is not allowed")
+    if policy.allowlisted_skill_ids and skill_id not in policy.allowlisted_skill_ids:
+        return ProposalResult(None, FailureCode.SAFETY_REJECTED, "skill is not deployment-allowlisted")
+    effective_maturity = definition.maturity
+    if maturity_evidence is not None:
+        key = maturity_evidence.key
+        if key.skill_id != definition.skill_id or key.implementation_version != definition.implementation_version:
+            return ProposalResult(None, FailureCode.SAFETY_REJECTED, "maturity evidence scope mismatch")
+        effective_maturity = maturity_evidence.maturity
+    if effective_maturity < policy.minimum_maturity:
+        return ProposalResult(None, FailureCode.SAFETY_REJECTED,
+                              "deployment maturity policy is not satisfied")
     specs = {item.name: item for item in definition.parameters}
     if set(parameters) - set(specs):
         return ProposalResult(None, FailureCode.INVALID_INPUT, "unknown parameter keys")

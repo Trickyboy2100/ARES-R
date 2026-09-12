@@ -2,8 +2,8 @@ import dataclasses
 import math
 import unittest
 
-from ares_r.skills import (CapabilityRequirement, FailureCode, LockMode,
-    LockRequirement, ParameterSpec, PlannerExposure, ResourceRequirement,
+from ares_r.skills import (CapabilityRequirement, FailureCode, LockIntent, LockMode,
+    ParameterSpec, PlannerExposure, ResourceRequirement,
     SafetyClass, SkillDefinition, SkillLayer, SkillMaturity, TimeoutPolicy)
 from ares_r.skills import digest
 
@@ -15,7 +15,7 @@ def definition():
         (CapabilityRequirement("motion.plan"),),
         (ResourceRequirement("object", ("Container",)),),
         ("object_free",), ("zone_clear",), ("attached",), (),
-        (LockRequirement("object", LockMode.EXCLUSIVE_MOTION),),
+        (LockIntent("object", "resource_parameter:object", LockMode.EXCLUSIVE_MOTION),),
         TimeoutPolicy(5, 30, 5), (FailureCode.PLAN_FAILED,),
         PlannerExposure.LLM, SafetyClass.S2_MOTION, motion_bearing=True)
 

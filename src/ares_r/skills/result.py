@@ -9,6 +9,14 @@ from .serialization import freeze, pairs
 
 
 class SkillStatus(str, Enum):
+    SUCCEEDED = "SUCCEEDED"
+    FAILED = "FAILED"
+    REJECTED = "REJECTED"
+    CANCELLED = "CANCELLED"
+    TIMED_OUT = "TIMED_OUT"
+
+
+class SkillLifecycleState(str, Enum):
     ACCEPTED = "ACCEPTED"
     PLANNING = "PLANNING"
     READY = "READY"
@@ -19,6 +27,48 @@ class SkillStatus(str, Enum):
     REJECTED = "REJECTED"
     CANCELLED = "CANCELLED"
     TIMED_OUT = "TIMED_OUT"
+
+
+@dataclass(frozen=True)
+class SkillRuntimeEvent:
+    invocation_id: str
+    sequence: int
+    previous_state: Optional[SkillLifecycleState]
+    state: SkillLifecycleState
+    recorded_at_unix_ns: int
+    details: Tuple[Tuple[str, Any], ...] = ()
+
+    def __post_init__(self) -> None:
+        if not self.invocation_id or self.sequence < 0 or self.recorded_at_unix_ns <= 0:
+            raise ValueError("runtime event identity, sequence and timestamp are required")
+        previous = (None if self.previous_state is None
+                    else SkillLifecycleState(self.previous_state))
+        object.__setattr__(self, "previous_state", previous)
+        object.__setattr__(self, "state", SkillLifecycleState(self.state))
+        if previous is None:
+            if self.sequence != 0 or self.state != SkillLifecycleState.ACCEPTED:
+                raise ValueError("initial runtime event must be sequence 0 ACCEPTED")
+        else:
+            allowed = {
+                SkillLifecycleState.ACCEPTED: (SkillLifecycleState.PLANNING,
+                    SkillLifecycleState.REJECTED, SkillLifecycleState.CANCELLED,
+                    SkillLifecycleState.TIMED_OUT, SkillLifecycleState.FAILED),
+                SkillLifecycleState.PLANNING: (SkillLifecycleState.READY,
+                    SkillLifecycleState.REJECTED, SkillLifecycleState.CANCELLED,
+                    SkillLifecycleState.TIMED_OUT, SkillLifecycleState.FAILED),
+                SkillLifecycleState.READY: (SkillLifecycleState.RUNNING,
+                    SkillLifecycleState.CANCELLED, SkillLifecycleState.TIMED_OUT,
+                    SkillLifecycleState.FAILED),
+                SkillLifecycleState.RUNNING: (SkillLifecycleState.VERIFYING,
+                    SkillLifecycleState.CANCELLED, SkillLifecycleState.TIMED_OUT,
+                    SkillLifecycleState.FAILED),
+                SkillLifecycleState.VERIFYING: (SkillLifecycleState.SUCCEEDED,
+                    SkillLifecycleState.FAILED, SkillLifecycleState.CANCELLED,
+                    SkillLifecycleState.TIMED_OUT),
+            }
+            if self.state not in allowed.get(previous, ()):
+                raise ValueError("invalid skill lifecycle transition")
+        object.__setattr__(self, "details", pairs(self.details, "runtime event details"))
 
 
 @dataclass(frozen=True)

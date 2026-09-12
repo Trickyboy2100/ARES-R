@@ -10,7 +10,7 @@ from .occupancy import Occupancy
 from .predicates import Predicate, TruthValue
 from .relations import Relation, RelationType
 from .resource import (Container, Holder, MaterialResource, PhysicalResource,
-                       Port, Resource, Slot)
+                       Port, Resource, Slot, Station, Zone)
 
 
 @dataclass(frozen=True)
@@ -62,6 +62,7 @@ class ResourceGraph:
         self._validate_relations(index, relations)
         self._validate_predicates(index, predicates)
         self._validate_occupancy(index, occupancies)
+        self._validate_location_authority(index, relations, occupancies)
         self._validate_bindings(index, bindings)
         self._validate_affordances(index, affordances)
         values = {"resources": resources, "relations": relations,
@@ -100,6 +101,8 @@ class ResourceGraph:
             if relation.relation == RelationType.CONTAINS_MATERIAL:
                 if not isinstance(index[relation.subject_id], Container) or not isinstance(index[relation.object_id], MaterialResource):
                     raise ValueError("contains_material requires Container -> MaterialResource")
+            if relation.relation == RelationType.LOCATED_AT and not isinstance(index[relation.object_id], (Station, Zone)):
+                raise ValueError("located_at is limited to coarse Station/Zone locations")
 
     @staticmethod
     def _validate_occupancy(index: Dict[str, Resource], occupancies: Iterable[Occupancy]) -> None:
@@ -133,6 +136,25 @@ class ResourceGraph:
             if affordance.resource_id not in index or key in keys:
                 raise ValueError("affordance references unknown resource or is duplicated")
             keys.add(key)
+
+    @staticmethod
+    def _validate_location_authority(index: Dict[str, Resource], relations: Iterable[Relation],
+                                     occupancies: Iterable[Occupancy]) -> None:
+        occupied = {item.occupant_id: item.location_id for item in occupancies}
+        located = [item for item in relations if item.relation == RelationType.LOCATED_AT]
+        coarse = {item.subject_id: item.object_id for item in located}
+        if len(coarse) != len(located):
+            raise ValueError("located_at has conflicting locations for one resource")
+        for resource_id, location_id in occupied.items():
+            if resource_id not in coarse:
+                continue
+            ancestors = set()
+            cursor = index[location_id]
+            while cursor is not None:
+                ancestors.add(cursor.resource_id)
+                cursor = index.get(cursor.parent_id) if cursor.parent_id else None
+            if coarse[resource_id] not in ancestors:
+                raise ValueError("located_at conflicts with authoritative occupancy")
 
     @staticmethod
     def _validate_bindings(index: Dict[str, Resource], bindings: Iterable[GeometryBinding]) -> None:

@@ -1,8 +1,8 @@
 import unittest
 
 from ares_r.skills import digest
-from ares_r.workspace import (Container, Relation, RelationType, ResourceGraph,
-                              Sample, Slot, Station)
+from ares_r.workspace import (Container, Occupancy, Relation, RelationType,
+                              ResourceGraph, Sample, Slot, Station, Zone)
 
 
 class ResourceGraphTests(unittest.TestCase):
@@ -33,3 +33,19 @@ class ResourceGraphTests(unittest.TestCase):
                          ResourceGraph.create((b, a)).revision)
         self.assertEqual(digest(ResourceGraph.create((a, b))),
                          digest(ResourceGraph.create((b, a))))
+
+    def test_located_at_is_coarse_and_cannot_conflict_with_occupancy(self):
+        resources = (Station("s1", "s1"), Station("s2", "s2"),
+            Slot("slot", "slot", "s1", accepts_occupant_types=("Container",)),
+            Container("vial", "vial"), Slot("not_coarse", "not coarse", "s2"))
+        with self.assertRaisesRegex(ValueError, "coarse"):
+            ResourceGraph.create(resources,
+                relations=(Relation(RelationType.LOCATED_AT, "vial", "not_coarse"),))
+        with self.assertRaisesRegex(ValueError, "conflicts"):
+            ResourceGraph.create(resources,
+                relations=(Relation(RelationType.LOCATED_AT, "vial", "s2"),),
+                occupancies=(Occupancy("slot", "vial"),))
+        graph = ResourceGraph.create(resources,
+            relations=(Relation(RelationType.LOCATED_AT, "vial", "s1"),),
+            occupancies=(Occupancy("slot", "vial"),))
+        self.assertEqual(graph.occupant("slot").resource_id, "vial")
