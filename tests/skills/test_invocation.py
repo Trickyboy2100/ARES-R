@@ -2,7 +2,7 @@ import dataclasses
 import math
 import unittest
 
-from ares_r.skills import SkillInvocation, canonical_json
+from ares_r.skills import SkillInvocation, canonical_json, digest
 
 
 class InvocationTests(unittest.TestCase):
@@ -21,3 +21,4 @@ class InvocationTests(unittest.TestCase):
         one = SkillInvocation("I", "x.y", "1", (("b", 2), ("a", 1)), "t", 1, "W", "K")
         two = SkillInvocation("I", "x.y", "1", (("a", 1), ("b", 2)), "t", 1, "W", "K")
         self.assertEqual(canonical_json(one), canonical_json(two))
+        self.assertEqual(digest(one), digest(two))

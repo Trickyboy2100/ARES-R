@@ -43,18 +43,30 @@ class ResourceGraph:
         return cls(cls._revision_for(values), **values)
 
     def __post_init__(self) -> None:
-        resources = tuple(self.resources)
+        resources = tuple(sorted(self.resources, key=lambda item: item.resource_id))
+        relations = tuple(sorted(self.relations, key=lambda item: (item.relation.value, item.subject_id, item.object_id)))
+        predicates = tuple(sorted(self.predicates, key=lambda item: (item.subject_id, item.name)))
+        occupancies = tuple(sorted(self.occupancies, key=lambda item: item.location_id))
+        bindings = tuple(sorted(self.geometry_bindings, key=lambda item: item.resource_id))
+        affordances = tuple(sorted(self.affordances, key=lambda item: (item.resource_id, item.affordance_id)))
+        object.__setattr__(self, "resources", resources)
+        object.__setattr__(self, "relations", relations)
+        object.__setattr__(self, "predicates", predicates)
+        object.__setattr__(self, "occupancies", occupancies)
+        object.__setattr__(self, "geometry_bindings", bindings)
+        object.__setattr__(self, "affordances", affordances)
         index = {item.resource_id: item for item in resources}
         if len(index) != len(resources):
             raise ValueError("duplicate resource ID")
         self._validate_parents(index)
-        self._validate_relations(index, self.relations)
-        self._validate_occupancy(index, self.occupancies)
-        self._validate_bindings(index, self.geometry_bindings)
-        values = {"resources": resources, "relations": tuple(self.relations),
-            "predicates": tuple(self.predicates), "occupancies": tuple(self.occupancies),
-            "geometry_bindings": tuple(self.geometry_bindings),
-            "affordances": tuple(self.affordances)}
+        self._validate_relations(index, relations)
+        self._validate_predicates(index, predicates)
+        self._validate_occupancy(index, occupancies)
+        self._validate_bindings(index, bindings)
+        self._validate_affordances(index, affordances)
+        values = {"resources": resources, "relations": relations,
+            "predicates": predicates, "occupancies": occupancies,
+            "geometry_bindings": bindings, "affordances": affordances}
         expected = self._revision_for(values)
         if self.revision != expected:
             raise ValueError("workspace revision does not match canonical content")
@@ -103,6 +115,24 @@ class ResourceGraph:
                 raise ValueError("occupancy is physical Holder/Slot/Port -> PhysicalResource")
             if location.accepts_occupant_types and occupant.type_name not in location.accepts_occupant_types:
                 raise ValueError("incompatible placement")
+
+    @staticmethod
+    def _validate_predicates(index: Dict[str, Resource], predicates: Iterable[Predicate]) -> None:
+        keys = set()
+        for predicate in predicates:
+            key = (predicate.subject_id, predicate.name)
+            if predicate.subject_id not in index or key in keys:
+                raise ValueError("predicate references unknown resource or is duplicated")
+            keys.add(key)
+
+    @staticmethod
+    def _validate_affordances(index: Dict[str, Resource], affordances: Iterable[Affordance]) -> None:
+        keys = set()
+        for affordance in affordances:
+            key = (affordance.resource_id, affordance.affordance_id)
+            if affordance.resource_id not in index or key in keys:
+                raise ValueError("affordance references unknown resource or is duplicated")
+            keys.add(key)
 
     @staticmethod
     def _validate_bindings(index: Dict[str, Resource], bindings: Iterable[GeometryBinding]) -> None:

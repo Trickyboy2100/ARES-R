@@ -5,6 +5,7 @@ import unittest
 from ares_r.skills import (CapabilityRequirement, FailureCode, LockMode,
     LockRequirement, ParameterSpec, PlannerExposure, ResourceRequirement,
     SafetyClass, SkillDefinition, SkillLayer, SkillMaturity, TimeoutPolicy)
+from ares_r.skills import digest
 
 
 def definition():
@@ -39,3 +40,6 @@ class ContractTests(unittest.TestCase):
         values["unknown"] = True
         with self.assertRaises(TypeError):
             SkillDefinition(**values)
+
+    def test_definition_has_canonical_digest(self):
+        self.assertEqual(len(digest(definition())), 64)

@@ -48,6 +48,6 @@ class ResourceResolver:
         if binding is not None and world_objects is not None:
             if world_objects.get(binding.object_id) != resource_id:
                 return ResolutionResult(ResolutionStatus.FAILED, resource=resource, binding=binding,
-                    failure_code=FailureCode.GEOMETRY_BINDING_MISSING,
+                    failure_code=FailureCode.OBJECT_RESOURCE_MISMATCH,
                     message="WorldModel object/resource mismatch")
         return ResolutionResult(ResolutionStatus.RESOLVED, resource=resource, binding=binding)

@@ -1,5 +1,6 @@
 import unittest
 
+from ares_r.skills import digest
 from ares_r.workspace import (Container, Relation, RelationType, ResourceGraph,
                               Sample, Slot, Station)
 
@@ -30,3 +31,5 @@ class ResourceGraphTests(unittest.TestCase):
         a, b = Station("a", "a"), Station("b", "b")
         self.assertEqual(ResourceGraph.create((a, b)).revision,
                          ResourceGraph.create((b, a)).revision)
+        self.assertEqual(digest(ResourceGraph.create((a, b))),
+                         digest(ResourceGraph.create((b, a))))

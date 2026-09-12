@@ -34,3 +34,15 @@ class PlanResultTests(unittest.TestCase):
         self.assertIn('"status":"REJECTED"', canonical_json(
             SkillResult("I", None, SkillStatus.REJECTED, "x", None, 2,
                         FailureCode.INVALID_INPUT)))
+
+    def test_plan_and_result_digest_are_stable(self):
+        one = SkillPlan("P", "I", "device.start", "1", 1, 2, "W", SHA, False,
+                        steps=(("b", 2), ("a", 1)))
+        two = SkillPlan("P", "I", "device.start", "1", 1, 2, "W", SHA, False,
+                        steps=(("a", 1), ("b", 2)))
+        self.assertEqual(digest(one), digest(two))
+        r1 = SkillResult("I", "P", SkillStatus.SUCCEEDED, "ok", 1, 2,
+                         metadata=(("b", 2), ("a", 1)))
+        r2 = SkillResult("I", "P", SkillStatus.SUCCEEDED, "ok", 1, 2,
+                         metadata=(("a", 1), ("b", 2)))
+        self.assertEqual(digest(r1), digest(r2))

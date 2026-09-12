@@ -1,7 +1,8 @@
 import unittest
 
-from ares_r.workspace import (Predicate, TransactionStatus, TruthValue,
-    WorkspaceTransaction, example_workspace)
+from ares_r.workspace import (Container, Predicate, Relation, RelationType,
+    ResourceGraph, Sample, TransactionStatus, TruthValue, WorkspaceTransaction,
+    example_workspace)
 
 
 class TransactionTests(unittest.TestCase):
@@ -23,3 +24,15 @@ class TransactionTests(unittest.TestCase):
         graph = example_workspace()
         self.assertEqual(graph.predicate("vial_7", "sealed"), TruthValue.FALSE)
         self.assertEqual(graph.predicate("vial_7", "clean"), TruthValue.UNKNOWN)
+
+    def test_material_identity_survives_container_transfer(self):
+        resources = (Container("from", "from"), Container("to", "to"),
+                     Sample("sample", "sample"))
+        old = Relation(RelationType.CONTAINS_MATERIAL, "from", "sample")
+        new = Relation(RelationType.CONTAINS_MATERIAL, "to", "sample")
+        graph = ResourceGraph.create(resources, (old,))
+        result = WorkspaceTransaction(graph.revision, relation_additions=(new,),
+            relation_removals=(old,)).commit(graph)
+        self.assertEqual(result.status, TransactionStatus.COMMITTED)
+        self.assertTrue(result.graph.relation_exists(RelationType.CONTAINS_MATERIAL, "to", "sample"))
+        self.assertIs(result.graph.get("sample"), graph.get("sample"))

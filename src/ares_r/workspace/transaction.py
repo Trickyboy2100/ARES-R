@@ -6,6 +6,7 @@ from typing import Tuple
 
 from .occupancy import Occupancy
 from .predicates import Predicate
+from .relations import Relation
 from .resource_graph import ResourceGraph
 
 
@@ -27,6 +28,8 @@ class WorkspaceTransaction:
     base_revision: str
     predicate_updates: Tuple[Predicate, ...] = ()
     occupancy_updates: Tuple[Occupancy, ...] = ()
+    relation_additions: Tuple[Relation, ...] = ()
+    relation_removals: Tuple[Relation, ...] = ()
 
     def commit(self, current: ResourceGraph) -> TransactionResult:
         if current.revision != self.base_revision:
@@ -35,8 +38,11 @@ class WorkspaceTransaction:
         predicates.update({(item.subject_id, item.name): item for item in self.predicate_updates})
         occupancies = {item.location_id: item for item in current.occupancies}
         occupancies.update({item.location_id: item for item in self.occupancy_updates})
+        relations = set(current.relations)
+        relations.difference_update(self.relation_removals)
+        relations.update(self.relation_additions)
         try:
-            updated = ResourceGraph.create(current.resources, current.relations,
+            updated = ResourceGraph.create(current.resources, relations,
                 predicates.values(), occupancies.values(), current.geometry_bindings,
                 current.affordances)
         except ValueError as error:
