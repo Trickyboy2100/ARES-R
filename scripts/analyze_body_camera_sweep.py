@@ -68,39 +68,53 @@ def main():
             "source_manifest":captured["manifest"]}
         if np.linalg.norm(position)>.03:
             expected_angle=math.atan2(position[1],position[0]);observed_angle=math.atan2(translation_level[1],translation_level[0])
-            inferred=angle_delta(expected_angle,observed_angle)
-            record["inferred_yaw_rad"]=inferred;record["inferred_yaw_deg"]=math.degrees(inferred)
-            record["translation_scale"]=float(np.linalg.norm(translation_level[:2])/np.linalg.norm(position))
+            scale=float(np.linalg.norm(translation_level[:2])/np.linalg.norm(position))
+            record["translation_scale"]=scale
+            # A controller may accept a request while declining to translate
+            # (for example, an unsupported lateral axis).  Such a frame is a
+            # useful failure observation, but it must not contaminate yaw.
+            record["motion_observed"]=bool(scale>=.5)
+            if record["motion_observed"]:
+                inferred=angle_delta(expected_angle,observed_angle)
+                record["inferred_yaw_rad"]=inferred;record["inferred_yaw_deg"]=math.degrees(inferred)
+            else:
+                record["invalid_reason"]="commanded translation was not observed in the point cloud"
         else:
             record["return_translation_error_m"]=float(np.linalg.norm(translation_level[:2]))
         records.append(record)
     inferred=[item["inferred_yaw_rad"] for item in records if "inferred_yaw_rad" in item]
-    if len(inferred)<2:raise RuntimeError("both x and y displaced captures are required")
-    phasor=sum(np.exp(1j*value) for value in inferred);yaw_sweep=math.atan2(phasor.imag,phasor.real)
-    prior_candidates=[yaw_prior,angle_delta(yaw_prior+math.pi,0)]
-    selected_prior=min(prior_candidates,key=lambda value:abs(angle_delta(value,yaw_sweep)))
-    disagreement=abs(math.degrees(angle_delta(yaw_sweep,selected_prior)))
+    yaw_sweep=None;selected_prior=None;disagreement=None
+    if inferred:
+        phasor=sum(np.exp(1j*value) for value in inferred);yaw_sweep=math.atan2(phasor.imag,phasor.real)
+        prior_candidates=[yaw_prior,angle_delta(yaw_prior+math.pi,0)]
+        selected_prior=min(prior_candidates,key=lambda value:abs(angle_delta(value,yaw_sweep)))
+        disagreement=abs(math.degrees(angle_delta(yaw_sweep,selected_prior)))
     returns=[item["return_translation_error_m"] for item in records if "return_translation_error_m" in item]
-    passed=(disagreement<=2 and all(item["fitness"]>=.55 and item["rmse_m"]<=.035 and
+    passed=(len(inferred)>=2 and disagreement is not None and disagreement<=2 and
+        all(item["fitness"]>=.55 and item["rmse_m"]<=.035 and
         item["estimated_rotation_drift_deg"]<=1.5 for item in records) and
         all(.65<=item.get("translation_scale",1)<=1.35 for item in records) and
         bool(returns) and max(returns)<=.03)
     result={"schema_version":1,"state":"SWEEP_VALIDATED" if passed else "SWEEP_INCONCLUSIVE",
         "planning_allowed":False,"execution_allowed":False,"operator_alignment_prior":str(priors[-1]),
         "api_axis_assumption":"AMR relative +x/+y are treated as BODY +X/+Y; physical arrow/response must be operator-observed",
-        "yaw_prior_deg_selected_branch":math.degrees(selected_prior),"yaw_sweep_deg":math.degrees(yaw_sweep),
+        "yaw_prior_deg_selected_branch":math.degrees(selected_prior) if selected_prior is not None else None,
+        "yaw_sweep_deg":math.degrees(yaw_sweep) if yaw_sweep is not None else None,
         "yaw_disagreement_deg":disagreement,"acceptance":{"max_yaw_disagreement_deg":2,"passed":passed},
+        "valid_displaced_axis_count":len(inferred),
         "pairs":records}
     (args.output/"base_sweep_yaw_validation.json").write_text(json.dumps(result,indent=2)+"\n")
     fig,ax=plt.subplots(figsize=(8,8));ax.axhline(0,color=".8");ax.axvline(0,color=".8")
     for item in records:
         e=np.asarray(item["expected_body_position_m"]);v=np.asarray(item["estimated_level_translation_m"][:2])
         ax.arrow(0,0,e[0],e[1],color="black",width=.001,length_includes_head=True)
-        ax.arrow(0,0,v[0],v[1],color="tab:orange",width=.001,length_includes_head=True)
+        observed_color="tab:orange" if item.get("motion_observed",True) else "tab:red"
+        ax.arrow(0,0,v[0],v[1],color=observed_color,width=.001,length_includes_head=True)
         ax.text(e[0],e[1],item["direction"])
     ax.set_aspect("equal");ax.set(xlabel="horizontal axis 1 (m)",ylabel="horizontal axis 2 (m)",title="Expected BODY translations (black) vs observed LEVEL (orange)")
     fig.tight_layout();fig.savefig(args.output/"base_sweep_vectors.png",dpi=180);plt.close(fig)
-    print(json.dumps({"state":result["state"],"yaw_sweep_deg":result["yaw_sweep_deg"],"disagreement_deg":disagreement}))
+    print(json.dumps({"state":result["state"],"yaw_sweep_deg":result["yaw_sweep_deg"],
+        "disagreement_deg":disagreement,"valid_displaced_axis_count":len(inferred)}))
 
 
 if __name__=="__main__":main()
