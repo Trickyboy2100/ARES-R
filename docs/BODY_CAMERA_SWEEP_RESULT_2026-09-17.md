@@ -73,3 +73,41 @@ READY_FOR_SUPERVISED_CLEAR = NO
 READY_FOR_SUPERVISED_AVOID = NO
 ```
 
+## Follow-up: manual lateral validation
+
+The physical joystick can command lateral motion even though the HTTP
+`RelativeMove` y request did not create observable motion.  A manually
+commanded BODY-right observation added a second independent direction:
+
+```text
+horizontal displacement = 0.07153 m
+fitness                 = 0.8864
+RMSE                    = 0.00621 m
+rotation drift          = 0.0777 deg
+inferred yaw            = -80.7682 deg
+```
+
+A quality-gated robust sanity solver combines the table-edge prior with the
+original forward and manual-right observations.  It rejects the ineffective
+HTTP lateral request and a later capture whose valid-point ratio was only
+`0.6273`.  The resulting validation values are:
+
+```text
+yaw sanity estimate     = -79.6222 deg
+camera BODY z prior     = 1.56957 m
+rotation_and_z_validated = true
+tx/ty                   = unresolved
+state                   = UNCOMMISSIONED
+```
+
+Artifacts:
+
+```text
+logs/calibration/body_camera/20260917_163644_0dd5978e/translation_observations_v2.json
+logs/calibration/body_camera/20260917_163644_0dd5978e/body_camera_rotation_z_validation.json
+```
+
+Per the current precision-calibration queue, base translation and table-edge
+results are validation evidence only.  Production `T_body_camera` must be
+solved by the robot-held target eye-to-hand workflow; these values do not
+commission a production transform.
