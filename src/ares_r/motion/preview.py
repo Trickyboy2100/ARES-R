@@ -17,7 +17,11 @@ def write_preview(path):
     delta = [[p[j]-q[0][j] for j in range(6)] for p in q]
     velocity = [[0.0]*6] + [[(b[j]-a[j])/dt for j in range(6)] for a,b in zip(q,q[1:])]
     acceleration = [[0.0]*6] + [[(b[j]-a[j])/dt for j in range(6)] for a,b in zip(velocity,velocity[1:])]
-    scene=json.loads(path.read_text()).get("demo")
+    raw = json.loads(path.read_text())
+    # The demo worker writes its geometry under "demo"; the pregrasp worker uses
+    # "pregrasp". Both carry the BODY link chain and obstacle corners the 3D
+    # views need, so the preview does not care which experiment produced it.
+    scene = raw.get("demo") or raw.get("pregrasp")
     data = json.dumps(dict(q=q, dt=dt, series=[delta, velocity, acceleration], info=info,scene=scene)).replace("<", "\\u003c")
     html = """<!doctype html><html lang="zh-CN"><meta charset="utf-8">
 <title>ARES-R cuRobo 轨迹预览</title><style>

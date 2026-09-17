@@ -37,6 +37,27 @@ class FeedbackAuditTest(unittest.TestCase):
         with patch("ares_r.motion.feedback_audit.subprocess.run",return_value=Mock(stdout=rows)):
             self.assertEqual(len(status_connections()),1)
 
+    def test_exclude_pid_drops_only_that_process_own_sockets(self):
+        # The native execution paths release the SDK connection and then probe,
+        # so the half-closed socket of that very release must not be reported as
+        # a competing reader. Sockets of any other process must still be caught.
+        rows = ("ESTAB 0 0 192.168.99.32:111 192.168.99.101:10001 "
+                "users:((\"python3\",pid=111,fd=3))\n"
+                "CLOSE-WAIT 1 0 192.168.99.32:112 192.168.99.101:10001 "
+                "users:((\"python3\",pid=222,fd=4))\n"
+                "ESTAB 0 0 192.168.99.32:113 192.168.99.100:10001 "
+                "users:((\"python3\",pid=111,fd=5))\n")
+        with patch("ares_r.motion.feedback_audit.subprocess.run",return_value=Mock(stdout=rows)):
+            self.assertEqual(len(status_connections()), 2, "both .101 sockets count by default")
+            only_111 = status_connections(exclude_pid=222)
+            self.assertEqual(len(only_111), 1)
+            self.assertIn("pid=111", only_111[0])
+            only_222 = status_connections(exclude_pid=111)
+            self.assertEqual(len(only_222), 1)
+            self.assertIn("pid=222", only_222[0])
+            # An unrelated pid must change nothing.
+            self.assertEqual(status_connections(exclude_pid=999), status_connections())
+
     def test_missing_inspection_blocks_before_reader(self):
         with tempfile.TemporaryDirectory() as root:
             factory = Mock()

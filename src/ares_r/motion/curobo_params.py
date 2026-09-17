@@ -1,6 +1,20 @@
 """Audited cuRobo planning profile with bounded, logged overrides."""
 import math
 
+#: Reviewed planning profiles for the 2026-09-14 dual-arm experiment (section 7).
+#: Each entry is a delta on the site planning configuration. Adding a profile is
+#: a code review change here; never a temporary edit of config/system.json.
+#: ``current`` is the baseline: 8 IK seeds, 8 TrajOpt seeds, 5 attempts, graph
+#: attempt 1 and CUDA Graph off. The path uses plan_cspace with an already fixed
+#: goal IK, so num_ik_seeds has no practical effect and the seeds4 variation
+#: comes from the TrajOpt seeds. Studying IK seeds needs a separate pose-goal
+#: experiment and must not be inferred from these results.
+PROFILES = {
+    "current": {},
+    "seeds4": {"num_ik_seeds": 4, "num_trajopt_seeds": 4},
+    "cuda-graph": {"use_cuda_graph": True},
+}
+
 DEFAULTS={"num_ik_seeds":8,"num_trajopt_seeds":8,"max_attempts":5,
           "enable_graph_attempt":1,"interpolation_dt":.008,
           "interpolation_buffer_size":5000,"use_cuda_graph":False,
@@ -37,3 +51,20 @@ def planning_profile(config):
         raise ValueError("invalid demo candidate distances")
     values["demo_candidate_tcp_m"]=candidates
     return values
+
+
+def profiled_config(config, profile):
+    """Return a config copy with one reviewed ``PROFILES`` delta applied.
+
+    The delta is merged on top of the site planning configuration rather than
+    replacing it, so a reviewed site change cannot be silently dropped. Every
+    resolved value still lands in the request and trajectory for traceability.
+    """
+    if profile not in PROFILES:
+        raise ValueError("unknown planning profile %r; reviewed profiles are %s"
+                         % (profile, ", ".join(sorted(PROFILES))))
+    planning = dict(config.get("curobo", {}).get("planning", {}))
+    planning.update(PROFILES[profile])
+    merged = dict(config)
+    merged["curobo"] = dict(config.get("curobo", {}), planning=planning)
+    return merged

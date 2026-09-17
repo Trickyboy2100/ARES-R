@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "session": "frame-verification",
+  "kind": "epic_frame_verification",
+  "recorded_at": "2026-09-16 13:53:50",
+  "arm": "right",
+  "conclusion": {
+    "frame": "right_arm_base",
+    "units": "millimetre",
+    "confirmed": true,
+    "confidence_mm": 10.0
+  },
+  "evidence": [
+    {
+      "method": "操作者按控制器读数把 TCP 调到相机坐标",
+      "circular": true,
+      "note": "数值比对本身是循环的：操作者让控制器读数等于相机读数，两边必然相等。但物理落点由操作者目视确认落在抓取点上（误差几毫米内），而若两个坐标系不同，偏移量会是两百毫米级 + 90 度偏航，肉眼必然可见。",
+      "comparison_mm": {
+        "arm": "right",
+        "epic_mean_mm": [
+          494.7705,
+          -504.8821,
+          -168.2868
+        ],
+        "tcp_mean_mm": [
+          499.0176,
+          -499.2415,
+          -168.4882
+        ],
+        "error_mm": [
+          4.2471,
+          5.6406,
+          -0.2014
+        ],
+        "error_magnitude_mm": 7.0636,
+        "tolerance_mm": 5.0,
+        "frame_confirmed": false,
+        "epic_spread_mm": [
+          1.6711,
+          1.853,
+          0.8659
+        ],
+        "tcp_spread_mm": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "method": "机械臂移开后重新检测并与该 TCP 比对",
+      "circular": false,
+      "error_mm": [
+        4.25,
+        5.64,
+        -0.2
+      ],
+      "error_magnitude_mm": 7.06,
+      "note": "z 仅差 0.20 mm；x/y 的 7 mm 与当时相机自身的 6.54 mm 跳动同量级，也可能是拖动示教时把料盘碰动了几毫米（z 不变符合台面平移特征）。"
+    },
+    {
+      "method": "料盘位移方向重复性",
+      "note": "两次反向移动单位向量夹角 176.1 度，z 分量占 2~4%，确认水平且可重复。",
+      "unit_direction_right": [
+        -0.92034,
+        -0.39059,
+        0.02042
+      ]
+    }
+  ],
+  "perception_observation": {
+    "note": "本次 5 次检测的 x/y 偏差强相关（比值约 0.65），是刚性平移跳变而非独立噪声，提示模板匹配在两个相近位姿间摆动；z 稳定在 ±0.9 mm。",
+    "spread_mm": [
+      4.608069999999998,
+      6.535339999999962,
+      1.3104099999999903
+    ],
+    "earlier_spread_mm": [
+      0.47,
+      1.5,
+      0.31,
+      0.88
+    ]
+  },
+  "limitation": "坐标系按右臂基座、毫米制验收，置信区间约 ±10 mm。该区间来自相机当前 6.5 mm 的双峰跳动与目视判读，不是坐标系本身的精度上限。姿态与欧拉角约定尚未独立验证：本次只比对了位置。",
+  "warning": "只读比对；未发送任何运动指令。拖动示教由操作者手动完成。"
+}

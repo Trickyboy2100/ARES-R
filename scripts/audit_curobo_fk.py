@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Right-only READ-ONLY URDF versus controller FK audit. No control API calls."""
+"""READ-ONLY URDF versus controller FK audit for either arm. No control API calls."""
 
 import argparse
 import json
@@ -39,12 +39,15 @@ def main():
     parser.add_argument("urdf", type=Path)
     parser.add_argument("output", type=Path)
     parser.add_argument("--config", default="config/system.json")
+    parser.add_argument("--side", choices=("left", "right"), default="right",
+                        help="arm to audit; the SDK runtime is always created read-only")
     args = parser.parse_args()
     if args.output.exists():
         raise ValueError("refusing to overwrite audit output")
+    side = args.side
     root = ET.parse(args.urdf).getroot()
     config = json.loads(Path(args.config).read_text())["jaka"]
-    arm = JakaSdkArm("right", config["arms"]["right"], config)
+    arm = JakaSdkArm(side, config["arms"][side], config)
     try:
         diagnostics = arm.diagnostics()
         tool = list(diagnostics["tool_data"]["pose_mm_rad"])
@@ -56,7 +59,7 @@ def main():
                 q = [0.0]*6; q[index] = delta; samples.append(q)
         measured = []
         for q in samples:
-            sdk = list(_value(arm.robot.kine_forward(q), "right FK"))
+            sdk = list(_value(arm.robot.kine_forward(q), "%s FK" % side))
             sdk[:3] = [v/1000 for v in sdk[:3]]
             measured.append(pose(sdk))
         correction = measured[0] @ np.linalg.inv(urdf_fk(root, samples[0]) @ tool_matrix)
@@ -67,7 +70,7 @@ def main():
             rows.append({"q_rad": q,
                          "position_error_mm": float(np.linalg.norm(actual[:3, 3]-predicted[:3, 3])*1000),
                          "orientation_error_deg": math.degrees(math.acos(float(np.clip((np.trace(relative)-1)/2, -1, 1))))})
-        report = {"arm": "right", "method": "zero-pose base correction, 13 independent read-only SDK FK checks",
+        report = {"arm": side, "method": "zero-pose base correction, 13 independent read-only SDK FK checks",
                   "T_controller_model": correction.tolist(), "samples": rows, "diagnostics": diagnostics,
                   "max_position_error_mm": max(row["position_error_mm"] for row in rows),
                   "max_orientation_error_deg": max(row["orientation_error_deg"] for row in rows),
