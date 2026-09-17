@@ -6,8 +6,9 @@ from .scene_snapshot import (AttachedObject,CalibrationSet,EnvironmentRevision,
     SceneSnapshot,canonical_json,digest,snapshot_dict)
 from .validity import InvalidationReason,LifecycleState,SnapshotLifecycle
 from .world_model import WorldModel
+from .scene_compiler import compile_snapshot,transform_body_aabb
 
 __all__=["PoseSE3","RobotState","AttachedObject","CalibrationSet","EnvironmentRevision",
     "ObservationEpoch","PointCloudRef","SafetyConstraint","SceneObject","SceneObjectRole",
     "SceneSnapshot","InvalidationReason","LifecycleState","SnapshotLifecycle","WorldModel",
-    "canonical_json","digest","snapshot_dict"]
+    "canonical_json","digest","snapshot_dict","compile_snapshot","transform_body_aabb"]
