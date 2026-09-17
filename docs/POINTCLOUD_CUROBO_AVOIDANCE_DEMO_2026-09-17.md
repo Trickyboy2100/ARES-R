@@ -27,7 +27,7 @@
 ```text
 /home/yikun/ARES-R_AUDIT_20260917/pointcloud_curobo_demo/
 ├── frame716_pipeline_v2/       # 01–08 图、pipeline、collision world、snapshot
-├── planning_v4/                # 三组 request/result/log/plot
+├── planning_v5/                # 三组 request/result/log/plot
 └── latency/                    # 内存快路径与 cuRobo steady-state benchmark
 ```
 
@@ -72,10 +72,10 @@ candidate 来自稳定桌面法向与单姿态机器人几何对齐，不是生�
 | 场景 | 碰撞世界 | 结果 | 证据 |
 |---|---|---|---|
 | FREE | known support，无额外 blocker | SUCCESS | 起点/路径最小模型间隙约 `2.33 mm` |
-| AVOID | FREE + 25 mm `DEMO_OBSTACLE_AUGMENTATION` | SUCCESS | 直连基线碰撞 `-37.50 mm`；规划成功；相对 FREE 最大 TCP 偏离 `58.48 mm` |
+| AVOID | FREE + 10 个端点安全的真实 residual AABB + 25 mm `DEMO_OBSTACLE_AUGMENTATION` | SUCCESS | 直连基线碰撞 `-37.50 mm`；规划成功；相对 FREE 最大 TCP 偏离 `58.49 mm` |
 | BLOCK | FREE + 100 mm goal enclosure | EXPECTED FAILURE | 起点 `+2.33 mm`，目标 `-75.00 mm`，失败原因是目标被阻塞 |
 
-AVOID augmentation 位于由 FREE 查询产生的中间区域，明确独立于真实 residual 层；其用途是稳定证明规划器确实响应碰撞世界，不冒充相机检测到的实体。
+AVOID augmentation 位于由 FREE 查询产生的中间区域，明确独立于真实 residual 层；其用途是稳定证明规划器确实响应碰撞世界，不冒充相机检测到的实体。16 个真实 residual AABB 中有 10 个在相同起终点保持至少 10 mm endpoint clearance 并进入 AVOID world；其余 6 个因 DEMO 配准/代理几何下已碰撞起点或目标而 fail-closed 排除，逐对象间隙保存在 `avoid_planning.json.real_residual_selection`。全量 16 个 AABB 的负向试验会被 cuRobo 以 start/end collision 拒绝，不能作为执行场景。
 
 ## 可视化与录屏建议
 

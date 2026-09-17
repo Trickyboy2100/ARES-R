@@ -130,6 +130,7 @@ def main():
     cfg = MotionPlannerCfg.create(
         robot=robot,
         scene_model={"cuboid": cuboids},
+        collision_cache={"cuboid": max(32, len(scene["cuboids"])+2)},
         interpolation_dt=params["interpolation_dt"],
         interpolation_buffer_size=params["interpolation_buffer_size"],
         num_trajopt_seeds=params["num_trajopt_seeds"],
@@ -150,6 +151,32 @@ def main():
             torch.tensor(ordered, device="cuda:0", dtype=torch.float32).contiguous(),
             joint_names=names,
         )
+
+    residual_selection = {"included": [], "excluded_endpoint_collision": []}
+    if mode == "AVOID":
+        endpoints = planner.compute_kinematics(state([start, goal])).robot_spheres.detach().cpu().numpy()
+
+        def box_gap(spheres, box):
+            spheres = spheres.reshape(-1, 4)
+            spheres = spheres[spheres[:, 3] > 0]
+            delta = np.abs(spheres[:, :3] - np.asarray(box["pose"][:3])) - np.asarray(box["dims"]) / 2
+            signed = np.linalg.norm(np.maximum(delta, 0), axis=1) + np.minimum(np.max(delta, axis=1), 0) - spheres[:, 3]
+            return float(signed.min())
+
+        for object_id, box in scene["cuboids"].items():
+            if not object_id.startswith("unknown_"):
+                continue
+            gaps = [box_gap(endpoints[index], box) for index in range(2)]
+            record = {"id": object_id, "start_gap_m": gaps[0], "goal_gap_m": gaps[1]}
+            if min(gaps) > 0.01:
+                cuboids[object_id] = box
+                residual_selection["included"].append(record)
+            else:
+                residual_selection["excluded_endpoint_collision"].append(record)
+        update_at = time.perf_counter()
+        planner.update_world(SceneCfg.create({"cuboid": cuboids}))
+        torch.cuda.synchronize()
+        world_update_ms += (time.perf_counter() - update_at) * 1000
 
     def clearance(rows):
         geometry = planner.compute_kinematics(state(rows)).robot_spheres.detach().cpu().numpy().reshape(-1, 4)
@@ -246,6 +273,7 @@ def main():
         "start_rad": start.tolist(),
         "goal_rad": goal.tolist(),
         "augmentation": augmentation,
+        "real_residual_selection": residual_selection,
         "world_cuboid_ids": list(cuboids),
         "trajectory_points_rad": points,
         "tcp_path_model_m": tcp_model,
