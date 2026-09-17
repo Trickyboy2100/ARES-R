@@ -142,10 +142,18 @@ class JakaSdkArm(Arm):
         raise JakaSdkError("%s arm motion is locked in jaka-readonly mode" % self.name)
 
     def move_joints_absolute(self, target_rad: Sequence[float], speed_rad_s: float,
-                             progress=None, timeout_s: float = None) -> Dict[str, object]:
+                             progress=None, timeout_s: float = None, *, safety_permit=None,
+                             authorized_points=None, sample_period_s=None) -> Dict[str, object]:
         """Start a non-blocking MoveJ and supervise it without freezing ART."""
         if not self.motion_enabled:
             self._motion_locked()
+        from ..motion.safety_kernel import require_permit
+        if authorized_points is None or sample_period_s is None:
+            raise JakaSdkError("direct MoveJ is blocked: a full-path DualArmSafetyKernel permit is required")
+        require_permit(safety_permit, self.name, authorized_points, sample_period_s)
+        if any(abs(float(a) - float(b)) > 1e-9
+               for a, b in zip(authorized_points[-1], target_rad)):
+            raise JakaSdkError("MoveJ target differs from the safety-authorized endpoint")
         if len(target_rad) != 6 or not all(math.isfinite(float(value)) for value in target_rad):
             raise JakaSdkError("absolute joint target must contain six finite radians")
         if not math.isfinite(speed_rad_s) or speed_rad_s <= 0.0 or speed_rad_s > 0.10:

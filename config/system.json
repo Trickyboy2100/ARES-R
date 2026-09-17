@@ -4,9 +4,41 @@
     "host": "192.168.99.199",
     "port": 5700,
     "timeout_s": 8.0,
-    "pick_command": "320,1,1,1,1,0",
-    "place_command": "320,1,2,1,1,0",
-    "response_terminator": ""
+    "response_terminator": "",
+    "default_pick_profile": "left_pick",
+    "default_place_profile": "left_place",
+    "task_profiles": {
+      "left_pick": {
+        "arm": "left", "purpose": "pick", "command": "320,1,1,1,1,0",
+        "camera_id": 1, "space_id": 1, "object_id": 1,
+        "output_frame": "left_arm_base_candidate", "translation_unit": "mm", "rotation_unit": "deg",
+        "orientation_convention": "UNKNOWN", "approach_axis": "UNKNOWN",
+        "tool_revision": "sha256:901e0a88a2198b5e9f3c8b7d1f7b69500306edea3c1152c1af9ec63ffd6cd3a4", "calibration_revision": "UNCOMMISSIONED", "state": "UNCOMMISSIONED",
+        "grasp": {"insertion_mode": "horizontal", "approach_m": 0.06, "lift_m": 0.08, "min_reach_m": 0.15, "max_reach_m": 0.80, "max_approach_tilt_deg": 15.0}
+      },
+      "left_place": {
+        "arm": "left", "purpose": "place", "command": "320,1,2,1,1,0",
+        "camera_id": 1, "space_id": 1, "object_id": 2,
+        "output_frame": "left_arm_base_candidate", "translation_unit": "mm", "rotation_unit": "deg",
+        "orientation_convention": "UNKNOWN", "approach_axis": "UNKNOWN",
+        "tool_revision": "sha256:901e0a88a2198b5e9f3c8b7d1f7b69500306edea3c1152c1af9ec63ffd6cd3a4", "calibration_revision": "UNCOMMISSIONED", "state": "UNCOMMISSIONED"
+      },
+      "right_pick": {
+        "arm": "right", "purpose": "pick", "command": "320,2,1,1,1,0",
+        "camera_id": 1, "space_id": 2, "object_id": 1,
+        "output_frame": "right_arm_base_candidate", "translation_unit": "mm", "rotation_unit": "deg",
+        "orientation_convention": "UNKNOWN", "approach_axis": "UNKNOWN",
+        "tool_revision": "sha256:b69f75dfc783a0e80f92e5b4e5a227365682f2970bb68e7eb139b9be3643948b", "calibration_revision": "UNCOMMISSIONED", "state": "UNCOMMISSIONED",
+        "grasp": {"insertion_mode": "horizontal", "approach_m": 0.06, "lift_m": 0.08, "min_reach_m": 0.15, "max_reach_m": 0.80, "max_approach_tilt_deg": 15.0}
+      },
+      "right_place": {
+        "arm": "right", "purpose": "place", "command": "320,2,2,1,1,0",
+        "camera_id": 1, "space_id": 2, "object_id": 2,
+        "output_frame": "right_arm_base_candidate", "translation_unit": "mm", "rotation_unit": "deg",
+        "orientation_convention": "UNKNOWN", "approach_axis": "UNKNOWN",
+        "tool_revision": "sha256:b69f75dfc783a0e80f92e5b4e5a227365682f2970bb68e7eb139b9be3643948b", "calibration_revision": "UNCOMMISSIONED", "state": "UNCOMMISSIONED"
+      }
+    }
   },
   "epic_pointcloud": {
     "endpoint": "192.168.99.199:5000",
@@ -28,7 +60,10 @@
     "approach_m": 0.03,
     "lift_m": 0.08,
     "speed_scale": 0.2,
-    "limits_file": "config/jaka_mini2_motion.site.json"
+    "limits_file": "config/jaka_mini2_motion.site.json",
+    "execution_enabled": false,
+    "motion_authority": "dual_arm_safety_kernel_v1",
+    "speed_profiles_file": "config/speed_profiles.json"
   },
   "curobo": {
     "python": "/home/yikun/ares-r-curobo-venv/bin/python",

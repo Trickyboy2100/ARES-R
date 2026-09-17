@@ -379,11 +379,14 @@ def validate_demo20(raw,trajectory,reset=False):
         raise RuntimeError("joint envelope")
 
 
-def execute(config,path,mode,confirmed=False):
+def execute(config,path,mode,confirmed=False,safety_permit=None):
     if not confirmed: raise RuntimeError("explicit on-site supervised confirmation required")
     competing = status_connections(exclude_pid=os.getpid())
     if competing: raise RuntimeError("right status port occupied")
     native,trajectory=prepare_native_file(config,path,mode)
+    from .safety_kernel import require_permit
+    require_permit(safety_permit, trajectory.arm, trajectory.points,
+                   trajectory.sample_period_s)
     from ..world_geometry import load_world_geometry,base_tcp_to_world
     world=load_world_geometry(Path(config["world_geometry_file"]))
     world_base=world["arms"]["right"]

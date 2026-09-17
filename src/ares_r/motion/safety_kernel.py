@@ -1,0 +1,144 @@
+"""Single offline-verifiable authorization gate for both JAKA arms.
+
+The kernel does not perform FK from the display model.  It consumes sampled
+BODY-frame collision spheres produced by the real planning model and refuses a
+trajectory when that evidence is missing.  Hardware adapters accept only a
+permit minted here, so endpoint-only checks cannot authorize motion.
+"""
+
+import hashlib
+import json
+import math
+import time
+from dataclasses import dataclass
+from typing import Mapping, Sequence
+
+FORBIDDEN_HALF_WIDTH_M = 0.070
+
+
+class SafetyViolation(RuntimeError):
+    pass
+
+
+@dataclass(frozen=True)
+class SafetyPermit:
+    arm: str
+    trajectory_digest: str
+    scene_snapshot_id: str
+    speed_profile: str
+    issued_at: float
+    authority: str = "dual_arm_safety_kernel_v1"
+
+
+def trajectory_digest(arm: str, points: Sequence[Sequence[float]], sample_period_s: float) -> str:
+    payload = {"arm": arm, "sample_period_s": float(sample_period_s),
+               "points": [[round(float(v), 12) for v in row] for row in points]}
+    return hashlib.sha256(json.dumps(payload, separators=(",", ":"), sort_keys=True).encode()).hexdigest()
+
+
+def require_permit(permit, arm, points, sample_period_s):
+    if not isinstance(permit, SafetyPermit) or permit.authority != "dual_arm_safety_kernel_v1":
+        raise SafetyViolation("motion requires a DualArmSafetyKernel permit")
+    if permit.arm != arm or permit.trajectory_digest != trajectory_digest(arm, points, sample_period_s):
+        raise SafetyViolation("safety permit does not match this arm/trajectory")
+
+
+class DualArmSafetyKernel:
+    def __init__(self, execution_enabled: bool, speed_profiles: Mapping[str, object]):
+        self.execution_enabled = bool(execution_enabled)
+        self.speed_profiles = speed_profiles
+
+    def authorize(self, *, arm, points, sample_period_s, geometry_samples,
+                  speed_profile, live_start, tool_revision, planned_tool_revision,
+                  scene_snapshot_id, collision_checked, base_stationary,
+                  inactive_arm_state_known, controller_fault=False, attached_object=False):
+        if not self.execution_enabled:
+            raise SafetyViolation("motion execution is disabled at the integration control point")
+        if arm not in ("left", "right"):
+            raise SafetyViolation("arm must be left or right")
+        if speed_profile not in self.speed_profiles:
+            raise SafetyViolation("unknown speed profile")
+        profile = self.speed_profiles[speed_profile]
+        if getattr(profile, "state", None) != "COMMISSIONED":
+            raise SafetyViolation("speed profile is not commissioned")
+        points = [[float(v) for v in row] for row in points]
+        if len(points) < 2 or any(len(row) != 6 or not all(math.isfinite(v) for v in row)
+                                  for row in points):
+            raise SafetyViolation("trajectory must contain at least two finite six-joint points")
+        if not math.isfinite(sample_period_s) or sample_period_s <= 0:
+            raise SafetyViolation("invalid sample period")
+        if len(live_start) != 6 or max(abs(float(a) - float(b))
+                                       for a, b in zip(live_start, points[0])) > 0.03:
+            raise SafetyViolation("start-state mismatch")
+        if not base_stationary or not inactive_arm_state_known:
+            raise SafetyViolation("base must be stationary and inactive arm state known")
+        if controller_fault:
+            raise SafetyViolation("controller fault/estop/collision/limit blocks motion")
+        if tool_revision != planned_tool_revision:
+            raise SafetyViolation("tool/TCP revision mismatch")
+        if not scene_snapshot_id or not collision_checked:
+            raise SafetyViolation("task manipulation requires a collision-checked SceneSnapshot")
+        self._check_dynamics(points, sample_period_s, profile)
+        self._check_geometry(arm, geometry_samples, len(points), attached_object)
+        return SafetyPermit(arm, trajectory_digest(arm, points, sample_period_s),
+                            scene_snapshot_id, speed_profile, time.time())
+
+    @staticmethod
+    def _check_dynamics(points, dt, profile):
+        previous_velocity = [0.0] * 6
+        for before, after in zip(points, points[1:]):
+            velocity = [(b - a) / dt for a, b in zip(before, after)]
+            if max(abs(v) for v in velocity) > profile.max_velocity_rad_s + 1e-12:
+                raise SafetyViolation("trajectory exceeds speed profile velocity")
+            acceleration = [(v - p) / dt for v, p in zip(velocity, previous_velocity)]
+            if max(abs(a) for a in acceleration) > profile.max_acceleration_rad_s2 + 1e-12:
+                raise SafetyViolation("trajectory exceeds speed profile acceleration")
+            previous_velocity = velocity
+
+    @staticmethod
+    def _check_geometry(arm, samples, point_count, attached_object):
+        if len(samples) != point_count:
+            raise SafetyViolation("full-path collision geometry is required for every sample")
+        moving_required = {"links", "tool"} | ({"attached_object"} if attached_object else set())
+        inactive = "right_arm" if arm == "left" else "left_arm"
+        for sample in samples:
+            if not moving_required.issubset(sample) or inactive not in sample:
+                raise SafetyViolation("link/tool/inactive-arm collision geometry is incomplete")
+            for component in moving_required:
+                DualArmSafetyKernel._check_side(arm, sample[component])
+            DualArmSafetyKernel._check_side("right" if arm == "left" else "left",
+                                            sample[inactive])
+
+    @staticmethod
+    def _check_side(side, spheres):
+        if not spheres:
+            raise SafetyViolation("empty collision geometry cannot authorize motion")
+        for sphere in spheres:
+            center = sphere["center_body_m"]
+            radius = float(sphere["radius_m"])
+            if len(center) != 3 or radius <= 0 or not all(math.isfinite(float(v)) for v in center):
+                raise SafetyViolation("invalid BODY collision sphere")
+            y = float(center[1])
+            clear = y - radius > FORBIDDEN_HALF_WIDTH_M if side == "left" else (
+                y + radius < -FORBIDDEN_HALF_WIDTH_M)
+            if not clear:
+                raise SafetyViolation("collision geometry touches the BODY central 14 cm slab")
+
+
+def central_plane_in_arm_base(arm: str, base_xyz_m, base_yaw_rad: float):
+    """BODY central boundary as `normal·p_base >= offset`, report-only.
+
+    Left keeps BODY `Y > +0.070`; right keeps BODY `Y < -0.070`.
+    The returned values are candidates for JAKA App entry and must not be written
+    automatically because the installed SDK exposes no safety-plane API.
+    """
+    if arm not in ("left", "right"):
+        raise ValueError("arm must be left or right")
+    sign = 1.0 if arm == "left" else -1.0
+    normal_body = (0.0, sign, 0.0)
+    cosine, sine = math.cos(float(base_yaw_rad)), math.sin(float(base_yaw_rad))
+    normal_base = (sign * sine, sign * cosine, 0.0)
+    offset = FORBIDDEN_HALF_WIDTH_M - sum(a * float(b) for a, b in zip(normal_body,
+                                                                        base_xyz_m))
+    return {"inequality": "normal_dot_point_gte_offset", "normal_base": list(normal_base),
+            "offset_m": offset, "safe_body_side": "Y>+0.070" if arm == "left" else "Y<-0.070"}

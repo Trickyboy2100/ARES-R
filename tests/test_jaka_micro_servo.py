@@ -9,6 +9,7 @@ import unittest
 from ares_r.adapters.jaka_micro_servo import check_micro, execute_micro
 from ares_r.motion import Trajectory, MotionLimits
 from ares_r.motion.curobo import ARM_NAMES, CUROBO_COMMIT
+from ares_r.motion.safety_kernel import SafetyPermit, trajectory_digest
 
 
 class FakeArm:
@@ -96,8 +97,12 @@ class MicroTest(unittest.TestCase):
                             raise RuntimeError("actual telemetry connection closed")
                         return {"joint_actual_position_rad": arm.q,
                                 "joint_position_rad": arm.q, "tool_id": 2}
-                def run(): return execute_micro(arm, root/"trajectory.json", root/"limits.json", True,
-                                                lambda:tick[0], sleep, lambda ip:Telemetry())
+                def run(): return execute_micro(
+                    arm, root/"trajectory.json", root/"limits.json", True,
+                    lambda:tick[0], sleep, lambda ip:Telemetry(),
+                    SafetyPermit("right", trajectory_digest("right", self.t.points,
+                                                            self.t.sample_period_s),
+                                 "scene", "slow", 0))
                 if interrupt == "telemetry_closed":
                     with self.assertRaisesRegex(RuntimeError, "connection closed"): run()
                     self.assertIn(("abort",), arm.calls)

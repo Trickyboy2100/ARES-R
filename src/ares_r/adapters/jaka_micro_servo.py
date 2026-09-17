@@ -66,7 +66,7 @@ def check_micro(trajectory, request, raw, limits, diagnostics):
 
 
 def execute_micro(arm, path, limits_path, confirmed=False, clock=time.monotonic, sleeper=time.sleep,
-                  telemetry_factory=JakaActualReader):
+                  telemetry_factory=JakaActualReader, safety_permit=None):
     if not confirmed:
         raise RuntimeError("explicit supervised micro-demo confirmation required")
     if arm.name != "right" or arm.ip != "192.168.99.101" or not arm.motion_enabled:
@@ -78,6 +78,9 @@ def execute_micro(arm, path, limits_path, confirmed=False, clock=time.monotonic,
     import fcntl
     path = Path(path)
     trajectory = load_trajectory(path)
+    from ..motion.safety_kernel import require_permit
+    require_permit(safety_permit, trajectory.arm, trajectory.points,
+                   trajectory.sample_period_s)
     request = json.loads((path.parent / "request.json").read_text())
     raw = json.loads(path.read_text())
     with open("/tmp/ares-r-right-servo.lock", "a") as lock, ExitStack() as stack:

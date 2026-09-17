@@ -2,6 +2,7 @@ import unittest
 
 from ares_r.adapters.jaka_servo import JakaExecutionError, JakaServoExecutor
 from ares_r.motion import MotionLimits, Trajectory
+from ares_r.motion.safety_kernel import SafetyPermit, trajectory_digest
 
 
 class FakeRobot:
@@ -25,6 +26,8 @@ class JakaServoExecutorTest(unittest.TestCase):
         self.limits = MotionLimits(
             ("j1", "j2"), (-1.0, -1.0), (1.0, 1.0),
             (1.0, 1.0), (10.0, 10.0), 0.1, 0.05, True)
+        self.permit = SafetyPermit("left", trajectory_digest("left", self.trajectory.points, .08),
+                                   "scene", "slow", 0)
 
     def test_requires_explicit_arm(self):
         with self.assertRaisesRegex(JakaExecutionError, "armed=True"):
@@ -34,7 +37,7 @@ class JakaServoExecutorTest(unittest.TestCase):
         robot = FakeRobot()
         ticks = iter([0.0, 0.0, 0.08, 0.08])
         executor = JakaServoExecutor(robot, clock=lambda: next(ticks), sleeper=lambda _: None)
-        executor.execute(self.trajectory, self.limits, armed=True)
+        executor.execute(self.trajectory, self.limits, armed=True, safety_permit=self.permit)
         servo_calls = [call for call in robot.calls if call[0] == "servo_j"]
         self.assertEqual(len(servo_calls), 2)
         self.assertEqual(servo_calls[0][2:], (0, 10))
@@ -44,7 +47,8 @@ class JakaServoExecutorTest(unittest.TestCase):
         robot = FakeRobot()
         robot.limit = 1
         with self.assertRaisesRegex(JakaExecutionError, "LIVE_LIMIT"):
-            JakaServoExecutor(robot).execute(self.trajectory, self.limits, armed=True)
+            JakaServoExecutor(robot).execute(self.trajectory, self.limits, armed=True,
+                                             safety_permit=self.permit)
         self.assertNotIn(("enable", True), robot.calls)
 
 

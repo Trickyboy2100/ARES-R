@@ -9,6 +9,7 @@ from ares_r.adapters.jaka_sdk import (
 )
 from ares_r.models import Pose
 from ares_r.motion import MotionLimits, Trajectory
+from ares_r.motion.safety_kernel import SafetyPermit, trajectory_digest
 
 
 class FakeRC:
@@ -71,13 +72,26 @@ class JakaSdkArmTest(unittest.TestCase):
 
     def test_motion_mode_uses_supervised_nonblocking_joint_move(self):
         arm = self.build_motion()
-        arm.move_joints_absolute([0.01] * 6, 0.05)
+        points = [[0.0] * 6, [0.01] * 6]
+        permit = SafetyPermit("left", trajectory_digest("left", points, .1), "scene", "slow", 0)
+        arm.move_joints_absolute([0.01] * 6, 0.05, safety_permit=permit,
+                                 authorized_points=points, sample_period_s=.1)
         self.assertIn(("joint_move", ([0.01] * 6, 0, False, 0.05)), arm.robot.control_calls)
+
+    def test_motion_mode_rejects_direct_move_without_kernel_permit(self):
+        arm = self.build_motion()
+        with self.assertRaisesRegex(JakaSdkError, "full-path"):
+            arm.move_joints_absolute([0.01] * 6, 0.05)
+        self.assertEqual(arm.robot.control_calls, [])
 
     def test_motion_mode_rejects_excess_speed_without_control_call(self):
         arm = self.build_motion()
         with self.assertRaisesRegex(JakaSdkError, "<=0.10"):
-            arm.move_joints_absolute([0.01] * 6, 0.11)
+            points = [[0.0] * 6, [0.01] * 6]
+            permit = SafetyPermit("left", trajectory_digest("left", points, .1),
+                                  "scene", "slow", 0)
+            arm.move_joints_absolute([0.01] * 6, 0.11, safety_permit=permit,
+                                     authorized_points=points, sample_period_s=.1)
         self.assertEqual(arm.robot.control_calls, [])
 
     def test_supervision_aborts_when_feedback_is_lost(self):
@@ -93,7 +107,11 @@ class JakaSdkArmTest(unittest.TestCase):
                              {"sdk_python_path": "/sdk", "sdk_library_path": "/sdk/lib.so"},
                              motion_enabled=True)
             with self.assertRaisesRegex(JakaSdkError, "unavailable after"):
-                arm.move_joints_absolute([0.01] * 6, 0.05)
+                points = [[0.0] * 6, [0.01] * 6]
+                permit = SafetyPermit("right", trajectory_digest("right", points, .1),
+                                      "scene", "slow", 0)
+                arm.move_joints_absolute([0.01] * 6, 0.05, safety_permit=permit,
+                                         authorized_points=points, sample_period_s=.1)
         self.assertIn(("motion_abort",), arm.robot.control_calls)
 
     def test_close_logs_out(self):

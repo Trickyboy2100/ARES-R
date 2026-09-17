@@ -40,9 +40,13 @@ class JakaServoExecutor:
             issues.append(ValidationIssue("ERROR", "LIVE_COLLISION", "robot reports collision protection"))
         return issues
 
-    def execute(self, trajectory: Trajectory, limits: MotionLimits, armed: bool = False) -> None:
+    def execute(self, trajectory: Trajectory, limits: MotionLimits, armed: bool = False,
+                safety_permit=None) -> None:
         if not armed:
             raise JakaExecutionError("execution requires an explicit armed=True call")
+        from ..motion.safety_kernel import require_permit
+        require_permit(safety_permit, trajectory.arm, trajectory.points,
+                       trajectory.sample_period_s)
         issues = self.preflight(trajectory, limits)
         errors = [issue for issue in issues if issue.severity == "ERROR"]
         if errors:
