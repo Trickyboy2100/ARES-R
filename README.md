@@ -17,6 +17,76 @@ ARES-R 是 BJUT-BBMG 团队用于双臂移动机器人视觉抓放任务的独�
 7. 规划并执行到预放置位。
 8. 垂直放置、释放并退出。
 
+## 统一控制金字塔：哪些是写死的，哪些允许组合
+
+ARES-R 不把“写死的安全规则”“可复用动作块”“操作人员编排的新任务”和“未来大模型规划”混在一起。左右 JAKA 可以保留各自独立的 SDK/控制器连接，但从**运动授权**开始必须处于同一套统一控制架构下；任何任务、Skill 或 Terminal 命令都不能绕过统一的 Safety / Coordination 层分别命令两条机械臂。
+
+```text
+L5  Mission / Protocol Layer
+    人或未来 LLM 提出任务意图
+    例：完成一次取料→称量→放回
+                    ↓
+L4  Workflow / Task Executive
+    操作人员/开发人员用已经验收的 Skill 组合新任务
+    例：Navigate → AcquireScene → Pick → Navigate → Place
+    这里允许“组合”，但不允许写 ServoJ / 原始关节命令
+                    ↓
+L3  Commissioned Skill Layer
+    经过验证、可复用的动作块
+    NavigateToStation / AcquireScene / DetectTarget / Pick / Place /
+    Press / Turn / LoadDevice / Measure ...
+                    ↓
+L2  Motion Coordination & Scene Layer
+    整机统一运动授权和规划
+    DualArmCoordinator / WorldModel / SceneSnapshot / SceneCompiler /
+    cuRobo / shared-zone ownership / inactive-arm obstacle /
+    tool + attached-object collision model
+                    ↓
+L1  Safety Kernel & Motion Primitives
+    所有运动入口都不可绕过的硬门和已 commission 的底层原语
+    joint limits / speed & acceleration limits / BODY central exclusion /
+    JAKA controller safety planes / start-state gate / tool-TCP revision /
+    AMR-arm interlock / estop-collision-fault gate / MoveJ-ServoJ primitive
+                    ↓
+L0  Hardware Adapters
+    JAKA-left / JAKA-right / grippers / AMR / Epic Pro / EpicEye
+```
+
+横跨上述各层的是事实与证据平面：
+
+```text
+WorldModel + LabWorkspace/ResourceGraph + EventLog + provenance/evidence
+```
+
+### 谁可以改什么
+
+- **HARD_INVARIANT（硬约束）**：身体中央禁区、控制器安全平面、关节限位、急停/碰撞状态、底盘运动时的双臂锁定等。只能由底层安全代码或管理员/commissioning 流程修改，任务作者不能覆盖。
+- **COMMISSIONED_PROFILE（现场验收配置）**：每臂 Epic space/object/camera/profile、Tool/TCP 完整 SE(3) revision、station 位姿、ROI、速度档位、抓放阈值。允许现场工程师在有证据的情况下更新，但未验收时必须保持 blocked。
+- **SKILL（可复用技能）**：固定语义、固定前置/后置条件的动作块，例如 Pick、Place、Navigate、Press。操作人员应复用，不应每个任务重新写一遍机械臂控制代码。
+- **WORKFLOW / PROCEDURE（任务流程）**：周帅旭等操作/开发人员把已验收 Skill 按顺序组合成新实验任务。这是当前最主要的“写新任务”层。
+- **MISSION / PLANNER（任务意图/未来自动规划）**：以后可由 Qwen/LLM 或规则规划器生成 Workflow；当前 E2E 集成阶段暂缓。
+
+### 双臂统一控制原则
+
+V0 不要求 12-DoF 同步双臂规划。当前优先采用更容易验收的统一控制模式：
+
+```text
+一次只授权一条臂运动
+另一条臂保持已知姿态并作为碰撞几何
+共享/中央区域由 DualArmCoordinator 统一分配
+底盘运动前两臂必须进入 transport-safe 姿态并锁定
+任何一条臂、底盘、Tool/TCP 或场景状态变化都可撤销旧的运动授权/轨迹
+```
+
+当前 `world view` 中中央禁区定义为 BODY `-0.070 <= Y <= +0.070 m`，即 14 cm slab；这比单纯禁止跨越 BODY `Y=0` 中线更严格。目标架构要求它成为统一 SafetyKernel 规则，并在 JAKA 控制器 Safety Plane、ARES-R 全轨迹几何 gate 和 cuRobo 场景碰撞三层重复保护，而不是只作为显示规则。
+
+当前两周内交付优先级不是继续扩展 LLM/Skill Library，而是先打通并稳定：
+
+```text
+AMR → 到站确认 → Epic → 点云碰撞场景 → cuRobo → 抓取
+→ transport-safe → AMR → Epic → 点云碰撞场景 → cuRobo → 放置
+```
+
 ## 目录
 
 cuRobo 右臂实机演示：[20 cm 操作指南](docs/CUROBO_REAL_DEMO20.md)（已执行约 19.43 cm TCP 行程；独立 SDK V2.2.2、低速、空载净空限定）。历史接入与故障记录：[审计指南](docs/CUROBO_DEMO.md)。
@@ -102,7 +172,7 @@ config/jaka_mini2_motion.site.json
 
 显示模型来自公开的侧装 MiniCobo MDH 参数，并加入左右镜像的模型到控制器固定旋转。模型已用两台控制器合计 34 组 `kine_forward()` 样本验证：左臂 RMS/最大误差为 0.102/0.308 mm，右臂为 0.242/0.943 mm。该验证足以支持关节折线显示，但折线没有连杆、夹具、负载和环境包络，禁止把它单独用于碰撞判断。验证方法见 `docs/JAKA_DH_VALIDATION_2026-09-04.md`。
 
-关节目标使用 `jaka joints`、`jaka plan`、`jaka step`、`jaka home` 和 `jaka dual` 预览；`jaka move` 与 `jaka move-step` 使用控制器插补 `joint_move` 执行附近目标。速度固定为 0.05 rad/s，单次变化限制为每关节 3°，并要求逐次精确确认。完整语法见 `docs/JAKA_JOINT_TERMINAL.md`。
+关节目标使用 `jaka joints`、`jaka plan`、`jaka step`、`jaka home` 和 `jaka dual` 预览；`jaka move` 与 `jaka move-step` 使用控制器插补 `joint_move` 执行附近目标。当前通用 Terminal 路线仍固定使用 0.05 rad/s、单次变化每关节 3°，并要求逐次精确确认；下一阶段将改成受 `config/jaka_mini2_motion.site.json` 上限约束的命名速度 profile，而不是让任务代码自行填写任意速度。完整语法见 `docs/JAKA_JOINT_TERMINAL.md`。
 
 夹爪位置范围为 `0–1000`。当前约定 `0` 为闭合方向、`1000` 为打开方向：
 
