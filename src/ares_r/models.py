@@ -47,6 +47,14 @@ class DetectionResult:
     confidence: Optional[float] = None
     raw_response: str = ""
     error: str = ""
+    #: Every pose the camera reported, in the order it reported them. ``pose``
+    #: stays the first candidate so existing task code keeps its meaning; the
+    #: list is what a grasp planner scores, and dropping it loses the opposite
+    #: grasp direction.
+    candidates: List[Pose] = field(default_factory=list)
+    #: Camera-side identifiers that must travel with the pose: space/object ids,
+    #: grasp index and total, pose type. Never inferred, never defaulted.
+    meta: Dict[str, object] = field(default_factory=dict)
 
 
 @dataclass

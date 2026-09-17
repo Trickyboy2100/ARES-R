@@ -13,17 +13,34 @@ from ..adapters.jaka_actual import JakaActualReader
 RIGHT_PEER = "192.168.99.101:10004"
 
 
-def status_connections():
+def status_connections(exclude_pid=None):
     """Inspect local Linux sockets before opening a potentially competing reader.
 
     This cannot detect clients on another host or eliminate connection races.
     Missing socket inspection is a blocker, not an empty connection list.
+
+    ``exclude_pid`` drops the sockets of one process. The native execution paths
+    pass their own pid: they release the SDK connection first, so a half-closed
+    socket left over by that very release (it can sit in CLOSE-WAIT for a while)
+    would otherwise be reported as a competing reader and block a run that is in
+    fact safe. Sockets owned by any other process are still reported.
     """
     result = subprocess.run(["ss", "-tnHp"], capture_output=True, text=True,
                             timeout=5, check=True)
-    return [line.strip() for line in result.stdout.splitlines()
-            if len(line.split()) >= 5 and line.split()[4].rsplit(":",1)[0] == "192.168.99.101"
-            and line.split()[0] in ("ESTAB", "SYN-SENT", "SYN-RECV", "CLOSE-WAIT")]
+    own = "pid=%d" % exclude_pid if exclude_pid is not None else None
+    connections = []
+    for line in result.stdout.splitlines():
+        fields = line.split()
+        if len(fields) < 5:
+            continue
+        if fields[4].rsplit(":", 1)[0] != "192.168.99.101":
+            continue
+        if fields[0] not in ("ESTAB", "SYN-SENT", "SYN-RECV", "CLOSE-WAIT"):
+            continue
+        if own is not None and own in line:
+            continue
+        connections.append(line.strip())
+    return connections
 
 
 def run_audit(log_directory, duration_s=600, *, reader_factory=JakaActualReader,

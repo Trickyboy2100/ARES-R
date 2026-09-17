@@ -11,15 +11,8 @@ import uuid
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from ares_r.motion.curobo_params import planning_profile
+from ares_r.motion.curobo_params import PROFILES, planning_profile
 from ares_r.timing import run_logged_process, timestamp
-
-
-PROFILES = {
-    "current": {},
-    "seeds4": {"num_ik_seeds": 4, "num_trajopt_seeds": 4},
-    "cuda-graph": {"use_cuda_graph": True},
-}
 
 
 def main():
