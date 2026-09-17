@@ -51,6 +51,10 @@ HELP = """Commands:
   epic detect pick           Epic detection only; never moves a device
   epic detect place [1-6]    Epic dock detection only; never moves a device
   epic parse "RESPONSE"       parse a saved 5700 response offline
+  calib body-camera status|show
+  calib body-camera capture origin
+  calib body-camera table-edge|sweep plan|mount-measurement show|solve|validate
+  calib body-camera sweep run x+|x-|y+|y- DISTANCE_M
   amr status|battery|map|position-types  read AMR HTTP state
   amr move-position ID NAME [RETRIES]    guarded named-position move
   amr move-relative X Y YAW_DEG [LINEAR_MPS ANGULAR_RADPS TIMEOUT_S]
@@ -225,6 +229,16 @@ def _allowed_in_hardware(args) -> bool:
     )
 
 
+def _allowed_in_calibration_scope(args) -> bool:
+    """Camera+AMR scope: block every arm/gripper/general-base command."""
+    return (
+        args[0] in ("status","help","quit","exit","note","calib")
+        or args in (["amr","status"],["amr","battery"],["amr","map"],
+                    ["amr","position-types"],["amr","stop"])
+        or args[:3] in (["epic","pointcloud","capture"],["epic","pointcloud","inspect"])
+    )
+
+
 def setup_command_history(repository: Path) -> None:
     """Enable Up/Down history and persist it between terminal sessions."""
     if readline is None:
@@ -302,7 +316,13 @@ def run_terminal(controller: TaskController) -> None:
             if not args: continue
             if controller.mode == "jaka-readonly" and not _allowed_in_jaka_readonly(args):
                 raise RuntimeError("command blocked by jaka-readonly mode; no control API called")
-            if controller.mode == "hardware-enabled" and not _allowed_in_hardware(args):
+            if (controller.mode == "hardware-enabled" and
+                    controller.config.get("hardware_devices")=="calibration" and
+                    not _allowed_in_calibration_scope(args)):
+                raise RuntimeError("command blocked by camera+AMR calibration scope; arm/gripper/general AMR control unavailable")
+            if (controller.mode == "hardware-enabled" and
+                    controller.config.get("hardware_devices")!="calibration" and
+                    not _allowed_in_hardware(args)):
                 raise RuntimeError("command blocked: combined task/base execution is not commissioned")
             if args[0] in ("quit", "exit"): break
             if args[0] == "help": print(help_text)
@@ -503,12 +523,55 @@ def run_terminal(controller: TaskController) -> None:
                 controller.events.write("curobo_plan_saved", path=str(output), arm="right")
                 print("Trajectory saved: %s" % output)
                 print(json.dumps(curobo_preview(output), indent=2))
+            elif args[:2] == ["calib","body-camera"]:
+                from . import body_camera_calibration as body_calib
+                if args==["calib","body-camera","status"] or args==["calib","body-camera","show"]:
+                    print(json.dumps(body_calib.manifest(controller.config),ensure_ascii=False,indent=2))
+                elif args==["calib","body-camera","capture","origin"]:
+                    if controller.config.get("hardware_devices")!="calibration":
+                        raise RuntimeError("start with --enable-hardware --devices calibration")
+                    print("CAMERA ONLY: creating a BODY-camera calibration session; no AMR/arm/gripper motion.")
+                    path=body_calib.capture_label(controller.config,"origin")
+                    print("Origin capture: %s"%path)
+                elif args==["calib","body-camera","table-edge"]:
+                    path=body_calib.analyze_table_edge(controller.config)
+                    print(path.read_text())
+                    print("Visual confirmation required: inspect table_edge_yaw_prior.png and source_image8bit.png")
+                elif args==["calib","body-camera","sweep","plan"]:
+                    print(json.dumps(body_calib.sweep_plan(controller.config),ensure_ascii=False,indent=2))
+                elif args[:4]==["calib","body-camera","sweep","run"] and len(args)==6:
+                    if controller.config.get("hardware_devices")!="calibration":
+                        raise RuntimeError("start with --enable-hardware --devices calibration")
+                    direction=args[4];distance=float(args[5])
+                    phrase="MOVE AMR CALIB %s %.3f"%(direction.upper(),distance)
+                    print("TRANSLATION ONLY: yaw=0, speed<=0.05m/s, collision detection ON; arms/grippers disabled.")
+                    if input("Type %s: "%phrase).strip()!=phrase:
+                        print("Cancelled; no AMR command sent.");continue
+                    response=body_calib.sweep_move(controller.config,controller.base,direction,distance)
+                    print(json.dumps(response,ensure_ascii=False,indent=2))
+                    stopped="AMR STOPPED %s"%direction.upper()
+                    if input("After visual stop confirmation, type %s: "%stopped).strip()!=stopped:
+                        print("Capture withheld. Send 'amr stop' if motion state is uncertain.");continue
+                    import time as _time;_time.sleep(max(1.0,float(controller.config["base"].get("settle_s",1.0))))
+                    path=body_calib.record_sweep_capture(controller.config,direction,distance)
+                    print("Sweep capture: %s"%path)
+                elif args==["calib","body-camera","mount-measurement","show"]:
+                    print(json.dumps(body_calib.measurement(controller.config),ensure_ascii=False,indent=2))
+                elif args==["calib","body-camera","validate"]:
+                    path=body_calib.validate_sweep(controller.config);print(path.read_text())
+                elif args==["calib","body-camera","solve"]:
+                    measurement=body_calib.measurement(controller.config)
+                    if measurement.get("state")=="MISSING":
+                        raise RuntimeError("manual camera x/y measurement missing; production solve remains blocked")
+                    raise RuntimeError("sweep analysis/commissioning gate not complete; no production transform written")
+                else:
+                    raise ValueError("usage: calib body-camera status|capture origin|table-edge|sweep plan|sweep run DIR M|mount-measurement show|solve|validate|show")
             elif args[:2] == ["epic", "status"]:
                 state = controller.probe_perception()
                 print("Epic status: %s" % state.detail)
             elif args == ["epic", "pointcloud", "capture"]:
-                if controller.mode!="hardware-enabled" or controller.config.get("hardware_devices")!="all":
-                    raise RuntimeError("capture requires --enable-hardware with the all-device scope")
+                if controller.mode!="hardware-enabled" or controller.config.get("hardware_devices") not in ("all","calibration"):
+                    raise RuntimeError("capture requires --enable-hardware with all or calibration scope")
                 from .epic_pointcloud import capture
                 print("EPIC CAPTURE ONLY: camera trigger and file output; no arm, gripper, or base command.")
                 manifest=capture(controller.config)
@@ -545,8 +608,8 @@ def run_terminal(controller: TaskController) -> None:
                 for index, pose in enumerate(response.poses):
                     print("pose[%d]: %s" % (index, ", ".join("%.9g" % value for value in pose)))
             elif args and args[0] == "amr":
-                if controller.mode!="hardware-enabled" or controller.config.get("hardware_devices")!="all":
-                    raise RuntimeError("AMR commands require --enable-hardware with the all-device scope")
+                if controller.mode!="hardware-enabled" or controller.config.get("hardware_devices") not in ("all","calibration"):
+                    raise RuntimeError("AMR commands require --enable-hardware with all or calibration scope")
                 base=controller.base
                 if args==["amr","status"]:
                     battery=base.battery();current_map=base.current_map()

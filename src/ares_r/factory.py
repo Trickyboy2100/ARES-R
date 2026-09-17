@@ -32,17 +32,25 @@ def build_controller(config: Dict[str, object], mode: str) -> TaskController:
         grippers = {"left": MockGripper(), "right": MockGripper()}
         base = MockBase()
     elif mode == "hardware-enabled":
-        from .adapters.jaka_sdk import build_jaka_arms, JakaSdkArm
-        if config.get("hardware_devices", "all") == "right-arm":
+        scope=config.get("hardware_devices", "all")
+        if scope == "calibration":
+            perception=EpicClient(config["epic"])
+            arms={name:DisabledDevice(name+" arm") for name in ("left","right")}
+            grippers={name:DisabledDevice(name+" gripper") for name in ("left","right")}
+            base=AmrHttpBase(config["base"])
+        else:
+            from .adapters.jaka_sdk import build_jaka_arms, JakaSdkArm
+        if scope == "right-arm":
             perception = DisabledDevice("epic")
             arms = {"left": DisabledDevice("left arm"),
                     "right": JakaSdkArm("right", config["jaka"]["arms"]["right"], config["jaka"], True)}
             grippers = {name: DisabledDevice(name + " gripper") for name in ("left", "right")}
-        else:
+            base = DisabledDevice("AMR")
+        elif scope == "all":
             perception = EpicClient(config["epic"])
             arms = build_jaka_arms(config["jaka"], motion_enabled=True)
             grippers = {name: SerialGripper(name, values) for name, values in config["grippers"].items()}
-        base = DisabledDevice("AMR") if config.get("hardware_devices", "all") == "right-arm" else AmrHttpBase(config["base"])
+            base = AmrHttpBase(config["base"])
     else:
         raise RuntimeError("hardware mode is intentionally locked until JAKA, gripper and base adapters pass commissioning")
     controller = TaskController(mode, perception, arms, grippers, base, config, EventLog(str(config["logging"]["directory"])))

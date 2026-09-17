@@ -22,7 +22,7 @@ def main() -> None:
     parser.add_argument("--config", default="config/system.json")
     parser.add_argument("--enable-hardware", action="store_true",
                         help="connect enabled physical adapters; default is fully offline")
-    parser.add_argument("--devices", choices=("all", "right-arm"), default="all",
+    parser.add_argument("--devices", choices=("all", "right-arm", "calibration"), default="all",
                         help="hardware scope; default all connects and enables both arms; right-arm is explicit isolation")
     args = parser.parse_args()
     config = load_config(args.config)
@@ -33,6 +33,8 @@ def main() -> None:
     if args.enable_hardware:
         if args.devices == "all":
             print("HARDWARE SCOPE all (default): LEFT and RIGHT arms connected with guarded motion enabled.")
+        elif args.devices == "calibration":
+            print("HARDWARE SCOPE calibration: camera + AMR only; both arms and both grippers DISABLED.")
         else:
             print("HARDWARE SCOPE right-arm (explicit isolation): LEFT arm is intentionally DISABLED.")
     controller = build_controller(config, mode)

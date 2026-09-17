@@ -77,12 +77,12 @@ def planning_assessment(stats,config):
             "transform BODY -> right URDF base","cuRobo update_world/plan","freeze scene during execution"],blockers=blockers)
 
 
-def capture(config):
+def capture(config, output_root=None):
     pc=config["epic_pointcloud"];python=Path(pc["python"]);script=Path(pc["capture_script"])
     if pc.get("source_coordinate_unit")!="mm":
         raise RuntimeError("Epic capture source unit must be explicitly configured as mm")
     if not python.is_file() or not script.is_file(): raise RuntimeError("EpicEye SDK environment unavailable on this host")
-    root=Path(config["logging"]["directory"])/"epic_captures"
+    root=Path(output_root) if output_root is not None else Path(config["logging"]["directory"])/"epic_captures"
     directory=root/(time.strftime("%Y%m%d_%H%M%S_")+uuid.uuid4().hex[:8]);directory.mkdir(parents=True,exist_ok=False)
     started=time.time();result=subprocess.run([str(python),str(script),str(pc["endpoint"])],cwd=str(directory),
         capture_output=True,text=True,timeout=float(pc.get("timeout_s",120)))
