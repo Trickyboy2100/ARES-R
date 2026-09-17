@@ -59,6 +59,39 @@ class NativeDemoTest(unittest.TestCase):
         self.assertNotEqual(result.returncode,0)
         self.assertNotIn("servo_on",calls)
 
+    def test_pregrasp_requires_the_explicit_confirmation_phrase(self):
+        with tempfile.TemporaryDirectory() as root:
+            root=Path(root);path=root/"path"
+            path.write_text("ARES_R_RIGHT_V1 2 0.08 %d 2\n0 0 0 0 0 0\n-6 -6 -6 -6 -6 -6\n6 6 6 6 6 6\n"
+                            "0 0 0 0 0 0\n0 0 0 0 0 0\n"%int(time.time()))
+            for phrase in ("CONFIRMED_RIGHT_CLEAR ","confirmed_right_clear","RUN PREGRASP right_S0"):
+                result=subprocess.run([str(self.binary),"pregrasp",str(path),phrase],
+                    env=dict(os.environ,FAKE_TRACE=str(root/"trace")),
+                    capture_output=True,text=True,timeout=10)
+                self.assertEqual(result.returncode,2,"phrase %r must be refused"%phrase)
+                self.assertIn("invalid explicit mode/confirmation",result.stderr)
+
+    def test_pregrasp_uses_the_reposition_excursion_bound(self):
+        import math
+        # Just above the 20 degree demo20 bound. The two-row path then fails on the
+        # native velocity/acceleration gate rather than the excursion gate, which is
+        # exactly what shows the excursion class changed for pregrasp. A full
+        # acceptance run needs hundreds of 80 ms samples and belongs to on-robot
+        # commissioning, not to this suite.
+        rows=[[0.0]*6,[math.radians(21.0)]+[0.0]*5]
+        result,_=self.run_case(mode="demo20",rows=rows)
+        self.assertIn("excursion cap",result.stderr)
+        result,_=self.run_case(mode="pregrasp",rows=rows)
+        self.assertNotIn("excursion cap",result.stderr)
+        self.assertIn("velocity/acceleration cap",result.stderr)
+
+    def test_pregrasp_still_refuses_beyond_the_reposition_envelope(self):
+        import math
+        rows=[[0.0]*6,[math.radians(151)]+[0.0]*5]
+        result,calls=self.run_case(mode="pregrasp",rows=rows)
+        self.assertIn("excursion cap",result.stderr)
+        self.assertEqual(calls,[])
+
     def test_demo_3x_speed_with_retained_site_acceleration(self):
         import math
         positions=[0.0]

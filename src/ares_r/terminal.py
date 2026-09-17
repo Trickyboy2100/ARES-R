@@ -91,6 +91,10 @@ JAKA_READONLY_HELP = """JAKA read-only commands:
   jaka step SIDE JN UNIT D   preview one-joint relative change
   jaka home SIDE             preview the all-zero joint target
   jaka dual UNIT L1..L6 R1..R6  preview both absolute targets
+  pregrasp capture-start CASE_ID SIDE   read and save an experiment start; no motion
+  pregrasp capture-goal TARGET_ID SIDE  read and save a pregrasp goal; no motion
+  pregrasp plan CASE_ID PROFILE  cuRobo planning only; never moves an arm
+  pregrasp preview [last|DIR]    singularity and geometry review; no motion
   world view                 show body-frame joint-chain top/rear/side views
   pose list / pose show NAME [left|right]  inspect BODY-frame named poses
   motion inspect FILE        summarize a joint trajectory offline
@@ -129,6 +133,11 @@ JAKA_MOTION_HELP = """Hardware-enabled commands:
   pose list / pose show NAME [left|right]  inspect BODY-frame named poses
   pose go NAME SIDE direct [Ndeg/s]  supervised MoveJ; default 2.86deg/s, range 1..5
   pose go ready right curobo [2x|3x] cuRobo -> ServoJ; stable default 2x
+  pregrasp capture-start CASE_ID SIDE   read and save an experiment start; no motion
+  pregrasp capture-goal TARGET_ID SIDE  read and save a pregrasp goal; no motion
+  pregrasp plan CASE_ID PROFILE  cuRobo planning only; never moves an arm
+  pregrasp preview [last|DIR]    singularity and geometry review; no motion
+  pregrasp run [last|DIR]        supervised right-arm ServoJ; confirms RUN PREGRASP CASE_ID
   jaka plan SIDE UNIT Q1..Q6      preview an absolute target
   jaka step SIDE JN UNIT DELTA    preview a relative one-joint target
   jaka move SIDE UNIT Q1..Q6      execute a nearby absolute target (asks MOVE SIDE)
@@ -153,6 +162,10 @@ def _allowed_in_jaka_readonly(args) -> bool:
         or args[:2] in (["motion", "inspect"], ["motion", "validate"])
         or args[:2] in (["epic", "pointcloud"], ["epic", "obstacles"])
         or args[:2] in (["curobo", "status"], ["curobo", "plan"], ["curobo", "plan-file"], ["curobo", "preview"])
+        # Capturing and planning never command an arm, so they stay available
+        # while the terminal is in its most restricted mode.
+        or args[:2] in (["pregrasp", "capture-start"], ["pregrasp", "capture-goal"],
+                        ["pregrasp", "plan"], ["pregrasp", "preview"])
     )
 
 
@@ -198,6 +211,8 @@ def _allowed_in_hardware(args) -> bool:
         or args[:2] in (["pose", "list"], ["pose", "show"], ["pose", "go"])
         or args[:2] in (["motion", "inspect"], ["motion", "validate"])
         or args[:2] in (["curobo", "status"], ["curobo", "plan"], ["curobo", "plan-file"], ["curobo", "preview"])
+        or args[:2] in (["pregrasp", "capture-start"], ["pregrasp", "capture-goal"],
+                        ["pregrasp", "plan"], ["pregrasp", "preview"], ["pregrasp", "run"])
         or args[:2] == ["curobo", "execute-micro"]
         or args[:3] in (["curobo", "demo", "plan20"], ["curobo", "demo", "run20"],
                         ["curobo","demo","start"], ["curobo","demo","reset"], ["curobo","demo","cycle20"])
@@ -422,6 +437,43 @@ def run_terminal(controller: TaskController) -> None:
                 print(json.dumps(curobo_preview(target), indent=2))
                 from .motion.preview import write_preview
                 print("Offline browser plots: %s" % write_preview(target))
+            elif args[:2] in (["pregrasp","capture-start"],["pregrasp","capture-goal"]) and len(args)==4:
+                from .motion.pregrasp import capture
+                side=args[3]
+                if side not in controller.arms: raise ValueError("arm must be left or right")
+                kind="start" if args[1]=="capture-start" else "goal"
+                path,record=capture(controller.config,kind,args[2],side,controller.arms[side])
+                controller.events.write("pregrasp_captured",kind=kind,path=str(path),arm=side,
+                                        tool_id=record["tool_id"],
+                                        joint_position_rad=record["joint_position_rad"])
+                print(json.dumps({key:record[key] for key in
+                    ("arm","identifier","joint_position_deg","tcp_position_mm_rad","body_tcp_m_rad",
+                     "tool_id","repeatability")},indent=2))
+                print("%s captured; no motion was sent: %s"%(kind.capitalize(),path))
+                if kind=="goal":
+                    print("Next: write worklog/pregrasp/cases/<CASE_ID>/manifest.json with "
+                          "goal_target_id=%s, then run pregrasp plan CASE_ID PROFILE."%args[2])
+            elif args[:2]==["pregrasp","plan"] and len(args)==4:
+                from .motion.pregrasp import plan_case
+                directory,result=plan_case(controller.config,args[2],args[3])
+                controller.events.write("pregrasp_planned",path=str(directory),case_id=args[2],profile=args[3])
+                print(json.dumps(result,indent=2,default=str))
+                print("Planning only; no arm was commanded. Preview: %s"%result["preview"])
+            elif args[:2]==["pregrasp","preview"] and len(args) in (2,3):
+                from .motion.pregrasp import preview_plan
+                report,preview=preview_plan(controller.config,args[2] if len(args)==3 else "last")
+                print(json.dumps(report,indent=2,default=str))
+                print("Browser plots: %s"%preview)
+            elif args[:2]==["pregrasp","run"] and len(args) in (2,3):
+                if controller.mode!="hardware-enabled":
+                    raise RuntimeError("pregrasp run requires --enable-hardware")
+                from .motion.pregrasp import run_case
+                target=args[2] if len(args)==3 else "last"
+                log=run_case(controller,target)
+                if log is not None:
+                    controller.events.write("pregrasp_executed",log=str(log),case_id=target)
+                    print("Pregrasp move finished; read the actual joints/TCP before the next case.")
+                    print("Actual feedback and servo exit: %s"%log)
             elif args[:2] == ["curobo", "execute-micro"] and len(args) == 3:
                 from .adapters.jaka_micro_servo import MICRO_BLOCK_REASON
                 raise RuntimeError(MICRO_BLOCK_REASON)
@@ -720,8 +772,10 @@ def run_terminal(controller: TaskController) -> None:
             else: print("Unknown command. Type 'help'.")
         except (ValueError, RuntimeError, OSError, KeyError) as exc:
             print("Command failed: %s" % exc)
-            if args and args[0] in ("curobo","servo"):
-                controller.events.write("motion_command_failed",command=args,error=str(exc))
+            # pregrasp failures were previously invisible in the session log,
+            # which left no trace of why an execution refused to start.
+            if args and args[0] in ("curobo", "servo", "pregrasp"):
+                controller.events.write("motion_command_failed", command=args, error=str(exc))
         except KeyboardInterrupt:
             if controller.mode == "jaka-readonly":
                 print("\nInterrupt received: read-only session remains motion-free")
