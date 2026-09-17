@@ -16,70 +16,75 @@
 
 3. `2026-09-17_BODY_CAMERA_ALIGNMENT_TO_PRODUCTION_AB_QUEUE.md`
    - table plane / table edge / base sweep 代码与证据保留；
-   - 这些方法降级为 sanity check / validation；
-   - 不再作为 production `T_body_camera` 的主求解方法。
+   - 这些方法作为 targetless calibration 的约束/validation；
+   - 不再把 command displacement 当 production tx/ty 真值。
+
+4. `2026-09-17_PRECISION_BODY_CAMERA_TARGET_CALIBRATION_ORDER.md`
+   - 需要额外刚性标定板/target；
+   - 当前现场没有该硬件条件；
+   - 设计保留为未来高精度可选方案，不在当前队列执行。
 
 ## 当前唯一 Active Task
 
 执行：
 
-`docs/work_orders/2026-09-17_PRECISION_BODY_CAMERA_TARGET_CALIBRATION_ORDER.md`
+`docs/work_orders/2026-09-17_TARGETLESS_BODY_CAMERA_MOTION_CALIBRATION_ORDER.md`
 
-production 主线改为：
+当前 production 主线：
 
 ```text
-固定 Pixel Pro eye-to-hand camera
-+ 右 JAKA Mini2 携带刚性标定板
-+ 18~24 个多样化 flange poses
-+ 同步 actual robot state + RGB/depth/pointcloud
-→ board 2D/3D features
-→ Robot-World/Hand-Eye 初值
-→ 联合优化 T_body_camera + T_flange_board
-→ hold-out validation
-→ 右臂求解 / 左臂交叉验证
+固定 Pixel Pro
++ 静态前方环境
++ 底盘多姿态运动
++ 点云 scene registration / pose graph
++ AMR actual pose（若可获得）
+→ motion-based hand-eye AX=XB
+→ planar constrained joint optimization
+→ table normal / table height / table edge validation
+→ visible robot geometry constrained refinement（如需要）
 → T_body_camera COMMISSIONED
 → production BODY SceneSnapshot
 → production A/B CLEAR / real-obstacle AVOID / BLOCK
-→ supervised real-motion go/no-go
 ```
 
-## 当前保留但降级为验证的现场信息
+## 当前可观测性原则
 
-```text
-桌面 support plane
-桌高 0.750 m
-桌边与 BODY 轴人工对齐 prior
-AMR 前/后/右小范围 sweep
-```
+- 仅有纯平移时，可很好验证 rotation/yaw、轴正负号、尺度；
+- 仅靠纯平移不能唯一恢复 absolute tx/ty，solver 不得通过正则化伪造；
+- 完整 tx/ty 需要以下任一独立信息：
+  1. 用户另行授权小角度原地 yaw，使 camera offset 对旋转中心可观；
+  2. AMR 提供可信 actual SE(2) pose / SLAM localization；
+  3. 可见 robot/body 已知 BODY 几何做 constrained refinement；
+  4. 一次人工量取 camera optical center 相对 BODY origin 的水平 x/y。
 
-用途：检测 z/yaw/frame sign/相对位移错误；不得用麦轮 command displacement 作为毫米级 production tx/ty 真值。
+当前桌面高度 `0.750 m` 用于约束/验证 camera z。
 
 ## 当前动作边界
 
-在用户再次明确授权机械臂运动前：
-
+- 已授权：前/后/左/右单次 <= 0.15 m 的底盘纯平移，用于 calibration/validation；
 - 不执行机械臂运动；
 - 不执行夹爪运动；
-- 已有 AMR sweep 若正在进行，只能完成已授权的小范围 validation，不再把它作为主标定数据；
-- 不做新的底盘旋转；
-- 不开始真实 A/B 执行。
+- 当前没有新的底盘 yaw 授权；
+- 不开始真实 A/B 执行；
+- 如需要 yaw calibration motion，必须先向用户明确说明最小角度/序列并获得单独授权。
 
-当前 Codex 优先完成：
+## 当前 Codex 优先完成
 
 ```text
-标定板定义/检测
-3D corner extraction
-robot state capture contract
-OpenCV hand-eye / robot-world-hand-eye initial solver
-3D robust nonlinear refinement
-hold-out validation
-Terminal workflow
-18~24 pose collection plan
+AMR actual-pose / localization API 审计
+→ static-scene multi-frame registration
+→ camera pose graph
+→ observability report
+→ AX=XB motion-based solver
+→ planar constrained joint optimization
+→ table 0.75m / table-edge / existing translation sweep validation
+→ 给出是否还缺 tx/ty，以及最小补充运动方案
 ```
 
 ## 禁止事项
 
 - 自由 6DoF ICP 继续作为 production 主 solver；
+- 在纯平移不可观条件下伪造 tx/ty；
 - 为了 PASS 放宽 calibration gate；
 - 使用 DEMO_ONLY `T_body_camera` 获得实机执行许可；
 - Skill Library / LLM；
