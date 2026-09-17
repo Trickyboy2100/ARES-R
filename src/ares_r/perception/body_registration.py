@@ -148,3 +148,87 @@ def canonical_transform_revision(matrix: Iterable[Iterable[float]], evidence: Ma
     payload = {"T_body_camera": transform.round(12).tolist(), "evidence": evidence}
     encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
     return "sha256:" + hashlib.sha256(encoded).hexdigest()
+
+
+def _angle_delta(a: float, b: float) -> float:
+    return (float(a) - float(b) + math.pi) % (2.0 * math.pi) - math.pi
+
+
+def robust_translation_yaw(observations: Sequence[Mapping[str, object]],
+                           yaw_prior_rad: float,
+                           huber_deg: float = 3.0) -> Mapping[str, object]:
+    """Fit BODY<-LEVEL yaw from directed translation observations.
+
+    Commanded distance is deliberately ignored: site evidence shows that the
+    AMR relative-motion endpoint can report completion without honoring the
+    requested magnitude.  Only the declared BODY direction and the registered
+    point-cloud translation direction participate in the estimate.
+    """
+    prior = float(yaw_prior_rad)
+    if not math.isfinite(prior):
+        raise ValueError("finite yaw prior required")
+    accepted, rejected = [], []
+    for raw in observations:
+        item = dict(raw)
+        label = str(item.get("label", "unnamed"))
+        vector = np.asarray(item.get("translation_level_m"), dtype=float)
+        reasons = []
+        if vector.shape != (3,) or not np.isfinite(vector).all():
+            reasons.append("finite translation_level_m required")
+        else:
+            horizontal = float(np.linalg.norm(vector[:2]))
+            if horizontal < 0.02:
+                reasons.append("horizontal translation below 0.02 m")
+        fitness = float(item.get("fitness", 0.0))
+        rmse = float(item.get("rmse_m", math.inf))
+        drift = float(item.get("rotation_drift_deg", math.inf))
+        valid_ratio = float(item.get("valid_ratio", 0.0))
+        if fitness < 0.55: reasons.append("fitness below 0.55")
+        if not math.isfinite(rmse) or rmse > 0.035: reasons.append("RMSE above 0.035 m")
+        if not math.isfinite(drift) or drift > 1.5: reasons.append("rotation drift above 1.5 deg")
+        if valid_ratio < 0.75: reasons.append("valid point ratio below 0.75")
+        heading = math.radians(float(item.get("expected_body_heading_deg", math.nan)))
+        if not math.isfinite(heading): reasons.append("finite expected BODY heading required")
+        if reasons:
+            rejected.append({"label": label, "reasons": reasons})
+            continue
+        observed = math.atan2(float(vector[1]), float(vector[0]))
+        yaw = prior + _angle_delta(heading - observed, prior)
+        base_weight = fitness * valid_ratio / max(rmse, 0.002) ** 2
+        accepted.append({"label": label, "yaw_rad": yaw, "yaw_deg": math.degrees(yaw),
+                         "horizontal_translation_m": horizontal,
+                         "base_weight": base_weight,
+                         "expected_body_heading_deg": math.degrees(heading)})
+    if len(accepted) < 2:
+        raise ValueError("at least two quality-gated translation observations are required")
+    headings = [math.radians(item["expected_body_heading_deg"]) for item in accepted]
+    independent = max(abs(math.sin(a - b)) for i, a in enumerate(headings) for b in headings[i + 1:])
+    if independent < math.sin(math.radians(20.0)):
+        raise ValueError("translation observations are not directionally independent")
+    estimate = prior
+    huber = math.radians(float(huber_deg))
+    prior_weight = float(np.median([item["base_weight"] for item in accepted]))
+    for _ in range(12):
+        values = [(prior, prior_weight)]
+        for item in accepted:
+            residual = abs(_angle_delta(item["yaw_rad"], estimate))
+            robust = 1.0 if residual <= huber else huber / residual
+            values.append((estimate + _angle_delta(item["yaw_rad"], estimate), item["base_weight"] * robust))
+        updated = sum(value * weight for value, weight in values) / sum(weight for _, weight in values)
+        if abs(updated - estimate) < 1e-12: break
+        estimate = updated
+    residuals = []
+    for item in accepted:
+        residual = math.degrees(_angle_delta(item["yaw_rad"], estimate))
+        item["residual_deg"] = residual
+        residuals.append(abs(residual))
+    return {
+        "yaw_rad": estimate,
+        "yaw_deg": math.degrees(estimate),
+        "prior_deg": math.degrees(prior),
+        "prior_residual_deg": math.degrees(_angle_delta(estimate, prior)),
+        "max_translation_residual_deg": max(residuals),
+        "accepted": accepted,
+        "rejected": rejected,
+        "directional_independence": independent,
+    }
