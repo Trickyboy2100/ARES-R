@@ -75,6 +75,42 @@ For both hypotheses report:
 
 The correct semantic must be supported by the two independent arm calibrations. Do not average first.
 
+
+## 2.1 Expected sanity values from the current UI evidence
+
+Before implementation details drift, the current numbers already imply a strong sanity target.
+
+Using the configured BODY arm-base transforms and interpreting the Epic matrices as `T_armbase_camera`:
+
+~~~text
+camera origin from LEFT  ≈ [+0.091874, -0.084155, +1.565736] m
+camera origin from RIGHT ≈ [+0.091845, -0.083593, +1.564977] m
+
+translation disagreement ≈ 0.94 mm
+rotation disagreement    ≈ 0.72 deg
+~~~
+
+The UI matrices are rounded, so do not demand sub-0.1-deg agreement.
+
+Under the inverse semantic hypothesis, the two BODY camera estimates disagree by roughly:
+
+~~~text
+translation ≈ 332 mm
+rotation    ≈ 56.6 deg
+~~~
+
+Therefore H1 should be strongly preferred if Codex reproduces these values.
+
+Using the 2026-09-20 vendor board pose with the RIGHT-derived BODY camera transform should place the board origin approximately at:
+
+~~~text
+BODY ≈ [1.064, 0.487, 0.752] m
+~~~
+
+and the board +Z normal should be about 1.1 deg from BODY +Z. This is an independent sanity target because the board is physically flat on the ≈0.750 m table.
+
+These values are expectations for regression detection, not hard-coded calibration outputs.
+
 ## 3. Preserve raw screenshot rounding
 
 UI matrix is shown at limited decimal precision.
