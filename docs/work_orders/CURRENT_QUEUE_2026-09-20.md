@@ -29,38 +29,33 @@ BODY_CLOUD_VIEWER_READY = YES
 LIVE_VIEWER_PROTOTYPE_READY = YES
 ~~~
 
-## Active now
+### P1.5 — .32 Git branch realignment
 
-### P1.5 — .32 Git branch realignment before P2
-
-Execute first:
-
-~~~text
-docs/work_orders/2026-09-20_P1_5_DOT32_GIT_REALIGN.md
-~~~
-
-Reason:
-
-~~~text
-GitHub official integration HEAD = c5ed445
-.32 local integration HEAD       = 2efbdb4
-
-patch contents are equivalent,
-but commit histories diverged.
-~~~
-
-P2 must NOT start until .32 official integration branch points to the exact same canonical commit as GitHub and the worktree is clean/preserved.
-
-Exit gates:
+Completed on 2026-09-20.
 
 ~~~text
 DOT32_INTEGRATION_ALIGNED_WITH_GITHUB = YES
 WORKTREE_CLEAN_FOR_P2 = YES
+
+.32 HEAD    = c5ed44515cbe4d5e298f74117f4ac02bbccb3f20
+GitHub HEAD = c5ed44515cbe4d5e298f74117f4ac02bbccb3f20
+tests       = 395/395 OK
 ~~~
 
-## Next after P1.5
+Preservation:
+
+~~~text
+branch: preserve/site-20260920-pre-p2-realign
+sha:    2efbdb4c48d96f319bdeac5aa2f34ebde1d1a470
+manifest:
+/home/yikun/ARES-R/worklog/preservation/2026-09-20-pre-p2-realign/manifest.json
+~~~
+
+## Active now
 
 ### P2 — whole dual-arm collision model + self-filter + mutual-arm avoidance substrate
+
+Execute:
 
 ~~~text
 docs/work_orders/2026-09-20_P2_WHOLE_DUAL_ARM_COLLISION_MODEL.md
@@ -70,8 +65,9 @@ Order inside P2:
 
 ~~~text
 asset audit
-→ whole-robot collision overlay on raw BODY cloud
+→ whole-robot BODY collision geometry
 → ARES gripper model validation
+→ overlay on raw BODY cloud
 → self-filter with SAME geometry
 → inactive-arm obstacle representation
 → offline active-vs-inactive arm collision regression
@@ -125,4 +121,4 @@ USER ACTION N
 
 ## Current motion boundary
 
-P1.5 and P2 require no AMR, arm, or gripper motion.
+P2 requires no AMR, arm, or gripper motion.
