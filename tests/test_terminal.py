@@ -31,6 +31,7 @@ class TerminalHistoryTest(unittest.TestCase):
         self.assertTrue(terminal._allowed_in_jaka_readonly(["world", "status"]))
         self.assertTrue(terminal._allowed_in_jaka_readonly(
             ["calib", "body-camera", "handeye", "compare"]))
+        self.assertTrue(terminal._allowed_in_jaka_readonly(["scene", "body-cloud", "inspect"]))
         self.assertTrue(terminal._allowed_in_jaka_readonly(["note", "audit"]))
         self.assertFalse(terminal._allowed_in_jaka_readonly(["pick"]))
         self.assertFalse(terminal._allowed_in_jaka_readonly(["stop"]))
@@ -49,6 +50,9 @@ class TerminalHistoryTest(unittest.TestCase):
         self.assertTrue(terminal._allowed_in_hardware(["world", "status"]))
         self.assertTrue(terminal._allowed_in_hardware(
             ["calib", "body-camera", "handeye", "board-check"]))
+        self.assertTrue(terminal._allowed_in_hardware(["scene", "body-cloud", "show"]))
+        self.assertTrue(terminal._allowed_in_hardware(
+            ["scene", "body-cloud", "live", "--interval", "2.0"]))
         self.assertFalse(terminal._allowed_in_hardware(["cycle", "1"]))
 
 

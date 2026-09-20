@@ -56,6 +56,8 @@ HELP = """Commands:
   calib body-camera capture origin
   calib body-camera table-edge|sweep plan|mount-measurement show|solve|validate
   calib body-camera sweep run x+|x-|y+|y- DISTANCE_M
+  scene body-cloud capture|show|inspect  canonical raw BODY cloud; no self-filter
+  scene body-cloud live --interval SEC   native Open3D scan viewer; no WebUI
   amr status|battery|map|position-types  read AMR HTTP state
   amr move-position ID NAME [RETRIES]    guarded named-position move
   amr move-relative X Y YAW_DEG [LINEAR_MPS ANGULAR_RADPS TIMEOUT_S]
@@ -167,7 +169,7 @@ def _allowed_in_jaka_readonly(args) -> bool:
         or args[:2] in (["pose", "list"], ["pose", "show"])
         or args[:2] in (["motion", "inspect"], ["motion", "validate"])
         or args[:2] in (["epic", "pointcloud"], ["epic", "obstacles"],
-                        ["calib", "body-camera"])
+                        ["calib", "body-camera"], ["scene", "body-cloud"])
         or args[:2] in (["curobo", "status"], ["curobo", "plan"], ["curobo", "plan-file"], ["curobo", "preview"])
         # Capturing and planning never command an arm, so they stay available
         # while the terminal is in its most restricted mode.
@@ -218,6 +220,7 @@ def _allowed_in_hardware(args) -> bool:
         or args[:2] in (["pose", "list"], ["pose", "show"], ["pose", "go"])
         or args[:2] in (["motion", "inspect"], ["motion", "validate"])
         or args[:2] == ["calib", "body-camera"]
+        or args[:2] == ["scene", "body-cloud"]
         or args[:2] in (["curobo", "status"], ["curobo", "plan"], ["curobo", "plan-file"], ["curobo", "preview"])
         or args[:2] in (["pregrasp", "capture-start"], ["pregrasp", "capture-goal"],
                         ["pregrasp", "plan"], ["pregrasp", "preview"], ["pregrasp", "run"])
@@ -240,6 +243,7 @@ def _allowed_in_calibration_scope(args) -> bool:
         or args in (["amr","status"],["amr","battery"],["amr","map"],
                     ["amr","position-types"],["amr","stop"])
         or args[:3] in (["epic","pointcloud","capture"],["epic","pointcloud","inspect"])
+        or args[:2] == ["scene", "body-cloud"]
     )
 
 
@@ -589,6 +593,58 @@ def run_terminal(controller: TaskController) -> None:
                     raise RuntimeError("sweep analysis/commissioning gate not complete; no production transform written")
                 else:
                     raise ValueError("usage: calib body-camera status|show|handeye compare|handeye board-check|capture origin|table-edge|sweep plan|sweep run DIR M|mount-measurement show|solve|validate")
+            elif args[:2] == ["scene", "body-cloud"]:
+                from .perception.body_pointcloud import (capture_body_cloud, latest_manifest)
+                if args == ["scene", "body-cloud", "capture"]:
+                    if controller.mode != "hardware-enabled" or controller.config.get("hardware_devices") not in ("all", "calibration"):
+                        raise RuntimeError("BODY cloud capture requires --enable-hardware with all or calibration scope")
+                    print("CAMERA ONLY: one Pixel Pro scan; no AMR/arm/gripper command; no self-filter/cuRobo.")
+                    manifest = capture_body_cloud(controller.config)
+                    print("BODY cloud manifest: %s" % manifest)
+                    print(manifest.read_text(encoding="utf-8"))
+                elif args == ["scene", "body-cloud", "inspect"]:
+                    manifest = latest_manifest(controller.config)
+                    print(manifest.read_text(encoding="utf-8"))
+                elif args == ["scene", "body-cloud", "show"]:
+                    import os as _os
+                    import subprocess as _subprocess
+                    manifest = latest_manifest(controller.config)
+                    repository = Path.cwd()
+                    command = [controller.config["epic_pointcloud"]["body_cloud_viewer_python"],
+                               str(repository / "scripts/body_cloud_viewer.py"), str(manifest)]
+                    if _os.environ.get("DISPLAY"):
+                        command.append("--interactive")
+                    else:
+                        output = manifest.parent / "body_cloud_snapshot.png"
+                        command.extend(["--snapshot", str(output)])
+                    result = _subprocess.run(command, cwd=str(repository), text=True,
+                                             capture_output=True, timeout=180)
+                    if result.returncode:
+                        raise RuntimeError("BODY cloud viewer failed: %s" % result.stderr.strip())
+                    print(result.stdout)
+                elif len(args) in (3, 5) and args[:3] == ["scene", "body-cloud", "live"]:
+                    if controller.mode != "hardware-enabled" or controller.config.get("hardware_devices") not in ("all", "calibration"):
+                        raise RuntimeError("live BODY cloud requires --enable-hardware with all or calibration scope")
+                    interval = 2.0
+                    if len(args) == 5:
+                        if args[3] != "--interval":
+                            raise ValueError("usage: scene body-cloud live [--interval SEC]")
+                        interval = float(args[4])
+                    if not 0.5 <= interval <= 3600.0:
+                        raise ValueError("live interval must be 0.5..3600 seconds")
+                    import os as _os
+                    import subprocess as _subprocess
+                    if not _os.environ.get("DISPLAY") and not _os.environ.get("WAYLAND_DISPLAY"):
+                        raise RuntimeError("native Open3D live viewer requires DISPLAY or WAYLAND_DISPLAY")
+                    repository = Path.cwd()
+                    command = [controller.config["epic_pointcloud"]["body_cloud_viewer_python"],
+                               str(repository / "scripts/body_cloud_viewer.py"),
+                               "--live", "--interval", str(interval)]
+                    result = _subprocess.run(command, cwd=str(repository), text=True)
+                    if result.returncode:
+                        raise RuntimeError("BODY cloud live viewer exited with code %d" % result.returncode)
+                else:
+                    raise ValueError("usage: scene body-cloud capture|show|inspect|live [--interval SEC]")
             elif args[:2] == ["epic", "status"]:
                 state = controller.probe_perception()
                 print("Epic status: %s" % state.detail)
