@@ -1,76 +1,60 @@
 # CURRENT QUEUE — 2026-09-20
 
-This file is the only queue index for the 2026-09-20 BODY-cloud / dual-arm avoidance work.
-
 Master roadmap:
 
 ~~~text
 docs/roadmaps/2026-09-20_BODY_POINTCLOUD_DUAL_ARM_AVOIDANCE_ROADMAP.md
 ~~~
 
-## Completed today
+## Completed and pushed
 
-### P0-A — recover Epic hand-eye evidence
+### P0 — BODY-camera calibration
 
-Integration branch evidence entered at:
+Completed. Production T_body_camera is COMMISSIONED.
 
-~~~text
-7ca1e1a feat(perception): preserve Epic calibration integration
-~~~
+### P1 — BODY pointcloud + viewer
 
-### P0-B — dual-arm hand-eye semantic cross-check
-
-Completed locally on .32:
+Pushed to integration branch:
 
 ~~~text
-02a03f23 feat(calibration): cross-check dual-arm Epic hand-eye
+c5ed44515cbe4d5e298f74117f4ac02bbccb3f20
+feat(perception): add canonical BODY cloud viewer
 ~~~
 
 Result:
 
 ~~~text
-Epic matrix semantic = T_armbase_camera
-
-left/right T_body_camera disagreement:
-translation ≈ 0.944 mm
-rotation    ≈ 0.722 deg
-
-right-derived production transform retained
-state = COMMISSIONED
-P1_ALLOWED = YES
+BODY_POINTCLOUD_READY_FOR_SELF_FILTER = YES
+BODY_CLOUD_VIEWER_READY = YES
+LIVE_VIEWER_PROTOTYPE_READY = YES
 ~~~
 
-P0-B must be pushed to the integration branch before P1 implementation starts.
+Independent box hold-out reached single-digit-mm dimension residuals and ~14 mm approximate center-X residual.
 
 ## Active now
 
-### P1 — BODY point cloud transform and 3D viewer
+### P2 — whole dual-arm collision model + self-filter
 
 Execute:
 
 ~~~text
-docs/work_orders/2026-09-20_P1_BODY_POINTCLOUD_VIEWER.md
-~~~
-
-Purpose:
-
-~~~text
-fixed COMMISSIONED T_body_camera
-→ CAMERA cloud → BODY cloud
-→ board/table validation
-→ Open3D BODY-frame snapshot viewer
-→ optional adjustable-rate live viewer
-→ BODY_POINTCLOUD_READY_FOR_SELF_FILTER
-~~~
-
-P1 must not perform self-filter or cuRobo planning.
-
-## Recorded next phases
-
-### P2
-~~~text
 docs/work_orders/2026-09-20_P2_WHOLE_DUAL_ARM_COLLISION_MODEL.md
 ~~~
+
+Order inside P2:
+
+~~~text
+asset audit
+→ whole-robot collision overlay on raw BODY cloud
+→ self-filter with SAME geometry
+→ inactive-arm obstacle representation
+→ offline regression
+→ P3 go/no-go
+~~~
+
+Do not start P3 inside P2.
+
+## Recorded next
 
 ### P3
 ~~~text
@@ -89,21 +73,21 @@ docs/work_orders/2026-09-20_P5_POINTCLOUD_THROUGHPUT_WATCHDOG.md
 
 ## Stage push policy
 
-From P1 onward:
+From P2 onward:
 
-1. Codex finishes one phase;
+1. finish one phase;
 2. run tests;
-3. create a local commit on `feat/e2e-v0-integration-20260917`;
-4. STOP and report the local commit SHA, test result, artifacts and blockers;
+3. create a local commit on feat/e2e-v0-integration-20260917;
+4. STOP and report;
 5. DO NOT push automatically;
-6. user returns to ChatGPT for review;
-7. only after ChatGPT gives the push instruction should Codex push that phase.
+6. user returns to ChatGPT;
+7. push only after explicit review instruction.
 
 No force-push. No blanket reset/revert.
 
 ## User action rule
 
-When physical user input is required, Codex must stop and ask for exactly one simple action:
+If physical user input is required, ask exactly one action:
 
 ~~~text
 USER ACTION N
@@ -113,10 +97,6 @@ USER ACTION N
 安全边界：
 ~~~
 
-One user action at a time.
-
 ## Current motion boundary
 
-P1 requires no AMR, arm, or gripper motion.
-
-Do not move hardware unless a later phase explicitly requests and receives authorization.
+P2 requires no AMR, arm, or gripper motion.
