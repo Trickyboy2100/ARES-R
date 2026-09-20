@@ -52,6 +52,7 @@ HELP = """Commands:
   epic detect place [1-6]    Epic dock detection only; never moves a device
   epic parse "RESPONSE"       parse a saved 5700 response offline
   calib body-camera status|show
+  calib body-camera handeye compare|board-check
   calib body-camera capture origin
   calib body-camera table-edge|sweep plan|mount-measurement show|solve|validate
   calib body-camera sweep run x+|x-|y+|y- DISTANCE_M
@@ -105,6 +106,7 @@ JAKA_READONLY_HELP = """JAKA read-only commands:
   motion validate FILE       validate a joint trajectory offline
   epic pointcloud inspect FILE / epic obstacles inspect FILE
   epic obstacles convert FILE left|right OUT  offline scheme-2 bridge
+  calib body-camera handeye compare|board-check / calib body-camera show
   note <text>                append a Git-trackable work note
   help                       show these commands
   quit                       exit
@@ -164,7 +166,8 @@ def _allowed_in_jaka_readonly(args) -> bool:
         or args == ["world", "status"]
         or args[:2] in (["pose", "list"], ["pose", "show"])
         or args[:2] in (["motion", "inspect"], ["motion", "validate"])
-        or args[:2] in (["epic", "pointcloud"], ["epic", "obstacles"])
+        or args[:2] in (["epic", "pointcloud"], ["epic", "obstacles"],
+                        ["calib", "body-camera"])
         or args[:2] in (["curobo", "status"], ["curobo", "plan"], ["curobo", "plan-file"], ["curobo", "preview"])
         # Capturing and planning never command an arm, so they stay available
         # while the terminal is in its most restricted mode.
@@ -214,6 +217,7 @@ def _allowed_in_hardware(args) -> bool:
         or args == ["world", "status"]
         or args[:2] in (["pose", "list"], ["pose", "show"], ["pose", "go"])
         or args[:2] in (["motion", "inspect"], ["motion", "validate"])
+        or args[:2] == ["calib", "body-camera"]
         or args[:2] in (["curobo", "status"], ["curobo", "plan"], ["curobo", "plan-file"], ["curobo", "preview"])
         or args[:2] in (["pregrasp", "capture-start"], ["pregrasp", "capture-goal"],
                         ["pregrasp", "plan"], ["pregrasp", "preview"], ["pregrasp", "run"])
@@ -525,8 +529,27 @@ def run_terminal(controller: TaskController) -> None:
                 print(json.dumps(curobo_preview(output), indent=2))
             elif args[:2] == ["calib","body-camera"]:
                 from . import body_camera_calibration as body_calib
-                if args==["calib","body-camera","status"] or args==["calib","body-camera","show"]:
+                if args==["calib","body-camera","handeye","compare"]:
+                    from .perception.handeye_crosscheck import read_report
+                    report=read_report(Path.cwd())
+                    print(json.dumps({"selected_semantic":report["selected_semantic"],
+                        "hypotheses":report["hypotheses"],"state":report["state"],
+                        "p1_allowed":report["p1_allowed"]},ensure_ascii=False,indent=2))
+                elif args==["calib","body-camera","handeye","board-check"]:
+                    from .perception.handeye_crosscheck import read_report
+                    report=read_report(Path.cwd())
+                    print(json.dumps({"board_check":report["board_check"],
+                        "table_ground_check":report["table_ground_check"],
+                        "state":report["state"]},ensure_ascii=False,indent=2))
+                elif args==["calib","body-camera","status"]:
                     print(json.dumps(body_calib.manifest(controller.config),ensure_ascii=False,indent=2))
+                elif args==["calib","body-camera","show"]:
+                    from .perception.handeye_crosscheck import read_report
+                    report=read_report(Path.cwd())
+                    print(json.dumps({"T_body_camera":controller.config["epic_pointcloud"].get("T_body_camera"),
+                        "revision":controller.config["epic_pointcloud"].get("T_body_camera_revision"),
+                        "validation":controller.config["epic_pointcloud"].get("T_body_camera_validation"),
+                        "crosscheck_state":report["state"]},ensure_ascii=False,indent=2))
                 elif args==["calib","body-camera","capture","origin"]:
                     if controller.config.get("hardware_devices")!="calibration":
                         raise RuntimeError("start with --enable-hardware --devices calibration")
@@ -565,7 +588,7 @@ def run_terminal(controller: TaskController) -> None:
                         raise RuntimeError("manual camera x/y measurement missing; production solve remains blocked")
                     raise RuntimeError("sweep analysis/commissioning gate not complete; no production transform written")
                 else:
-                    raise ValueError("usage: calib body-camera status|capture origin|table-edge|sweep plan|sweep run DIR M|mount-measurement show|solve|validate|show")
+                    raise ValueError("usage: calib body-camera status|show|handeye compare|handeye board-check|capture origin|table-edge|sweep plan|sweep run DIR M|mount-measurement show|solve|validate")
             elif args[:2] == ["epic", "status"]:
                 state = controller.probe_perception()
                 print("Epic status: %s" % state.detail)

@@ -29,6 +29,8 @@ class TerminalHistoryTest(unittest.TestCase):
             ["jaka", "plan", "left", "deg", "0", "0", "0", "0", "0", "0"]))
         self.assertTrue(terminal._allowed_in_jaka_readonly(["motion", "validate", "path.json"]))
         self.assertTrue(terminal._allowed_in_jaka_readonly(["world", "status"]))
+        self.assertTrue(terminal._allowed_in_jaka_readonly(
+            ["calib", "body-camera", "handeye", "compare"]))
         self.assertTrue(terminal._allowed_in_jaka_readonly(["note", "audit"]))
         self.assertFalse(terminal._allowed_in_jaka_readonly(["pick"]))
         self.assertFalse(terminal._allowed_in_jaka_readonly(["stop"]))
@@ -45,6 +47,8 @@ class TerminalHistoryTest(unittest.TestCase):
         self.assertTrue(terminal._allowed_in_hardware(["amr", "move-relative", "0.1", "0", "0"]))
         self.assertTrue(terminal._allowed_in_hardware(["nav", "pick"]))
         self.assertTrue(terminal._allowed_in_hardware(["world", "status"]))
+        self.assertTrue(terminal._allowed_in_hardware(
+            ["calib", "body-camera", "handeye", "board-check"]))
         self.assertFalse(terminal._allowed_in_hardware(["cycle", "1"]))
 
 
