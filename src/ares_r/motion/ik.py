@@ -18,7 +18,7 @@ from .curobo import CUROBO_COMMIT, settings
 from .curobo_params import PROFILES, planning_profile, profiled_config
 from .pregrasp import _arm_correction, _arm_geometry
 from .pregrasp_worker import SUPPORTED_ARMS
-from .scene import load_scene
+from .scene import load_scene, scene_identity, scene_snapshot_id
 from ..timing import run_logged_process, timestamp
 from .se3 import pose_mm_rad_to_matrix, transform_revision
 
@@ -43,8 +43,11 @@ def solve_ik(config, arm, targets, diagnostics, profile, scene_snapshot=None):
                          % (profile, ", ".join(sorted(PROFILES))))
     if not targets:
         raise ValueError("at least one IK target is required")
-    if not isinstance(scene_snapshot, dict) or not scene_snapshot.get("snapshot_id"):
-        raise ValueError("IK requires a frozen SceneSnapshot; Epic-to-cuRobo direct planning is forbidden")
+    if not isinstance(scene_snapshot, dict):
+        raise ValueError("IK requires a frozen SceneSnapshot; Epic-to-cuRobo direct "
+                         "planning is forbidden")
+    snapshot_id = scene_snapshot_id(scene_snapshot)
+    scene_provenance = scene_identity(scene_snapshot)
     geometry = _arm_geometry(config, arm)
     correction, audit_path = _arm_correction(config, arm)
     settings_ = settings(config)
@@ -81,6 +84,8 @@ def solve_ik(config, arm, targets, diagnostics, profile, scene_snapshot=None):
         T_controller_model=correction,
         fk_audit=str(audit_path),
         scene_snapshot=scene,
+        scene_snapshot_id=snapshot_id,
+        scene_provenance=scene_provenance,
         motion_limits_file=str(Path(config["motion"]["limits_file"]).resolve()),
         min_body_z_m=float(pragmatic.get("min_body_z_m", 0.8)),
         min_model_clearance_m=float(pragmatic.get("min_model_clearance_m", 0.005)),

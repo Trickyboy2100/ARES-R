@@ -21,6 +21,7 @@ import time
 from .grasp import build_grasp_plan
 from .ik import best_candidate, build_targets, solve_ik
 from .pregrasp import (SUPPORTED_ARMS, _arm_geometry, capture, case_dir, plan_case, target_path)
+from .scene import scene_identity, scene_snapshot_id
 from ..timing import timestamp
 from ..world_geometry import base_tcp_to_world
 from .se3 import pose_mm_rad_to_matrix, transform_revision
@@ -38,23 +39,39 @@ def _require_separation(declared):
 
 
 def prepare(config, arm, case_id, reader, profile, other_arm_separated,
-            detection=None, scene_snapshot=None, perception=None):
+            detection=None, scene_snapshot=None, perception=None, stop="pregrasp",
+            acknowledge_standoff_skipped=False):
     """Build a scene-bound IK case from an already committed observation.
 
     Capturing from Epic inside this function is intentionally forbidden: the
     detection and pointcloud must first become one ObservationEpoch and frozen
     SceneSnapshot, otherwise a trajectory could be planned against a different
     physical scene than the target pose.
+
+    ``stop`` selects which of the two solved Cartesian stops becomes the case
+    goal. It defaults to the standoff, because the audited execution sequence
+    approaches first and inserts along a straight line second. Planning straight
+    to the grasp is allowed only as an explicit, acknowledged choice so that
+    skipping the standoff can never happen by omission.
     """
     if arm not in SUPPORTED_ARMS:
         raise ValueError("arm must be left or right, got %r" % (arm,))
+    if stop not in ("pregrasp", "grasp"):
+        raise ValueError("stop must be pregrasp or grasp, got %r" % (stop,))
+    if stop == "grasp" and not acknowledge_standoff_skipped:
+        raise RuntimeError(
+            "planning straight to the grasp skips the audited approach standoff. "
+            "Pass acknowledge_standoff_skipped=True once you have decided this is a "
+            "reachability or inspection run rather than a staged pick")
     _require_separation(other_arm_separated)
     if perception is not None:
         raise RuntimeError("Epic-to-cuRobo direct planning is forbidden; commit detection and cloud to WorldModel first")
     if detection is None or scene_snapshot is None:
         raise RuntimeError("detection plus frozen SceneSnapshot are required")
-    if not isinstance(scene_snapshot, dict) or not scene_snapshot.get("snapshot_id"):
+    if not isinstance(scene_snapshot, dict):
         raise RuntimeError("invalid SceneSnapshot")
+    snapshot_id = scene_snapshot_id(scene_snapshot)
+    scene_provenance = scene_identity(scene_snapshot)
 
     started = time.time()
     start_path, start = capture(config, "start", case_id, arm, reader)
@@ -71,12 +88,12 @@ def prepare(config, arm, case_id, reader, profile, other_arm_separated,
         raise RuntimeError("live tool/TCP revision differs from the Epic task profile")
     ik_directory, payload = solve_ik(config, arm, build_targets(plan), diagnostics, profile,
                                      scene_snapshot=scene_snapshot)
-    # The first planned motion is to the standoff, never straight to the grasp.
-    candidate = best_candidate(payload, target="pregrasp")
+    # The staged pick approaches the standoff first; anything else is deliberate.
+    candidate = best_candidate(payload, target=stop)
 
     geometry = _arm_geometry(config, arm)
     target_id = "%s_%s" % (case_id, candidate["target"])
-    pose_m_rad = list(plan.pregrasp.values())
+    pose_m_rad = list((plan.pregrasp if stop == "pregrasp" else plan.grasp).values())
     body_tcp = base_tcp_to_world(geometry, [value * 1000.0 for value in pose_m_rad[:3]]
                                  + list(pose_m_rad[3:]))
     target = dict(
@@ -99,13 +116,19 @@ def prepare(config, arm, case_id, reader, profile, other_arm_separated,
             min_central_margin_m=candidate["min_central_margin_m"],
             min_soft_limit_margin_rad=candidate["min_soft_limit_margin_rad"],
             raw_response=detection.raw_response,
-            scene_snapshot_id=scene_snapshot["snapshot_id"],
+            scene_snapshot_id=snapshot_id,
+            scene_provenance=scene_provenance,
             tool_revision=tool_revision,
+            stop=stop,
+            standoff_skipped=(stop == "grasp"),
         ),
         warning=("Goal joints come from IK against a camera pose, not from a teach capture. "
                  "Re-read the live arm before planning: this is a target, not an observation."),
     )
     path = target_path(config, target_id)
+    # The target tree is not tracked, so the first run after a branch change has
+    # nowhere to write. Create the directory rather than failing on a fresh tree.
+    path.parent.mkdir(parents=True, exist_ok=True)
     if path.exists():
         raise RuntimeError("%s already exists; move it aside instead of overwriting a target"
                            % path)
@@ -114,7 +137,7 @@ def prepare(config, arm, case_id, reader, profile, other_arm_separated,
     manifest = dict(
         schema_version=SCHEMA_VERSION, case_id=case_id, arm=arm, goal_target_id=target_id,
         other_arm_physically_separated=True, tool_id=start["tool_id"],
-        tcp_revision=tool_revision, scene_snapshot_id=scene_snapshot["snapshot_id"],
+        tcp_revision=tool_revision, scene_snapshot_id=snapshot_id,
         scene_note="camera goal from Epic space %s" % detection.meta.get("space_id"),
         operator_note="start captured live; goal solved by %s" % Path(ik_directory).name,
     )
@@ -124,7 +147,7 @@ def prepare(config, arm, case_id, reader, profile, other_arm_separated,
                            % manifest_path)
     manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     return dict(case_id=case_id, arm=arm, start=str(start_path), target=str(path),
-                manifest=str(manifest_path), ik_run=str(ik_directory),
+                manifest=str(manifest_path), ik_run=str(ik_directory), stop=stop,
                 candidates=payload["candidate_count"], accepted=payload["accepted_count"],
                 joint_travel_rad=candidate["joint_distance_from_start_rad"],
                 elapsed_s=round(time.time() - started, 2))

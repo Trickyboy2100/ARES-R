@@ -39,22 +39,32 @@ def compile_snapshot(snapshot, arm: str, T_body_model, planning_scope="DEMO_OFFL
     model_body = np.linalg.inv(body_model)
     objects = snapshot.environment.observation.obstacles
     cuboids = {}
+    targets = {}
     provenance = []
     for item in objects:
         if item.pose.frame_id != "body" or item.geometry_type != "cuboid":
             raise ValueError("SceneCompiler accepts BODY cuboids only")
         center, dims = transform_body_aabb(item.pose.xyz_m, item.dimensions_m, model_body)
-        cuboids[item.object_id] = {"dims": dims, "pose": center + [1, 0, 0, 0]}
+        entry = {"dims": dims, "pose": center + [1, 0, 0, 0], "inflation_m": item.inflation_m}
+        # The object about to be grasped has to be entered by the gripper, so it
+        # cannot double as a solid obstacle. It is moved to ``targets`` rather
+        # than dropped, so the scene still accounts for every observed object.
+        if item.role is SceneObjectRole.TARGET:
+            targets[item.object_id] = entry
+        else:
+            cuboids[item.object_id] = {"dims": entry["dims"], "pose": entry["pose"]}
         provenance.append({"object_id": item.object_id, "role": item.role.value,
                            "source_observation_id": item.source_observation_id,
-                           "inflation_m": item.inflation_m})
+                           "inflation_m": item.inflation_m,
+                           "used_as": "target" if item.role is SceneObjectRole.TARGET
+                           else "obstacle"})
     payload = {
         "schema_version": 1, "frame": "curobo_model_base", "arm": arm,
         "source": "scene_snapshot_compiler", "planning_scope": planning_scope,
         "execution_allowed": False, "scene_snapshot_id": snapshot.snapshot_id,
         "planning_context_digest": snapshot.planning_context_digest,
         "calibration_revision": dict(snapshot.calibration_revision),
-        "cuboids": cuboids, "provenance": provenance,
+        "cuboids": cuboids, "targets": targets, "provenance": provenance,
     }
     payload["digest"] = hashlib.sha256(json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
     return payload

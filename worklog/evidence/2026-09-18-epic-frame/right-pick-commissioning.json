@@ -1,0 +1,73 @@
+{
+  "record": "right_pick Epic task profile commissioning",
+  "date": "2026-09-18",
+  "arm": "right",
+  "profile": "right_pick",
+  "camera_command": "320,2,1,1,1,0",
+  "sets": {
+    "orientation_convention": "ZYX",
+    "approach_axis": "+z",
+    "calibration_revision": "epic-handeye:sha256:6777ae271a9212665ee72e4bb6016431",
+    "tool_revision": "sha256:b69f75dfc783a0e80f92e5b4e5a227365682f2970bb68e7eb139b9be3643948b",
+    "state": "COMMISSIONED"
+  },
+  "method": {
+    "what": "Read the controller TCP, then have the operator move the arm clear and let the camera report the same tray grasp pose.",
+    "why_not_position": "A millimetre triple looks plausible in almost any frame, so only a physical cross-check settles it. Orientation is the only quantity a controller can referee.",
+    "control_for_circularity": "The script reads the controller first and never prints the camera orientation before the arm is placed, so the operator cannot unconsciously copy the answer.",
+    "source": "worklog/evidence/2026-09-18-epic-frame/epic-attitude-111411.json"
+  },
+  "controller": {
+    "tool": 2,
+    "mean_mm_rad": [0.53618, -0.37421, -0.23752, -1.62292, -0.00344, -2.32391],
+    "repeatability": "five reads bit-identical"
+  },
+  "camera": {
+    "mean_mm_rad": [0.53660, -0.37776, -0.18036, 1.56900, -0.00499, 0.77953],
+    "spread_mm": [0.30, 0.54, 0.91]
+  },
+  "orientation_result": {
+    "residual_deg_by_order_gripper_symmetry_aware": {
+      "ZYX": 3.823,
+      "ZXY": 3.965,
+      "YZX": 3.978,
+      "XZY": 65.049,
+      "YXZ": 65.050,
+      "XYZ": 65.059
+    },
+    "residual_deg_without_symmetry": {
+      "ZYX": 179.462,
+      "ZXY": 179.740,
+      "YZX": 179.548,
+      "XZY": 137.837,
+      "YXZ": 137.631,
+      "XYZ": 137.930
+    },
+    "gripper_half_turn": true,
+    "excluded": "XYZ, XZY, YXZ rejected decisively (65 deg against 3.8 deg)",
+    "caveat": "ZYX, ZXY and YZX differ by only 0.15 deg because pitch is -0.29 deg, which makes them nearly degenerate at this attitude. Selecting ZYX adds at most about 0.6 deg of attitude error even in the worst case, so the choice is safe but not isolated by this measurement.",
+    "tool_axis_alignment_deg": {"+z": 3.79, "+x": 177.76, "+y": 176.86},
+    "reading": "The approach axis agrees while both transverse axes are flipped, which is exactly one grasp seen from the other finger pair. This is why the symmetry-aware test is the correct one."
+  },
+  "approach_axis_result": {
+    "sign_and_direction": "+z points into the tray (-z is 157.1 deg away from the tray direction)",
+    "tilt_from_horizontal_deg": 0.24,
+    "angle_to_tray_direction_deg": 22.9,
+    "convention_independence": "The tool +z tilt is asin(cos(ry)cos(rx)) regardless of yaw, so it is the same under all six orders. Only the reported residual above depends on the convention."
+  },
+  "position_result": {
+    "camera_minus_controller_mm": [0.42, -3.55, 57.16],
+    "norm_mm": 57.27,
+    "explanation": "Operator placed the TCP with x/y from the printed coordinates but set z by eye against the tray, so the 57 mm is a placement difference and not a camera offset.",
+    "corroboration": "On 2026-09-16 the same camera matched the controller in z to 0.20 mm when the operator placed the TCP on the printed coordinate, so no systematic z offset exists."
+  },
+  "not_commissioned": {
+    "left_pick": "left hand-eye calibration never read; orientation and approach not measured on the left arm",
+    "left_place": "same, and the place object was never detected",
+    "right_place": "object 2 never detected as a commissionable pose"
+  },
+  "limits": [
+    "Nothing was commissioned from a single measurement without a physical cross-check.",
+    "The commissioning changes data only; it does not enable motion. motion.execution_enabled stays false."
+  ]
+}
