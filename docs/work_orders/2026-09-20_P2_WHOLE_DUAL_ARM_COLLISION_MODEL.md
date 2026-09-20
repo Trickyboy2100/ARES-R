@@ -1,235 +1,318 @@
-# P2 — Whole dual-arm collision model, robot overlay and self-filter
+# P2 — Whole dual-arm collision model, self-filter, and mutual-arm avoidance substrate
 
 ## 0. Entry gate
 
-P1 has passed and is pushed:
+P1 is complete and pushed. P1.5 Git realignment must finish first.
+
+Require:
 
 ~~~text
-integration HEAD:
-c5ed44515cbe4d5e298f74117f4ac02bbccb3f20
-
-BODY_POINTCLOUD_READY_FOR_SELF_FILTER = YES
-BODY_CLOUD_VIEWER_READY = YES
-LIVE_VIEWER_PROTOTYPE_READY = YES
+DOT32_INTEGRATION_ALIGNED_WITH_GITHUB = YES
+WORKTREE_CLEAN_FOR_P2 = YES
 ~~~
 
-Known P1 hold-out:
+P2 does NOT recalibrate T_body_camera.
+
+No AMR, arm, or gripper motion in P2.
+
+## 1. P2 scope
+
+P2 has three core outcomes:
 
 ~~~text
-box AABB cloud ≈ 83.8 × 209.1 × 230.5 mm
-manual         ≈ 78 × 205 × 224 mm
-center X cloud ≈ 0.8206 m
-manual X       ≈ 0.835 m
+A. whole-robot geometry is correct in BODY
+B. robot-owned points can be removed from BODY cloud
+C. either arm can be treated as an obstacle for the other arm
 ~~~
 
-P2 does not recalibrate T_body_camera.
+Important distinction:
 
-No AMR, arm, or gripper motion.
+- P2 DOES include self-filter;
+- P2 DOES include dual-arm mutual collision representation/checking;
+- P2 does NOT yet run the final physical A↔B avoidance motion;
+- P3 performs actual cuRobo planning/execution around real obstacles + inactive arm.
 
-## 1. P2-A — asset audit before changing geometry
+## 2. P2-A — audit and select the production robot/gripper assets
 
-Use current ARES-R and pinned ARES assets before downloading anything new.
+Use current ARES-R and pinned ARES assets first.
 
-Audit and report separately:
+Known preferred source:
 
-1. kinematics;
-2. visual mesh;
-3. collision representation;
-4. tool/TCP;
-5. gripper;
-6. BODY mounting.
+~~~text
+ARES URDF
+ARES STL meshes
+ARES gripper model
+ARES gripper mount relative to link6
+ARES cuRobo sphere config
+~~~
 
-Known starting facts:
+User/site clarification:
 
-- ARES has Link0..Link6 STL meshes and URDF;
-- old cuRobo YAML has collision spheres for link1..link6;
-- old gripper 4C2 links have empty collision sphere lists;
-- current ARES-R preview model intentionally removes visual/collision meshes;
-- current FK has already been validated against controller FK;
-- BODY left/right base transforms are already commissioned.
+- the ARES gripper 3D model is considered geometrically close/usable;
+- the gripper-to-arm-end relative mounting in ARES is considered basically correct;
+- therefore ARES gripper geometry is the FIRST candidate for production use, not merely a fallback proxy.
 
-Do not replace validated kinematics merely because a prettier online model exists.
+Audit separately:
 
-If an external/open Mini2 model is considered, first compare joint origins, axes, link lengths, flange, base mounting and mesh bounds.
+1. arm kinematics;
+2. arm visual mesh;
+3. arm collision spheres;
+4. gripper visual/collision mesh;
+5. gripper mount transform relative to link6;
+6. current tool/TCP transform;
+7. BODY left/right base transforms;
+8. chassis/body geometry.
+
+Classification:
+
+~~~text
+VALIDATED_EXISTING_MODEL
+VALIDATED_AFTER_SITE_CHECK
+CONSERVATIVE_PROXY
+MISSING_BLOCKER
+~~~
+
+Do not replace validated kinematics just because another online Mini2 mesh exists.
+
+If an external Mini2 model is used, compare joint origin/axis/link length/flange/base/mesh bounds before adopting it.
 
 Output:
 
 ~~~text
 docs/ROBOT_COLLISION_MODEL_AUDIT_2026-09-20.md
+worklog/generated/robot_collision_model_manifest.json
 ~~~
 
-and a machine-readable manifest.
+## 3. P2-B — build one reusable whole-robot BODY geometry exporter
 
-## 2. P2-B — whole-robot geometry overlay BEFORE filtering
-
-This is the first visual gate.
-
-Create a reusable geometry exporter that takes live/read-only joint snapshots and returns BODY-frame robot geometry for BOTH arms.
-
-Preferred first representation:
+Create a canonical exporter:
 
 ~~~text
-validated link collision spheres
-+ explicit conservative base/housing proxies
-+ explicit tool/gripper proxies where exact geometry is not yet commissioned
+live/read-only joints
++ BODY arm-base transforms
++ arm link collision geometry
++ gripper/tool geometry
+→ left/right BODY robot geometry
 ~~~
 
-Each proxy must be labelled:
+The same geometry source must be used for:
+
+1. viewer overlay;
+2. self-filter;
+3. inactive-arm obstacle;
+4. later cuRobo collision checks.
+
+Do not maintain separate “display-only” and “planning-only” transforms.
+
+Output should contain at minimum:
 
 ~~~text
-EXACT
-VALIDATED_FROM_EXISTING_MODEL
-CONSERVATIVE_PROXY
-MISSING_BLOCKER
+left arm link geometry
+left gripper/tool geometry
+right arm link geometry
+right gripper/tool geometry
+base/chassis conservative geometry
+central BODY exclusion
+geometry revision
+joint snapshot revision
+tool/TCP revision
 ~~~
 
-Do not silently pretend old 4C2 geometry equals the current physical gripper.
+## 4. P2-C — visual overlay gate before filtering
 
-Extend the P1 BODY viewer to show:
+Extend the P1 BODY viewer.
+
+Display:
 
 - raw BODY pointcloud;
-- left arm collision spheres;
-- right arm collision spheres;
+- left arm link collision spheres/mesh proxy;
+- right arm link collision spheres/mesh proxy;
+- left gripper;
+- right gripper;
 - left/right base frames;
-- tool/gripper collision geometry;
-- chassis/body conservative geometry if available;
-- central BODY exclusion;
-- current joint revision/timestamp.
+- chassis/body geometry if available;
+- BODY central exclusion;
+- current joints and geometry revision.
 
 Required screenshot:
 
 ~~~text
-raw BODY cloud + dual-arm robot collision overlay
+raw BODY cloud + both arm models + both grippers
 ~~~
 
-At this phase, do NOT remove points yet.
+Acceptance:
 
-## 3. P2-C — self-filter using the SAME geometry
+- visible robot pointcloud should plausibly overlap the robot geometry;
+- arm bases must appear in correct BODY positions;
+- gripper/tool geometry must be at the correct link6/TCP side;
+- no filtering yet.
 
-Only after the overlay is visually/plausibly correct.
+## 5. P2-D — self-filter using the SAME whole-robot geometry
 
 Self-filter rule:
 
 ~~~text
-for each BODY cloud point:
-  remove only if inside commissioned/conservative robot-owned geometry
-  plus an explicit filter margin
+raw BODY cloud
+- left arm owned geometry
+- right arm owned geometry
+- left gripper/tool owned geometry
+- right gripper/tool owned geometry
+- optional chassis/body owned geometry
+= external environment cloud
 ~~~
 
-The geometry used for filtering must be the same source used later for planning collision.
+No image-space masks and no arbitrary hand-drawn exclusion regions as the production filter.
 
-No arbitrary image-space masks or hand-drawn BODY boxes as production self-filter.
+Use configurable margin and benchmark several values, for example:
 
-Start with a conservative configurable margin. Benchmark at least a few values offline, e.g. around 10/20/30 mm, and show the effect.
+~~~text
+10 mm
+20 mm
+30 mm
+~~~
 
 Required evidence:
 
 - raw cloud;
-- geometry overlay;
+- overlay;
 - filtered cloud;
-- removed point count / percentage;
-- remaining table;
-- remaining known box from P1;
-- before/after known-box AABB so the box is proven not to be carved away;
-- before/after table retention;
-- per-arm removed counts if possible.
+- total removed points;
+- left-arm removed points;
+- right-arm removed points;
+- gripper/tool removed points;
+- table retention;
+- P1 known-box retention;
+- box AABB before/after.
 
-## 4. P2-D — inactive-arm obstacle representation
+Self-filter is considered ready only if robot points are substantially removed while table/box are preserved.
 
-V0 dual-arm rule:
+## 6. P2-E — dual-arm mutual avoidance substrate
+
+This phase explicitly covers “双臂互相避障”的 geometry/collision foundation.
+
+V0 policy:
 
 ~~~text
 active arm:
-  cuRobo 6DoF robot model
+  planned as a normal 6DoF cuRobo robot
 
 inactive arm:
   live joints
-  → BODY collision geometry
-  → planning-world obstacle
+  → BODY geometry
+  → converted into active-arm planning world obstacle
 ~~~
 
-Implement the data contract now, but do not run a motion plan in P2.
-
-Show a viewer state for both:
+Implement both directions:
 
 ~~~text
-active=right, inactive=left
-active=left,  inactive=right
+right active / left inactive obstacle
+left active  / right inactive obstacle
 ~~~
 
-The inactive arm must remain visible in the world.
+Requirements:
 
-## 5. P2-E — tool/gripper/base completeness decision
+- inactive-arm geometry must update from fresh joint state;
+- inactive gripper/tool must also be included;
+- active-arm path collision query must detect collision with inactive arm;
+- central shared-space / 14 cm exclusion remains represented;
+- scene revision changes when inactive arm joint/tool state changes.
 
-P2 may finish with staged readiness.
+## 7. P2-F — offline mutual-arm collision regression
 
-Allowed exit states:
+No physical motion.
+
+Create synthetic/offline tests that prove:
+
+1. a known-clear active-arm configuration is collision-free with the inactive arm;
+2. a deliberately overlapping active/inactive geometry is detected as collision;
+3. moving the inactive-arm joint snapshot changes the obstacle geometry/revision;
+4. the gripper participates in collision checking;
+5. active-right and active-left paths are symmetric at the contract level.
+
+This is where P2 verifies mutual avoidance logic.
+
+Actual cuRobo A↔B path planning around the inactive arm is deferred to P3.
+
+## 8. P2-G — gripper completeness decision
+
+Because ARES gripper geometry is considered usable, prefer:
 
 ~~~text
-ARM_LINKS_READY
-GRIPPER_PROXY_ONLY
-BASE_PROXY_ONLY
-WHOLE_ROBOT_READY
+ARES gripper mesh + mount transform
+→ verify against current physical setup/tool/TCP
+→ classify VALIDATED_AFTER_SITE_CHECK
 ~~~
 
-If the current physical gripper model cannot be identified precisely today, use a conservative proxy for self-filter/visualization and mark it explicitly. Do not block all progress if the arm links themselves are validated.
+If only the finger opening differs from the physical state, do not throw away the model. Use one of:
 
-However, P3 supervised execution requires tool/gripper collision geometry to be adequate for the selected demo.
+- live opening if available;
+- conservative maximum-envelope geometry;
+- fixed known opening for the selected demo.
 
-## 6. Offline regression only
+Only fall back to a generic gripper box/sphere proxy if the ARES geometry is demonstrably inconsistent.
 
-Run offline/read-only:
+## 9. Terminal / viewer commands
 
-- FK vs controller regression from existing evidence;
-- collision sphere transform regression for both arms;
-- left/right BODY base transform regression;
-- self-filter synthetic tests;
-- known-box retention test;
-- inactive-arm scene export test;
-- tool/base proxy provenance test.
-
-Do NOT start the P3 A↔B cuRobo demo in this phase.
-
-## 7. Terminal / viewer commands
-
-Add read-only commands such as:
+Read-only commands should include or converge on:
 
 ~~~text
 robot collision inspect
 robot collision show
+robot collision compare-arms
+
 scene body-cloud show --robot
 scene body-cloud self-filter
 scene body-cloud self-filter-show
+
+scene arm-obstacle show right
+scene arm-obstacle show left
 ~~~
 
-Names may be adapted to current ART grammar, but one canonical backend path must be shared.
+Names may follow current ART grammar, but all commands must use the same backend geometry service.
 
-## 8. Exit criteria
+## 10. Performance measurements
+
+Measure separately:
+
+- whole-robot geometry export;
+- transform of both arms to BODY;
+- self-filter;
+- inactive-arm world conversion;
+- collision-query preparation.
+
+Do not optimize prematurely, but record p50/p95 if easy to obtain.
+
+## 11. Exit criteria
 
 Report:
 
 ~~~text
 ROBOT_COLLISION_OVERLAY_READY = YES/NO
 ARM_LINK_COLLISION_MODEL_READY = YES/NO
+GRIPPER_COLLISION_MODEL_READY = YES/NO
 WHOLE_ROBOT_COLLISION_MODEL_READY = YES/NO
 SELF_FILTER_READY = YES/NO
 INACTIVE_ARM_OBSTACLE_READY = YES/NO
+MUTUAL_ARM_COLLISION_CHECK_READY = YES/NO
 P3_ALLOWED = YES/NO
 ~~~
 
 Include:
 
-- asset audit summary;
-- exact/proxy/missing geometry table;
-- before/overlay/after screenshots;
-- removed-point statistics;
-- known-box retention error;
+- asset audit;
+- geometry classification table;
+- raw/overlay/filtered screenshots;
+- self-filter statistics;
+- P1 box retention;
 - table retention;
-- latency of robot geometry export and self-filter;
+- active-right/inactive-left collision regression;
+- active-left/inactive-right collision regression;
+- gripper collision regression;
+- latency;
 - tests;
 - local commit SHA.
 
-## 9. Push policy
+## 12. Push policy
 
 Commit locally on:
 
