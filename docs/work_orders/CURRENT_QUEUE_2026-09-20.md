@@ -14,74 +14,70 @@ Completed. Production T_body_camera is COMMISSIONED.
 
 ### P1 — BODY pointcloud + viewer
 
-Pushed to integration branch:
+Pushed at:
 
 ~~~text
 c5ed44515cbe4d5e298f74117f4ac02bbccb3f20
-feat(perception): add canonical BODY cloud viewer
+~~~
+
+### P1.5 — .32 Git realignment
+
+Completed.
+
+~~~text
+DOT32_INTEGRATION_ALIGNED_WITH_GITHUB = YES
+WORKTREE_CLEAN_FOR_P2 = YES
+~~~
+
+### P2 — whole dual-arm collision model + self-filter + mutual-arm substrate
+
+Pushed at:
+
+~~~text
+a4b3bac3ca8e099168cf26677d24656136406b8c
+feat(perception): add whole dual-arm collision substrate
 ~~~
 
 Result:
 
 ~~~text
-BODY_POINTCLOUD_READY_FOR_SELF_FILTER = YES
-BODY_CLOUD_VIEWER_READY = YES
-LIVE_VIEWER_PROTOTYPE_READY = YES
-~~~
-
-### P1.5 — .32 Git branch realignment
-
-Completed on 2026-09-20.
-
-~~~text
-DOT32_INTEGRATION_ALIGNED_WITH_GITHUB = YES
-WORKTREE_CLEAN_FOR_P2 = YES
-
-.32 HEAD    = c5ed44515cbe4d5e298f74117f4ac02bbccb3f20
-GitHub HEAD = c5ed44515cbe4d5e298f74117f4ac02bbccb3f20
-tests       = 395/395 OK
-~~~
-
-Preservation:
-
-~~~text
-branch: preserve/site-20260920-pre-p2-realign
-sha:    2efbdb4c48d96f319bdeac5aa2f34ebde1d1a470
-manifest:
-/home/yikun/ARES-R/worklog/preservation/2026-09-20-pre-p2-realign/manifest.json
+ROBOT_COLLISION_OVERLAY_READY = YES
+ARM_LINK_COLLISION_MODEL_READY = YES
+GRIPPER_COLLISION_MODEL_READY = YES
+WHOLE_ROBOT_COLLISION_MODEL_READY = YES
+SELF_FILTER_READY = YES
+INACTIVE_ARM_OBSTACLE_READY = YES
+MUTUAL_ARM_COLLISION_CHECK_READY = YES
+P3_ALLOWED = YES
 ~~~
 
 ## Active now
 
-### P2 — whole dual-arm collision model + self-filter + mutual-arm avoidance substrate
+### P3 — residual environment cleanup → real obstacle cuRobo A↔B demo
 
 Execute:
 
 ~~~text
-docs/work_orders/2026-09-20_P2_WHOLE_DUAL_ARM_COLLISION_MODEL.md
-~~~
-
-Order inside P2:
-
-~~~text
-asset audit
-→ whole-robot BODY collision geometry
-→ ARES gripper model validation
-→ overlay on raw BODY cloud
-→ self-filter with SAME geometry
-→ inactive-arm obstacle representation
-→ offline active-vs-inactive arm collision regression
-→ P3 go/no-go
-~~~
-
-Do not start P3 inside P2.
-
-## Recorded next
-
-### P3
-~~~text
 docs/work_orders/2026-09-20_P3_PRODUCTION_POINTCLOUD_CUROBO_DEMO.md
 ~~~
+
+Order inside P3:
+
+~~~text
+residual-cloud sparse-outlier cleanup
+→ stable obstacle AABB extraction
+→ inactive arm + table + real obstacle world
+→ BODY target A/B contract
+→ CLEAR planning-only
+→ real-box AVOID planning-only
+→ BLOCK planning-only
+→ timing + visualization
+→ supervised execution go/no-go
+~~~
+
+Do not execute a physical arm motion until planning-only results are reviewed and separately authorized.
+
+## Recorded next
 
 ### P4
 ~~~text
@@ -95,21 +91,19 @@ docs/work_orders/2026-09-20_P5_POINTCLOUD_THROUGHPUT_WATCHDOG.md
 
 ## Stage push policy
 
-From P2 onward:
-
-1. finish one phase;
+1. finish phase;
 2. run tests;
-3. create a local commit on feat/e2e-v0-integration-20260917;
+3. local commit;
 4. STOP and report;
-5. DO NOT push automatically;
+5. do not push automatically;
 6. user returns to ChatGPT;
-7. push only after explicit review instruction.
+7. push/execution only after review.
 
 No force-push. No blanket reset/revert.
 
 ## User action rule
 
-If physical user input is required, ask exactly one action:
+When physical user input is required, ask exactly one action:
 
 ~~~text
 USER ACTION N
@@ -121,4 +115,6 @@ USER ACTION N
 
 ## Current motion boundary
 
-P2 requires no AMR, arm, or gripper motion.
+P3 planning-only may capture the camera and read robot state.
+
+AMR/arm/gripper motion still requires separate explicit authorization.
