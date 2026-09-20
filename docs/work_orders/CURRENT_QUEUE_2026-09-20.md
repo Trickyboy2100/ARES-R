@@ -60,7 +60,7 @@ WORKTREE_CLEAN_FOR_P2 = YES
 
 ## Next after P1.5
 
-### P2 — whole dual-arm collision model + self-filter
+### P2 — whole dual-arm collision model + self-filter + mutual-arm avoidance substrate
 
 ~~~text
 docs/work_orders/2026-09-20_P2_WHOLE_DUAL_ARM_COLLISION_MODEL.md
@@ -71,9 +71,10 @@ Order inside P2:
 ~~~text
 asset audit
 → whole-robot collision overlay on raw BODY cloud
+→ ARES gripper model validation
 → self-filter with SAME geometry
 → inactive-arm obstacle representation
-→ offline regression
+→ offline active-vs-inactive arm collision regression
 → P3 go/no-go
 ~~~
 
