@@ -56,7 +56,11 @@ HELP = """Commands:
   calib body-camera capture origin
   calib body-camera table-edge|sweep plan|mount-measurement show|solve|validate
   calib body-camera sweep run x+|x-|y+|y- DISTANCE_M
-  scene body-cloud capture|show|inspect  canonical raw BODY cloud; no self-filter
+  scene body-cloud capture|show|inspect  canonical raw BODY cloud
+  scene body-cloud show --robot          overlay canonical whole-robot collision geometry
+  scene body-cloud self-filter [10|20|30]  offline mesh-derived self-filter evidence
+  robot collision inspect|compare-arms   inspect P2 geometry/regression; never moves
+  scene arm-obstacle show left|right     inactive-arm BODY obstacles + revision
   scene body-cloud live --interval SEC   native Open3D scan viewer; no WebUI
   amr status|battery|map|position-types  read AMR HTTP state
   amr move-position ID NAME [RETRIES]    guarded named-position move
@@ -109,6 +113,8 @@ JAKA_READONLY_HELP = """JAKA read-only commands:
   epic pointcloud inspect FILE / epic obstacles inspect FILE
   epic obstacles convert FILE left|right OUT  offline scheme-2 bridge
   calib body-camera handeye compare|board-check / calib body-camera show
+  scene body-cloud show --robot|self-filter [10|20|30]
+  robot collision inspect|compare-arms / scene arm-obstacle show SIDE
   note <text>                append a Git-trackable work note
   help                       show these commands
   quit                       exit
@@ -169,7 +175,8 @@ def _allowed_in_jaka_readonly(args) -> bool:
         or args[:2] in (["pose", "list"], ["pose", "show"])
         or args[:2] in (["motion", "inspect"], ["motion", "validate"])
         or args[:2] in (["epic", "pointcloud"], ["epic", "obstacles"],
-                        ["calib", "body-camera"], ["scene", "body-cloud"])
+                        ["calib", "body-camera"], ["scene", "body-cloud"],
+                        ["robot", "collision"], ["scene", "arm-obstacle"])
         or args[:2] in (["curobo", "status"], ["curobo", "plan"], ["curobo", "plan-file"], ["curobo", "preview"])
         # Capturing and planning never command an arm, so they stay available
         # while the terminal is in its most restricted mode.
@@ -221,6 +228,7 @@ def _allowed_in_hardware(args) -> bool:
         or args[:2] in (["motion", "inspect"], ["motion", "validate"])
         or args[:2] == ["calib", "body-camera"]
         or args[:2] == ["scene", "body-cloud"]
+        or args[:2] in (["robot", "collision"], ["scene", "arm-obstacle"])
         or args[:2] in (["curobo", "status"], ["curobo", "plan"], ["curobo", "plan-file"], ["curobo", "preview"])
         or args[:2] in (["pregrasp", "capture-start"], ["pregrasp", "capture-goal"],
                         ["pregrasp", "plan"], ["pregrasp", "preview"], ["pregrasp", "run"])
@@ -244,6 +252,7 @@ def _allowed_in_calibration_scope(args) -> bool:
                     ["amr","position-types"],["amr","stop"])
         or args[:3] in (["epic","pointcloud","capture"],["epic","pointcloud","inspect"])
         or args[:2] == ["scene", "body-cloud"]
+        or args[:2] in (["robot", "collision"], ["scene", "arm-obstacle"])
     )
 
 
@@ -605,11 +614,26 @@ def run_terminal(controller: TaskController) -> None:
                 elif args == ["scene", "body-cloud", "inspect"]:
                     manifest = latest_manifest(controller.config)
                     print(manifest.read_text(encoding="utf-8"))
-                elif args == ["scene", "body-cloud", "show"]:
+                elif args in (["scene", "body-cloud", "show"],
+                               ["scene", "body-cloud", "show", "--robot"]):
                     import os as _os
                     import subprocess as _subprocess
                     manifest = latest_manifest(controller.config)
                     repository = Path.cwd()
+                    if args[-1] == "--robot":
+                        collision = controller.config["robot_collision"]
+                        output = repository / collision["evidence_directory"]
+                        command = [controller.config["epic_pointcloud"]["body_cloud_viewer_python"],
+                                   str(repository / "scripts/robot_collision_evidence.py"), str(manifest),
+                                   str(repository / collision["geometry_snapshot"]),
+                                   "--output-dir", str(output)]
+                        result = _subprocess.run(command, cwd=str(repository), text=True,
+                                                 capture_output=True, timeout=240)
+                        if result.returncode:
+                            raise RuntimeError("robot overlay failed: %s" % result.stderr.strip())
+                        print("ROBOT_COLLISION_OVERLAY_READY: %s" % (output / "robot_collision_overlay.png"))
+                        print(result.stdout)
+                        continue
                     command = [controller.config["epic_pointcloud"]["body_cloud_viewer_python"],
                                str(repository / "scripts/body_cloud_viewer.py"), str(manifest)]
                     if _os.environ.get("DISPLAY"):
@@ -643,8 +667,54 @@ def run_terminal(controller: TaskController) -> None:
                     result = _subprocess.run(command, cwd=str(repository), text=True)
                     if result.returncode:
                         raise RuntimeError("BODY cloud live viewer exited with code %d" % result.returncode)
+                elif len(args) in (3, 4) and args[:3] == ["scene", "body-cloud", "self-filter"]:
+                    margin = (int(args[3]) if len(args) == 4 else
+                              int(controller.config["robot_collision"]["default_self_filter_margin_mm"]))
+                    if margin not in (10, 20, 30):
+                        raise ValueError("self-filter margin must be 10, 20, or 30 mm")
+                    import subprocess as _subprocess
+                    repository = Path.cwd(); collision = controller.config["robot_collision"]
+                    output = repository / collision["evidence_directory"]
+                    command = [controller.config["epic_pointcloud"]["body_cloud_viewer_python"],
+                               str(repository / "scripts/robot_collision_evidence.py"),
+                               str(latest_manifest(controller.config)),
+                               str(repository / collision["geometry_snapshot"]),
+                               "--output-dir", str(output)]
+                    result = _subprocess.run(command, cwd=str(repository), text=True,
+                                             capture_output=True, timeout=240)
+                    if result.returncode:
+                        raise RuntimeError("self-filter failed: %s" % result.stderr.strip())
+                    report = json.loads((output / "self_filter_report.json").read_text())
+                    print(json.dumps(report["margins"][str(margin)], ensure_ascii=False, indent=2))
+                elif args == ["scene", "body-cloud", "self-filter-show"]:
+                    output = Path.cwd() / controller.config["robot_collision"]["evidence_directory"]
+                    print("SELF_FILTER_READY: %s" % (output / "self_filtered_20mm.png"))
+                    print((output / "self_filter_report.json").read_text(encoding="utf-8"))
                 else:
-                    raise ValueError("usage: scene body-cloud capture|show|inspect|live [--interval SEC]")
+                    raise ValueError("usage: scene body-cloud capture|show [--robot]|inspect|live [--interval SEC]|self-filter 10|20|30")
+            elif args[:2] == ["robot", "collision"]:
+                collision = controller.config["robot_collision"]; repository = Path.cwd()
+                if args == ["robot", "collision", "inspect"]:
+                    model = json.loads((repository / collision["model"]).read_text())
+                    geometry = json.loads((repository / collision["geometry_snapshot"]).read_text())
+                    print(json.dumps({"state": collision["state"], "classifications": model["classifications"],
+                        "geometry_revision": geometry["geometry_revision"],
+                        "scene_revision": geometry["scene_revision"], "box_count": len(geometry["boxes"]),
+                        "joints_rad": geometry["joints_rad"], "execution_allowed": False},
+                        ensure_ascii=False, indent=2))
+                elif args == ["robot", "collision", "compare-arms"]:
+                    path = repository / collision["evidence_directory"] / "mutual_collision_regression.json"
+                    print(path.read_text(encoding="utf-8"))
+                elif args == ["robot", "collision", "show"]:
+                    print("ROBOT_COLLISION_OVERLAY_READY: %s" %
+                          (repository / collision["evidence_directory"] / "robot_collision_overlay.png"))
+                else:
+                    raise ValueError("usage: robot collision inspect|show|compare-arms")
+            elif args[:3] == ["scene", "arm-obstacle", "show"] and len(args) == 4:
+                from .perception.robot_collision import inactive_arm_obstacles, load_geometry_snapshot
+                collision = controller.config["robot_collision"]
+                snapshot = load_geometry_snapshot(Path.cwd() / collision["geometry_snapshot"])
+                print(json.dumps(inactive_arm_obstacles(snapshot, args[3]), ensure_ascii=False, indent=2))
             elif args[:2] == ["epic", "status"]:
                 state = controller.probe_perception()
                 print("Epic status: %s" % state.detail)

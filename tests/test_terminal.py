@@ -32,6 +32,9 @@ class TerminalHistoryTest(unittest.TestCase):
         self.assertTrue(terminal._allowed_in_jaka_readonly(
             ["calib", "body-camera", "handeye", "compare"]))
         self.assertTrue(terminal._allowed_in_jaka_readonly(["scene", "body-cloud", "inspect"]))
+        self.assertTrue(terminal._allowed_in_jaka_readonly(["scene", "body-cloud", "show", "--robot"]))
+        self.assertTrue(terminal._allowed_in_jaka_readonly(["robot", "collision", "inspect"]))
+        self.assertTrue(terminal._allowed_in_jaka_readonly(["scene", "arm-obstacle", "show", "right"]))
         self.assertTrue(terminal._allowed_in_jaka_readonly(["note", "audit"]))
         self.assertFalse(terminal._allowed_in_jaka_readonly(["pick"]))
         self.assertFalse(terminal._allowed_in_jaka_readonly(["stop"]))
