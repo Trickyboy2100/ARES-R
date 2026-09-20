@@ -41,9 +41,24 @@ class AmrHttpTest(unittest.TestCase):
         with self.assertRaises(ValueError):self.base.move_relative(.1,0,0,linear_mps=.6)
         with patch("ares_r.adapters.amr_http.urlopen",return_value=_Response({"ok":True})) as open_:
             self.base.move_relative(.1,-.2,.3)
+            request=open_.call_args.args[0]
+            body=json.loads(request.data)
+            self.assertEqual(request.method,"POST")
+            self.assertEqual(request.full_url,
+                "http://192.168.99.30:11375/openapi/control/move/relative")
+            # Compatibility payload commissioned on the R300 v0.3.18
+            # controller.  Do not silently rename or rescale these fields.
+            self.assertEqual(body,{"x":.1,"y":-.2,"orientation":.3,
+                "maxLinearspeed":.2,"maxAngularspeed":.2,
+                "collisiondetection":1,"timeout":30.0})
+
+    def test_lateral_sign_is_forwarded_without_axis_remapping(self):
+        with patch("ares_r.adapters.amr_http.urlopen",return_value=_Response({"status":3})) as open_:
+            self.base.move_relative(0,-.6,0)
             body=json.loads(open_.call_args.args[0].data)
-            self.assertEqual(body["collisiondetection"],1)
-            self.assertEqual(body["orientation"],.3)
+            self.assertEqual(body["x"],0.0)
+            self.assertEqual(body["y"],-.6)
+            self.assertEqual(body["orientation"],0.0)
 
     def test_named_navigation_requires_explicit_config(self):
         with self.assertRaises(RuntimeError):self.base.navigate("pick_station")
