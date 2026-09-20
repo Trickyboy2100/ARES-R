@@ -8,15 +8,55 @@ Master roadmap:
 docs/roadmaps/2026-09-20_BODY_POINTCLOUD_DUAL_ARM_AVOIDANCE_ROADMAP.md
 ~~~
 
-## Active now
+## Completed / superseded today
 
-### P0 — Recover Epic hand-eye → BODY
+### P0-A — recover Epic hand-eye evidence
+
+The integration branch now contains:
+
+~~~text
+7ca1e1a feat(perception): preserve Epic calibration integration
+~~~
+
+with:
+
+- left Epic hand-eye UI transcription;
+- right Epic hand-eye UI transcription;
+- earlier right hand-eye evidence;
+- body-camera commissioning code/tests;
+- a right-derived T_body_camera already written in config/system.json.
+
+Therefore the generic recovery/search phase is no longer the active task.
+
+Historical order retained:
 
 ~~~text
 docs/work_orders/2026-09-20_P0_RECOVER_EPIC_HAND_EYE_TO_BODY.md
 ~~~
 
-Do not start P1 before P0 exits with a staged report.
+## Active now
+
+### P0-B — dual-arm hand-eye semantic cross-check
+
+Execute only:
+
+~~~text
+docs/work_orders/2026-09-20_P0B_DUAL_ARM_HANDEYE_CROSSCHECK.md
+~~~
+
+Purpose:
+
+~~~text
+left Epic hand-eye
++ right Epic hand-eye
++ BODY arm-base transforms
+→ independently derive T_body_camera twice
+→ prove matrix direction
+→ board/table/pointcloud validation
+→ decide final COMMISSIONED/CANDIDATE state
+~~~
+
+Do not start P1 before P0-B exits with a staged report.
 
 ## Recorded next phases
 
@@ -54,7 +94,7 @@ docs/work_orders/2026-09-20_P5_POINTCLOUD_THROUGHPUT_WATCHDOG.md
 
 The earlier table-edge/base-sweep/targetless/vendor-board work orders remain historical evidence and fallback methods.
 
-They are not the active path until P0 proves existing Epic hand-eye cannot be recovered or validated.
+They are not active unless P0-B proves the existing Epic hand-eye chain cannot be trusted.
 
 ## User action rule
 
@@ -70,6 +110,6 @@ USER ACTION N
 
 ## Current motion boundary
 
-P0 requires no AMR, arm, or gripper motion.
+P0-B requires no AMR, arm, or gripper motion.
 
 Do not move hardware unless a later phase explicitly requests and receives authorization.
