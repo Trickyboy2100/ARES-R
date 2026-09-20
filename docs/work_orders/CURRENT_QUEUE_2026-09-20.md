@@ -29,13 +29,38 @@ BODY_CLOUD_VIEWER_READY = YES
 LIVE_VIEWER_PROTOTYPE_READY = YES
 ~~~
 
-Independent box hold-out reached single-digit-mm dimension residuals and ~14 mm approximate center-X residual.
-
 ## Active now
 
-### P2 — whole dual-arm collision model + self-filter
+### P1.5 — .32 Git branch realignment before P2
 
-Execute:
+Execute first:
+
+~~~text
+docs/work_orders/2026-09-20_P1_5_DOT32_GIT_REALIGN.md
+~~~
+
+Reason:
+
+~~~text
+GitHub official integration HEAD = c5ed445
+.32 local integration HEAD       = 2efbdb4
+
+patch contents are equivalent,
+but commit histories diverged.
+~~~
+
+P2 must NOT start until .32 official integration branch points to the exact same canonical commit as GitHub and the worktree is clean/preserved.
+
+Exit gates:
+
+~~~text
+DOT32_INTEGRATION_ALIGNED_WITH_GITHUB = YES
+WORKTREE_CLEAN_FOR_P2 = YES
+~~~
+
+## Next after P1.5
+
+### P2 — whole dual-arm collision model + self-filter
 
 ~~~text
 docs/work_orders/2026-09-20_P2_WHOLE_DUAL_ARM_COLLISION_MODEL.md
@@ -99,4 +124,4 @@ USER ACTION N
 
 ## Current motion boundary
 
-P2 requires no AMR, arm, or gripper motion.
+P1.5 and P2 require no AMR, arm, or gripper motion.
