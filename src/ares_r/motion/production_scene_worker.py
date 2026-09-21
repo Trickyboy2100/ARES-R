@@ -10,6 +10,7 @@ from pathlib import Path
 import sys,time,xml.etree.ElementTree as ET
 
 ARM_NAMES=["joint%d"%i for i in range(1,7)]
+from ares_r.perception.robot_owned_filter import grid_spheres_local as grid_spheres
 
 
 def transform(xyz,rpy):
@@ -18,17 +19,6 @@ def transform(xyz,rpy):
     value=np.eye(4);value[:3,:3]=[[cy*cp,cy*sp*sr-sy*cr,cy*sp*cr+sy*sr],
         [sy*cp,sy*sp*sr+cy*cr,sy*sp*cr-cy*sr],[-sp,cp*sr,cp*cr]];value[:3,3]=xyz
     return value
-
-
-def grid_spheres(box,max_cell_m=.060):
-    """Circumscribed cell spheres whose union conservatively covers one OBB."""
-    import numpy as np
-    center=np.asarray(box["center_m"],dtype=float);half=np.asarray(box["half_extents_m"],dtype=float)
-    count=np.maximum(1,np.ceil(2*half/max_cell_m).astype(int));cell=2*half/count
-    radius=float(np.linalg.norm(cell/2))
-    axes=[center[i]-half[i]+cell[i]*(.5+np.arange(count[i])) for i in range(3)]
-    return [{"center":[float(x),float(y),float(z)],"radius":radius}
-            for x in axes[0] for y in axes[1] for z in axes[2]]
 
 
 def path_metrics(points):
@@ -134,6 +124,7 @@ def main():
         result,elapsed,error=solve();samples.append(elapsed)
         if error:errors.append(error)
     success=result is not None and bool(torch.all(result.success).item());points=[];tcp_body=[];path_gap=None
+    path_details={}
     central_margin=None
     if success:
         plan=result.get_interpolated_plan();raw=plan.position.detach().cpu().numpy().reshape(-1,6);order=list(plan.joint_names)
@@ -142,9 +133,10 @@ def main():
         central_margin=float((-tcp[:,1]-.07).min() if request["active_arm"]=="right"
                              else (tcp[:,1]-.07).min())
         dense=np.concatenate([a+(b-a)*np.arange(4)[:,None]/4 for a,b in zip(q,q[1:])]+[q[-1:]])
-        path_gap=clearance(dense)
+        path_details=clearance_details(dense)
+        path_gap=min(path_details.values()) if path_details else float("inf")
         if central_margin<=0:
-            success=False;points=[];tcp_body=[];path_gap=None
+            success=False;points=[];tcp_body=[];path_gap=None;path_details={}
     mode=request["mode"];expected="FAILURE" if mode=="BLOCK" else "SUCCESS";observed="SUCCESS" if success else "FAILURE"
     payload={"schema_version":3,"planner":"cuRobo","mode":mode,"planning_only":True,"execution_allowed":False,
         "expected_result":expected,"observed_result":observed,"expectation_met":expected==observed,
@@ -156,6 +148,8 @@ def main():
         "world_cuboid_ids":list(cuboids),"start_rad":start.tolist(),"goal_rad":goal.tolist(),
         "trajectory_points_rad":points,"tcp_path_body_m":tcp_body,"path_metrics":path_metrics(tcp_body),
         "clearance_m":{"start":start_gap,"goal":goal_gap,"joint_linear_baseline":baseline_gap,"planned_path":path_gap},
+        "path_clearance_by_object_m":path_details,
+        "path_limiting_object_id":min(path_details,key=path_details.get) if path_details else None,
         "central_tcp_margin_m":central_margin,
         "endpoint_clearance_by_object_m":{"start":start_details,"goal":goal_details},
         "timing_s":{"cuda_import":import_s,"curobo_world_and_planner_init":world_init_s,

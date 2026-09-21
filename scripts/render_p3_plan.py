@@ -37,7 +37,13 @@ def main():
     for i,item in enumerate(report["objects"]):
         c=np.asarray(item["center_m"]);d=np.asarray(item["dims_m"])+2*float(item["inflation_m"])
         lines=o3d.geometry.LineSet.create_from_axis_aligned_bounding_box(o3d.geometry.AxisAlignedBoundingBox(c-d/2,c+d/2))
-        lines.paint_uniform_color([.7,.15,1.] if item["id"].startswith("residual") else [.25,1.,.3])
+        source=item.get("source","")
+        if "PROTRUDING_OBSTACLE" in source:world_color=[1.,.12,.12]
+        elif "SUPPORT_SURFACE" in source:world_color=[.25,1.,.3]
+        elif "STRUCTURE" in source:world_color=[.15,.55,1.]
+        elif "UNKNOWN_OCCUPIED" in source or item["id"].startswith("residual"):world_color=[.7,.15,1.]
+        else:world_color=[.25,1.,.3]
+        lines.paint_uniform_color(world_color)
         renderer.scene.add_geometry("world-%d"%i,lines,lm)
     for label,color in (("A",[.1,1.,.1]),("B",[.15,.45,1.])):
         sphere=o3d.geometry.TriangleMesh.create_sphere(radius=.025);sphere.translate(target[label]["xyz_m"]);sphere.paint_uniform_color(color)
@@ -53,11 +59,13 @@ def main():
     output=Path(a.output);output.parent.mkdir(parents=True,exist_ok=True);o3d.io.write_image(str(output),renderer.render_to_image(),9)
     from PIL import Image,ImageDraw
     canvas=Image.open(output).convert("RGB");draw=ImageDraw.Draw(canvas)
-    lines=["P3 %s planning-only | execution BLOCKED"%report["mode"],
+    lines=["P3.1 %s planning-only | execution BLOCKED"%report["mode"],
         "cyan=active robot orange=inactive robot red=TCP path",
-        "purple=residual AABB green=known/fixed AABB",
+        "red=protrusion blue=structure purple=unknown green=support/fixed",
         "snapshot="+report["snapshot_id"],"calibration="+report["calibration_revision"][:36],
-        "geometry="+report["geometry_revision"][:36],"self-filter=20mm obstacle-inflation=15mm",
+        "geometry="+report["geometry_revision"][:36],
+        "pipeline=%s primitives=%d"%(report.get("obstacle_pipeline","single_aabb"),len(report["objects"])),
+        "robot-owned-filter="+str(report.get("self_filter",{}).get("revision","P2 baseline"))[:32],
         "result=%s min-clearance=%s m"%(plan["observed_result"],plan["clearance_m"]["planned_path"])]
     draw.rectangle((12,12,850,28+18*len(lines)),fill=(0,0,0),outline=(220,220,220))
     for i,line in enumerate(lines):draw.text((24,22+18*i),line,fill=(245,245,245))

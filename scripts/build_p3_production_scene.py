@@ -16,6 +16,9 @@ from ares_r.perception.body_pointcloud import load_artifact
 from ares_r.perception.residual_cloud import PROFILES,DEFAULT_PROFILE,clean_and_cluster
 from ares_r.perception.robot_collision import (arm_link_transforms,inactive_arm_obstacles,
     load_geometry_snapshot,self_filter_body_cloud,transform_xyz_rpy)
+from ares_r.perception.robot_owned_filter import build_robot_owned_filter,filter_robot_owned
+from ares_r.perception.support_decomposition import (decompose_support_objects,
+    refine_robot_adjacent_primitives)
 from ares_r.world import (CalibrationSet,PointCloudRef,PoseSE3,RobotState,SafetyConstraint,
     SceneObject,SceneObjectRole,WorldModel,compile_snapshot,snapshot_dict)
 
@@ -93,6 +96,9 @@ def main():
                    help="canonical robot-geometry self-filter margin (default: 30 mm)")
     p.add_argument("--capture-pointer",
                    help="optional capture pointer with camera capture and end-to-end timings")
+    p.add_argument("--obstacle-pipeline",choices=("single_aabb","multi_primitive"),
+                   default="single_aabb",
+                   help="retain P3 fail-closed baseline or use P3.1 support decomposition")
     p.add_argument("--output",required=True);a=p.parse_args();started=time.perf_counter()
     out=Path(a.output);out.mkdir(parents=True,exist_ok=False)
     cloud,meta=load_artifact(Path(a.manifest));geometry=load_geometry_snapshot(Path(a.geometry))
@@ -103,11 +109,27 @@ def main():
     (out/"targets.json").write_text(json.dumps(contract,indent=2)+"\n")
     if not 0.0 <= a.self_filter_margin_m <= 0.05:
         raise ValueError("self-filter margin must be between 0 and 50 mm")
-    sf_at=time.perf_counter();keep,sf=self_filter_body_cloud(
-        cloud.points_body_m,geometry,a.self_filter_margin_m);sf_s=time.perf_counter()-sf_at
+    sf_at=time.perf_counter();robot_owned=None
+    if a.obstacle_pipeline=="multi_primitive":
+        robot_owned=build_robot_owned_filter(geometry,planning_sphere_cell_m=.035,
+                                             obb_sensor_margin_m=.020,
+                                             sphere_sensor_margin_m=.003)
+        keep,sf=filter_robot_owned(cloud.points_body_m,robot_owned)
+    else:
+        keep,sf=self_filter_body_cloud(cloud.points_body_m,geometry,a.self_filter_margin_m)
+    sf_s=time.perf_counter()-sf_at
     profile=next(x for x in PROFILES if x.name==DEFAULT_PROFILE)
     cleanup_at=time.perf_counter();clean,boxes,cleanup=clean_and_cluster(np.asarray(cloud.points_body_m)[keep],ROI,profile)
     cleanup_s=time.perf_counter()-cleanup_at;np.savez_compressed(out/"clean_residual.npz",points_body_m=clean)
+    decomposition=None;decomposition_s=0.0
+    planning_boxes=boxes
+    if a.obstacle_pipeline=="multi_primitive":
+        decomposition_at=time.perf_counter()
+        decomposition=decompose_support_objects(clean,boxes)
+        decomposition=refine_robot_adjacent_primitives(clean,decomposition,robot_owned)
+        decomposition_s=time.perf_counter()-decomposition_at
+        planning_boxes=decomposition["primitives"]
+        (out/"support_decomposition.json").write_text(json.dumps(decomposition,indent=2)+"\n")
     runtime="p3-%s-%d"%(a.mode.lower(),time.time_ns());noww,nowm=time.time_ns(),time.monotonic_ns()
     wm=WorldModel(runtime_id=runtime,snapshot_ttl_s=3600,environment_ttl_s=3600)
     wm.update_robot_state(RobotState(noww,nowm,runtime,left_joints_rad=tuple(geometry.joints_rad["left"]),
@@ -119,9 +141,15 @@ def main():
     provenance.append(add(objects,obs,"known_support_table",SceneObjectRole.FIXED,
         [(lo[0]+hi[0])/2,(lo[1]+hi[1])/2,table["median_z_m"]-.020],
         [hi[0]-lo[0],hi[1]-lo[1],.040],0.0,"P1 table validation"))
-    for box in boxes:
-        provenance.append(add(objects,obs,box["object_id"],SceneObjectRole.OBSTACLE,
-                              box["center_m"],box["dims_m"],.015,"clean Pixel Pro residual"))
+    for box in planning_boxes:
+        if a.obstacle_pipeline=="multi_primitive":
+            identifier="observed_"+box["primitive_id"]
+            source="P3.1 %s from observed points"%box["semantic"]
+            inflation=box["inflation_m"]
+        else:
+            identifier=box["object_id"];source="clean Pixel Pro residual";inflation=.015
+        provenance.append(add(objects,obs,identifier,SceneObjectRole.OBSTACLE,
+                              box["center_m"],box["dims_m"],inflation,source))
     inactive=inactive_arm_obstacles(geometry,a.active)
     for box in inactive["boxes"]:
         if box["kind"]=="central_exclusion":
@@ -149,9 +177,13 @@ def main():
                               contract["B"]["xyz_m"],[.24,.24,.24],.010,
                               "P3 explicitly labelled synthetic goal enclosure"))
     wm.register_obstacles(obs,objects,cloud_ref.pointcloud_id,cloud_ref.sha256)
+    filter_revision=(robot_owned.revision if robot_owned else "P2_OBB_MARGIN_%.3f"%a.self_filter_margin_m)
+    decomposition_revision=("sha256:"+hashlib.sha256(json.dumps(decomposition,sort_keys=True,
+        separators=(",",":")).encode()).hexdigest() if decomposition else "single_aabb")
     wm.register_calibration(obs,CalibrationSet((("T_body_camera",cloud.transform_revision),
         ("T_body_camera_validation",cloud.validation_revision),("robot_geometry",geometry.geometry_revision),
-        ("robot_joint_snapshot",geometry.joint_snapshot_revision),("residual_cleanup",DEFAULT_PROFILE))))
+        ("robot_joint_snapshot",geometry.joint_snapshot_revision),("residual_cleanup",DEFAULT_PROFILE),
+        ("robot_owned_filter",filter_revision),("obstacle_decomposition",decomposition_revision))))
     wm.commit_observation(obs)
     snapshot=wm.freeze_snapshot(geometry.geometry_revision,geometry.tool_revision,
         constraints=(SafetyConstraint("central_body_exclusion","body_y_forbidden",(("half_width_m",.07),)),))
@@ -168,15 +200,20 @@ def main():
         "compiled_scene_digest":compiled["digest"],"calibration_revision":cloud.transform_revision,
         "geometry_revision":geometry.geometry_revision,"joint_snapshot_revision":geometry.joint_snapshot_revision,
         "tool_revision":geometry.tool_revision,"inactive_arm_revision":inactive["revision"],
-        "self_filter":sf,"cleanup":cleanup,"objects":provenance,"T_body_model":T_body_model.tolist(),
+        "obstacle_pipeline":a.obstacle_pipeline,"self_filter":sf,"cleanup":cleanup,
+        "robot_owned_filter":robot_owned.as_dict() if robot_owned else None,
+        "support_decomposition":decomposition,"old_single_aabb_obstacles":boxes,
+        "objects":provenance,"T_body_model":T_body_model.tolist(),
         "timing_s":{"camera_capture":capture_pointer.get("camera_capture_elapsed_s"),
                     "capture_body_total":capture_pointer.get("capture_body_total_s"),
                     "camera_to_body":cloud.timings_s.get("unit_and_rigid_transform"),
                     "self_filter":sf_s,"outlier_voxel_cluster_aabb":cleanup_s,
+                    "support_decomposition_primitive_generation":decomposition_s,
                     "scene_snapshot_compiler":compile_s,"total_post_capture":time.perf_counter()-started}}
     (out/"scene_report.json").write_text(json.dumps(report,indent=2)+"\n")
     print(json.dumps({"mode":a.mode,"snapshot_id":snapshot.snapshot_id,"objects":len(objects),
-                      "residual_boxes":len(boxes),"target_A":contract["A"]["xyz_m"],
+                      "residual_boxes":len(boxes),"planning_primitives":len(planning_boxes),
+                      "obstacle_pipeline":a.obstacle_pipeline,"target_A":contract["A"]["xyz_m"],
                       "target_B":contract["B"]["xyz_m"],"timing_s":report["timing_s"]},indent=2))
 
 
