@@ -1,4 +1,4 @@
-# CURRENT QUEUE — 2026-09-20
+# CURRENT QUEUE — 2026-09-21
 
 Master roadmap:
 
@@ -9,25 +9,13 @@ docs/roadmaps/2026-09-20_BODY_POINTCLOUD_DUAL_ARM_AVOIDANCE_ROADMAP.md
 ## Completed and pushed
 
 ### P0 — BODY-camera calibration
-
 Completed. Production T_body_camera is COMMISSIONED.
 
 ### P1 — BODY pointcloud + viewer
-
-Pushed at:
-
-~~~text
-c5ed44515cbe4d5e298f74117f4ac02bbccb3f20
-~~~
+Pushed.
 
 ### P1.5 — .32 Git realignment
-
 Completed.
-
-~~~text
-DOT32_INTEGRATION_ALIGNED_WITH_GITHUB = YES
-WORKTREE_CLEAN_FOR_P2 = YES
-~~~
 
 ### P2 — whole dual-arm collision model + self-filter + mutual-arm substrate
 
@@ -38,44 +26,55 @@ a4b3bac3ca8e099168cf26677d24656136406b8c
 feat(perception): add whole dual-arm collision substrate
 ~~~
 
+## Current checkpoint awaiting push
+
+### P3 planning-only checkpoint
+
+Local commit on .32:
+
+~~~text
+eafae083cc03f61c6b7162ea90130ce798b8cac6
+~~~
+
 Result:
 
 ~~~text
-ROBOT_COLLISION_OVERLAY_READY = YES
-ARM_LINK_COLLISION_MODEL_READY = YES
-GRIPPER_COLLISION_MODEL_READY = YES
-WHOLE_ROBOT_COLLISION_MODEL_READY = YES
-SELF_FILTER_READY = YES
-INACTIVE_ARM_OBSTACLE_READY = YES
-MUTUAL_ARM_COLLISION_CHECK_READY = YES
-P3_ALLOWED = YES
+RESIDUAL_CLOUD_CLEANUP_READY = TRUE
+REAL_OBSTACLE_SCENE_READY = TRUE_WITH_CONSERVATIVE_AABB_LIMITATION
+CLEAR_PLAN_READY = FALSE
+AVOID_PLAN_READY = FALSE
+BLOCK_PLAN_READY = TRUE
+READY_FOR_SUPERVISED_CLEAR = FALSE
+READY_FOR_SUPERVISED_AVOID = FALSE
 ~~~
 
-## Active now
+This checkpoint is valuable and should be pushed after verifying it is a clean fast-forward from a4b3bac3 and excludes unrelated AMR dirty work.
 
-### P3 — residual environment cleanup → real obstacle cuRobo A↔B demo
+## Active after checkpoint push
+
+### P3.1 — residual attribution + support/object decomposition + fresh CLEAR/AVOID recovery
 
 Execute:
 
 ~~~text
-docs/work_orders/2026-09-20_P3_PRODUCTION_POINTCLOUD_CUROBO_DEMO.md
+docs/work_orders/2026-09-21_P3_1_RESIDUAL_SUPPORT_DECOMPOSITION.md
 ~~~
 
-Order inside P3:
+Order:
 
 ~~~text
-residual-cloud sparse-outlier cleanup
-→ stable obstacle AABB extraction
-→ inactive arm + table + real obstacle world
-→ BODY target A/B contract
-→ CLEAR planning-only
-→ real-box AVOID planning-only
-→ BLOCK planning-only
-→ timing + visualization
+explain robot-adjacent residual
+→ align self-filter ownership with exact planning geometry
+→ generic support-surface / protruding-object decomposition
+→ multi-primitive AABB world
+→ sparse outlier cleanup validation
+→ fresh CLEAR
+→ real-box AVOID
+→ BLOCK regression
 → supervised execution go/no-go
 ~~~
 
-Do not execute a physical arm motion until planning-only results are reviewed and separately authorized.
+Do not jump directly to nvblox/MPC in P3.1.
 
 ## Recorded next
 
@@ -115,6 +114,6 @@ USER ACTION N
 
 ## Current motion boundary
 
-P3 planning-only may capture the camera and read robot state.
+P3/P3.1 may capture camera and read robot state.
 
-AMR/arm/gripper motion still requires separate explicit authorization.
+AMR/arm/gripper motion requires separate explicit authorization.
