@@ -9,72 +9,86 @@ docs/roadmaps/2026-09-20_BODY_POINTCLOUD_DUAL_ARM_AVOIDANCE_ROADMAP.md
 ## Completed and pushed
 
 ### P0 — BODY-camera calibration
-Completed. Production T_body_camera is COMMISSIONED.
+Completed.
 
 ### P1 — BODY pointcloud + viewer
-Pushed.
+Completed and pushed.
 
 ### P1.5 — .32 Git realignment
 Completed.
 
 ### P2 — whole dual-arm collision model + self-filter + mutual-arm substrate
+Completed and pushed.
 
-Pushed at:
+## Current local checkpoint awaiting push
 
-~~~text
-a4b3bac3ca8e099168cf26677d24656136406b8c
-feat(perception): add whole dual-arm collision substrate
-~~~
-
-## Current checkpoint awaiting push
-
-### P3 planning-only checkpoint
+### P3.1 — residual attribution + support/object decomposition
 
 Local commit on .32:
 
 ~~~text
-eafae083cc03f61c6b7162ea90130ce798b8cac6
+7ae26aacb86222263d76490e3ec9cc55e9867de6
 ~~~
 
-Result:
+Planning-only result:
 
 ~~~text
-RESIDUAL_CLOUD_CLEANUP_READY = TRUE
-REAL_OBSTACLE_SCENE_READY = TRUE_WITH_CONSERVATIVE_AABB_LIMITATION
-CLEAR_PLAN_READY = FALSE
-AVOID_PLAN_READY = FALSE
-BLOCK_PLAN_READY = TRUE
-READY_FOR_SUPERVISED_CLEAR = FALSE
-READY_FOR_SUPERVISED_AVOID = FALSE
+ROBOT_ADJACENT_RESIDUAL_EXPLAINED = YES
+ROBOT_OWNED_FILTER_READY = YES
+SUPPORT_OBJECT_DECOMPOSITION_READY = YES
+MULTI_PRIMITIVE_OBSTACLE_WORLD_READY = YES
+CLEAR_PLAN_READY = YES
+AVOID_PLAN_READY = YES
+BLOCK_PLAN_READY = YES
+
+READY_FOR_SUPERVISED_CLEAR = NO
+READY_FOR_SUPERVISED_AVOID = NO
 ~~~
 
-This checkpoint is valuable and should be pushed after verifying it is a clean fast-forward from a4b3bac3 and excludes unrelated AMR dirty work.
+Reason physical execution remains blocked:
 
-## Active after checkpoint push
+~~~text
+right controller TCP is ~35 mm beyond the pinned gripper collision envelope
+observed-box modeled AVOID clearance is only ~9.63 mm
+~~~
 
-### P3.1 — residual attribution + support/object decomposition + fresh CLEAR/AVOID recovery
+Push P3.1 after verifying it is a clean fast-forward from the current GitHub integration branch and excludes unrelated AMR dirty work.
+
+## Active after P3.1 push
+
+### P3.2 — supervised scan-before-each-leg A↔B demo commissioning
 
 Execute:
 
 ~~~text
-docs/work_orders/2026-09-21_P3_1_RESIDUAL_SUPPORT_DECOMPOSITION.md
+docs/work_orders/2026-09-21_P3_2_SUPERVISED_AB_SCAN_AVOID_DEMO.md
 ~~~
 
-Order:
+Desired demo semantics:
 
 ~~~text
-explain robot-adjacent residual
-→ align self-filter ownership with exact planning geometry
-→ generic support-surface / protruding-object decomposition
-→ multi-primitive AABB world
-→ sparse outlier cleanup validation
-→ fresh CLEAR
-→ real-box AVOID
-→ BLOCK regression
-→ supervised execution go/no-go
+right TCP at A or B
+→ fresh scan before every leg
+
+if straight corridor CLEAR:
+    execute validated Cartesian straight line
+
+if straight corridor BLOCKED:
+    cuRobo OVERHEAD bypass around observed obstacle
+
+arrive
+→ invalidate old scene/trajectory
+→ next leg rescans and re-decides
 ~~~
 
-Do not jump directly to nvblox/MPC in P3.1.
+User-requested target redesign:
+
+- larger left/right BODY span;
+- both A/B lower;
+- clear path visibly straight;
+- obstacle-present path visibly arcs upward.
+
+First gate in P3.2 is physical right-tool/TCP collision commissioning.
 
 ## Recorded next
 
@@ -114,6 +128,6 @@ USER ACTION N
 
 ## Current motion boundary
 
-P3/P3.1 may capture camera and read robot state.
+P3.2 planning/commissioning may capture camera and read robot state.
 
-AMR/arm/gripper motion requires separate explicit authorization.
+Physical arm motion requires a separate explicit one-time authorization after the P3.2 planning/commissioning gates pass.
