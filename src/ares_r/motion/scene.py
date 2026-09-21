@@ -105,6 +105,7 @@ def scene_cuboids(data):
         dims=box["dims"];pose=box["pose"]
         if len(dims)!=3 or len(pose)!=7 or not all(math.isfinite(v) for v in dims+pose) or min(dims)<=0:
             raise ValueError("invalid cuboid geometry")
-        if pose[3:]!=[1,0,0,0]: raise ValueError("only axis-aligned cuboids currently supported")
+        norm=sum(value*value for value in pose[3:])**0.5
+        if abs(norm-1.0)>1e-6: raise ValueError("cuboid quaternion must be normalized")
         output[name]=dict(dims=list(dims),pose=list(pose))
     return output

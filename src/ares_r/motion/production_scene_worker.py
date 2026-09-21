@@ -1,0 +1,173 @@
+"""GPU-only P3 planner for one frozen production SceneSnapshot.
+
+There is intentionally no execution entry point in this module.  CLEAR, AVOID
+and BLOCK all consume the complete compiled world; BLOCK differs only because
+its SceneSnapshot contains an explicitly labelled goal enclosure.
+"""
+
+import hashlib,json,math
+from pathlib import Path
+import sys,time,xml.etree.ElementTree as ET
+
+ARM_NAMES=["joint%d"%i for i in range(1,7)]
+
+
+def transform(xyz,rpy):
+    import numpy as np
+    r,p,y=[float(x) for x in rpy];cr,sr=math.cos(r),math.sin(r);cp,sp=math.cos(p),math.sin(p);cy,sy=math.cos(y),math.sin(y)
+    value=np.eye(4);value[:3,:3]=[[cy*cp,cy*sp*sr-sy*cr,cy*sp*cr+sy*sr],
+        [sy*cp,sy*sp*sr+cy*cr,sy*sp*cr-cy*sr],[-sp,cp*sr,cp*cr]];value[:3,3]=xyz
+    return value
+
+
+def grid_spheres(box,max_cell_m=.060):
+    """Circumscribed cell spheres whose union conservatively covers one OBB."""
+    import numpy as np
+    center=np.asarray(box["center_m"],dtype=float);half=np.asarray(box["half_extents_m"],dtype=float)
+    count=np.maximum(1,np.ceil(2*half/max_cell_m).astype(int));cell=2*half/count
+    radius=float(np.linalg.norm(cell/2))
+    axes=[center[i]-half[i]+cell[i]*(.5+np.arange(count[i])) for i in range(3)]
+    return [{"center":[float(x),float(y),float(z)],"radius":radius}
+            for x in axes[0] for y in axes[1] for z in axes[2]]
+
+
+def path_metrics(points):
+    import numpy as np
+    p=np.asarray(points,dtype=float)
+    if len(p)<2:return {"path_length_m":0.,"endpoint_distance_m":0.,"length_ratio":None,"max_straight_line_deviation_m":None}
+    length=float(np.linalg.norm(np.diff(p,axis=0),axis=1).sum());direct=float(np.linalg.norm(p[-1]-p[0]))
+    t=np.linspace(0,1,len(p))[:,None];line=p[0]+t*(p[-1]-p[0]);deviation=float(np.linalg.norm(p-line,axis=1).max())
+    return {"path_length_m":length,"endpoint_distance_m":direct,
+            "length_ratio":length/direct if direct>1e-9 else None,"max_straight_line_deviation_m":deviation}
+
+
+def main():
+    request=json.loads(Path(sys.argv[1]).read_text());output=Path(sys.argv[2])
+    if request.get("planning_only") is not True or request.get("execution_allowed") is not False:
+        raise RuntimeError("P3 request must be planning-only and execution-blocked")
+    scene=request["compiled_scene"]
+    if scene.get("planning_scope")!="P3_PRODUCTION_PLANNING_ONLY" or scene.get("execution_allowed") is not False:
+        raise RuntimeError("compiled P3 planning-only scene required")
+    if scene["scene_snapshot_id"]!=request["scene_snapshot_id"] or scene["digest"]!=request["scene_digest"]:
+        raise RuntimeError("stale/mismatched SceneSnapshot binding")
+    imported=time.perf_counter()
+    import numpy as np
+    import torch,yaml,curobo
+    from curobo.motion_planner import MotionPlanner,MotionPlannerCfg
+    from curobo.types import JointState
+    from curobo._src.geom.types import SceneCfg
+    import_s=time.perf_counter()-imported
+    if not torch.cuda.is_available():raise RuntimeError("CUDA required; no fallback")
+    source=Path(curobo.__file__).resolve().parent.parent;manifest=json.loads((source/"ARES_R_SOURCE_MANIFEST.json").read_text())
+    if manifest["commit"]!=request["expected_commit"]:raise RuntimeError("cuRobo revision mismatch")
+    for item in manifest["files"]:
+        blob=(source/item["path"]).read_bytes();sha=hashlib.sha1(b"blob "+str(len(blob)).encode()+b"\0"+blob).hexdigest()
+        if sha!=item["sha"]:raise RuntimeError("modified cuRobo source: "+item["path"])
+    robot_path=Path(request["robot_yaml"]);robot=yaml.safe_load(robot_path.read_text())
+    collision_model=request["collision_model"]
+    params=request["planning_parameters"]
+    sphere_cell_m=float(params.get("active_sphere_cell_m",.035))
+    if not .015 <= sphere_cell_m <= .060:
+        raise ValueError("active sphere cell must be between 15 and 60 mm")
+    spheres={link:grid_spheres(box,sphere_cell_m) for link,box in collision_model["arm_link_boxes"].items()}
+    spheres["link6"].extend(grid_spheres(collision_model["gripper_max_envelope_link6"],sphere_cell_m))
+    for link in robot["kinematics"]["collision_spheres"]:robot["kinematics"]["collision_spheres"][link]=spheres.get(link,[])
+    active_revision="sha256:"+hashlib.sha256(json.dumps(spheres,sort_keys=True,separators=(",",":")).encode()).hexdigest()
+    urdf=ET.parse(robot["kinematics"]["urdf_path"]).getroot();origins=[]
+    for name in ARM_NAMES:
+        node=urdf.find("joint[@name='%s']"%name);origin=node.find("origin")
+        origins.append(transform([float(x) for x in origin.get("xyz").split()],[float(x) for x in origin.get("rpy").split()]))
+    tool=np.asarray(request["T_link6_tcp"],dtype=float)
+    def fk(q):
+        value=np.eye(4)
+        for origin,angle in zip(origins,q):value=value@origin@transform([0,0,0],[0,0,float(angle)])
+        return value@tool
+    torch.manual_seed(params["random_seed"])
+    cuboids=dict(scene["cuboids"]);world_at=time.perf_counter()
+    cfg=MotionPlannerCfg.create(robot=robot,scene_model={"cuboid":cuboids},
+        collision_cache={"cuboid":max(64,len(cuboids)+8)},interpolation_dt=params["interpolation_dt"],
+        interpolation_buffer_size=params["interpolation_buffer_size"],num_trajopt_seeds=params["num_trajopt_seeds"],
+        num_ik_seeds=params["num_ik_seeds"],use_cuda_graph=params["use_cuda_graph"],
+        self_collision_check=True,random_seed=params["random_seed"],
+        optimizer_collision_activation_distance=params["optimizer_collision_activation_distance"])
+    planner=MotionPlanner(cfg);world_init_s=time.perf_counter()-world_at;names=list(planner.joint_names)
+    def state(rows):
+        rows=np.asarray(rows,dtype=float).reshape(-1,6);ordered=rows[:,[ARM_NAMES.index(x) for x in names]]
+        return JointState.from_position(torch.tensor(ordered,device="cuda:0",dtype=torch.float32).contiguous(),joint_names=names)
+    def quaternion_rotation(q):
+        w,x,y,z=[float(v) for v in q]
+        return np.asarray([[1-2*(y*y+z*z),2*(x*y-z*w),2*(x*z+y*w)],
+                           [2*(x*y+z*w),1-2*(x*x+z*z),2*(y*z-x*w)],
+                           [2*(x*z-y*w),2*(y*z+x*w),1-2*(x*x+y*y)]])
+    def clearance_details(rows):
+        current=planner.compute_kinematics(state(rows)).robot_spheres.detach().cpu().numpy().reshape(-1,4)
+        current=current[current[:,3]>0];values={}
+        for name,box in cuboids.items():
+            rotation=quaternion_rotation(box["pose"][3:])
+            local=(current[:,:3]-np.asarray(box["pose"][:3]))@rotation
+            delta=np.abs(local)-np.asarray(box["dims"])/2
+            signed=np.linalg.norm(np.maximum(delta,0),axis=1)+np.minimum(np.max(delta,axis=1),0)-current[:,3]
+            values[name]=float(signed.min())
+        return values
+    def clearance(rows):
+        values=clearance_details(rows)
+        return min(values.values()) if values else float("inf")
+    # Explicit world update is separately timed from planner initialization.
+    typed=SceneCfg.create({"cuboid":cuboids});planner.update_world(typed);torch.cuda.synchronize()
+    updates=[]
+    for _ in range(int(request.get("benchmark_runs",3))):
+        at=time.perf_counter();planner.update_world(typed);torch.cuda.synchronize();updates.append(time.perf_counter()-at)
+    start=np.asarray(request["start_rad"],dtype=float);goal=np.asarray(request["goal_rad"],dtype=float)
+    baseline=np.linspace(start,goal,101);start_details=clearance_details([start]);goal_details=clearance_details([goal])
+    start_gap=min(start_details.values());goal_gap=min(goal_details.values());baseline_gap=clearance(baseline)
+    def solve():
+        at=time.perf_counter()
+        try:
+            value=planner.plan_cspace(state(goal),state(start),max_attempts=params["max_attempts"],
+                                      enable_graph_attempt=params["enable_graph_attempt"])
+            torch.cuda.synchronize();return value,time.perf_counter()-at,None
+        except Exception as exc:  # BLOCK may be rejected before an ordinary result is allocated.
+            return None,time.perf_counter()-at,"%s: %s"%(type(exc).__name__,exc)
+    solve() # warmup
+    samples=[];errors=[];result=None
+    for _ in range(int(request.get("benchmark_runs",3))):
+        result,elapsed,error=solve();samples.append(elapsed)
+        if error:errors.append(error)
+    success=result is not None and bool(torch.all(result.success).item());points=[];tcp_body=[];path_gap=None
+    central_margin=None
+    if success:
+        plan=result.get_interpolated_plan();raw=plan.position.detach().cpu().numpy().reshape(-1,6);order=list(plan.joint_names)
+        q=raw[:,[order.index(x) for x in ARM_NAMES]];points=q.tolist();T=np.asarray(request["T_body_model"])
+        tcp=np.asarray([(T@fk(row))[:3,3] for row in q]);tcp_body=tcp.tolist()
+        central_margin=float((-tcp[:,1]-.07).min() if request["active_arm"]=="right"
+                             else (tcp[:,1]-.07).min())
+        dense=np.concatenate([a+(b-a)*np.arange(4)[:,None]/4 for a,b in zip(q,q[1:])]+[q[-1:]])
+        path_gap=clearance(dense)
+        if central_margin<=0:
+            success=False;points=[];tcp_body=[];path_gap=None
+    mode=request["mode"];expected="FAILURE" if mode=="BLOCK" else "SUCCESS";observed="SUCCESS" if success else "FAILURE"
+    payload={"schema_version":3,"planner":"cuRobo","mode":mode,"planning_only":True,"execution_allowed":False,
+        "expected_result":expected,"observed_result":observed,"expectation_met":expected==observed,
+        "scene_snapshot_id":scene["scene_snapshot_id"],"scene_digest":scene["digest"],
+        "planning_context_digest":scene["planning_context_digest"],"calibration_revision":scene["calibration_revision"],
+        "geometry_revision":request["geometry_revision"],"inactive_arm_revision":request["inactive_arm_revision"],
+        "active_collision_revision":active_revision,"active_collision_sphere_count":sum(map(len,spheres.values())),
+        "active_collision_sphere_cell_m":sphere_cell_m,
+        "world_cuboid_ids":list(cuboids),"start_rad":start.tolist(),"goal_rad":goal.tolist(),
+        "trajectory_points_rad":points,"tcp_path_body_m":tcp_body,"path_metrics":path_metrics(tcp_body),
+        "clearance_m":{"start":start_gap,"goal":goal_gap,"joint_linear_baseline":baseline_gap,"planned_path":path_gap},
+        "central_tcp_margin_m":central_margin,
+        "endpoint_clearance_by_object_m":{"start":start_details,"goal":goal_details},
+        "timing_s":{"cuda_import":import_s,"curobo_world_and_planner_init":world_init_s,
+                    "world_update_samples":updates,"planning_samples":samples,
+                    "planning_errors":errors,
+                    "planning_reported_total":float(result.total_time) if result is not None else None,
+                    "planning_reported_solve":float(result.solve_time) if result is not None else None},
+        "gpu":torch.cuda.get_device_name(0),"curobo_version":str(curobo.__version__),"source_commit":manifest["commit"]}
+    output.write_text(json.dumps(payload,indent=2)+"\n")
+    print(json.dumps({"mode":mode,"observed":observed,"expectation_met":payload["expectation_met"],
+                      "minimum_clearance_m":path_gap,"planning_samples_s":samples}))
+    if not payload["expectation_met"]:raise SystemExit(2)
+
+
+if __name__=="__main__":main()

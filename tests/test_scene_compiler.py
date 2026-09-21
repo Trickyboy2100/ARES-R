@@ -43,6 +43,14 @@ class SceneCompilerTest(unittest.TestCase):
         self.assertEqual(compiled["calibration_revision"]["T_body_camera"], "DEMO_ONLY:123")
         self.assertFalse(compiled["execution_allowed"])
         self.assertIn("box", compiled["cuboids"])
+        np.testing.assert_allclose(compiled["cuboids"]["box"]["dims"], [.24, .34, .44])
+
+        angle=np.pi/4;body_model=np.eye(4)
+        body_model[:3,:3]=[[np.cos(angle),-np.sin(angle),0],[np.sin(angle),np.cos(angle),0],[0,0,1]]
+        oriented=compile_snapshot(snapshot,"right",body_model,"P3_PRODUCTION_PLANNING_ONLY")
+        np.testing.assert_allclose(oriented["cuboids"]["box"]["dims"],[.24,.34,.44])
+        self.assertAlmostEqual(sum(x*x for x in oriented["cuboids"]["box"]["pose"][3:]),1.)
+        self.assertNotEqual(oriented["cuboids"]["box"]["pose"][3:],[1,0,0,0])
 
 
 if __name__ == "__main__":

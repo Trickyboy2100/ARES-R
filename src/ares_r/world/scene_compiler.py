@@ -32,6 +32,27 @@ def transform_body_aabb(center_m, dimensions_m, T_arm_body):
     return ((low + high) / 2.0).tolist(), (high - low).tolist()
 
 
+def _quaternion_wxyz(rotation):
+    """Normalized quaternion for a proper 3x3 rotation matrix."""
+    matrix = np.asarray(rotation, dtype=float)
+    eigenvalues, eigenvectors = np.linalg.eigh(np.asarray([
+        [matrix[0, 0]-matrix[1, 1]-matrix[2, 2], matrix[1, 0]+matrix[0, 1], matrix[2, 0]+matrix[0, 2], matrix[1, 2]-matrix[2, 1]],
+        [matrix[1, 0]+matrix[0, 1], matrix[1, 1]-matrix[0, 0]-matrix[2, 2], matrix[2, 1]+matrix[1, 2], matrix[2, 0]-matrix[0, 2]],
+        [matrix[2, 0]+matrix[0, 2], matrix[2, 1]+matrix[1, 2], matrix[2, 2]-matrix[0, 0]-matrix[1, 1], matrix[0, 1]-matrix[1, 0]],
+        [matrix[1, 2]-matrix[2, 1], matrix[2, 0]-matrix[0, 2], matrix[0, 1]-matrix[1, 0], matrix.trace()],
+    ]) / 3.0)
+    xyzw = eigenvectors[:, int(np.argmax(eigenvalues))]
+    value = np.asarray([xyzw[3], xyzw[0], xyzw[1], xyzw[2]])
+    if value[0] < 0: value = -value
+    return (value / np.linalg.norm(value)).tolist()
+
+
+def transform_body_cuboid(center_m, dimensions_m, T_arm_body):
+    transform = _matrix(T_arm_body, "T_arm_body")
+    center = transform[:3, :3] @ np.asarray(center_m, dtype=float) + transform[:3, 3]
+    return center.tolist(), list(dimensions_m), _quaternion_wxyz(transform[:3, :3])
+
+
 def compile_snapshot(snapshot, arm: str, T_body_model, planning_scope="DEMO_OFFLINE_ONLY") -> Mapping[str, object]:
     if arm not in ("left", "right"):
         raise ValueError("arm must be left or right")
@@ -44,8 +65,13 @@ def compile_snapshot(snapshot, arm: str, T_body_model, planning_scope="DEMO_OFFL
     for item in objects:
         if item.pose.frame_id != "body" or item.geometry_type != "cuboid":
             raise ValueError("SceneCompiler accepts BODY cuboids only")
-        center, dims = transform_body_aabb(item.pose.xyz_m, item.dimensions_m, model_body)
-        entry = {"dims": dims, "pose": center + [1, 0, 0, 0], "inflation_m": item.inflation_m}
+        inflated = (np.asarray(item.dimensions_m, dtype=float) + 2.0 * item.inflation_m).tolist()
+        if planning_scope == "P3_PRODUCTION_PLANNING_ONLY":
+            center, dims, orientation = transform_body_cuboid(item.pose.xyz_m, inflated, model_body)
+        else:
+            center, dims = transform_body_aabb(item.pose.xyz_m, inflated, model_body)
+            orientation = [1, 0, 0, 0]
+        entry = {"dims": dims, "pose": center + orientation, "inflation_m": item.inflation_m}
         # The object about to be grasped has to be entered by the gripper, so it
         # cannot double as a solid obstacle. It is moved to ``targets`` rather
         # than dropped, so the scene still accounts for every observed object.
