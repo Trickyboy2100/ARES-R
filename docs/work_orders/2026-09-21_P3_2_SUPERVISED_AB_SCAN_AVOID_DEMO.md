@@ -1,169 +1,165 @@
-# P3.2 — Supervised right-arm A↔B scan-before-each-leg avoidance demo
+# P3.2 — Right-arm scan-before-each-leg A↔B demo, planning/commissioning stage
 
 Date: 2026-09-21
 
 ## 0. Goal
 
-Build the first physical demo exactly around this behavior:
+Build the first right-arm A↔B demo around this exact behavior:
 
 ~~~text
 RIGHT ARM TCP at A or B
 → before every leg, fresh Pixel Pro scan + fresh dual-arm/tool state
 → rebuild BODY scene
 
-if the straight A↔B TCP corridor is clear:
-    execute a validated Cartesian straight-line TCP path
+if the straight A↔B corridor is clear:
+    generate/validate a true Cartesian TCP straight-line path
 
-if the straight corridor is blocked by a real obstacle:
-    run cuRobo and generate an ABOVE-obstacle bypass path
-    then execute that planned path
+if the straight corridor is blocked:
+    run cuRobo with OVERHEAD bypass policy
+    generate a visibly upward arc around the obstacle
 
 arrive at the other endpoint
 → stop
-→ next leg repeats the entire scan / classify / plan process
+→ invalidate old scene/trajectory
+→ next leg rescans and decides again
 ~~~
 
-No stale scene/trajectory reuse between legs.
-
-The intended visual demo is:
+Desired presentation:
 
 ~~~text
-A → B : no box    → straight line
-B → A : box added → upward arc
-A → B : box still present → upward arc
-B → A : box removed → straight line
+no obstacle    → straight line
+obstacle added → upward arc
+obstacle kept  → upward arc on reverse leg
+obstacle removed → straight line again
 ~~~
 
-Each physical leg requires a separate operator confirmation until the demo is commissioned.
+P3.2 is split into planning/commissioning first, physical execution later.
 
-## 1. Entry gate
+## 1. Current prerequisite / Git state
 
-P3.1 must be pushed first.
-
-Known P3.1 planning-only result:
-
-- current same-A/B CLEAR succeeds;
-- observed-box AVOID succeeds;
-- path deviation vs CLEAR peaks around 46.6 mm;
-- BLOCK fails with no fallback;
-- active right controller TCP is about 35 mm beyond the pinned gripper collision envelope;
-- observed-box AVOID modeled clearance is only about 9.63 mm.
-
-Therefore physical execution is still blocked until tool/gripper collision extent is reconciled.
-
-## 2. P3.2-A — right tool/TCP collision commissioning
-
-First resolve the only physical-model blocker.
-
-Current right controller TCP:
+GitHub integration HEAD currently contains the P3 checkpoint:
 
 ~~~text
-approximately [-3.0, -4.8, +184.4] mm in link6/flange frame
+eafae083cc03f61c6b7162ea90130ce798b8cac6
 ~~~
 
-Pinned ARES gripper collision envelope reaches only about:
+P3.1 local commit awaiting safe push:
 
 ~~~text
-z ≈ +149.0 mm
+7ae26aacb86222263d76490e3ec9cc55e9867de6
 ~~~
 
-Do not execute with the old envelope.
+Before P3.2 work starts, verify whether eafae083 is an ancestor of 7ae26aac.
 
-### Preferred user measurement
+- If yes: fast-forward push 7ae26aac.
+- If not: do not force push; replay only the P3.1 patch on top of GitHub eafae083, test, then fast-forward push.
 
-Ask exactly one physical action:
+No unrelated AMR dirty changes may enter the push.
+
+## 2. Tool/TCP note — deferred for this planning-only phase
+
+New manual measurement:
 
 ~~~text
-USER ACTION 1
-目的：确认右臂实际夹爪碰撞长度/TCP。
-你现在做：用尺子测量“右臂 link6/法兰安装平面”到“两指实际夹持中心/指尖最前端”的轴向距离，单位 mm；若夹持中心和最前端不同，请给两个数。
-完成后回复：夹持中心 xx mm，最前端 yy mm。
-安全边界：机器人保持不动，不需要拆夹爪。
+right flange mounting plane → approximate grasp center ≈ 145 mm
 ~~~
 
-Also record approximate maximum lateral width of the fingers/body if easily available, but do not require a second user action unless necessary.
-
-### Collision model update
-
-Use pinned ARES gripper mesh/mount as the base model.
-
-If the physical distal extent exceeds the mesh:
-
-- extend the gripper collision model with a conservative distal box/capsule from the mesh tip to at least the measured finger-tip extent;
-- bind it to the current right tool/TCP revision;
-- keep provenance;
-- render the new model against the physical geometry/TCP audit.
-
-Require:
+Existing evidence:
 
 ~~~text
-RIGHT_TOOL_COLLISION_MODEL_COMMISSIONED = YES
+pinned ARES gripper collision envelope distal extent ≈ 149 mm
+controller active TCP Z ≈ 184 mm
 ~~~
 
-before any physical motion.
+This means the controller TCP semantic and physical grasp/contact point are still not fully reconciled.
 
-## 3. P3.2-B — redesign A/B for a stronger visual demo
+For this P3.2 planning-only phase:
 
-The user wants:
+- DO NOT block A/B redesign and planner development on this issue;
+- DO NOT rewrite the tool model from the 145 mm rough measurement alone;
+- keep the current validated/pinned gripper geometry for planning comparison;
+- carry an explicit TOOL_TCP_PHYSICAL_SEMANTICS_UNRESOLVED flag in reports/artifacts;
+- physical execution remains blocked until this flag is resolved.
 
-- larger BODY-left/right span;
+The 145 mm measurement is evidence, not yet a commissioned tool revision.
+
+## 3. P3.2-A — redesign A/B for a stronger demo
+
+User requirements:
+
+- larger BODY-left/right span than current;
 - both endpoints lower;
-- clear path visually close to a horizontal straight line;
-- obstacle-present path visibly arcs upward.
+- X and Z approximately equal;
+- motion mainly along BODY Y;
+- CLEAR path should visually be a straight horizontal traverse;
+- AVOID path should be a visibly higher arc.
 
-Do NOT hard-code one arbitrary pair.
+Search offline for a safe A/B pair.
 
-Search offline for a safe A/B contract subject to:
+Suggested exploration region only, not a hard contract:
 
 ~~~text
-right arm only
-same/similar BODY X
-same/similar BODY Z
-larger |ΔY| than the current pair where feasible
-both endpoints remain safely on the right-arm side of the central exclusion
-target Z lower than current A/B
-current→A reposition feasible
-A→B and B→A straight Cartesian paths feasible in box-free scene
-whole-arm / gripper / inactive-left-arm collision-free
+BODY X roughly 0.66–0.75 m
+BODY Z roughly 0.96–1.03 m
+lateral |ΔY| target roughly 0.45–0.60 m if feasible
 ~~~
 
-Suggested search targets, not hard requirements:
+Constraints:
+
+- both endpoints reachable;
+- no central exclusion violation;
+- no table/dock/inactive-left-arm collision;
+- current→A reposition is feasible planning-only;
+- enough vertical headroom exists for an overhead bypass;
+- keep the pair away from singular/near-limit joint configurations;
+- prefer a larger visual span even if exact max span is slightly below the suggested target.
+
+Output a versioned A/B contract:
 
 ~~~text
-lateral span target: roughly 0.45–0.55 m if feasible
-endpoint Z target: roughly 0.98–1.03 m
-BODY X: roughly 0.68–0.74 m
+A BODY TCP pose
+B BODY TCP pose
+A right-arm joints
+B right-arm joints
+span_m
+height_m
+orientation profile
+clearance summary
 ~~~
 
-The search must respect actual reach, central exclusion and table/dock geometry.
+## 4. P3.2-B — true Cartesian straight CLEAR planner
 
-Output a versioned A/B contract with BODY TCP pose and right-arm joint solution for each endpoint.
+No-obstacle mode must be truly straight in TCP space.
 
-## 4. P3.2-C — explicit straight-line CLEAR planner
+Do not use free plan_cspace and call it straight.
 
-The no-obstacle behavior must be geometrically straight in TCP space.
-
-Do not use unconstrained cuRobo plan_cspace and merely call it "straight".
-
-Implement a Cartesian straight-line path:
+Implement:
 
 ~~~text
-TCP pose(s) = interpolate position from A to B
-orientation = fixed demo orientation profile
-→ solve continuous IK along samples
-→ choose continuous joint branch
-→ dense whole-robot collision validation
+A→B Cartesian position interpolation
++ fixed demo orientation
+→ continuous IK at sampled waypoints
+→ continuous joint-branch selection
+→ dense whole-arm + tool collision validation
 → velocity/acceleration/time parameterization
-→ ServoJ-ready joint trajectory
+→ ServoJ-ready trajectory
 ~~~
 
-If the straight Cartesian path is infeasible, fail closed. Do not silently substitute a curved route when the scene is classified CLEAR.
+Likewise for B→A.
 
-The same applies to B→A.
+Report maximum TCP deviation from the A-B chord.
 
-## 5. P3.2-D — scan and straight-corridor classification
+Target:
 
-Before every leg:
+~~~text
+CLEAR straightness error as close to zero as practical
+~~~
+
+If a true straight path is infeasible, fail closed and search a different A/B pair.
+
+## 5. P3.2-C — scan-before-each-leg scene/classifier
+
+Before every future leg:
 
 ~~~text
 fresh camera capture
@@ -171,21 +167,12 @@ fresh camera capture
 → whole-robot self-filter
 → residual cleanup
 → support/object decomposition
-→ multi-primitive obstacle world
-→ fresh inactive-arm geometry
+→ multi-primitive obstacle scene
+→ fresh inactive-left-arm geometry
 → fresh SceneSnapshot
 ~~~
 
-Construct a swept straight-corridor query around the intended TCP/tool trajectory.
-
-The corridor must account for:
-
-- TCP path;
-- commissioned right gripper/tool envelope;
-- safety inflation;
-- whole active-arm path validation.
-
-Decision:
+Then classify the intended straight swept corridor:
 
 ~~~text
 STRAIGHT_CLEAR
@@ -193,81 +180,99 @@ STRAIGHT_BLOCKED
 SCENE_INVALID
 ~~~
 
-Do not decide only from TCP centerline intersection.
+The corridor check must include:
 
-## 6. P3.2-E — obstacle-present ABOVE bypass planner
+- TCP centerline;
+- active gripper/tool collision geometry;
+- active-arm swept geometry;
+- safety inflation;
+- inactive left arm;
+- table/dock/support;
+- chassis/central exclusion.
 
-If the fresh straight corridor is blocked:
+Do not classify only from the TCP line.
 
-1. identify obstacle primitives intersecting the straight corridor;
-2. compute the highest observed/represented obstacle top relevant to the corridor;
-3. generate one or more OVERHEAD waypoint candidates above that top:
+## 6. P3.2-D — OVERHEAD cuRobo bypass planner
+
+If the straight corridor is blocked by a real observed obstacle:
+
+1. identify the obstacle primitives intersecting the straight swept corridor;
+2. estimate the relevant obstacle top Z from observed/represented geometry;
+3. generate a small bounded set of overhead waypoint candidates:
 
 ~~~text
-z_waypoint = obstacle_top
-           + tool/gripper extent allowance
-           + configured vertical safety clearance
+z_waypoint = obstacle_top + vertical_clearance_candidate
 ~~~
 
-4. keep the waypoint horizontally near the A/B corridor midpoint unless whole-arm geometry requires another safe location;
-5. use cuRobo to plan:
-
-~~~text
-A → overhead waypoint → B
-~~~
-
-or the reverse;
-
-6. validate the complete concatenated trajectory continuously against:
-   - real multi-primitive obstacles;
+4. keep XY near the A/B corridor midpoint when safe;
+5. plan with cuRobo through the overhead waypoint;
+6. dense-validate the whole resulting trajectory against:
+   - observed multi-primitive obstacles;
    - table/dock/support;
    - inactive left arm/gripper;
    - chassis/body;
    - central exclusion.
 
-Try a small bounded set of increasing overhead heights if needed.
-
-No unconstrained side-bypass should be accepted for this demo unless explicitly labelled as a different mode. The desired demo mode is:
+The demo policy is explicitly:
 
 ~~~text
 BYPASS_POLICY = OVERHEAD
 ~~~
 
-## 7. P3.2-F — stronger planning-only proof before execution
+Do not silently accept a side-bypass and present it as the requested demo.
 
-Using the new A/B and corrected tool model, regenerate fresh:
+Try a small ordered set of increasing overhead heights if needed.
+
+## 7. P3.2-E — make the arc visually stronger
+
+The current planning-only AVOID/CLEAR path separation peaks at about 46.6 mm.
+
+For the new demo:
+
+- lower A/B;
+- enlarge lateral span;
+- choose overhead waypoint height so the AVOID arc is visibly distinct;
+- still maintain conservative whole-arm clearance.
+
+Do not optimize only for aesthetics. Planning validity comes first.
+
+Prefer a modeled obstacle clearance materially larger than the current ~9.63 mm planning-only result. If feasible, aim for roughly 40–60+ mm modeled clearance, but do not treat this as a physical execution certificate while the tool/TCP semantics remain unresolved.
+
+## 8. P3.2-F — planning-only proof
+
+Using the new A/B:
 
 ### CLEAR
-- straight Cartesian A→B;
-- straight Cartesian B→A;
-- both succeed;
-- TCP straightness error reported.
+- A→B straight Cartesian succeeds;
+- B→A straight Cartesian succeeds;
+- report straightness error;
+- report minimum modeled clearance.
 
 ### AVOID
-- observed physical box blocks straight corridor;
-- overhead cuRobo A→B succeeds;
-- overhead cuRobo B→A succeeds;
-- path arc is visibly stronger than the current 46.6 mm comparison;
-- positive modeled clearance with the corrected tool model.
+- real observed box blocks the straight corridor;
+- A→B overhead cuRobo succeeds;
+- B→A overhead cuRobo succeeds;
+- path arc is visibly stronger than current result;
+- report obstacle top, overhead waypoint and min clearance.
 
 ### BLOCK
-- expected fail, no fallback.
+- expected safe failure;
+- no fallback.
 
 Required visualization:
 
 - TOP / REAR / RIGHT;
-- CLEAR straight line vs AVOID overhead arc;
-- obstacle top and overhead waypoint;
-- whole dual-arm robot;
-- inactive arm;
-- A/B;
-- minimum clearance.
+- CLEAR straight vs AVOID overhead arc;
+- same A/B;
+- obstacle;
+- overhead waypoint;
+- whole dual-arm model;
+- minimum clearance;
+- scene/calibration/geometry revisions.
 
-Do not proceed to motion unless these are accepted.
+## 9. P3.2-G — backend state machine, no motion yet
 
-## 8. P3.2-G — supervised physical execution state machine
-
-Implement backend/Terminal state machine:
+Implement the future demo state machine now:
 
 ~~~text
 AB_DEMO_IDLE
@@ -285,7 +290,7 @@ STOPPED
 FAULT
 ~~~
 
-Commands may follow ART grammar, but should converge on something like:
+Terminal/backend commands may converge on:
 
 ~~~text
 demo ab status
@@ -297,95 +302,70 @@ demo ab execute-next
 demo ab stop
 ~~~
 
-Later one convenience command may chain scan+plan, but execution still requires confirmation until commissioned.
+During this planning-only phase, execute-next must remain blocked.
 
-## 9. P3.2-H — execution semantics
+## 10. Future physical execution semantics
 
-Every physical leg:
+Once tool/TCP physical semantics are later reconciled and ChatGPT/user explicitly authorize execution, every leg must be:
 
 ~~~text
-robot stationary at endpoint
+stationary at endpoint
 → fresh scan
-→ fresh dual-arm/tool state
-→ classify straight corridor
-→ generate NEW trajectory
-→ preview / summary
+→ fresh robot/tool state
+→ fresh SceneSnapshot
+→ classify
+→ generate NEW straight or overhead trajectory
+→ preview
 → explicit one-time confirmation
-→ execute at commissioned low speed
-→ monitor actual joints / collision / stop conditions
+→ execute low-speed
 → verify arrival
-→ invalidate old SceneSnapshot and trajectory
+→ invalidate old scene/trajectory
 ~~~
 
-If obstacle is removed before the next leg, the next fresh scan must restore straight-line mode automatically.
+No stale plan reuse.
+No auto retry.
+No base motion.
 
-No automatic retry.
-No stale-plan execution.
-No base motion during the demo.
+## 11. Exit gates for this planning-only phase
 
-## 10. Speed / initial execution
-
-For the first physical CLEAR leg use a commissioned conservative speed profile.
-
-Do not start with the final presentation speed.
-
-After one CLEAR round-trip is validated, increase within the already defined site ceiling and revalidate before recording the final demo.
-
-## 11. Exit gates
-
-Planning/commissioning stage:
+Report:
 
 ~~~text
-RIGHT_TOOL_COLLISION_MODEL_COMMISSIONED = YES/NO
-AB_TARGETS_COMMISSIONED = YES/NO
+P31_PUSHED_AND_ALIGNED = YES/NO
+TOOL_TCP_PHYSICAL_SEMANTICS_UNRESOLVED = YES
+AB_TARGETS_READY = YES/NO
 STRAIGHT_CARTESIAN_PLANNER_READY = YES/NO
 STRAIGHT_CORRIDOR_CLASSIFIER_READY = YES/NO
 OVERHEAD_BYPASS_PLANNER_READY = YES/NO
 NEW_CLEAR_PLAN_READY = YES/NO
 NEW_AVOID_PLAN_READY = YES/NO
 NEW_BLOCK_PLAN_READY = YES/NO
-READY_FOR_FIRST_SUPERVISED_CLEAR_EXECUTION = YES/NO
+AB_DEMO_STATE_MACHINE_READY = YES/NO
+READY_FOR_FIRST_SUPERVISED_CLEAR_EXECUTION = NO
 ~~~
 
-After physical execution:
+The last value must remain NO in this phase because the user explicitly deferred the tool/TCP physical-length issue.
 
-~~~text
-CLEAR_ROUNDTRIP_EXECUTED = YES/NO
-AVOID_ROUNDTRIP_EXECUTED = YES/NO
-SCAN_BEFORE_EACH_LEG_VERIFIED = YES/NO
-OBSTACLE_ADD_REMOVE_MODE_SWITCH_VERIFIED = YES/NO
-~~~
+Include:
 
-## 12. Evidence
+- new A/B BODY coordinates;
+- lateral span and height;
+- CLEAR straightness error;
+- AVOID maximum Z / arc height;
+- CLEAR-vs-AVOID path separation;
+- minimum modeled clearances;
+- timing;
+- screenshots;
+- tests;
+- local commit SHA.
 
-Record per leg:
+## 12. Push policy
 
-- camera frame / pointcloud SHA;
-- calibration revision;
-- robot geometry revision;
-- right tool/TCP revision;
-- inactive-left-arm revision;
-- SceneSnapshot ID;
-- classification result;
-- planner mode STRAIGHT/BYPASS;
-- overhead waypoint if used;
-- trajectory hash;
-- minimum clearance;
-- execution feedback;
-- arrival result;
-- timing.
+After finishing this planning-only phase:
 
-Generate a final demo comparison graphic and terminal log.
+- local commit;
+- STOP;
+- do not push automatically;
+- return to ChatGPT for review.
 
-## 13. Push/execution policy
-
-Phase 1: tool model + A/B redesign + planners + planning-only validation.
-
-Commit locally and STOP. Do not push automatically.
-
-Only after ChatGPT review:
-
-- push the planning/commissioning code;
-- request explicit user authorization for one supervised CLEAR movement.
-
-Physical arm motion is never implied by this work order.
+No physical arm motion.
