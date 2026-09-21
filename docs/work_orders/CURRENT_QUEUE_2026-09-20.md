@@ -12,51 +12,53 @@ docs/roadmaps/2026-09-20_BODY_POINTCLOUD_DUAL_ARM_AVOIDANCE_ROADMAP.md
 Completed.
 
 ### P1 — BODY pointcloud + viewer
-Completed and pushed.
+Completed.
 
 ### P1.5 — .32 Git realignment
 Completed.
 
 ### P2 — whole dual-arm collision model + self-filter + mutual-arm substrate
-Completed and pushed.
+Completed.
+
+### P3 checkpoint
+GitHub integration branch currently includes:
+
+~~~text
+eafae083cc03f61c6b7162ea90130ce798b8cac6
+feat(perception): add P3 production scene planning audit
+~~~
 
 ## Current local checkpoint awaiting push
 
 ### P3.1 — residual attribution + support/object decomposition
 
-Local commit on .32:
+Local .32 commit:
 
 ~~~text
 7ae26aacb86222263d76490e3ec9cc55e9867de6
 ~~~
 
-Planning-only result:
+Before push:
+
+- verify whether eafae083 is an ancestor of 7ae26aac;
+- if yes, fast-forward push 7ae26aac;
+- if not, replay only the P3.1 patch on top of eafae083 and test;
+- no force-push;
+- no unrelated AMR dirty work.
+
+P3.1 planning-only result is successful:
 
 ~~~text
-ROBOT_ADJACENT_RESIDUAL_EXPLAINED = YES
-ROBOT_OWNED_FILTER_READY = YES
-SUPPORT_OBJECT_DECOMPOSITION_READY = YES
-MULTI_PRIMITIVE_OBSTACLE_WORLD_READY = YES
 CLEAR_PLAN_READY = YES
 AVOID_PLAN_READY = YES
 BLOCK_PLAN_READY = YES
-
-READY_FOR_SUPERVISED_CLEAR = NO
-READY_FOR_SUPERVISED_AVOID = NO
 ~~~
 
-Reason physical execution remains blocked:
-
-~~~text
-right controller TCP is ~35 mm beyond the pinned gripper collision envelope
-observed-box modeled AVOID clearance is only ~9.63 mm
-~~~
-
-Push P3.1 after verifying it is a clean fast-forward from the current GitHub integration branch and excludes unrelated AMR dirty work.
+Physical execution remains blocked by unresolved tool/TCP physical semantics.
 
 ## Active after P3.1 push
 
-### P3.2 — supervised scan-before-each-leg A↔B demo commissioning
+### P3.2 — right-arm scan-before-each-leg A↔B demo, planning/commissioning stage
 
 Execute:
 
@@ -64,31 +66,53 @@ Execute:
 docs/work_orders/2026-09-21_P3_2_SUPERVISED_AB_SCAN_AVOID_DEMO.md
 ~~~
 
-Desired demo semantics:
+User-requested semantics:
 
 ~~~text
-right TCP at A or B
-→ fresh scan before every leg
+right TCP shuttles between A and B
 
-if straight corridor CLEAR:
-    execute validated Cartesian straight line
+before every leg:
+  fresh scan + fresh robot/tool state
 
-if straight corridor BLOCKED:
-    cuRobo OVERHEAD bypass around observed obstacle
+if straight corridor clear:
+  true Cartesian TCP straight path
 
-arrive
-→ invalidate old scene/trajectory
-→ next leg rescans and re-decides
+if blocked:
+  cuRobo OVERHEAD bypass
+
+after arrival:
+  invalidate old scene and trajectory
+  rescan before the next leg
 ~~~
 
-User-requested target redesign:
+User-requested A/B redesign:
 
-- larger left/right BODY span;
-- both A/B lower;
-- clear path visibly straight;
-- obstacle-present path visibly arcs upward.
+- larger BODY-left/right span;
+- lower endpoints;
+- X/Z approximately equal;
+- CLEAR visibly straight;
+- AVOID visibly arcs upward.
 
-First gate in P3.2 is physical right-tool/TCP collision commissioning.
+## Tool/TCP physical-length note
+
+Manual measurement on 2026-09-21:
+
+~~~text
+right flange mounting plane → approximate grasp center ≈ 145 mm
+~~~
+
+Existing controller TCP Z is about 184 mm; pinned gripper model distal extent is about 149 mm.
+
+This discrepancy is recorded but explicitly deferred for the current P3.2 planning-only phase.
+
+Therefore:
+
+~~~text
+TOOL_TCP_PHYSICAL_SEMANTICS_UNRESOLVED = YES
+READY_FOR_FIRST_SUPERVISED_CLEAR_EXECUTION = NO
+~~~
+
+P3.2 may redesign A/B, implement straight/overhead planning, classifier and demo state machine, but must not execute physical arm motion.
 
 ## Recorded next
 
@@ -130,4 +154,4 @@ USER ACTION N
 
 P3.2 planning/commissioning may capture camera and read robot state.
 
-Physical arm motion requires a separate explicit one-time authorization after the P3.2 planning/commissioning gates pass.
+Physical arm motion is NOT authorized in the current phase.
