@@ -198,6 +198,8 @@ first supervised profile target:
 
 Use existing native sender constraints as additional hard caps.
 
+The current native sender/feedback audit also implies a conservative tracking-derived speed cap of about 1.25 deg/s ≈ 0.0218 rad/s (0.15 deg tracking budget / 0.12 s lag model), which is stricter than the nominal 0.03 rad/s slow profile. The first execution package must honor the strictest active cap unless new real tracking evidence commissions a higher value.
+
 Do NOT reuse the P3.2 preview scaling target of 0.35 rad/s; that exceeds the site ceiling.
 
 Implement/reuse time dilation/resampling so the exact geometric path is preserved while timing is slowed.
