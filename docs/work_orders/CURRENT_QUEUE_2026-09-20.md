@@ -75,15 +75,21 @@ docs/work_orders/2026-09-22_P3_3_EXECUTION_HARDENING.md
 Purpose:
 
 ~~~text
-preserve approved A/B and trajectory semantics
-→ conservative execution tool envelope
-→ clearance reproducibility
-→ deterministic execution candidate selection
-→ slow native/ServoJ packaging
-→ fresh scene/start/tool execution lease
-→ SafetyKernel dry-run
-→ request-readiness for first supervised CURRENT→A motion
+FAST LANE P3.3A:
+  get first supervised CLEAR motion ready today
+  CURRENT→A → fresh A→B CLEAR → fresh B→A CLEAR
+
+then P3.3B:
+  harden AVOID repeatability
 ~~~
+
+Main hardening:
+- preserve approved A/B and cuRobo-only/no-waypoint policy;
+- reconcile physical gripper geometry;
+- package selected path for native ServoJ;
+- bind fresh scene/start/tool lease;
+- SafetyKernel dry-run;
+- request-readiness for first supervised CURRENT→A motion.
 
 No hardware movement in P3.3.
 
@@ -99,9 +105,9 @@ controller active TCP Z ≈ 184 mm
 
 Do not change controller TCP in P3.3.
 
-Use a conservative execution collision envelope that covers the physical gripper and the full active TCP offset.
+The manual physical grasp-center measurement (~145 mm) agrees closely with the pinned ARES gripper distal extent (~149 mm). For this movement-only demo, the pinned gripper remains the physical collision body; the controller TCP at ~184 mm is treated as a task frame unless physical material is observed there.
 
-The unresolved semantic difference remains documented.
+Do not invent collision geometry solely to fill a virtual TCP offset. The semantic difference remains documented.
 
 ## Execution blocker observed in P3.2
 
