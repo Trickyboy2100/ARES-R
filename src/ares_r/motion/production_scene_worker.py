@@ -11,6 +11,7 @@ import sys,time,xml.etree.ElementTree as ET
 
 ARM_NAMES=["joint%d"%i for i in range(1,7)]
 from ares_r.perception.robot_owned_filter import grid_spheres_local as grid_spheres
+from ares_r.motion.ab_demo_state import classify_reference_corridor,validate_curobo_only_policy
 
 
 def transform(xyz,rpy):
@@ -102,6 +103,28 @@ def main():
     def clearance(rows):
         values=clearance_details(rows)
         return min(values.values()) if values else float("inf")
+    ab_demo=request.get("ab_demo")
+    corridor=None
+    if ab_demo is not None:
+        validate_curobo_only_policy(ab_demo)
+        if (ab_demo.get("motion_policy")!="CUROBO_ONLY_FOR_EVERY_POINT_TO_POINT_LEG"
+                or ab_demo.get("TOOL_TCP_PHYSICAL_SEMANTICS_UNRESOLVED")!="YES"
+                or request.get("execution_allowed") is not False):
+            raise RuntimeError("P3.2 cuRobo-only planning and tool/TCP gate required")
+        reference=np.asarray(ab_demo["reference_chord_joints_rad"],dtype=float)
+        if reference.ndim!=2 or reference.shape[1]!=6 or len(reference)<21:
+            raise ValueError("dense whole-arm reference corridor required")
+        reference_dense=np.concatenate([a+(b-a)*np.arange(4)[:,None]/4
+            for a,b in zip(reference,reference[1:])]+[reference[-1:]])
+        gaps=clearance_details(reference_dense)
+        classification,hit_ids=classify_reference_corridor(
+            gaps,clearance([reference[0],reference[-1]]))
+        corridor={"classification":classification,"whole_arm_gripper_checked":True,
+                  "reference_only_never_executed":True,"min_gap_by_object_m":gaps,
+                  "blocking_object_ids":hit_ids,
+                  "observed_blocking_object_ids":[name for name in hit_ids if name.startswith("observed_")]}
+        if classification=="SCENE_INVALID":
+            raise RuntimeError("A/B endpoint or scene invalid; no planning fallback")
     # Explicit world update is separately timed from planner initialization.
     typed=SceneCfg.create({"cuboid":cuboids});planner.update_world(typed);torch.cuda.synchronize()
     updates=[]
@@ -110,12 +133,14 @@ def main():
     start=np.asarray(request["start_rad"],dtype=float);goal=np.asarray(request["goal_rad"],dtype=float)
     baseline=np.linspace(start,goal,101);start_details=clearance_details([start]);goal_details=clearance_details([goal])
     start_gap=min(start_details.values());goal_gap=min(goal_details.values());baseline_gap=clearance(baseline)
+    def solve_segment(begin,end):
+        return planner.plan_cspace(state(end),state(begin),max_attempts=params["max_attempts"],
+                                   enable_graph_attempt=params["enable_graph_attempt"])
     def solve():
         at=time.perf_counter()
         try:
-            value=planner.plan_cspace(state(goal),state(start),max_attempts=params["max_attempts"],
-                                      enable_graph_attempt=params["enable_graph_attempt"])
-            torch.cuda.synchronize();return value,time.perf_counter()-at,None
+            value=solve_segment(start,goal)
+            torch.cuda.synchronize();return [value],time.perf_counter()-at,None
         except Exception as exc:  # BLOCK may be rejected before an ordinary result is allocated.
             return None,time.perf_counter()-at,"%s: %s"%(type(exc).__name__,exc)
     solve() # warmup
@@ -123,19 +148,39 @@ def main():
     for _ in range(int(request.get("benchmark_runs",3))):
         result,elapsed,error=solve();samples.append(elapsed)
         if error:errors.append(error)
-    success=result is not None and bool(torch.all(result.success).item());points=[];tcp_body=[];path_gap=None
+    success=result is not None and all(bool(torch.all(part.success).item()) for part in result);points=[];tcp_body=[];path_gap=None
     path_details={}
     central_margin=None
+    smoothness=None
     if success:
-        plan=result.get_interpolated_plan();raw=plan.position.detach().cpu().numpy().reshape(-1,6);order=list(plan.joint_names)
-        q=raw[:,[order.index(x) for x in ARM_NAMES]];points=q.tolist();T=np.asarray(request["T_body_model"])
+        segments=[]
+        for segment_index,part in enumerate(result):
+            plan=part.get_interpolated_plan();raw=plan.position.detach().cpu().numpy().reshape(-1,6)
+            order=list(plan.joint_names);row=raw[:,[order.index(x) for x in ARM_NAMES]]
+            segments.append(row if segment_index==0 else row[1:])
+        q=np.concatenate(segments);points=q.tolist();T=np.asarray(request["T_body_model"])
         tcp=np.asarray([(T@fk(row))[:3,3] for row in q]);tcp_body=tcp.tolist()
         central_margin=float((-tcp[:,1]-.07).min() if request["active_arm"]=="right"
                              else (tcp[:,1]-.07).min())
+        dt=float(params["interpolation_dt"])
+        v=np.diff(q,axis=0)/dt;a=np.diff(v,axis=0)/dt;j=np.diff(a,axis=0)/dt
+        max_step=float(np.max(np.abs(np.diff(q,axis=0))))
+        max_v=float(np.max(np.abs(v)))
+        max_a=float(np.max(np.abs(a))) if len(a) else 0.0
+        max_j=float(np.max(np.abs(j))) if len(j) else 0.0
+        slow_scale=max(1.0,max_v/.35,math.sqrt(max_a/1.0),(max_j/10.0)**(1.0/3.0))
+        smoothness={"sample_period_s":dt,"max_joint_step_rad":max_step,
+            "max_joint_speed_rad_s":max_v,"max_joint_accel_rad_s2":max_a,
+            "max_joint_jerk_rad_s3":max_j,
+            "recommended_offline_time_scale_for_smooth_preview":slow_scale,
+            "time_scaled_speed_bound_rad_s":max_v/slow_scale,
+            "time_scaled_accel_bound_rad_s2":max_a/slow_scale**2,
+            "time_scaled_jerk_bound_rad_s3":max_j/slow_scale**3,
+            "physical_execution_commissioned":False}
         dense=np.concatenate([a+(b-a)*np.arange(4)[:,None]/4 for a,b in zip(q,q[1:])]+[q[-1:]])
         path_details=clearance_details(dense)
         path_gap=min(path_details.values()) if path_details else float("inf")
-        if central_margin<=0:
+        if central_margin<=0 or path_gap<=0 or not np.isfinite(q).all() or max_step>.15:
             success=False;points=[];tcp_body=[];path_gap=None;path_details={}
     mode=request["mode"];expected="FAILURE" if mode=="BLOCK" else "SUCCESS";observed="SUCCESS" if success else "FAILURE"
     payload={"schema_version":3,"planner":"cuRobo","mode":mode,"planning_only":True,"execution_allowed":False,
@@ -155,9 +200,21 @@ def main():
         "timing_s":{"cuda_import":import_s,"curobo_world_and_planner_init":world_init_s,
                     "world_update_samples":updates,"planning_samples":samples,
                     "planning_errors":errors,
-                    "planning_reported_total":float(result.total_time) if result is not None else None,
-                    "planning_reported_solve":float(result.solve_time) if result is not None else None},
+                    "planning_reported_total":sum(float(x.total_time) for x in result) if result else None,
+                    "planning_reported_solve":sum(float(x.solve_time) for x in result) if result else None},
         "gpu":torch.cuda.get_device_name(0),"curobo_version":str(curobo.__version__),"source_commit":manifest["commit"]}
+    if request.get("TOOL_TCP_PHYSICAL_SEMANTICS_UNRESOLVED"):
+        payload["TOOL_TCP_PHYSICAL_SEMANTICS_UNRESOLVED"]=request["TOOL_TCP_PHYSICAL_SEMANTICS_UNRESOLVED"]
+        payload["READY_FOR_FIRST_SUPERVISED_CLEAR_EXECUTION"]="NO"
+    if ab_demo is not None:
+        payload["ab_demo"]={"motion_policy":ab_demo["motion_policy"],
+            "TOOL_TCP_PHYSICAL_SEMANTICS_UNRESOLVED":"YES",
+            "READY_FOR_FIRST_SUPERVISED_CLEAR_EXECUTION":"NO",
+            "planner_mode":ab_demo["planner_mode"],"corridor":corridor,
+            "explicit_waypoints":[],"smoothness":smoothness,
+            "max_tcp_z_m":(float(np.max(np.asarray(tcp_body)[:,2])) if tcp_body else None),
+            "arc_height_above_endpoints_m":(float(np.max(np.asarray(tcp_body)[:,2])-
+                max(tcp_body[0][2],tcp_body[-1][2])) if tcp_body else None)}
     output.write_text(json.dumps(payload,indent=2)+"\n")
     print(json.dumps({"mode":mode,"observed":observed,"expectation_met":payload["expectation_met"],
                       "minimum_clearance_m":path_gap,"planning_samples_s":samples}))
