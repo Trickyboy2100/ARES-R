@@ -26,6 +26,12 @@ B BODY TCP = [0.710, -0.130, 1.000] m
 lateral span = 0.470 m
 ~~~
 
+## 0.1 Documentation consistency fix
+
+The P3.2 report header still says "LOCAL COMMIT ONLY; NO PUSH" even though the integration branch is now pushed to d258c30476868b2789c1cd61ac5c402a93b5ebf6.
+
+At the beginning of P3.3, correct only this stale status metadata and record the pushed commit. Do not alter the accepted P3.2 numeric results or override text.
+
 ## 1. Goal
 
 Convert the approved planning-only P3.2 result into an execution-ready package without moving hardware yet.
