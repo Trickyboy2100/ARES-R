@@ -1,4 +1,4 @@
-# CURRENT QUEUE — 2026-09-21
+# CURRENT QUEUE — 2026-09-22
 
 Master roadmap:
 
@@ -20,101 +20,119 @@ Completed.
 ### P2 — whole dual-arm collision model + self-filter + mutual-arm substrate
 Completed.
 
-### P3 checkpoint
-GitHub integration branch currently includes:
+### P3 / P3.1 — production pointcloud planning substrate
+Completed and pushed.
+
+### P3.2 — cuRobo-only A/B planning checkpoint
+Completed and pushed.
+
+GitHub integration HEAD:
 
 ~~~text
-eafae083cc03f61c6b7162ea90130ce798b8cac6
-feat(perception): add P3 production scene planning audit
+d258c30476868b2789c1cd61ac5c402a93b5ebf6
 ~~~
 
-## Current local checkpoint awaiting push
-
-### P3.1 — residual attribution + support/object decomposition
-
-Local .32 commit:
+Canonical operator overrides now locked for this demo:
 
 ~~~text
-7ae26aacb86222263d76490e3ec9cc55e9867de6
+1. CURRENT→A, A→B and B→A all use cuRobo.
+2. No explicit waypoint is allowed.
+3. CLEAR/AVOID both use one direct cuRobo start→goal request.
+4. The operator visually approved the current trajectory style.
 ~~~
 
-Before push:
-
-- verify whether eafae083 is an ancestor of 7ae26aac;
-- if yes, fast-forward push 7ae26aac;
-- if not, replay only the P3.1 patch on top of eafae083 and test;
-- no force-push;
-- no unrelated AMR dirty work.
-
-P3.1 planning-only result is successful:
+Current A/B:
 
 ~~~text
-CLEAR_PLAN_READY = YES
-AVOID_PLAN_READY = YES
-BLOCK_PLAN_READY = YES
+A BODY TCP = [0.710, -0.600, 1.000] m
+B BODY TCP = [0.710, -0.130, 1.000] m
+lateral span = 0.470 m
 ~~~
 
-Physical execution remains blocked by unresolved tool/TCP physical semantics.
+Planning-only checkpoint:
 
-## Active after P3.1 push
+~~~text
+CLEAR both directions = SUCCESS
+AVOID both directions = SUCCESS
+BLOCK = expected FAILURE / no fallback
 
-### P3.2 — right-arm scan-before-each-leg A↔B demo, planning/commissioning stage
+AVOID path rises about 155 mm above endpoints.
+CLEAR-vs-AVOID max TCP separation about 202–204 mm.
+~~~
+
+Physical execution remains disabled.
+
+## Active now
+
+### P3.3 — execution hardening for the approved cuRobo-only A/B demo
 
 Execute:
 
 ~~~text
-docs/work_orders/2026-09-21_P3_2_SUPERVISED_AB_SCAN_AVOID_DEMO.md
+docs/work_orders/2026-09-22_P3_3_EXECUTION_HARDENING.md
 ~~~
 
-User-requested semantics:
+Purpose:
 
 ~~~text
-right TCP shuttles between A and B
-
-before every leg:
-  fresh scan + fresh robot/tool state
-
-if straight corridor clear:
-  true Cartesian TCP straight path
-
-if blocked:
-  cuRobo OVERHEAD bypass
-
-after arrival:
-  invalidate old scene and trajectory
-  rescan before the next leg
+preserve approved A/B and trajectory semantics
+→ conservative execution tool envelope
+→ clearance reproducibility
+→ deterministic execution candidate selection
+→ slow native/ServoJ packaging
+→ fresh scene/start/tool execution lease
+→ SafetyKernel dry-run
+→ request-readiness for first supervised CURRENT→A motion
 ~~~
 
-User-requested A/B redesign:
+No hardware movement in P3.3.
 
-- larger BODY-left/right span;
-- lower endpoints;
-- X/Z approximately equal;
-- CLEAR visibly straight;
-- AVOID visibly arcs upward.
+## Tool/TCP note
 
-## Tool/TCP physical-length note
-
-Manual measurement on 2026-09-21:
+Current evidence:
 
 ~~~text
-right flange mounting plane → approximate grasp center ≈ 145 mm
+manual flange→grasp center ≈ 145 mm
+pinned ARES gripper distal extent ≈ 149 mm
+controller active TCP Z ≈ 184 mm
 ~~~
 
-Existing controller TCP Z is about 184 mm; pinned gripper model distal extent is about 149 mm.
+Do not change controller TCP in P3.3.
 
-This discrepancy is recorded but explicitly deferred for the current P3.2 planning-only phase.
+Use a conservative execution collision envelope that covers the physical gripper and the full active TCP offset.
 
-Therefore:
+The unresolved semantic difference remains documented.
+
+## Execution blocker observed in P3.2
+
+Same frozen AVOID scene produced modeled minimum clearance ranging from about:
 
 ~~~text
-TOOL_TCP_PHYSICAL_SEMANTICS_UNRESOLVED = YES
-READY_FOR_FIRST_SUPERVISED_CLEAR_EXECUTION = NO
+35.4 mm
+to
+9.3 mm
 ~~~
 
-P3.2 may redesign A/B, implement straight/overhead planning, classifier and demo state machine, but must not execute physical arm motion.
+Repeat planning success alone is not an execution certificate.
+
+P3.3 must establish a repeatable modeled-clearance gate before any motion request.
 
 ## Recorded next
+
+### First supervised physical demo
+Only after P3.3 review and a separate explicit user authorization.
+
+Expected order:
+
+~~~text
+CURRENT→A
+→ fresh scan
+→ A→B
+→ fresh scan
+→ B→A
+~~~
+
+Every leg uses new cuRobo planning and no explicit waypoint.
 
 ### P4
 ~~~text
@@ -152,6 +170,6 @@ USER ACTION N
 
 ## Current motion boundary
 
-P3.2 planning/commissioning may capture camera and read robot state.
+P3.3 may capture camera and read robot state.
 
-Physical arm motion is NOT authorized in the current phase.
+AMR/arm/gripper motion is NOT authorized in P3.3.
