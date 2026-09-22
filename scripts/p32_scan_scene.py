@@ -23,6 +23,21 @@ def run(*args, python=None):
                    env=dict(os.environ, PYTHONPATH=str(ROOT / "src")), check=True)
 
 
+def audit_with_readonly_retry(urdf, output, side):
+    """Retry transient JAKA read errors; never substitute cached joint state."""
+    for attempt in range(3):
+        try:
+            # The system JAKA Python binding is the site-proven read-only
+            # diagnostic runtime; Open3D's calib environment is for clouds.
+            run(ROOT / "scripts/audit_curobo_fk.py", urdf, output,
+                "--side", side, python="python3")
+            return
+        except subprocess.CalledProcessError:
+            if attempt == 2:
+                raise
+            time.sleep(1.0)
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--mode", choices=("CLEAR", "AVOID", "BLOCK"), required=True)
@@ -41,12 +56,16 @@ def main():
     started = time.perf_counter()
     manifest = capture_body_cloud(config)
     capture_s = time.perf_counter() - started
+    # Pixel Pro acquisition briefly loads the shared controller network.  Let
+    # it settle before independent, read-only JAKA state snapshots; retries
+    # below still fail closed instead of using yesterday's joint positions.
+    time.sleep(2.0)
     model = json.loads(Path(config["robot_collision"]["model"]).read_text())
     robot_urdf = Path(model["asset_root"]) / model["urdf"]
     left = output / "left_fk_audit.json"
     right = output / "right_fk_audit.json"
-    run(ROOT / "scripts/audit_curobo_fk.py", robot_urdf, left, "--side", "left")
-    run(ROOT / "scripts/audit_curobo_fk.py", robot_urdf, right, "--side", "right")
+    audit_with_readonly_retry(robot_urdf, left, "left")
+    audit_with_readonly_retry(robot_urdf, right, "right")
     geometry = output / "whole_robot_geometry.json"
     run(ROOT / "scripts/export_whole_robot_geometry.py", "--model",
         config["robot_collision"]["model"], "--world", ROOT / "config/robot_world.json",

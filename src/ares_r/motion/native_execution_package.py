@@ -22,11 +22,11 @@ NATIVE_MAX_SAMPLES = 10000
 NATIVE_MAX_EXCURSION_RAD = math.radians(150)
 # A deliberate operating target below the 0.0218 rad/s tracking-derived hard
 # ceiling: this leaves model budget rather than planning at its exact edge.
-FIRST_DEMO_SPEED_RAD_S = 0.020
-FIRST_DEMO_ACCEL_RAD_S2 = 0.06
-# Independently rebuilt from scripts/jaka_right_demo.cpp using the site SDK on
-# 2026-09-22; the current installed binary matched byte-for-byte.
-AUDITED_SITE_SENDER_SHA256 = "87649366d9c83fd87841e755303fe2b39595e1c4f547347b1ea8e1696dc7aff5"
+FIRST_DEMO_SPEED_RAD_S = 0.015
+FIRST_DEMO_ACCEL_RAD_S2 = 0.03
+# Built from the explicit supervised_path source with the site SDK.  The old
+# demo/pregrasp binary is intentionally not accepted for an A/B package.
+AUDITED_SITE_SENDER_SHA256 = "7c760d2b913af068e7b85012ae520ca6e9eb7e254e15837969df583f933de337"
 
 
 def verify_installed_sender(path):
@@ -112,7 +112,7 @@ def package_native_preview(points, source_dt_s, site_limits, *, tool_id,
                            - (sampled[j-1][i]-sampled[j-2][i]) / NATIVE_DT_S)
                        / NATIVE_DT_S for j in range(2, len(sampled)) for i in range(6))
     audit = {
-        "format": "ARES_R_RIGHT_V1", "native_sender_mode_for_future_review": "pregrasp",
+        "format": "ARES_R_RIGHT_V1", "native_sender_mode_for_future_review": "supervised_path",
         "planning_only": True, "execution_allowed": False,
         "sample_period_s": NATIVE_DT_S, "sample_count": len(sampled),
         "duration_s": duration, "max_joint_speed_rad_s": velocity,

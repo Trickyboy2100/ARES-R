@@ -95,8 +95,10 @@ class DualArmSafetyKernel:
                 and candidate.get("explicit_waypoints") == []),
             "CENTRAL_EXCLUSION": candidate.get("central_tcp_margin_m", -math.inf) > 0,
             "VELOCITY": native_audit.get("max_joint_speed_rad_s", math.inf)
-                        <= min(0.03, NATIVE_TRACKING_SPEED_CAP_RAD_S) + 1e-12,
-            "ACCELERATION": native_audit.get("max_joint_accel_rad_s2", math.inf) <= 0.06 + 1e-12,
+                        <= min(0.015 if speed_profile == "precision" else 0.03,
+                               NATIVE_TRACKING_SPEED_CAP_RAD_S) + 1e-12,
+            "ACCELERATION": native_audit.get("max_joint_accel_rad_s2", math.inf)
+                            <= (0.03 if speed_profile == "precision" else 0.06) + 1e-12,
             "NATIVE_SENDER_LIMITS": (
                 native_audit.get("sample_period_s") == 0.08
                 and 2 <= native_audit.get("sample_count", 0) <= 10000

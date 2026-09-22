@@ -28,7 +28,7 @@ class P33HardeningTests(unittest.TestCase):
         self.envelope = build_execution_tool_envelope(self.model, self.tool)
         self.site = json.loads((ROOT / "config/jaka_mini2_motion.site.json").read_text())
 
-    def test_envelope_covers_full_gripper_and_controller_tcp_ray(self):
+    def test_envelope_covers_physical_gripper_but_not_virtual_tcp(self):
         box = self.envelope["box"]
         lo = [a-b for a, b in zip(box["center_m"], box["half_extents_m"])]
         hi = [a+b for a, b in zip(box["center_m"], box["half_extents_m"])]
@@ -36,8 +36,8 @@ class P33HardeningTests(unittest.TestCase):
         for i in range(3):
             self.assertLess(lo[i], gripper["center_m"][i]-gripper["half_extents_m"][i])
             self.assertGreater(hi[i], gripper["center_m"][i]+gripper["half_extents_m"][i])
-            self.assertLessEqual(lo[i], min(0, self.tool[i]/1000))
-            self.assertGreaterEqual(hi[i], max(0, self.tool[i]/1000))
+        self.assertLess(hi[2], self.tool[2]/1000)
+        self.assertFalse(self.envelope["controller_tcp_is_physical_collision_body"])
         verify_execution_tool_envelope(self.envelope, self.model, self.tool)
         with self.assertRaises(ValueError):
             verify_execution_tool_envelope(dict(self.envelope, revision="tampered"),
@@ -98,8 +98,9 @@ class P33HardeningTests(unittest.TestCase):
             tool_id=1, controller_tool_pose_mm_rad=self.tool, captured_at_unix=1000)
         self.assertTrue(content.startswith("ARES_R_RIGHT_V1 "))
         self.assertAlmostEqual(audit["sample_period_s"], 0.08)
-        self.assertLessEqual(audit["max_joint_speed_rad_s"], math.radians(1.25)+1e-12)
-        self.assertLessEqual(audit["max_joint_accel_rad_s2"], 0.06+1e-12)
+        self.assertLessEqual(audit["max_joint_speed_rad_s"], 0.015+1e-12)
+        self.assertLessEqual(audit["max_joint_accel_rad_s2"], 0.03+1e-12)
+        self.assertEqual(audit["native_sender_mode_for_future_review"], "supervised_path")
         self.assertLessEqual(audit["max_joint_geometry_error_rad"], 1e-8)
         self.assertFalse(audit["execution_allowed"])
 

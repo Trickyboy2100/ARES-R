@@ -4,7 +4,11 @@ set -euo pipefail
 repo_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 sdk_include="/home/yikun/ws/SDK v2.2.2/04 Linux/c&c++/inc_of_c++"
 sdk_library="/home/yikun/JAKA/lib"
-demo_output="/home/yikun/ares-r-curobo-assets/jaka_right_demo"
+case "${1:-}" in
+  "") demo_output="/home/yikun/ares-r-curobo-assets/jaka_right_demo" ;;
+  --supervised-path) demo_output="/home/yikun/ares-r-curobo-assets/jaka_right_supervised_path_v3" ;;
+  *) echo "usage: build_jaka_right_demo.sh [--supervised-path]" >&2; exit 2 ;;
+esac
 test -f "$sdk_include/JAKAZuRobot.h"
 test -f "$sdk_library/libjakaAPI.so"
 test -d /home/yikun/ares-r-curobo-assets

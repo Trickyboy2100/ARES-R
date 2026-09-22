@@ -95,7 +95,7 @@ def main():
         return
     activation, choices = decision
     site = load(ROOT / "config/jaka_mini2_motion.site.json")
-    sender_sha = verify_installed_sender("/home/yikun/ares-r-curobo-assets/jaka_right_demo")
+    sender_sha = verify_installed_sender("/home/yikun/ares-r-curobo-assets/jaka_right_supervised_path_v3")
     speed_state = load(ROOT / "config/speed_profiles.json")["profiles"]["slow"]["state"]
     kernel = DualArmSafetyKernel(False, {"slow": SimpleNamespace(state=speed_state)})
     output = {"chosen_activation_mm": activation,

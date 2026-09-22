@@ -26,6 +26,8 @@ except ImportError:  # pragma: no cover - readline is present on the target Linu
 
 
 HELP = """Commands:
+  demo ab status|scan|plan-next|preview|preflight|execute-next|stop
+                             P3.3A CLEAR backend; execute-next locked, no WebUI
   curobo demo start show|save|replace  persistent current right start (no motion)
   curobo demo reset           cuRobo reset to saved start + live dashboard
   curobo demo plan-reset      plan current -> fixed start without motion
@@ -182,6 +184,9 @@ def _allowed_in_jaka_readonly(args) -> bool:
         # while the terminal is in its most restricted mode.
         or args[:2] in (["pregrasp", "capture-start"], ["pregrasp", "capture-goal"],
                         ["pregrasp", "plan"], ["pregrasp", "preview"])
+        or args[:3] in (["demo", "ab", "status"], ["demo", "ab", "preview"],
+                        ["demo", "ab", "preflight"], ["demo", "ab", "execute-next"],
+                        ["demo", "ab", "stop"])
     )
 
 
@@ -232,6 +237,7 @@ def _allowed_in_hardware(args) -> bool:
         or args[:2] in (["curobo", "status"], ["curobo", "plan"], ["curobo", "plan-file"], ["curobo", "preview"])
         or args[:2] in (["pregrasp", "capture-start"], ["pregrasp", "capture-goal"],
                         ["pregrasp", "plan"], ["pregrasp", "preview"], ["pregrasp", "run"])
+        or args[:2] == ["demo", "ab"]
         or args[:2] == ["curobo", "execute-micro"]
         or args[:3] in (["curobo", "demo", "plan20"], ["curobo", "demo", "run20"],
                         ["curobo","demo","start"], ["curobo","demo","reset"], ["curobo","demo","cycle20"])
@@ -343,6 +349,25 @@ def run_terminal(controller: TaskController) -> None:
                 raise RuntimeError("command blocked: combined task/base execution is not commissioned")
             if args[0] in ("quit", "exit"): break
             if args[0] == "help": print(help_text)
+            elif args[:2] == ["demo", "ab"]:
+                if len(args) != 3 or args[2] not in (
+                        "status", "scan", "plan-next", "preview", "preflight",
+                        "execute-next", "stop"):
+                    raise ValueError("usage: demo ab status|scan|plan-next|preview|preflight|execute-next|stop")
+                from .motion import ab_fastlane
+                action = args[2]
+                if action in ("scan", "plan-next", "preflight") and controller.mode != "hardware-enabled":
+                    raise RuntimeError("live CLEAR scan/plan/preflight requires hardware-enabled mode; motion remains locked")
+                result = {
+                    "status": ab_fastlane.status,
+                    "scan": lambda: ab_fastlane.scan(controller.config),
+                    "plan-next": lambda: ab_fastlane.plan_next(controller.config),
+                    "preview": ab_fastlane.preview,
+                    "preflight": lambda: ab_fastlane.preflight(controller.config),
+                    "execute-next": ab_fastlane.execute_next,
+                    "stop": ab_fastlane.stop,
+                }[action]()
+                print(json.dumps(result, indent=2, ensure_ascii=False))
             elif args[0] == "status": pass
             elif args == ["world","status"]:
                 print(json.dumps(controller.world.status(),ensure_ascii=False,indent=2))

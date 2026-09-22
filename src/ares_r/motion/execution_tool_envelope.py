@@ -1,9 +1,4 @@
-"""Conservative, planning-only link6 envelope for the P3.3 movement demo.
-
-The pinned gripper geometry remains the source of the finger/body extent.  The
-selected controller TCP translation is included as a second source; it is not
-silently substituted for the physical grasp centre.
-"""
+"""Pinned physical gripper envelope for the P3.3A free-space motion demo."""
 
 from __future__ import annotations
 
@@ -18,11 +13,10 @@ def _digest(value):
 
 
 def build_execution_tool_envelope(collision_model, tool_pose_mm_rad, *, inflation_m=0.008):
-    """Return a single conservative link6 AABB covering gripper and TCP ray.
+    """Return the pinned maximum-open ARES gripper box with sensor inflation.
 
-    The TCP orientation is deliberately not used to reposition the fingers;
-    the translation defines the origin-to-controller-TCP ray in link6.  The
-    source box is the pinned ARES maximum-open gripper mesh envelope.
+    Controller TCP is a kinematic/task frame, not measured physical material.
+    It remains revision-bound provenance but does not enlarge collision body.
     """
     if len(tool_pose_mm_rad) != 6:
         raise ValueError("six-value controller tool pose required")
@@ -36,16 +30,17 @@ def build_execution_tool_envelope(collision_model, tool_pose_mm_rad, *, inflatio
             or any(v <= 0 for v in half) or not 0.003 <= inflation_m <= 0.020
             or not 0.12 <= tool[2] <= 0.25):
         raise ValueError("untrusted gripper/TCP dimensions; no execution envelope")
-    lower = [min(center[i] - half[i], 0.0, tool[i]) - inflation_m for i in range(3)]
-    upper = [max(center[i] + half[i], 0.0, tool[i]) + inflation_m for i in range(3)]
+    lower = [center[i] - half[i] - inflation_m for i in range(3)]
+    upper = [center[i] + half[i] + inflation_m for i in range(3)]
     box = {"center_m": [(a + b) / 2 for a, b in zip(lower, upper)],
            "half_extents_m": [(b - a) / 2 for a, b in zip(lower, upper)]}
     provenance = {
-        "schema_version": 1,
+        "schema_version": 2,
         "frame": "link6", "unit": "m", "box": box,
         "pinned_ares_gripper": {"center_m": center, "half_extents_m": half,
                                 "asset_revision": collision_model["asset_revision"]},
-        "controller_tcp_translation_m": tool,
+        "controller_tcp_task_frame_translation_m": tool,
+        "controller_tcp_is_physical_collision_body": False,
         "rough_flange_to_grasp_center_m": 0.145,
         "inflation_m": inflation_m,
         "TOOL_TCP_PHYSICAL_SEMANTICS_UNRESOLVED": "YES",

@@ -116,7 +116,9 @@ def make_candidate_manifest(*, plan, selection, scene_report, pointcloud_sha256,
         "scene_snapshot_id": plan["scene_snapshot_id"],
         "scene_digest": plan["scene_digest"],
         "pointcloud_sha256": pointcloud_sha256,
-        "T_body_camera_revision": scene_report["calibration_revision"]["T_body_camera"],
+        "T_body_camera_revision": (scene_report["calibration_revision"]["T_body_camera"]
+                                   if isinstance(scene_report["calibration_revision"], dict)
+                                   else scene_report["calibration_revision"]),
         "whole_robot_geometry_revision": scene_report["geometry_revision"],
         "inactive_left_arm_revision": scene_report["inactive_arm_revision"],
         "tool_revision": scene_report["tool_revision"],
