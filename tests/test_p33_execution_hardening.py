@@ -43,6 +43,17 @@ class P33HardeningTests(unittest.TestCase):
             verify_execution_tool_envelope(dict(self.envelope, revision="tampered"),
                                            self.model, self.tool)
 
+    def test_ab_observed_envelope_is_conservative_and_revision_bound(self):
+        observed = build_execution_tool_envelope(
+            self.model, self.tool, observed_demo_only=True)
+        box = observed["box"]
+        low = [a-b for a, b in zip(box["center_m"], box["half_extents_m"])]
+        high = [a+b for a, b in zip(box["center_m"], box["half_extents_m"])]
+        self.assertLessEqual(low[1], -.055)
+        self.assertGreaterEqual(high[2], .20)
+        self.assertNotEqual(observed["revision"], self.envelope["revision"])
+        verify_execution_tool_envelope(observed, self.model, self.tool)
+
     def _plan(self, gap):
         q = [[0.0]*6, [0.002]*6, [0.004]*6]
         return {"observed_result": "SUCCESS", "execution_tool_envelope_revision":
@@ -98,8 +109,9 @@ class P33HardeningTests(unittest.TestCase):
             tool_id=1, controller_tool_pose_mm_rad=self.tool, captured_at_unix=1000)
         self.assertTrue(content.startswith("ARES_R_RIGHT_V1 "))
         self.assertAlmostEqual(audit["sample_period_s"], 0.08)
-        self.assertLessEqual(audit["max_joint_speed_rad_s"], 0.015+1e-12)
-        self.assertLessEqual(audit["max_joint_accel_rad_s2"], 0.03+1e-12)
+        self.assertLessEqual(audit["max_joint_speed_rad_s"], 0.070+1e-12)
+        self.assertLessEqual(audit["max_joint_accel_rad_s2"], 0.10+1e-12)
+        self.assertEqual(audit["native_sender_hard_tracking_gate_deg"], 0.5)
         self.assertEqual(audit["native_sender_mode_for_future_review"], "supervised_path")
         self.assertLessEqual(audit["max_joint_geometry_error_rad"], 1e-8)
         self.assertFalse(audit["execution_allowed"])

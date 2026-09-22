@@ -26,34 +26,46 @@ from ares_r.motion.feedback_audit import status_connections
 from ares_r.motion.native_demo import native_environment
 from ares_r.motion.native_execution_package import verify_installed_sender
 
-AUTHORIZATION = "RIGHT CURRENT_TO_A PRECISION SUPERVISED"
+AUTHORIZATIONS = {
+    "CURRENT_to_A": "RIGHT CURRENT_TO_A PRECISION SUPERVISED",
+    "A_to_B": "RIGHT A_TO_B CLEAR SUPERVISED",
+    "B_to_A": "RIGHT B_TO_A CLEAR SUPERVISED",
+}
 EXPECTED_BLOCKERS = {"EXECUTION_ENABLED", "SPEED_PROFILE_COMMISSIONED"}
 
 
-def _check_exact(session, expected_hash):
+def _check_exact(session, expected_hash, direction):
     if session.get("state") not in ("PREVIEWED", "PREFLIGHTED"):
-        raise RuntimeError("preview of one fresh CURRENT→A candidate required")
-    if session.get("direction") != "CURRENT_to_A":
-        raise RuntimeError("this runner is CURRENT→A only")
+        raise RuntimeError("preview of one fresh candidate required")
+    if session.get("direction") != direction:
+        raise RuntimeError("previewed direction differs from requested leg")
     package = Path(session["package_dir"])
     candidate = ab_fastlane.read_json(package / "candidate_manifest.json")
     native = ab_fastlane.read_json(package / "native_audit.json")
     if (candidate["trajectory_hash"] != expected_hash
             or candidate["candidate_id"] != session["candidate_id"]
-            or candidate["expected_destination"] != "A"
+            or candidate["expected_destination"] != ("B" if direction == "A_to_B" else "A")
             or candidate["explicit_waypoints"] != []
             or candidate["motion_policy"] != "CUROBO_ONLY_FOR_EVERY_POINT_TO_POINT_LEG"):
         raise RuntimeError("exact preview hash or candidate binding changed")
+    if direction in ("A_to_B", "B_to_A"):
+        plan = ab_fastlane.read_json(Path(session["plan_dir"]) / "planning.json")
+        if (plan.get("orientation_validation", {}).get("passed") is not True or
+                float(candidate["dense_min_clearance_m"]) < 0.030):
+            raise RuntimeError("A/B BODY-forward orientation or 30 mm clearance failed")
     if candidate["native_sender_binary_sha256"] != verify_installed_sender(ab_fastlane.SENDER):
         raise RuntimeError("native sender binary changed")
     text = (package / "native_preview.txt").read_bytes()
     import hashlib
     if hashlib.sha256(text).hexdigest() != candidate["native_trajectory_hash"]:
         raise RuntimeError("native file hash changed")
+    speed_cap = 0.015 if direction == "CURRENT_to_A" else 0.070
+    accel_cap = 0.03 if direction == "CURRENT_to_A" else 0.10
     if (native["native_sender_mode_for_future_review"] != "supervised_path"
-            or native["max_joint_speed_rad_s"] > 0.015 + 1e-12
-            or native["max_joint_accel_rad_s2"] > 0.03 + 1e-12):
-        raise RuntimeError("precision speed or sender mode mismatch")
+            or native["native_sender_hard_tracking_gate_deg"] != 0.5
+            or native["max_joint_speed_rad_s"] > speed_cap + 1e-12
+            or native["max_joint_accel_rad_s2"] > accel_cap + 1e-12):
+        raise RuntimeError("leg speed/tracking gate or sender mode mismatch")
     return package, candidate, native
 
 
@@ -67,7 +79,7 @@ def _offline_native_validate(package):
     return result.stdout.strip()
 
 
-def _monitor_native(package, native, output):
+def _monitor_native(package, native, output, candidate_id):
     """Interactive keyboard abort; no Python SDK connection competes with ServoJ."""
     if not sys.stdin.isatty():
         raise RuntimeError("interactive TTY and keyboard abort are required")
@@ -87,9 +99,10 @@ def _monitor_native(package, native, output):
                                   str(package / "native_preview.txt"), "CONFIRMED_RIGHT_CLEAR"],
                                  env=native_environment(), stdout=subprocess.PIPE,
                                  stderr=subprocess.STDOUT, text=True, bufsize=1)
+        ab_fastlane.register_active_native(child.pid, candidate_id)
         selector.register(child.stdout, selectors.EVENT_READ, "output")
         deadline = started + native["duration_s"] + 30
-        print("RIGHT CURRENT→A started. Space=controlled abort; B=software emergency abort; physical E-stop remains primary.", flush=True)
+        print("RIGHT supervised path started. Space=controlled abort; B=software emergency abort; physical E-stop remains primary.", flush=True)
         with log_path.open("x") as log:
             while child.poll() is None or selector.get_map().get(child.stdout.fileno()):
                 if time.monotonic() > deadline and not aborted:
@@ -144,6 +157,8 @@ def _monitor_native(package, native, output):
         termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, old_settings)
         selector.close()
         ab_fastlane.stop()  # invalidate scene, trajectory and lease on every exit
+        if child is not None and child.poll() is not None:
+            ab_fastlane.clear_active_native(child.pid)
     events = []
     for line in log_path.read_text().splitlines():
         if line.startswith("{"):
@@ -163,6 +178,7 @@ def _monitor_native(package, native, output):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--direction", choices=tuple(AUTHORIZATIONS), default="CURRENT_to_A")
     parser.add_argument("--expected-trajectory-hash", required=True)
     parser.add_argument("--execute", action="store_true")
     parser.add_argument("--authorization")
@@ -171,11 +187,12 @@ def main():
     args = parser.parse_args()
     if args.output.exists():
         raise FileExistsError("refusing to overwrite execution evidence")
-    if args.execute and (args.authorization != AUTHORIZATION or not args.onsite_observer_confirmed):
+    if args.execute and (args.authorization != AUTHORIZATIONS[args.direction] or
+                         not args.onsite_observer_confirmed):
         raise PermissionError("scoped authorization and on-site observer are required")
     config = ab_fastlane.read_json(ROOT / "config/system.json")
     session = ab_fastlane.status()
-    package, candidate, native = _check_exact(session, args.expected_trajectory_hash)
+    package, candidate, native = _check_exact(session, args.expected_trajectory_hash, args.direction)
     native_check = _offline_native_validate(package)
     preflight = ab_fastlane.preflight(config)
     if preflight["candidate_id"] != candidate["candidate_id"]:
@@ -189,7 +206,7 @@ def main():
               "native_hash": candidate["native_trajectory_hash"],
               "native_check": native_check, "preflight": preflight,
               "commissioning_authorization": args.authorization if args.execute else None,
-              "precision_profile_state": "UNCOMMISSIONED: ONE-TIME FIRST MOTION ONLY",
+              "speed_profile_state": "UNCOMMISSIONED: SCOPED SUPERVISED MOTION ONLY",
               "physical_estop_required": True}
     args.output.mkdir(parents=True)
     ab_fastlane.write_json(args.output / "authorization_review.json", review)
@@ -197,10 +214,11 @@ def main():
     if not args.execute:
         print("DRY RUN: no controller login or movement", flush=True)
         return
-    result = _monitor_native(package, native, args.output / "live")
+    result = _monitor_native(package, native, args.output / "live", candidate["candidate_id"])
     if not result["success"]:
         raise RuntimeError("supervised execution failed; see %s" % result["log"])
-    print("SUPERVISED CURRENT→A ARRIVED; candidate invalidated. Fresh scan required for A→B.", flush=True)
+    print("SUPERVISED %s ARRIVED; candidate invalidated. Fresh scan required for next leg." %
+          args.direction, flush=True)
 
 
 if __name__ == "__main__":

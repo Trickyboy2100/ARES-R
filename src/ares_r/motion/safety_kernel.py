@@ -59,7 +59,9 @@ class DualArmSafetyKernel:
         from .execution_candidate import (MIN_FIRST_DEMO_CLEARANCE_M,
                                           NATIVE_START_TOLERANCE_RAD,
                                           candidate_binding_reasons)
-        from .native_demo import NATIVE_TRACKING_BUDGET_DEG, NATIVE_TRACKING_SPEED_CAP_RAD_S
+        from .native_demo import (NATIVE_TRACKING_BUDGET_DEG, NATIVE_TRACKING_SPEED_CAP_RAD_S,
+                                  SUPERVISED_TRACKING_BUDGET_DEG,
+                                  SUPERVISED_TRACKING_SPEED_CAP_RAD_S)
         now = time.time() if now is None else float(now)
         binding = candidate_binding_reasons(candidate, live, now=now)
         start = live.get("actual_start_joints_rad")
@@ -95,10 +97,11 @@ class DualArmSafetyKernel:
                 and candidate.get("explicit_waypoints") == []),
             "CENTRAL_EXCLUSION": candidate.get("central_tcp_margin_m", -math.inf) > 0,
             "VELOCITY": native_audit.get("max_joint_speed_rad_s", math.inf)
-                        <= min(0.015 if speed_profile == "precision" else 0.03,
-                               NATIVE_TRACKING_SPEED_CAP_RAD_S) + 1e-12,
+                        <= min(0.015 if speed_profile == "precision" else 0.070,
+                               NATIVE_TRACKING_SPEED_CAP_RAD_S if speed_profile == "precision"
+                               else SUPERVISED_TRACKING_SPEED_CAP_RAD_S) + 1e-12,
             "ACCELERATION": native_audit.get("max_joint_accel_rad_s2", math.inf)
-                            <= (0.03 if speed_profile == "precision" else 0.06) + 1e-12,
+                            <= (0.03 if speed_profile == "precision" else 0.10) + 1e-12,
             "NATIVE_SENDER_LIMITS": (
                 native_audit.get("sample_period_s") == 0.08
                 and 2 <= native_audit.get("sample_count", 0) <= 10000
@@ -109,7 +112,8 @@ class DualArmSafetyKernel:
                 and live.get("native_sender_binary_sha256")
                     == candidate.get("native_sender_binary_sha256")),
             "TRACKING_PREDICTION": native_audit.get("predicted_tracking_gate_deg", math.inf)
-                                   <= NATIVE_TRACKING_BUDGET_DEG + 1e-9,
+                                   <= (NATIVE_TRACKING_BUDGET_DEG if speed_profile == "precision"
+                                       else SUPERVISED_TRACKING_BUDGET_DEG) + 1e-9,
             "EXECUTION_ENABLED": self.execution_enabled,
             "SPEED_PROFILE_COMMISSIONED": profile_state == "COMMISSIONED",
         }

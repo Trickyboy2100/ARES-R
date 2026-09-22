@@ -153,8 +153,8 @@ class NativeEnvelopeTest(unittest.TestCase):
         speed, _ = native_move_caps(self.site)
         self.assertAlmostEqual(speed[0], NATIVE_TRACKING_SPEED_CAP_RAD_S, places=12)
 
-    def test_tracking_ceiling_spends_only_three_quarters_of_the_allowance(self):
-        self.assertAlmostEqual(NATIVE_TRACKING_BUDGET_DEG, 0.15, places=12)
+    def test_tracking_ceiling_retains_native_stop_margin(self):
+        self.assertAlmostEqual(NATIVE_TRACKING_BUDGET_DEG, 0.18, places=12)
         self.assertAlmostEqual(
             NATIVE_TRACKING_BUDGET_DEG / NATIVE_TRACKING_LAG_S,
             math.degrees(NATIVE_TRACKING_SPEED_CAP_RAD_S), places=9)

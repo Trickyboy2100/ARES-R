@@ -11,6 +11,7 @@ import json
 import math
 import os
 from pathlib import Path
+import signal
 import subprocess
 import time
 from types import SimpleNamespace
@@ -22,9 +23,10 @@ from .native_execution_package import package_native_preview, verify_installed_s
 from .safety_kernel import DualArmSafetyKernel
 
 ROOT = Path(__file__).resolve().parents[3]
-SEARCH = ROOT / "worklog/evidence/2026-09-21-p3-2-ab-demo/search_v2.json"
+SEARCH = ROOT / "config/ab_demo_horizontal_forward.json"
 SENDER = Path("/home/yikun/ares-r-curobo-assets/jaka_right_supervised_path_v4")
 STATE = ROOT / "logs/ab_fastlane_session.json"
+ACTIVE_NATIVE = ROOT / "logs/ab_native_active.json"
 EVIDENCE = ROOT / "worklog/evidence/2026-09-22-p3-3a-clear-fastlane"
 JOINT_MATCH_RAD = math.radians(0.02)
 
@@ -85,7 +87,7 @@ def scan(config):
 
 def _direction(scene_dir):
     actual = read_json(scene_dir / "right_fk_audit.json")["diagnostics"]["joint_position_rad"]
-    target = read_json(SEARCH)["candidates"][1]
+    target = read_json(SEARCH)["candidates"][0]
     def at(name):
         return max(abs(a-b) for a, b in zip(actual, target[name + "_joints_rad"])) <= JOINT_MATCH_RAD
     if at("A"):
@@ -103,7 +105,11 @@ def prepare_plan(scene_dir, plan_dir):
     report = read_json(scene_dir / "scene/scene_report.json")
     contract = read_json(plan_dir / "ab_plan_contract.json")
     direction = contract["direction"]
-    gate = 0.030 if direction == "CURRENT_to_A" else 0.050
+    if direction in ("A_to_B", "B_to_A"):
+        orientation = plan.get("orientation_validation") or {}
+        if orientation.get("passed") is not True:
+            raise ValueError("horizontal BODY-forward TCP orientation failed: %s" % orientation)
+    gate = 0.030
     envelope = request["execution_tool_envelope"]
     selected = trial_summary(plan, expected_envelope_revision=envelope["revision"],
                              minimum_clearance_m=gate)
@@ -119,7 +125,9 @@ def prepare_plan(scene_dir, plan_dir):
         plan["trajectory_points_rad"], plan["smoothness"]["sample_period_s"], site,
         tool_id=audit["tool_id"],
         controller_tool_pose_mm_rad=audit["tool_data"]["pose_mm_rad"],
-        captured_at_unix=captured_at)
+        captured_at_unix=captured_at,
+        speed_ceiling_rad_s=0.015 if direction == "CURRENT_to_A" else 0.070,
+        accel_ceiling_rad_s2=0.03 if direction == "CURRENT_to_A" else 0.10)
     sender_hash = verify_installed_sender(SENDER)
     destination = plan_dir / "supervised_path_package_v4"
     if destination.exists():
@@ -162,6 +170,8 @@ def plan_next(config):
         raise RuntimeError("fresh demo ab scan required before every leg")
     scene_dir = Path(session["scene_dir"])
     direction = _direction(scene_dir)
+    if direction != "CURRENT_to_A" and read_json(SEARCH).get("leveling_only", False):
+        raise RuntimeError("horizontal A/B sweep is uncommissioned; leveling target only")
     output = scene_dir / ("art_" + direction.lower() + "_plan")
     python = config["epic_pointcloud"]["body_cloud_viewer_python"]
     write_json(STATE, dict(session, state="PLANNING", candidate_id=None,
@@ -169,7 +179,7 @@ def plan_next(config):
     try:
         _run((python, ROOT / "scripts/run_p32_ab_plan.py", scene_dir / "scene",
               "--audit", scene_dir / "right_fk_audit.json", "--search", SEARCH,
-              "--candidate", "1", "--direction", direction, "--policy", "DIRECT",
+              "--candidate", "0", "--direction", direction, "--policy", "DIRECT",
               "--execution-tool-envelope", "--output", output), timeout=240)
         package = prepare_plan(scene_dir, output)
     except Exception:
@@ -291,11 +301,13 @@ def preflight(config):
                 base_stationary=base["stationary"], inactive_arm_known=left_unchanged)
     sender_sha = verify_installed_sender(SENDER)
     live["native_sender_binary_sha256"] = sender_sha
-    speed_state = read_json(ROOT / "config/speed_profiles.json")["profiles"]["precision"]["state"]
-    kernel = DualArmSafetyKernel(False, {"precision": SimpleNamespace(state=speed_state)})
+    speed_profile = "precision" if session["direction"] == "CURRENT_to_A" else "slow"
+    speed_state = read_json(ROOT / "config/speed_profiles.json")["profiles"][speed_profile]["state"]
+    kernel = DualArmSafetyKernel(False, {speed_profile: SimpleNamespace(state=speed_state)})
     result = kernel.preflight_execution_candidate(candidate, live, native,
-                                                  speed_profile="precision")
+                                                  speed_profile=speed_profile)
     result.update({"candidate_id": candidate["candidate_id"],
+                   "speed_profile": speed_profile,
                    "base_evidence": str(evidence / "base_stationarity.json"),
                    "left_unchanged": left_unchanged, "right_tool_unchanged": tool_unchanged,
                    "TOOL_TCP_PHYSICAL_SEMANTICS_UNRESOLVED": "YES"})
@@ -304,13 +316,53 @@ def preflight(config):
     return result
 
 
+def _native_start_ticks(pid):
+    """Linux process identity; PID alone is unsafe because it can be reused."""
+    return int(Path("/proc/%d/stat" % pid).read_text().rsplit(")", 1)[1].split()[19])
+
+
+def _matching_native(pid, start_ticks):
+    try:
+        command = Path("/proc/%d/cmdline" % pid).read_bytes().split(b"\0")
+        return (_native_start_ticks(pid) == start_ticks and
+                str(SENDER).encode() in command and b"supervised_path" in command)
+    except (OSError, ValueError, IndexError):
+        return False
+
+
+def register_active_native(pid, candidate_id):
+    ticks = _native_start_ticks(pid)
+    if not _matching_native(pid, ticks):
+        raise RuntimeError("refusing to register unknown native sender")
+    write_json(ACTIVE_NATIVE, {"pid": pid, "start_ticks": ticks,
+                               "candidate_id": candidate_id,
+                               "registered_at_unix": time.time()})
+
+
+def clear_active_native(pid):
+    if ACTIVE_NATIVE.exists() and read_json(ACTIVE_NATIVE).get("pid") == pid:
+        ACTIVE_NATIVE.unlink()
+
+
 def stop():
-    """No runner exists yet: invalidate local plan without a device command."""
+    """Signal only the exact registered sender, then invalidate the candidate.
+
+    Native SIGTERM handling performs motion_abort + servo disable. Physical
+    E-stop remains the primary emergency control if motion does not cease.
+    """
     old = status()
+    signal_sent = False
+    if ACTIVE_NATIVE.exists():
+        active = read_json(ACTIVE_NATIVE)
+        pid = int(active["pid"])
+        if _matching_native(pid, int(active["start_ticks"])):
+            os.kill(pid, signal.SIGTERM)
+            signal_sent = True
     write_json(STATE, {"state": "STOPPED", "invalidated_at_unix": time.time(),
                        "previous_candidate_id": old.get("candidate_id"),
                        "execution_enabled": False})
-    return status()
+    return dict(status(), native_abort_signal_sent=signal_sent,
+                physical_estop_required_if_motion_continues=True)
 
 
 def execute_next():

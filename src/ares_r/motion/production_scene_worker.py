@@ -14,6 +14,7 @@ from ares_r.perception.robot_owned_filter import grid_spheres_local as grid_sphe
 from ares_r.motion.ab_demo_state import classify_reference_corridor,validate_curobo_only_policy
 from ares_r.motion.execution_tool_envelope import verify_execution_tool_envelope
 from ares_r.motion.independent_path_validation import validate_dense_world
+from ares_r.motion.tcp_orientation import HORIZONTAL_FORWARD_R_BODY,validate_path
 
 
 def transform(xyz,rpy):
@@ -49,6 +50,7 @@ def main():
     import numpy as np
     import torch,yaml,curobo
     from curobo.motion_planner import MotionPlanner,MotionPlannerCfg
+    from curobo._src.cost.tool_pose_criteria import ToolPoseCriteria
     from curobo.types import JointState
     from curobo._src.geom.types import SceneCfg
     import_s=time.perf_counter()-imported
@@ -91,6 +93,14 @@ def main():
         self_collision_check=True,random_seed=params["random_seed"],
         optimizer_collision_activation_distance=params["optimizer_collision_activation_distance"])
     planner=MotionPlanner(cfg);world_init_s=time.perf_counter()-world_at;names=list(planner.joint_names)
+    orientation_lock=request.get("orientation_lock")
+    if orientation_lock is not None:
+        if (orientation_lock.get("policy")!="BODY_FORWARD_HORIZONTAL_V1" or
+                not np.allclose(orientation_lock.get("target_R_body_tcp"),
+                                HORIZONTAL_FORWARD_R_BODY,atol=1e-8)):
+            raise ValueError("unknown BODY TCP orientation contract")
+        planner.update_tool_pose_criteria({"link6":ToolPoseCriteria.track_orientation(
+            rpy=[1.0,1.0,1.0],non_terminal_scale=1.0)})
     def state(rows):
         rows=np.asarray(rows,dtype=float).reshape(-1,6);ordered=rows[:,[ARM_NAMES.index(x) for x in names]]
         return JointState.from_position(torch.tensor(ordered,device="cuda:0",dtype=torch.float32).contiguous(),joint_names=names)
@@ -133,6 +143,11 @@ def main():
                   "blocking_object_ids":hit_ids,
                   "observed_blocking_object_ids":[name for name in hit_ids if name.startswith("observed_")]}
         if classification=="SCENE_INVALID":
+            print(json.dumps({"corridor_diagnostic":corridor,
+                "start_min_gap_m":clearance([reference[0]]),
+                "goal_min_gap_m":clearance([reference[-1]]),
+                "start_nearest":sorted(clearance_details([reference[0]]).items(),key=lambda x:x[1])[:6],
+                "goal_nearest":sorted(clearance_details([reference[-1]]).items(),key=lambda x:x[1])[:6]}),flush=True)
             raise RuntimeError("A/B endpoint or scene invalid; no planning fallback")
     # Explicit world update is separately timed from planner initialization.
     typed=SceneCfg.create({"cuboid":cuboids});planner.update_world(typed);torch.cuda.synchronize()
@@ -162,6 +177,7 @@ def main():
     central_margin=None
     smoothness=None
     independent=None
+    orientation_validation=None
     if success:
         segments=[]
         for segment_index,part in enumerate(result):
@@ -196,6 +212,12 @@ def main():
             independent=validate_dense_world(points,request,subdivisions=4)
             if not independent["collision_free"]:
                 success=False
+        if success and orientation_lock is not None:
+            orientation_validation=validate_path(
+                lambda row:T@fk(row),q,subdivisions=4,
+                tolerance_deg=float(orientation_lock["max_error_deg"]))
+            if not orientation_validation["passed"]:
+                success=False
     mode=request["mode"];expected="FAILURE" if mode=="BLOCK" else "SUCCESS";observed="SUCCESS" if success else "FAILURE"
     payload={"schema_version":3,"planner":"cuRobo","mode":mode,"planning_only":True,"execution_allowed":False,
         "expected_result":expected,"observed_result":observed,"expectation_met":expected==observed,
@@ -211,6 +233,7 @@ def main():
         "path_clearance_by_object_m":path_details,
         "path_limiting_object_id":min(path_details,key=path_details.get) if path_details else None,
         "central_tcp_margin_m":central_margin,
+        "orientation_validation":orientation_validation,
         "smoothness":smoothness,
         "independent_dense_validation":independent,
         "endpoint_clearance_by_object_m":{"start":start_details,"goal":goal_details},

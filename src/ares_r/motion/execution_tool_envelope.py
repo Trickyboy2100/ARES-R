@@ -12,7 +12,8 @@ def _digest(value):
         value, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 
 
-def build_execution_tool_envelope(collision_model, tool_pose_mm_rad, *, inflation_m=0.008):
+def build_execution_tool_envelope(collision_model, tool_pose_mm_rad, *, inflation_m=0.008,
+                                  observed_demo_only=False):
     """Return the pinned maximum-open ARES gripper box with sensor inflation.
 
     Controller TCP is a kinematic/task frame, not measured physical material.
@@ -24,14 +25,24 @@ def build_execution_tool_envelope(collision_model, tool_pose_mm_rad, *, inflatio
     source = collision_model["gripper_max_envelope_link6"]
     center = [float(v) for v in source["center_m"]]
     half = [float(v) for v in source["half_extents_m"]]
+    # B-point Pixel Pro hold-out (2026-09-22, cloud SHA a9198f13...)
+    # found four gripper-adjacent clusters outside the pinned mesh envelope.
+    # This is a conservative, right A/B demo-only collision envelope. It is
+    # deliberately not a new physical TCP calibration or a production model.
+    observed_bounds = [[-.062, -.047, -.007], [.062, .017, .192]]
     tool = [v / 1000.0 for v in tool_pose[:3]]
     if (len(center) != 3 or len(half) != 3
             or not all(math.isfinite(v) for v in center + half + tool_pose)
             or any(v <= 0 for v in half) or not 0.003 <= inflation_m <= 0.020
             or not 0.12 <= tool[2] <= 0.25):
         raise ValueError("untrusted gripper/TCP dimensions; no execution envelope")
-    lower = [center[i] - half[i] - inflation_m for i in range(3)]
-    upper = [center[i] + half[i] + inflation_m for i in range(3)]
+    lower = [center[i] - half[i] for i in range(3)]
+    upper = [center[i] + half[i] for i in range(3)]
+    if observed_demo_only:
+        lower = [min(lower[i], observed_bounds[0][i]) for i in range(3)]
+        upper = [max(upper[i], observed_bounds[1][i]) for i in range(3)]
+    lower = [v - inflation_m for v in lower]
+    upper = [v + inflation_m for v in upper]
     box = {"center_m": [(a + b) / 2 for a, b in zip(lower, upper)],
            "half_extents_m": [(b - a) / 2 for a, b in zip(lower, upper)]}
     provenance = {
@@ -41,6 +52,11 @@ def build_execution_tool_envelope(collision_model, tool_pose_mm_rad, *, inflatio
                                 "asset_revision": collision_model["asset_revision"]},
         "controller_tcp_task_frame_translation_m": tool,
         "controller_tcp_is_physical_collision_body": False,
+        "observed_demo_only": bool(observed_demo_only),
+        "observed_gripper_bounds_link6_m": observed_bounds if observed_demo_only else None,
+        "observed_source_pointcloud_sha256": (
+            "a9198f1354f80c9b53a38ec983048fdf82877d074768da4d482e23a355d9cfe6"
+            if observed_demo_only else None),
         "rough_flange_to_grasp_center_m": 0.145,
         "inflation_m": inflation_m,
         "TOOL_TCP_PHYSICAL_SEMANTICS_UNRESOLVED": "YES",
@@ -51,7 +67,8 @@ def build_execution_tool_envelope(collision_model, tool_pose_mm_rad, *, inflatio
 
 def verify_execution_tool_envelope(envelope, collision_model, tool_pose_mm_rad):
     expected = build_execution_tool_envelope(
-        collision_model, tool_pose_mm_rad, inflation_m=float(envelope["inflation_m"]))
+        collision_model, tool_pose_mm_rad, inflation_m=float(envelope["inflation_m"]),
+        observed_demo_only=envelope.get("observed_demo_only") is True)
     if envelope != expected:
         raise ValueError("execution tool envelope revision/source mismatch")
     return expected

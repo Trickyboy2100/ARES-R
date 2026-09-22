@@ -22,6 +22,7 @@ from ares_r.motion.curobo import CUROBO_COMMIT
 from ares_r.motion.curobo_params import planning_profile
 from ares_r.motion.se3 import pose_mm_rad_to_matrix
 from ares_r.motion.execution_tool_envelope import build_execution_tool_envelope
+from ares_r.motion.tcp_orientation import HORIZONTAL_FORWARD_R_BODY, MAX_ORIENTATION_ERROR_DEG
 from search_p32_ab import build_solver
 
 
@@ -63,6 +64,8 @@ def main():
     start_xyz = (solver.fk(start)[:3, 3].tolist() if source == "CURRENT" else
                  candidate[source+"_xyz_m"])
     orientation = np.asarray(candidate["orientation_matrix"])
+    if not np.allclose(orientation, HORIZONTAL_FORWARD_R_BODY, atol=1e-8):
+        raise ValueError("A/B TCP orientation must point BODY +X with horizontal fingers")
     if source == "CURRENT" and a.policy != "DIRECT":
         raise ValueError("current-to-A reposition must be a direct cuRobo request")
     ab = None
@@ -81,7 +84,8 @@ def main():
             raise ValueError("activation distance must be between 5 and 80 mm")
         parameters["optimizer_collision_activation_distance"] = a.collision_activation_distance_m
     collision_model=load(config["robot_collision"]["model"])
-    envelope=(build_execution_tool_envelope(collision_model,tool)
+    envelope=(build_execution_tool_envelope(collision_model,tool,
+                observed_demo_only=source!="CURRENT")
               if a.execution_tool_envelope else None)
     request = {"schema_version": 2, "planning_only": True, "execution_allowed": False,
         "TOOL_TCP_PHYSICAL_SEMANTICS_UNRESOLVED": "YES",
@@ -99,7 +103,11 @@ def main():
         "execution_tool_envelope":envelope,"controller_tool_pose_mm_rad":tool,
         "robot_yaml": config["curobo"]["robot_yaml"], "expected_commit": CUROBO_COMMIT,
         "planning_parameters": parameters, "benchmark_runs": 1,
-        "ab_demo": ab}
+        "ab_demo": ab,
+        "orientation_lock": ({"policy": "BODY_FORWARD_HORIZONTAL_V1",
+            "target_R_body_tcp": HORIZONTAL_FORWARD_R_BODY.tolist(),
+            "max_error_deg": MAX_ORIENTATION_ERROR_DEG,
+            "non_terminal_orientation_cost": True} if source != "CURRENT" else None)}
     (a.output / "planner_request.json").write_text(json.dumps(request, indent=2)+"\n")
     metadata = {"P31_PUSHED_AND_ALIGNED": True,
         "TOOL_TCP_PHYSICAL_SEMANTICS_UNRESOLVED": "YES",
@@ -111,7 +119,8 @@ def main():
         "candidate_index": a.candidate, "reference_corridor_only": True,
         "execution_tool_envelope_revision":envelope["revision"] if envelope else None,
         "optimizer_collision_activation_distance_m": parameters["optimizer_collision_activation_distance"],
-        "ab_contract": candidate, "explicit_waypoints": []}
+        "ab_contract": candidate, "explicit_waypoints": [],
+        "orientation_lock": request["orientation_lock"]}
     (a.output / "ab_plan_contract.json").write_text(json.dumps(metadata, indent=2)+"\n")
     env = dict(os.environ, PYTHONPATH=str(ROOT / "src"))
     with (a.output / "planner.log").open("w") as stream:

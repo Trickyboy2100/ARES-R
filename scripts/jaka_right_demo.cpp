@@ -80,14 +80,14 @@ static Path load(const char* file,bool micro,bool reset,bool pregrasp,bool super
             const double cap=micro?(j==5?.5001:.005):(long_move?150:20);
             if(std::abs(p.q[i][j]-p.q[0][j])>rad(cap))throw std::runtime_error("excursion cap");
             double v=i?(p.q[i][j]-p.q[i-1][j])/p.dt:0;
-            const double speed_cap=supervised_path?.015:rad(micro?.5:3.0);
-            const double accel_cap=supervised_path?.03:(micro?rad(1):.2);
+            const double speed_cap=supervised_path?.070:rad(micro?.5:3.0);
+            const double accel_cap=supervised_path?.10:(micro?rad(1):.2);
             if(std::abs(v)>speed_cap+1e-10||std::abs(v-previous_v[j])/p.dt>accel_cap+1e-10)
                 throw std::runtime_error("velocity/acceleration cap");
             previous_v[j]=v;
         }
     }
-    for(double v:previous_v)if(std::abs(v)/p.dt>(supervised_path?.03:(micro?rad(1):.2))+1e-10)throw std::runtime_error("end acceleration");
+    for(double v:previous_v)if(std::abs(v)/p.dt>(supervised_path?.10:(micro?rad(1):.2))+1e-10)throw std::runtime_error("end acceleration");
     if(f>>extra)throw std::runtime_error("trailing data");
     if((n-1)*p.dt>(long_move?240:115))throw std::runtime_error("duration cap");
     return p;
@@ -141,7 +141,7 @@ int main(int argc,char**argv){
                 if(lag>.04)throw std::runtime_error("feedback/send deadline");
                 if(actual.tool_id!=start.tool_id||actual.user_id!=start.user_id)throw std::runtime_error("tool/user changed");
                 if(distance(actual.tool,start.tool)>1e-6)throw std::runtime_error("tool offset changed");
-                if(distance(actual.q,previous)>rad(micro?.1:.2))throw std::runtime_error("tracking error");
+                if(distance(actual.q,previous)>rad(micro?.1:(supervised_path?.5:.2)))throw std::runtime_error("tracking error");
                 double tcp_displacement=0;for(int j=0;j<3;++j)tcp_displacement+=std::pow(actual.tcp[j]-start.tcp[j],2);
                 if(std::sqrt(tcp_displacement)>(micro?5:(long_move?1500:250)))throw std::runtime_error("actual TCP displacement cap");
                 JointValue target{};for(int j=0;j<6;++j)target.jVal[j]=path.q[i][j];

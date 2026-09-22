@@ -13,6 +13,9 @@ from pathlib import Path
 from ares_r.motion.native_demo import (
     NATIVE_MAX_JOINT_ACCEL_RAD_S2, NATIVE_MAX_JOINT_SPEED_RAD_S,
     NATIVE_TRACKING_BUDGET_DEG, NATIVE_TRACKING_SPEED_CAP_RAD_S,
+    SUPERVISED_HARD_TRACKING_GATE_DEG, SUPERVISED_TRACKING_BUDGET_DEG,
+    SUPERVISED_TRACKING_SPEED_CAP_RAD_S, SUPERVISED_MAX_JOINT_SPEED_RAD_S,
+    SUPERVISED_MAX_JOINT_ACCEL_RAD_S2,
     native_move_violations, predicted_tracking_gate_deg, resample_for_native,
 )
 
@@ -20,13 +23,13 @@ NATIVE_DT_S = 0.08
 NATIVE_MAX_DURATION_S = 240.0
 NATIVE_MAX_SAMPLES = 10000
 NATIVE_MAX_EXCURSION_RAD = math.radians(150)
-# A deliberate operating target below the 0.0218 rad/s tracking-derived hard
-# ceiling: this leaves model budget rather than planning at its exact edge.
-FIRST_DEMO_SPEED_RAD_S = 0.015
-FIRST_DEMO_ACCEL_RAD_S2 = 0.03
+# Supervised A/B preview ceiling; the separate generic native-demo cap remains
+# unchanged. This does not certify a particular path for physical execution.
+FIRST_DEMO_SPEED_RAD_S = SUPERVISED_MAX_JOINT_SPEED_RAD_S
+FIRST_DEMO_ACCEL_RAD_S2 = SUPERVISED_MAX_JOINT_ACCEL_RAD_S2
 # Built from the explicit supervised_path source with the site SDK.  The old
 # demo/pregrasp binary is intentionally not accepted for an A/B package.
-AUDITED_SITE_SENDER_SHA256 = "68b4123dbdf12d00f7da50bc5742ca0c2808859f4b9c8312244285948e483684"
+AUDITED_SITE_SENDER_SHA256 = "20339e7c88dd276bb9c4fbafc48382e840523519e30b249033eb932145360676"
 
 
 def verify_installed_sender(path):
@@ -56,7 +59,9 @@ def _geometry_error(source, sampled):
 
 def package_native_preview(points, source_dt_s, site_limits, *, tool_id,
                            controller_tool_pose_mm_rad, captured_at_unix,
-                           max_duration_s=NATIVE_MAX_DURATION_S):
+                           max_duration_s=NATIVE_MAX_DURATION_S,
+                           speed_ceiling_rad_s=FIRST_DEMO_SPEED_RAD_S,
+                           accel_ceiling_rad_s2=FIRST_DEMO_ACCEL_RAD_S2):
     """Return native file text and audit, or raise without writing a file."""
     source = [[float(v) for v in row] for row in points]
     if (len(source) < 2 or any(len(row) != 6 or not all(math.isfinite(v) for v in row)
@@ -68,11 +73,13 @@ def package_native_preview(points, source_dt_s, site_limits, *, tool_id,
     lower = [float(v) for v in site_limits["lower_rad"]]
     upper = [float(v) for v in site_limits["upper_rad"]]
     soft = float(site_limits["soft_limit_margin_rad"])
+    if not 0 < speed_ceiling_rad_s <= FIRST_DEMO_SPEED_RAD_S or not 0 < accel_ceiling_rad_s2 <= FIRST_DEMO_ACCEL_RAD_S2:
+        raise ValueError("supervised sender speed/acceleration ceiling exceeded")
     speed = [min(float(site_limits["max_velocity_rad_s"][i]),
-                 NATIVE_MAX_JOINT_SPEED_RAD_S, NATIVE_TRACKING_SPEED_CAP_RAD_S,
-                 FIRST_DEMO_SPEED_RAD_S) for i in range(6)]
+                 SUPERVISED_MAX_JOINT_SPEED_RAD_S, SUPERVISED_TRACKING_SPEED_CAP_RAD_S,
+                 speed_ceiling_rad_s) for i in range(6)]
     accel = [min(float(site_limits["max_acceleration_rad_s2"][i]),
-                 NATIVE_MAX_JOINT_ACCEL_RAD_S2, FIRST_DEMO_ACCEL_RAD_S2)
+                 NATIVE_MAX_JOINT_ACCEL_RAD_S2, accel_ceiling_rad_s2)
              for i in range(6)]
     if not 0 < max_duration_s <= NATIVE_MAX_DURATION_S:
         raise ValueError("cannot exceed 240 s native reposition duration")
@@ -97,7 +104,7 @@ def package_native_preview(points, source_dt_s, site_limits, *, tool_id,
     if violations:
         raise ValueError("native velocity/acceleration cap: %s" % violations[:3])
     predicted_tracking = predicted_tracking_gate_deg(sampled, NATIVE_DT_S)
-    if predicted_tracking > NATIVE_TRACKING_BUDGET_DEG + 1e-9:
+    if predicted_tracking > SUPERVISED_TRACKING_BUDGET_DEG + 1e-9:
         raise ValueError("predicted native tracking budget")
     rows = ["ARES_R_RIGHT_V1 %d %.17g %d %d" % (
                 len(sampled), NATIVE_DT_S, int(captured_at_unix), int(tool_id)),
@@ -118,12 +125,12 @@ def package_native_preview(points, source_dt_s, site_limits, *, tool_id,
         "duration_s": duration, "max_joint_speed_rad_s": velocity,
         "max_joint_accel_rad_s2": acceleration,
         "speed_cap_rad_s": min(speed), "accel_cap_rad_s2": min(accel),
-        "tracking_speed_cap_rad_s": NATIVE_TRACKING_SPEED_CAP_RAD_S,
+        "tracking_speed_cap_rad_s": SUPERVISED_TRACKING_SPEED_CAP_RAD_S,
         "predicted_tracking_gate_deg": predicted_tracking,
-        "tracking_budget_deg": NATIVE_TRACKING_BUDGET_DEG,
-        "tracking_margin_deg": NATIVE_TRACKING_BUDGET_DEG-predicted_tracking,
-        "native_sender_hard_tracking_gate_deg": 0.2,
-        "predicted_margin_to_sender_hard_gate_deg": 0.2-predicted_tracking,
+        "tracking_budget_deg": SUPERVISED_TRACKING_BUDGET_DEG,
+        "tracking_margin_deg": SUPERVISED_TRACKING_BUDGET_DEG-predicted_tracking,
+        "native_sender_hard_tracking_gate_deg": SUPERVISED_HARD_TRACKING_GATE_DEG,
+        "predicted_margin_to_sender_hard_gate_deg": SUPERVISED_HARD_TRACKING_GATE_DEG-predicted_tracking,
         "max_excursion_rad": excursion,
         "max_joint_geometry_error_rad": geometry_error,
         "native_file_sha256": hashlib.sha256(content.encode()).hexdigest(),

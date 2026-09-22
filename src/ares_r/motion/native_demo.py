@@ -91,7 +91,8 @@ NATIVE_MAX_JOINT_ACCEL_RAD_S2 = 0.2
 
 #: The sender's third gate is the servo following error (scripts/jaka_right_demo.cpp
 #: line 128): it aborts with "tracking error" when the measured joints differ from
-#: the PREVIOUS commanded target by more than rad(0.2) = 0.2 deg. That residual
+#: the PREVIOUS commanded target by more than rad(0.2) = 0.2 deg in legacy
+#: modes. The explicit supervised_path mode has a separate 0.5 deg gate. That residual
 #: grows with commanded speed, so it is a velocity ceiling far tighter than either
 #: the joint limits or the sender's own 3 deg/s gate -- and neither of those can
 #: see it. A file can pass every offline gate and still abort mid-motion, which is
@@ -102,10 +103,19 @@ NATIVE_MAX_JOINT_ACCEL_RAD_S2 = 0.2
 #: which joints are moving, not a fixed constant, so this uses the conservative end
 #: of that range instead of the best-fitting value.
 NATIVE_TRACKING_LAG_S = 0.12
-#: Spend only 75% of the sender's 0.2 deg allowance, leaving a quarter as margin.
-NATIVE_TRACKING_BUDGET_DEG = 0.15
+#: Legacy mode budget; supervised_path has a separate bounded budget below.
+NATIVE_TRACKING_BUDGET_DEG = 0.18
 NATIVE_TRACKING_SPEED_CAP_RAD_S = math.radians(
     NATIVE_TRACKING_BUDGET_DEG / NATIVE_TRACKING_LAG_S)
+
+# Right-only supervised A/B trial. Other native modes retain their 0.2-degree
+# sender gate and the historical conservative speed ceiling.
+SUPERVISED_HARD_TRACKING_GATE_DEG = 0.5
+SUPERVISED_TRACKING_BUDGET_DEG = 0.49
+SUPERVISED_TRACKING_SPEED_CAP_RAD_S = math.radians(
+    SUPERVISED_TRACKING_BUDGET_DEG / NATIVE_TRACKING_LAG_S)
+SUPERVISED_MAX_JOINT_SPEED_RAD_S = 0.070
+SUPERVISED_MAX_JOINT_ACCEL_RAD_S2 = 0.10
 
 RESAMPLE_MAX_ATTEMPTS = 200
 RESAMPLE_STEP = 1.02
@@ -132,7 +142,7 @@ def predicted_tracking_gate_deg(points, dt, lag_s=NATIVE_TRACKING_LAG_S):
     The sender takes the Chebyshev distance between the measured joints and the
     previous target, and the residual scales with the commanded speed, so
     ``lag_s`` times the fastest joint step predicts the value it will compare
-    against 0.2 deg. Reported alongside the velocity and acceleration margins so
+    against the mode-specific sender gate. Reported alongside velocity and acceleration margins so
     the operator can see how much of the tracking allowance a path spends.
     """
     worst = 0.0

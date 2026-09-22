@@ -4,11 +4,32 @@ import unittest
 from unittest.mock import patch
 from pathlib import Path
 import tempfile
+import signal
 
 from ares_r.motion import ab_fastlane
 
 
 class FastLaneTests(unittest.TestCase):
+    def test_terminal_stop_signals_only_registered_native_identity(self):
+        with tempfile.TemporaryDirectory() as directory:
+            state = Path(directory) / "session.json"
+            active = Path(directory) / "native.json"
+            with patch.object(ab_fastlane, "STATE", state), \
+                    patch.object(ab_fastlane, "ACTIVE_NATIVE", active), \
+                    patch.object(ab_fastlane, "_matching_native", return_value=True), \
+                    patch.object(ab_fastlane.os, "kill") as kill:
+                ab_fastlane.write_json(state, {"state": "EXECUTING", "candidate_id": "one"})
+                ab_fastlane.write_json(active, {"pid": 12345, "start_ticks": 77})
+                result = ab_fastlane.stop()
+                self.assertTrue(result["native_abort_signal_sent"])
+                kill.assert_called_once_with(12345, signal.SIGTERM)
+            with patch.object(ab_fastlane, "STATE", state), \
+                    patch.object(ab_fastlane, "ACTIVE_NATIVE", active), \
+                    patch.object(ab_fastlane, "_matching_native", return_value=False), \
+                    patch.object(ab_fastlane.os, "kill") as kill:
+                self.assertFalse(ab_fastlane.stop()["native_abort_signal_sent"])
+                kill.assert_not_called()
+
     def test_execute_next_remains_locked(self):
         with self.assertRaises(PermissionError):
             ab_fastlane.execute_next()
