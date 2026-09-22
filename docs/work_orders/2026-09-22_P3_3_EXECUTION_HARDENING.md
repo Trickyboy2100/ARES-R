@@ -50,6 +50,30 @@ tool/collision conservative execution envelope
 
 No AMR, arm or gripper motion in P3.3.
 
+## 1.1 Fast-lane split: first supervised CLEAR today
+
+P3.3 must distinguish two readiness levels:
+
+~~~text
+P3.3A FIRST_CLEAR_READY
+    CURRENT→A + A↔B in a box-free fresh scene
+
+P3.3B AVOID_READY
+    box-present scan-before-each-leg avoidance
+~~~
+
+Do not hold P3.3A hostage to AVOID-only planner variability if the fresh CLEAR route has a large, repeatable margin.
+
+Target today:
+
+~~~text
+P3.3A → request one-time CURRENT→A supervised motion
+→ then fresh-scan A→B CLEAR
+→ then fresh-scan B→A CLEAR
+~~~
+
+P3.3B can follow later the same day after CLEAR tracking evidence is available.
+
 ## 2. Tool/TCP execution-envelope reconciliation
 
 Known evidence:
@@ -62,13 +86,26 @@ controller active TCP Z ≈ 184 mm
 
 Do NOT change the controller TCP and do NOT claim the 145 mm rough measurement commissions the TCP semantic.
 
-For the A/B demo, build an EXECUTION_COLLISION_ENVELOPE that conservatively covers:
+The new physical measurement materially changes the interpretation:
 
-- the pinned ARES gripper body/fingers;
-- the full current controller TCP ray/offset;
-- a small explicit sensor/model safety inflation.
+~~~text
+manual physical grasp center ≈145 mm
+pinned ARES physical gripper extent ≈149 mm
+~~~
 
-The envelope may extend beyond the physical gripper; over-conservatism is acceptable for this demo.
+These agree to roughly 4 mm and support the pinned gripper geometry as the physical collision body for this movement-only demo.
+
+The controller TCP at ≈184 mm is therefore treated as a task/kinematic frame unless there is physical material extending to it. Do NOT automatically invent 35–40 mm of collision geometry merely to fill the virtual TCP offset.
+
+For execution collision, use:
+
+- pinned ARES gripper/finger physical geometry;
+- conservative small model/sensor inflation;
+- any actually measured physical protrusion beyond the mesh, if later observed.
+
+Keep the controller TCP for FK/target semantics.
+
+The discrepancy remains documented because the controller TCP is not the measured grasp center, but it no longer blocks a non-contact free-space movement demo by itself.
 
 Record:
 
@@ -92,7 +129,9 @@ This variability must be resolved before execution.
 
 ### 3.1 Parameter/repeat sweep
 
-Using frozen P3.2 CLEAR and AVOID scenes, run repeated planning-only trials with a small sweep of relevant cuRobo settings, especially optimizer collision activation distance.
+For FAST-LANE P3.3A, first verify the approved/default planner profile on fresh/frozen CLEAR scenes and CURRENT→A. If CLEAR margins are comfortably above the gates, do not spend hours sweeping AVOID parameters before the first CLEAR motion.
+
+For P3.3B AVOID, use frozen P3.2 AVOID scenes and run repeated planning-only trials with a small sweep of relevant cuRobo settings, especially optimizer collision activation distance.
 
 Suggested candidates, bounded by current code validation:
 
@@ -129,12 +168,18 @@ Do not accept one lucky safe-looking trajectory.
 
 Choose one versioned planner profile only if repeated trajectories meet a conservative execution gate.
 
-Initial engineering gate for the FIRST supervised demo:
+Initial engineering gates:
 
 ~~~text
-dense modeled clearance >= 30 mm
-for every accepted repeat
+P3.3A first CLEAR:
+  CURRENT→A selected trajectory dense modeled clearance >= 30 mm
+  A→B/B→A fresh CLEAR dense modeled clearance >= 50 mm
+
+P3.3B AVOID:
+  every accepted repeat dense modeled clearance >= 30 mm
 ~~~
+
+The CLEAR threshold is intentionally higher because the current box-free P3.2 artifacts already showed about 103 mm modeled clearance; if a fresh CLEAR cannot retain a wide margin, execution should stop rather than consume time tuning around it.
 
 If the conservative execution tool envelope makes 30 mm infeasible, STOP and report rather than lowering the gate silently.
 
@@ -179,6 +224,21 @@ at endpoint
 No explicit waypoint and no stale scene reuse.
 
 The straight corridor classifier remains diagnostic/reference-only. It does NOT select a different planner.
+
+## 5.1 Precision/commissioning speed profile
+
+For the first physical motion, prefer the existing precision envelope:
+
+~~~text
+velocity <= 0.015 rad/s
+acceleration <= 0.03 rad/s²
+~~~
+
+This is stricter than both the nominal slow profile and the tracking-derived cap.
+
+P3.3 may prepare a provenance-backed state transition for the precision profile from UNCOMMISSIONED to COMMISSIONING_READY based on existing native execution evidence and offline trajectory checks. It must not silently label normal/site_max as commissioned.
+
+Actual motion still requires explicit user authorization.
 
 ## 6. Native/ServoJ execution packaging
 
@@ -337,6 +397,8 @@ SAFETY_PREFLIGHT_READY = YES/NO
 CURRENT_TO_A_EXECUTION_PACKAGE_READY = YES/NO
 A_TO_B_EXECUTION_PACKAGE_READY = YES/NO
 B_TO_A_EXECUTION_PACKAGE_READY = YES/NO
+P3_3A_FIRST_CLEAR_READY = YES/NO
+P3_3B_AVOID_READY = YES/NO
 READY_TO_REQUEST_FIRST_SUPERVISED_MOTION = YES/NO
 ~~~
 
