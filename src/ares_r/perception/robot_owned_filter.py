@@ -44,6 +44,7 @@ class RobotOwnedFilterGeometry:
     spheres: tuple
     planning_sphere_cell_m: float
     obb_sensor_margin_m: float
+    gripper_sensor_margin_m: float
     sphere_sensor_margin_m: float
     source_scene_revision: str
     revision: str
@@ -55,6 +56,7 @@ class RobotOwnedFilterGeometry:
                 "spheres": [sphere.as_dict() for sphere in self.spheres],
                 "planning_sphere_cell_m": self.planning_sphere_cell_m,
                 "obb_sensor_margin_m": self.obb_sensor_margin_m,
+                "gripper_sensor_margin_m": self.gripper_sensor_margin_m,
                 "sphere_sensor_margin_m": self.sphere_sensor_margin_m,
                 "source_scene_revision": self.source_scene_revision,
                 "revision": self.revision,
@@ -93,10 +95,13 @@ def _box_grid_spheres(box: CollisionBox, cell_m: float) -> list:
 
 def build_robot_owned_filter(snapshot: RobotGeometrySnapshot, *, planning_sphere_cell_m=.035,
                              obb_sensor_margin_m=.020,
+                             gripper_sensor_margin_m=.020,
                              sphere_sensor_margin_m=.003) -> RobotOwnedFilterGeometry:
     if not .015 <= planning_sphere_cell_m <= .060:
         raise ValueError("planning sphere cell must be between 15 and 60 mm")
-    if not 0 <= obb_sensor_margin_m <= .05 or not 0 <= sphere_sensor_margin_m <= .02:
+    if (not 0 <= obb_sensor_margin_m <= .05 or
+            not 0 <= gripper_sensor_margin_m <= .05 or
+            not 0 <= sphere_sensor_margin_m <= .02):
         raise ValueError("sensor margins exceed commissioned bounds")
     boxes = tuple(box for box in snapshot.boxes if box.filter_owned)
     planning_boxes = [box for box in boxes
@@ -106,11 +111,13 @@ def build_robot_owned_filter(snapshot: RobotGeometrySnapshot, *, planning_sphere
     payload = {"scene": snapshot.scene_revision,
                "cell_m": planning_sphere_cell_m,
                "obb_margin_m": obb_sensor_margin_m,
+               "gripper_margin_m": gripper_sensor_margin_m,
                "sphere_margin_m": sphere_sensor_margin_m,
                "boxes": [box.as_dict() for box in boxes],
                "spheres": [sphere.as_dict() for sphere in spheres]}
     return RobotOwnedFilterGeometry(boxes, spheres, planning_sphere_cell_m,
-                                    obb_sensor_margin_m, sphere_sensor_margin_m,
+                                    obb_sensor_margin_m, gripper_sensor_margin_m,
+                                    sphere_sensor_margin_m,
                                     snapshot.scene_revision, _digest(payload))
 
 
@@ -133,7 +140,10 @@ def filter_robot_owned(points_body_m, geometry: RobotOwnedFilterGeometry):
         raise ValueError("BODY Nx3 points required")
     obb_hit = np.zeros(len(points), dtype=bool)
     for box in geometry.boxes:
-        obb_hit |= _inside_box(points, box, geometry.obb_sensor_margin_m)
+        margin = (geometry.gripper_sensor_margin_m
+                  if box.kind == "gripper_max_envelope"
+                  else geometry.obb_sensor_margin_m)
+        obb_hit |= _inside_box(points, box, margin)
     sphere_hit = np.zeros(len(points), dtype=bool)
     try:
         from scipy.spatial import cKDTree

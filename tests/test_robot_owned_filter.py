@@ -30,6 +30,22 @@ class RobotOwnedFilterTest(unittest.TestCase):
         keep, _ = filter_robot_owned(np.asarray([[.3, .3, .3]]), geometry)
         self.assertTrue(keep[0])
 
+    def test_gripper_only_margin_does_not_expand_other_robot_boxes(self):
+        base = snapshot()
+        gripper = CollisionBox("right/gripper", "right_gripper_tool",
+                               "gripper_max_envelope", (0.5, 0, 0),
+                               ((1, 0, 0), (0, 1, 0), (0, 0, 1)),
+                               (.05, .02, .08), True, "test")
+        state = RobotGeometrySnapshot(base.boxes + (gripper,), base.joints_rad,
+                                      base.geometry_revision, base.joint_snapshot_revision,
+                                      base.tool_revision, base.scene_revision, {}, {})
+        geometry = build_robot_owned_filter(state, obb_sensor_margin_m=.02,
+                                            gripper_sensor_margin_m=.04)
+        points = np.asarray([[.5, .055, 0], [.0, .075, 0], [.9, .9, .9]])
+        keep, _ = filter_robot_owned(points, geometry)
+        self.assertEqual(keep.tolist(), [False, True, True])
+        self.assertEqual(geometry.as_dict()["gripper_sensor_margin_m"], .04)
+
 
 if __name__ == "__main__":
     unittest.main()

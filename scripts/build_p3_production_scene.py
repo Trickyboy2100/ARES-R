@@ -94,6 +94,8 @@ def main():
                    help="planning-only joint delta used when creating a new A/B contract")
     p.add_argument("--self-filter-margin-m",type=float,default=.030,
                    help="canonical robot-geometry self-filter margin (default: 30 mm)")
+    p.add_argument("--gripper-self-filter-margin-m",type=float,default=.020,
+                   help="gripper-only observed-point ownership margin (default: 20 mm)")
     p.add_argument("--capture-pointer",
                    help="optional capture pointer with camera capture and end-to-end timings")
     p.add_argument("--obstacle-pipeline",choices=("single_aabb","multi_primitive"),
@@ -113,6 +115,7 @@ def main():
     if a.obstacle_pipeline=="multi_primitive":
         robot_owned=build_robot_owned_filter(geometry,planning_sphere_cell_m=.035,
                                              obb_sensor_margin_m=.020,
+                                             gripper_sensor_margin_m=a.gripper_self_filter_margin_m,
                                              sphere_sensor_margin_m=.003)
         keep,sf=filter_robot_owned(cloud.points_body_m,robot_owned)
     else:

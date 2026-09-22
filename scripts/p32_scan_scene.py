@@ -93,7 +93,8 @@ def main():
     run(ROOT / "scripts/build_p3_production_scene.py", "--mode", args.mode,
         "--manifest", manifest, "--geometry", geometry,
         "--left-audit", left, "--right-audit", right,
-        "--obstacle-pipeline", "multi_primitive", "--capture-pointer",
+        "--obstacle-pipeline", "multi_primitive",
+        "--gripper-self-filter-margin-m", ".040", "--capture-pointer",
         output / "capture_pointer.json", "--output", scene, *target_args,
         python=str(args.open3d_python))
     report = json.loads((scene / "scene_report.json").read_text())
