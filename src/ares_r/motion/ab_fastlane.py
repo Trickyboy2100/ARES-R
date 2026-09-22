@@ -23,7 +23,7 @@ from .safety_kernel import DualArmSafetyKernel
 
 ROOT = Path(__file__).resolve().parents[3]
 SEARCH = ROOT / "worklog/evidence/2026-09-21-p3-2-ab-demo/search_v2.json"
-SENDER = Path("/home/yikun/ares-r-curobo-assets/jaka_right_supervised_path_v3")
+SENDER = Path("/home/yikun/ares-r-curobo-assets/jaka_right_supervised_path_v4")
 STATE = ROOT / "logs/ab_fastlane_session.json"
 EVIDENCE = ROOT / "worklog/evidence/2026-09-22-p3-3a-clear-fastlane"
 JOINT_MATCH_RAD = math.radians(0.02)
@@ -121,7 +121,7 @@ def prepare_plan(scene_dir, plan_dir):
         controller_tool_pose_mm_rad=audit["tool_data"]["pose_mm_rad"],
         captured_at_unix=captured_at)
     sender_hash = verify_installed_sender(SENDER)
-    destination = plan_dir / "supervised_path_package_v3"
+    destination = plan_dir / "supervised_path_package_v4"
     if destination.exists():
         raise FileExistsError("package cannot overwrite a previewed trajectory")
     destination.mkdir()

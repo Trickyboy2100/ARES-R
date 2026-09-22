@@ -86,7 +86,7 @@ static Path load(const char* file,bool micro,bool reset,bool pregrasp,bool super
     return p;
 }
 int main(int argc,char**argv){
-    std::signal(SIGINT,stop_signal);std::signal(SIGTERM,stop_signal);
+    std::signal(SIGINT,stop_signal);std::signal(SIGTERM,stop_signal);std::signal(SIGHUP,stop_signal);
     std::signal(SIGPIPE,SIG_IGN);
     std::cout<<std::setprecision(16);
     const bool snapshot=argc==2&&std::string(argv[1])=="snapshot";
@@ -97,6 +97,7 @@ int main(int argc,char**argv){
     const bool supervised_path=argc==4&&std::string(argv[1])=="supervised_path";
     const bool validate_supervised=argc==3&&std::string(argv[1])=="validate-supervised-path";
     const bool long_move=reset||pregrasp||supervised_path;
+    const pid_t launch_parent=getppid();
     if(!snapshot&&!validate_supervised&&(!(micro||demo||reset||pregrasp||supervised_path)||std::string(argv[3])!="CONFIRMED_RIGHT_CLEAR")){std::cerr<<"invalid explicit mode/confirmation\n";return 2;}
     Path path;try{if(!snapshot)path=load(argv[2],micro,reset,pregrasp,supervised_path||validate_supervised);}catch(const std::exception&e){std::cerr<<e.what()<<std::endl;return 2;}
     if(validate_supervised){std::cout<<"VALID_SUPERVISED_PATH samples="<<path.q.size()<<" duration_s="<<(path.q.size()-1)*path.dt<<"; no controller connection"<<std::endl;return 0;}
@@ -124,7 +125,7 @@ int main(int argc,char**argv){
             auto deadline=Clock::now();Q previous=path.q.front();
             for(size_t i=0;i<path.q.size();++i){
                 std::this_thread::sleep_until(deadline);
-                if(interrupted)throw std::runtime_error("interrupted");
+                if(interrupted || (supervised_path && getppid()!=launch_parent))throw std::runtime_error("interrupted / supervisor lost");
                 auto before=Clock::now();State actual=read(robot,true);
                 double lag=std::chrono::duration<double>(Clock::now()-deadline).count();
                 if(lag>.04)throw std::runtime_error("feedback/send deadline");
@@ -142,7 +143,7 @@ int main(int argc,char**argv){
                 previous=path.q[i];deadline+=std::chrono::milliseconds(80);
             }
             std::this_thread::sleep_until(deadline);
-            if(interrupted)throw std::runtime_error("interrupted");
+            if(interrupted || (supervised_path && getppid()!=launch_parent))throw std::runtime_error("interrupted / supervisor lost");
             auto before=Clock::now();State final=read(robot);
             if(Clock::now()-before>std::chrono::milliseconds(40)||distance(final.q,path.q.back())>rad(.05))
                 throw std::runtime_error("final feedback mismatch");

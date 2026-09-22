@@ -26,7 +26,7 @@ FIRST_DEMO_SPEED_RAD_S = 0.015
 FIRST_DEMO_ACCEL_RAD_S2 = 0.03
 # Built from the explicit supervised_path source with the site SDK.  The old
 # demo/pregrasp binary is intentionally not accepted for an A/B package.
-AUDITED_SITE_SENDER_SHA256 = "7c760d2b913af068e7b85012ae520ca6e9eb7e254e15837969df583f933de337"
+AUDITED_SITE_SENDER_SHA256 = "c2c3f5e415a9ca3609d5049b482f0f91083cae77fba419c20f1ea178dd7d1938"
 
 
 def verify_installed_sender(path):
