@@ -4,6 +4,12 @@ Status: **PLANNING-ONLY; NO DEVICE MOTION; LOCAL COMMIT ONLY; NO PUSH.**
 
 ## Latest operator override
 
+两条现场 override 原文：
+
+> 明确override：从A到B或者反过来一直保持用curobo规划，而不是走真直线，这次demo中所有点到点运动都走curobo规划
+
+> 小箱子已移走，请继续工作。我不希望有waypoint，我希望只是在避障状态下从A点到B点或者反过来运动进行curobo规划，动作还要相对平滑
+
 Every point-to-point leg, including CURRENT→A, A→B and B→A, uses cuRobo. No true-Cartesian commanded path and **no explicit waypoint**, including for avoidance. The A–B Cartesian chord remains a *reference-only*, whole-arm-plus-gripper swept-corridor classifier; it is never sent to the controller. When the real observed box blocks that chord, cuRobo receives only start, goal and the fresh collision world and generates its own avoidance trajectory. This override supersedes the P3.2 order's straight-CLEAR and forced-OVERHEAD requirements. `validate_curobo_only_policy()` rejects explicit waypoint contracts.
 
 The rough right flange-to-grasp-center measurement is ≈145 mm; pinned gripper distal extent ≈149 mm; controller active TCP Z≈184 mm. No tool revision was changed. `TOOL_TCP_PHYSICAL_SEMANTICS_UNRESOLVED = YES`, so `READY_FOR_FIRST_SUPERVISED_CLEAR_EXECUTION = NO`. The new demo state machine's `execute_next` raises `PermissionError` unconditionally.
@@ -34,6 +40,8 @@ Each leg used a separate Pixel Pro capture and fresh read-only dual-arm diagnost
 | BLOCK A→B | `SCENE_337a3a1f87a84165956ee211b27bb997` | EXPECTED FAILURE; no fallback trajectory | goal −117 mm | none | 5.42 s |
 
 The cuRobo-generated AVOID arcs rise 154.7/156.5 mm above the endpoints without an imposed overhead point. Relative to matching-direction CLEAR paths, maximum TCP path separation is 202.4/204.1 mm; modeled minimum gap in those artifacts is 35.4/34.6 mm. A further AVOID A→B repeat with the final waypoint-rejection guard, on the same frozen scene, also succeeded but returned a **9.3 mm** minimum modeled gap and 121.0 mm arc. This exposes planner-solution variability: repeat planning success does not certify a stable clearance margin. It is model clearance, **not** certified physical clearance. CLEAR cuRobo paths happen to be nearly direct, but are not exact Cartesian lines.
+
+人工看过本轮三视图与 CLEAR/AVOID 轨迹对比图后，已确认**同意这次轨迹看起来的效果**。这是对规划可视化表现的认可，不是对最小间隙、TCP 标定、平滑实机跟踪或实机执行安全性的验收；上述执行禁用状态不变。
 
 Trajectory continuity was measured at 8 ms interpolation: CLEAR max joint step ≈0.0125 rad, AVOID ≈0.0116 rad. An *offline preview* time-scale factor ≈4.46 for CLEAR or ≈4.13 for AVOID would bound peak joint speed near 0.35 rad/s; it has not been applied to a real ServoJ executor. Smoothness and tracking remain uncommissioned.
 
