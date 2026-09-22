@@ -1,6 +1,6 @@
 # P3.2 — cuRobo-only A/B planning checkpoint (2026-09-22)
 
-Status: **PLANNING-ONLY; NO DEVICE MOTION; LOCAL COMMIT ONLY; NO PUSH.**
+Status: **PLANNING-ONLY; NO DEVICE MOTION.** P3.2 was pushed to GitHub integration HEAD `d258c30476868b2789c1cd61ac5c402a93b5ebf6`. Physical execution remains disabled.
 
 ## Latest operator override
 

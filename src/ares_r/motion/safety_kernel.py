@@ -48,6 +48,74 @@ class DualArmSafetyKernel:
         self.execution_enabled = bool(execution_enabled)
         self.speed_profiles = speed_profiles
 
+    def preflight_execution_candidate(self, candidate, live, native_audit, *, now=None,
+                                      speed_profile="slow"):
+        """Report every P3.3 gate without minting a permit or sending motion.
+
+        This diagnostic deliberately does not invoke ``authorize``; that
+        fail-closed entry point remains disabled for P3.3. Missing live facts
+        are reported as failures, never inferred from a historical snapshot.
+        """
+        from .execution_candidate import (MIN_FIRST_DEMO_CLEARANCE_M,
+                                          NATIVE_START_TOLERANCE_RAD,
+                                          candidate_binding_reasons)
+        from .native_demo import NATIVE_TRACKING_BUDGET_DEG, NATIVE_TRACKING_SPEED_CAP_RAD_S
+        now = time.time() if now is None else float(now)
+        binding = candidate_binding_reasons(candidate, live, now=now)
+        start = live.get("actual_start_joints_rad")
+        planned = candidate.get("planned_start_joints_rad")
+        captured = candidate.get("actual_start_joints_rad")
+        start_match = (start is not None and planned is not None and captured is not None
+                       and len(start) == len(planned) == len(captured) == 6
+                       and max(abs(float(a)-float(b)) for a, b in zip(start, planned))
+                       <= NATIVE_START_TOLERANCE_RAD
+                       and max(abs(float(a)-float(b)) for a, b in zip(start, captured))
+                       <= NATIVE_START_TOLERANCE_RAD)
+        scene_keys = ("SCENE_SNAPSHOT_ID_CHANGED", "SCENE_DIGEST_CHANGED",
+                      "POINTCLOUD_SHA256_CHANGED", "T_BODY_CAMERA_REVISION_CHANGED",
+                      "WHOLE_ROBOT_GEOMETRY_REVISION_CHANGED", "EXPIRED")
+        scene_fresh = (not any(reason in binding for reason in scene_keys)
+                       and 0 <= now - candidate.get("scene_captured_at_unix", -math.inf) <= 300)
+        tool_keys = ("TOOL_REVISION_CHANGED", "CONTROLLER_TOOL_ID_CHANGED",
+                     "CONTROLLER_TOOL_POSE_MM_RAD_CHANGED", "EXECUTION_TOOL_ENVELOPE_REVISION_CHANGED")
+        profile = self.speed_profiles.get(speed_profile)
+        profile_state = (getattr(profile, "state", None) if profile is not None else None)
+        gates = {
+            "START_MATCH": bool(start_match),
+            "SCENE_FRESH": bool(scene_fresh),
+            "BASE_STATIONARY": live.get("base_stationary") is True,
+            "INACTIVE_ARM_KNOWN": (live.get("inactive_arm_known") is True
+                                   and "INACTIVE_LEFT_ARM_REVISION_CHANGED" not in binding),
+            "TOOL_REVISION_MATCH": not any(reason in binding for reason in tool_keys),
+            "TRAJECTORY_COLLISION_CHECKED": (
+                candidate.get("dense_min_clearance_m", -math.inf) >= MIN_FIRST_DEMO_CLEARANCE_M
+                and live.get("trajectory_hash") == candidate.get("trajectory_hash")
+                and live.get("native_trajectory_hash") == candidate.get("native_trajectory_hash")
+                and candidate.get("motion_policy") == "CUROBO_ONLY_FOR_EVERY_POINT_TO_POINT_LEG"
+                and candidate.get("explicit_waypoints") == []),
+            "CENTRAL_EXCLUSION": candidate.get("central_tcp_margin_m", -math.inf) > 0,
+            "VELOCITY": native_audit.get("max_joint_speed_rad_s", math.inf)
+                        <= min(0.03, NATIVE_TRACKING_SPEED_CAP_RAD_S) + 1e-12,
+            "ACCELERATION": native_audit.get("max_joint_accel_rad_s2", math.inf) <= 0.06 + 1e-12,
+            "NATIVE_SENDER_LIMITS": (
+                native_audit.get("sample_period_s") == 0.08
+                and 2 <= native_audit.get("sample_count", 0) <= 10000
+                and native_audit.get("duration_s", math.inf) <= 240
+                and native_audit.get("max_excursion_rad", math.inf) <= math.radians(150)
+                and native_audit.get("max_joint_geometry_error_rad", math.inf) <= 1e-8
+                and native_audit.get("native_file_sha256") == candidate.get("native_trajectory_hash")
+                and live.get("native_sender_binary_sha256")
+                    == candidate.get("native_sender_binary_sha256")),
+            "TRACKING_PREDICTION": native_audit.get("predicted_tracking_gate_deg", math.inf)
+                                   <= NATIVE_TRACKING_BUDGET_DEG + 1e-9,
+            "EXECUTION_ENABLED": self.execution_enabled,
+            "SPEED_PROFILE_COMMISSIONED": profile_state == "COMMISSIONED",
+        }
+        return {"planning_only": True, "permit_issued": False, "gates": gates,
+                "binding_reasons": binding,
+                "blockers": [name for name, passed in gates.items() if not passed],
+                "ready": all(gates.values())}
+
     def authorize(self, *, arm, points, sample_period_s, geometry_samples,
                   speed_profile, live_start, tool_revision, planned_tool_revision,
                   scene_snapshot_id, collision_checked, base_stationary,

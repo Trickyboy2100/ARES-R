@@ -12,6 +12,8 @@ import sys,time,xml.etree.ElementTree as ET
 ARM_NAMES=["joint%d"%i for i in range(1,7)]
 from ares_r.perception.robot_owned_filter import grid_spheres_local as grid_spheres
 from ares_r.motion.ab_demo_state import classify_reference_corridor,validate_curobo_only_policy
+from ares_r.motion.execution_tool_envelope import verify_execution_tool_envelope
+from ares_r.motion.independent_path_validation import validate_dense_world
 
 
 def transform(xyz,rpy):
@@ -36,6 +38,8 @@ def main():
     request=json.loads(Path(sys.argv[1]).read_text());output=Path(sys.argv[2])
     if request.get("planning_only") is not True or request.get("execution_allowed") is not False:
         raise RuntimeError("P3 request must be planning-only and execution-blocked")
+    if request.get("point_to_point_policy") is not None:
+        validate_curobo_only_policy(request["point_to_point_policy"])
     scene=request["compiled_scene"]
     if scene.get("planning_scope")!="P3_PRODUCTION_PLANNING_ONLY" or scene.get("execution_allowed") is not False:
         raise RuntimeError("compiled P3 planning-only scene required")
@@ -61,7 +65,12 @@ def main():
     if not .015 <= sphere_cell_m <= .060:
         raise ValueError("active sphere cell must be between 15 and 60 mm")
     spheres={link:grid_spheres(box,sphere_cell_m) for link,box in collision_model["arm_link_boxes"].items()}
-    spheres["link6"].extend(grid_spheres(collision_model["gripper_max_envelope_link6"],sphere_cell_m))
+    envelope=request.get("execution_tool_envelope")
+    if envelope is not None:
+        verify_execution_tool_envelope(envelope,collision_model,request["controller_tool_pose_mm_rad"])
+        spheres["link6"].extend(grid_spheres(envelope["box"],sphere_cell_m))
+    else:
+        spheres["link6"].extend(grid_spheres(collision_model["gripper_max_envelope_link6"],sphere_cell_m))
     for link in robot["kinematics"]["collision_spheres"]:robot["kinematics"]["collision_spheres"][link]=spheres.get(link,[])
     active_revision="sha256:"+hashlib.sha256(json.dumps(spheres,sort_keys=True,separators=(",",":")).encode()).hexdigest()
     urdf=ET.parse(robot["kinematics"]["urdf_path"]).getroot();origins=[]
@@ -152,6 +161,7 @@ def main():
     path_details={}
     central_margin=None
     smoothness=None
+    independent=None
     if success:
         segments=[]
         for segment_index,part in enumerate(result):
@@ -182,6 +192,10 @@ def main():
         path_gap=min(path_details.values()) if path_details else float("inf")
         if central_margin<=0 or path_gap<=0 or not np.isfinite(q).all() or max_step>.15:
             success=False;points=[];tcp_body=[];path_gap=None;path_details={}
+        elif envelope is not None:
+            independent=validate_dense_world(points,request,subdivisions=4)
+            if not independent["collision_free"]:
+                success=False
     mode=request["mode"];expected="FAILURE" if mode=="BLOCK" else "SUCCESS";observed="SUCCESS" if success else "FAILURE"
     payload={"schema_version":3,"planner":"cuRobo","mode":mode,"planning_only":True,"execution_allowed":False,
         "expected_result":expected,"observed_result":observed,"expectation_met":expected==observed,
@@ -189,6 +203,7 @@ def main():
         "planning_context_digest":scene["planning_context_digest"],"calibration_revision":scene["calibration_revision"],
         "geometry_revision":request["geometry_revision"],"inactive_arm_revision":request["inactive_arm_revision"],
         "active_collision_revision":active_revision,"active_collision_sphere_count":sum(map(len,spheres.values())),
+        "execution_tool_envelope_revision":envelope["revision"] if envelope else None,
         "active_collision_sphere_cell_m":sphere_cell_m,
         "world_cuboid_ids":list(cuboids),"start_rad":start.tolist(),"goal_rad":goal.tolist(),
         "trajectory_points_rad":points,"tcp_path_body_m":tcp_body,"path_metrics":path_metrics(tcp_body),
@@ -196,6 +211,8 @@ def main():
         "path_clearance_by_object_m":path_details,
         "path_limiting_object_id":min(path_details,key=path_details.get) if path_details else None,
         "central_tcp_margin_m":central_margin,
+        "smoothness":smoothness,
+        "independent_dense_validation":independent,
         "endpoint_clearance_by_object_m":{"start":start_details,"goal":goal_details},
         "timing_s":{"cuda_import":import_s,"curobo_world_and_planner_init":world_init_s,
                     "world_update_samples":updates,"planning_samples":samples,
@@ -203,6 +220,8 @@ def main():
                     "planning_reported_total":sum(float(x.total_time) for x in result) if result else None,
                     "planning_reported_solve":sum(float(x.solve_time) for x in result) if result else None},
         "gpu":torch.cuda.get_device_name(0),"curobo_version":str(curobo.__version__),"source_commit":manifest["commit"]}
+    if request.get("point_to_point_policy") is not None:
+        payload["point_to_point_policy"]=request["point_to_point_policy"]
     if request.get("TOOL_TCP_PHYSICAL_SEMANTICS_UNRESOLVED"):
         payload["TOOL_TCP_PHYSICAL_SEMANTICS_UNRESOLVED"]=request["TOOL_TCP_PHYSICAL_SEMANTICS_UNRESOLVED"]
         payload["READY_FOR_FIRST_SUPERVISED_CLEAR_EXECUTION"]="NO"

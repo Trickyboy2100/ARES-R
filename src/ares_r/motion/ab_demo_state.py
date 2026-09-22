@@ -38,6 +38,9 @@ class ABState(str, Enum):
     STRAIGHT_CLEAR = "STRAIGHT_CLEAR"
     BYPASS_REQUIRED = "BYPASS_REQUIRED"
     PLANNED = "PLANNED"
+    CUROBO_PLANNED = "CUROBO_PLANNED"
+    VALIDATED = "VALIDATED"
+    PREVIEWED = "PREVIEWED"
     AWAITING_CONFIRMATION = "AWAITING_CONFIRMATION"
     EXECUTING = "EXECUTING"
     ARRIVED = "ARRIVED"
@@ -51,6 +54,8 @@ class ABPlanningSession:
     endpoint: str | None = None
     scene_snapshot_id: str | None = None
     trajectory_id: str | None = None
+    execution_candidate_id: str | None = None
+    execution_lease_id: str | None = None
     tool_tcp_physical_semantics_unresolved: bool = True
 
     def at_endpoint(self, endpoint: str):
@@ -92,9 +97,34 @@ class ABPlanningSession:
         self.trajectory_id = trajectory_id
         self.state = ABState.PLANNED
 
+    def curobo_planned_for_execution(self, trajectory_id: str, snapshot_id: str):
+        """P3.3 extension; policy remains direct cuRobo and execution blocked."""
+        self.planned(trajectory_id, snapshot_id)
+        self.state = ABState.CUROBO_PLANNED
+
     def preview(self):
         if self.state != ABState.PLANNED:
             raise ValueError("no fresh plan")
+        self.state = ABState.AWAITING_CONFIRMATION
+
+    def validate_execution_candidate(self, candidate_id: str, lease_id: str,
+                                     snapshot_id: str):
+        if (self.state not in (ABState.PLANNED, ABState.CUROBO_PLANNED)
+                or not candidate_id or not lease_id
+                or snapshot_id != self.scene_snapshot_id):
+            raise ValueError("validated candidate must bind current planned scene")
+        self.execution_candidate_id = candidate_id
+        self.execution_lease_id = lease_id
+        self.state = ABState.VALIDATED
+
+    def preview_execution_candidate(self, candidate_id: str):
+        if self.state != ABState.VALIDATED or candidate_id != self.execution_candidate_id:
+            raise ValueError("preview must match the validated exact candidate")
+        self.state = ABState.PREVIEWED
+
+    def await_execution_confirmation(self):
+        if self.state != ABState.PREVIEWED:
+            raise ValueError("preview required before confirmation")
         self.state = ABState.AWAITING_CONFIRMATION
 
     def execute_next(self):
@@ -121,3 +151,5 @@ class ABPlanningSession:
     def invalidate(self):
         self.scene_snapshot_id = None
         self.trajectory_id = None
+        self.execution_candidate_id = None
+        self.execution_lease_id = None

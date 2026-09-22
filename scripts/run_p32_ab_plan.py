@@ -21,6 +21,7 @@ from ares_r.cli import load_config
 from ares_r.motion.curobo import CUROBO_COMMIT
 from ares_r.motion.curobo_params import planning_profile
 from ares_r.motion.se3 import pose_mm_rad_to_matrix
+from ares_r.motion.execution_tool_envelope import build_execution_tool_envelope
 from search_p32_ab import build_solver
 
 
@@ -36,6 +37,8 @@ def main():
     p.add_argument("--candidate", type=int, default=0)
     p.add_argument("--direction", choices=("A_to_B", "B_to_A", "CURRENT_to_A"), required=True)
     p.add_argument("--policy", choices=("DIRECT", "BLOCK"), required=True)
+    p.add_argument("--execution-tool-envelope", action="store_true",
+                   help="P3.3 conservative link6 gripper plus controller-TCP envelope")
     p.add_argument("--collision-activation-distance-m", type=float,
                    help="planning-only cuRobo optimizer obstacle activation distance")
     p.add_argument("--output", type=Path, required=True)
@@ -77,8 +80,13 @@ def main():
         if not .005 <= a.collision_activation_distance_m <= .08:
             raise ValueError("activation distance must be between 5 and 80 mm")
         parameters["optimizer_collision_activation_distance"] = a.collision_activation_distance_m
+    collision_model=load(config["robot_collision"]["model"])
+    envelope=(build_execution_tool_envelope(collision_model,tool)
+              if a.execution_tool_envelope else None)
     request = {"schema_version": 2, "planning_only": True, "execution_allowed": False,
         "TOOL_TCP_PHYSICAL_SEMANTICS_UNRESOLVED": "YES",
+        "point_to_point_policy": {"motion_policy": "CUROBO_ONLY_FOR_EVERY_POINT_TO_POINT_LEG",
+            "planner_mode": "CUROBO_DIRECT", "explicit_waypoints": []},
         "mode": report["mode"], "compiled_scene": scene,
         "scene_snapshot_id": scene["scene_snapshot_id"], "scene_digest": scene["digest"],
         "start_rad": start, "goal_rad": goal, "active_arm": "right",
@@ -86,7 +94,9 @@ def main():
         "T_link6_tcp": pose_mm_rad_to_matrix(tool),
         "geometry_revision": report["geometry_revision"],
         "inactive_arm_revision": report["inactive_arm_revision"],
-        "collision_model": load(config["robot_collision"]["model"]),
+        "collision_model": collision_model,
+        "robot_yaml_urdf": str(Path(collision_model["asset_root"]) / collision_model["urdf"]),
+        "execution_tool_envelope":envelope,"controller_tool_pose_mm_rad":tool,
         "robot_yaml": config["curobo"]["robot_yaml"], "expected_commit": CUROBO_COMMIT,
         "planning_parameters": parameters, "benchmark_runs": 1,
         "ab_demo": ab}
@@ -99,6 +109,7 @@ def main():
         "policy": a.policy, "start_endpoint": source, "goal_endpoint": destination,
         "start_body_xyz_m": start_xyz, "goal_body_xyz_m": goal_xyz,
         "candidate_index": a.candidate, "reference_corridor_only": True,
+        "execution_tool_envelope_revision":envelope["revision"] if envelope else None,
         "optimizer_collision_activation_distance_m": parameters["optimizer_collision_activation_distance"],
         "ab_contract": candidate, "explicit_waypoints": []}
     (a.output / "ab_plan_contract.json").write_text(json.dumps(metadata, indent=2)+"\n")
