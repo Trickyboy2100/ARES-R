@@ -46,7 +46,14 @@ static State read(JAKAZuRobot& robot,bool tool_data=false){
     check(robot.get_user_frame_id(&s.user_id),"user ID");
     check(robot.is_in_drag_mode(&drag),"drag status");
     if(status.errcode||!status.powered_on||!status.enabled||s.motion.isInEstop||s.motion.isInCollision||s.motion.isOnLimit||drag)
-        throw std::runtime_error("controller safety gate");
+        throw std::runtime_error(
+            "controller safety gate errcode="+std::to_string(status.errcode)+
+            " power="+std::to_string(status.powered_on)+
+            " enabled="+std::to_string(status.enabled)+
+            " estop="+std::to_string(s.motion.isInEstop)+
+            " collision="+std::to_string(s.motion.isInCollision)+
+            " limit="+std::to_string(s.motion.isOnLimit)+
+            " drag="+std::to_string(drag));
     for(int j=0;j<6;++j){s.q[j]=q.jVal[j];if(!std::isfinite(s.q[j]))throw std::runtime_error("non-finite feedback");}
     s.tcp=pose(tcp);for(double v:s.tcp)if(!std::isfinite(v))throw std::runtime_error("non-finite TCP");
     if(tool_data){check(robot.get_tool_data(s.tool_id,&tcp),"tool data");s.tool=pose(tcp);}
@@ -106,6 +113,9 @@ int main(int argc,char**argv){
     JAKAZuRobot robot;bool logged=false,servo=false;int result=1;
     try{
         check(robot.login_in("192.168.99.101",false),"login");logged=true;
+        // Allow the SDK's read-only status cache to settle before the first
+        // safety check. Never retry a gate failure or delay checks in ServoJ.
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
         read(robot,true); // Warm-up only, before arming.
         State start=read(robot,true);
         std::cout<<"{\"event\":\"snapshot\"";stamp();std::cout<<",\"captured_at_unix\":"<<std::time(nullptr)<<",\"actual_rad\":";
