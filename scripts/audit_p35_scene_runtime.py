@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Static fail-closed audit of the production P3.5 scene runtime inputs."""
+"""Static audit that generic scene runtime has no object/demo hard-coding."""
 
 import argparse
 import json
@@ -9,10 +9,11 @@ import re
 ROOT = Path(__file__).resolve().parents[1]
 FILES = (
     "src/ares_r/motion/live_scene.py",
-    "src/ares_r/motion/ab_fastlane.py",
+    "src/ares_r/motion/local_scene_service.py",
+    "src/ares_r/motion/scene_aware_motion.py",
+    "src/ares_r/motion/scene_aware_planner.py",
     "scripts/p32_scan_scene.py",
     "scripts/build_p3_production_scene.py",
-    "scripts/run_p32_ab_plan.py",
     "src/ares_r/motion/production_scene_worker.py",
     "src/ares_r/perception/support_decomposition.py",
 )
@@ -37,7 +38,7 @@ def audit():
                                  "match": match.group(0)})
     live = (ROOT / "src/ares_r/motion/live_scene.py").read_text()
     required = ("fresh_camera", "current_robot_state", "commissioned_calibration",
-                "generic_scene_parameters", "versioned_ab_contract")
+                "generic_scene_parameters")
     missing = [item for item in required if item not in live]
     return {"schema_version": 1,
             "SCENE_RUNTIME_HARDCODE_AUDIT": "PASS" if not findings and not missing else "FAIL",

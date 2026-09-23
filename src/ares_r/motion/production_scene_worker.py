@@ -112,10 +112,13 @@ def main():
             optimizer_collision_activation_distance=params["optimizer_collision_activation_distance"])
         planner=MotionPlanner(cfg);names=list(planner.joint_names)
         if orientation_lock is not None:
-            if (orientation_lock.get("policy")!="BODY_FORWARD_HORIZONTAL_V1" or
-                    not np.allclose(orientation_lock.get("target_R_body_tcp"),
-                                    HORIZONTAL_FORWARD_R_BODY,atol=1e-8)):
-                raise ValueError("unknown BODY TCP orientation contract")
+            target_rotation=np.asarray(orientation_lock.get("target_R_body_tcp"),dtype=float)
+            if (orientation_lock.get("policy") not in
+                    ("BODY_FORWARD_HORIZONTAL_V1", "FIXED_ROTATION_V1") or
+                    target_rotation.shape!=(3,3) or
+                    not np.allclose(target_rotation.T@target_rotation,np.eye(3),atol=1e-5) or
+                    not np.isclose(np.linalg.det(target_rotation),1.0,atol=1e-5)):
+                raise ValueError("unknown or invalid BODY TCP orientation contract")
             planner.update_tool_pose_criteria({"link6":ToolPoseCriteria.track_orientation(
                 rpy=[1.0,1.0,1.0],non_terminal_scale=1.0)})
         cached={"planner":planner,"names":names,"warmup_done":False}
@@ -132,16 +135,26 @@ def main():
         return np.asarray([[1-2*(y*y+z*z),2*(x*y-z*w),2*(x*z+y*w)],
                            [2*(x*y+z*w),1-2*(x*x+z*z),2*(y*z-x*w)],
                            [2*(x*z-y*w),2*(y*z+x*w),1-2*(x*x+y*y)]])
-    def clearance_details(rows):
-        current=planner.compute_kinematics(state(rows)).robot_spheres.detach().cpu().numpy().reshape(-1,4)
-        current=current[current[:,3]>0];values={}
+    def clearance_by_sample(rows):
+        rows=np.asarray(rows,dtype=float).reshape(-1,6)
+        current=planner.compute_kinematics(state(rows)).robot_spheres.detach().cpu().numpy()
+        current=current.reshape(len(rows),-1,4)
+        valid=current[0,:,3]>0
+        current=current[:,valid,:];values={}
         for name,box in cuboids.items():
             rotation=quaternion_rotation(box["pose"][3:])
-            local=(current[:,:3]-np.asarray(box["pose"][:3]))@rotation
+            local=(current[:,:,:3]-np.asarray(box["pose"][:3]))@rotation
             delta=np.abs(local)-np.asarray(box["dims"])/2
-            signed=np.linalg.norm(np.maximum(delta,0),axis=1)+np.minimum(np.max(delta,axis=1),0)-current[:,3]
-            values[name]=float(signed.min())
+            signed=(np.linalg.norm(np.maximum(delta,0),axis=2)+
+                    np.minimum(np.max(delta,axis=2),0)-current[:,:,3])
+            values[name]=signed.min(axis=1)
         return values
+    def clearance_details(rows):
+        return {name:float(values.min()) for name,values in clearance_by_sample(rows).items()}
+    def clearance_trace(rows):
+        values=clearance_by_sample(rows)
+        if not values:return [float("inf")]*len(rows)
+        return np.min(np.stack(list(values.values()),axis=1),axis=1).tolist()
     def clearance(rows):
         values=clearance_details(rows)
         return min(values.values()) if values else float("inf")
@@ -208,6 +221,7 @@ def main():
     central_margin=None
     smoothness=None
     independent=None
+    planner_clearance_trace=[]
     independent_validation_s=0.0
     orientation_validation=None
     postprocess_at=time.perf_counter()
@@ -240,6 +254,7 @@ def main():
         dense=np.concatenate([a+(b-a)*np.arange(2)[:,None]/2
                               for a,b in zip(validation_knots,validation_knots[1:])]+[validation_knots[-1:]])
         path_details=clearance_details(dense)
+        planner_clearance_trace=clearance_trace(dense)
         path_gap=min(path_details.values()) if path_details else float("inf")
         if central_margin<=0 or path_gap<=0 or not np.isfinite(q).all() or max_step>.15:
             success=False;points=[];tcp_body=[];path_gap=None;path_details={}
@@ -252,7 +267,8 @@ def main():
         if success and orientation_lock is not None:
             orientation_validation=validate_path(
                 lambda row:T@fk(row),q,subdivisions=4,
-                tolerance_deg=float(orientation_lock["max_error_deg"]))
+                tolerance_deg=float(orientation_lock["max_error_deg"]),
+                target_rotation=orientation_lock["target_R_body_tcp"])
             if not orientation_validation["passed"]:
                 success=False
     mode=request["mode"];expected="FAILURE" if mode=="BLOCK" else "SUCCESS";observed="SUCCESS" if success else "FAILURE"
@@ -268,6 +284,7 @@ def main():
         "trajectory_points_rad":points,"tcp_path_body_m":tcp_body,"path_metrics":path_metrics(tcp_body),
         "clearance_m":{"start":start_gap,"goal":goal_gap,"joint_linear_baseline":baseline_gap,"planned_path":path_gap},
         "path_clearance_by_object_m":path_details,
+        "planner_clearance_trace_m":planner_clearance_trace,
         "path_limiting_object_id":min(path_details,key=path_details.get) if path_details else None,
         "central_tcp_margin_m":central_margin,
         "dense_post_validation_samples":len(dense) if success else None,
@@ -284,6 +301,10 @@ def main():
                     "planning_reported_total":sum(float(x.total_time) for x in result) if result else None,
                     "planning_reported_solve":sum(float(x.solve_time) for x in result) if result else None},
         "gpu":torch.cuda.get_device_name(0),"curobo_version":str(curobo.__version__),"source_commit":manifest["commit"]}
+    if request.get("motion_contract"):
+        payload["motion_contract"]=request["motion_contract"]
+        payload["planner_clearance_policy"]=request.get("planner_clearance_policy")
+        payload["motion_constraints"]=request.get("motion_constraints")
     if request.get("point_to_point_policy") is not None:
         payload["point_to_point_policy"]=request["point_to_point_policy"]
     if request.get("TOOL_TCP_PHYSICAL_SEMANTICS_UNRESOLVED"):

@@ -158,7 +158,8 @@ class SceneAwareMotionService:
     def plan(self, request: MotionRequest) -> dict:
         request.validate()
         scene = self.local_scene.ensure_fresh(
-            "MOTION_REQUEST:%s" % request.request_label, request.scene_policy)
+            "MOTION_REQUEST:%s" % request.request_label, request.scene_policy,
+            active_arm=request.arm)
         if scene["state"] != "READY":
             raise RuntimeError("fresh local scene required")
         plan_id = "PLAN_" + uuid.uuid4().hex
@@ -226,3 +227,28 @@ class SceneAwareMotionService:
 
     def stop(self):
         return self.invalidate_plans("OPERATOR_STOP")
+
+
+def build_services(config: Mapping[str, object], *, scene_state_path=None,
+                   motion_state_path=None):
+    """Construct the shared backend used by ART, scripts and the Web UI."""
+    from .scene_aware_planner import PersistentCuroboPlanner, load_profile
+    profile = load_profile()
+    merged = dict(config)
+    merged["scene_aware_motion"] = {
+        "scene_ttl_s": profile["scene_ttl_s"],
+        "evidence_directory": "worklog/evidence/scene-aware-motion",
+    }
+    scene = LocalSceneService(merged, state_path=scene_state_path)
+    values = profile["planner"]
+    clearance = ClearancePolicy(
+        revision=values["profile_revision"],
+        preferred_clearance_m=float(values["preferred_clearance_m"]),
+        hard_collision_floor_m=float(values["hard_collision_floor_m"]),
+        escape_dip_tolerance_m=float(values["escape_dip_tolerance_m"]),
+    )
+    motion = SceneAwareMotionService(
+        merged, scene, PersistentCuroboPlanner(config, profile),
+        state_path=motion_state_path or "logs/scene_aware_motion.json",
+        clearance_policy=clearance)
+    return scene, motion

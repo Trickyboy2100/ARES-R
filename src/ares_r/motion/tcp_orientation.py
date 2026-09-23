@@ -16,13 +16,20 @@ HORIZONTAL_FORWARD_R_BODY = np.array(
 MAX_ORIENTATION_ERROR_DEG = 3.0
 
 
-def validate_path(fk_body_tcp, joints, *, subdivisions=4, tolerance_deg=MAX_ORIENTATION_ERROR_DEG):
+def validate_path(fk_body_tcp, joints, *, subdivisions=4,
+                  tolerance_deg=MAX_ORIENTATION_ERROR_DEG,
+                  target_rotation=HORIZONTAL_FORWARD_R_BODY):
     """Independently check every interpolated joint interval, not just endpoints."""
     rows = np.asarray(joints, dtype=float)
     if rows.ndim != 2 or rows.shape[1] != 6 or len(rows) < 2 or not np.isfinite(rows).all():
         raise ValueError("finite six-joint path with at least two samples required")
     if subdivisions < 1 or not 0.0 < tolerance_deg <= 5.0:
         raise ValueError("invalid orientation validation settings")
+    target_rotation = np.asarray(target_rotation, dtype=float)
+    if (target_rotation.shape != (3, 3) or not np.isfinite(target_rotation).all() or
+            not np.allclose(target_rotation.T @ target_rotation, np.eye(3), atol=1e-5) or
+            not np.isclose(np.linalg.det(target_rotation), 1.0, atol=1e-5)):
+        raise ValueError("target orientation must be a proper 3x3 rotation")
     worst_rotation = worst_forward_tilt = worst_finger_tilt = 0.0
     samples = 0
     for i in range(len(rows) - 1):
@@ -31,13 +38,13 @@ def validate_path(fk_body_tcp, joints, *, subdivisions=4, tolerance_deg=MAX_ORIE
             R = np.asarray(fk_body_tcp(q), dtype=float)[:3, :3]
             if R.shape != (3, 3) or not np.isfinite(R).all():
                 raise ValueError("invalid BODY TCP rotation")
-            cosine = float(np.clip((np.trace(HORIZONTAL_FORWARD_R_BODY.T @ R) - 1.0) / 2.0, -1.0, 1.0))
+            cosine = float(np.clip((np.trace(target_rotation.T @ R) - 1.0) / 2.0, -1.0, 1.0))
             worst_rotation = max(worst_rotation, math.degrees(math.acos(cosine)))
             worst_forward_tilt = max(worst_forward_tilt, math.degrees(math.asin(min(1.0, abs(float(R[2, 2]))))))
             worst_finger_tilt = max(worst_finger_tilt, math.degrees(math.asin(min(1.0, abs(float(R[2, 0]))))))
             samples += 1
     R = np.asarray(fk_body_tcp(rows[-1]), dtype=float)[:3, :3]
-    cosine = float(np.clip((np.trace(HORIZONTAL_FORWARD_R_BODY.T @ R) - 1.0) / 2.0, -1.0, 1.0))
+    cosine = float(np.clip((np.trace(target_rotation.T @ R) - 1.0) / 2.0, -1.0, 1.0))
     worst_rotation = max(worst_rotation, math.degrees(math.acos(cosine)))
     worst_forward_tilt = max(worst_forward_tilt, math.degrees(math.asin(min(1.0, abs(float(R[2, 2]))))))
     worst_finger_tilt = max(worst_finger_tilt, math.degrees(math.asin(min(1.0, abs(float(R[2, 0]))))))
@@ -47,5 +54,5 @@ def validate_path(fk_body_tcp, joints, *, subdivisions=4, tolerance_deg=MAX_ORIE
             "max_finger_axis_tilt_deg": worst_finger_tilt,
             "tolerance_deg": tolerance_deg,
             "dense_samples": samples + 1,
-            "target_R_body_tcp": HORIZONTAL_FORWARD_R_BODY.tolist(),
+            "target_R_body_tcp": target_rotation.tolist(),
             "tcp_forward_axis": "+Z", "finger_closing_axis": "X"}

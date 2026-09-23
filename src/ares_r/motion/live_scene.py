@@ -22,15 +22,18 @@ def _stamp():
     return datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
 
 
-def build_live_planning_scene(config: dict, destination: Path | None = None) -> dict:
+def build_live_planning_scene(config: dict, destination: Path | None = None,
+                              active_arm: str = "right") -> dict:
     """Build one immutable scene solely from a fresh scan and current state."""
+    if active_arm not in ("left", "right"):
+        raise ValueError("active arm must be left or right")
     destination = Path(destination) if destination else EVIDENCE / ("live_scan_" + _stamp())
     if destination.exists():
         raise FileExistsError("live scene output already exists")
     python = Path(config["epic_pointcloud"]["body_cloud_viewer_python"])
     command = [str(python), str(ROOT / "scripts/p32_scan_scene.py"),
                "--mode", "LIVE", "--output", str(destination),
-               "--open3d-python", str(python)]
+               "--open3d-python", str(python), "--active", active_arm]
     result = subprocess.run(command, cwd=ROOT,
                             env=dict(os.environ, PYTHONPATH=str(ROOT / "src")),
                             text=True, capture_output=True, timeout=240, check=False)
@@ -55,7 +58,7 @@ def build_live_planning_scene(config: dict, destination: Path | None = None) -> 
         "timing_s": summary["timing_s"],
         "total_s": summary["total_s"],
         "valid": True,
+        "active_arm": active_arm,
         "runtime_inputs": ["fresh_camera", "current_robot_state",
-                           "commissioned_calibration", "generic_scene_parameters",
-                           "versioned_ab_contract"],
+                           "commissioned_calibration", "generic_scene_parameters"],
     }

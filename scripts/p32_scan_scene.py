@@ -47,6 +47,7 @@ def main():
     p.add_argument("--block-search", type=Path,
                    help="versioned A/B search artifact; required for BLOCK goal enclosure")
     p.add_argument("--candidate", type=int, default=1)
+    p.add_argument("--active", choices=("left", "right"), default="right")
     p.add_argument("--deployment-voxel-m", type=float,
                    choices=(.005,.0075,.010), help="deployment scene voxel size")
     args = p.parse_args()
@@ -55,7 +56,7 @@ def main():
         raise ValueError("refusing to overwrite prior capture")
     output.mkdir(parents=True)
     config = json.loads((ROOT / "config/system.json").read_text())
-    deployment = json.loads((ROOT / "config/ab_demo_deployment_profile.json").read_text())
+    deployment = json.loads((ROOT / "config/scene_aware_motion.json").read_text())
     scene_profile = deployment["scene"]
     deployment_voxel = (float(args.deployment_voxel_m) if args.deployment_voxel_m is not None
                         else float(scene_profile["deployment_voxel_m"]))
@@ -101,6 +102,7 @@ def main():
     run(ROOT / "scripts/build_p3_production_scene.py", "--mode", args.mode,
         "--manifest", manifest, "--geometry", geometry,
         "--left-audit", left, "--right-audit", right,
+        "--active", args.active,
         "--obstacle-pipeline", "multi_primitive",
         "--deployment-voxel-m", str(deployment_voxel),
         "--self-filter-margin-m", str(scene_profile["robot_self_filter_margin_m"]),

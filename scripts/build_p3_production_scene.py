@@ -121,7 +121,7 @@ def main():
     out=Path(a.output);out.mkdir(parents=True,exist_ok=False)
     cloud,meta=load_artifact(Path(a.manifest));geometry=load_geometry_snapshot(Path(a.geometry))
     audits={"left":load(a.left_audit),"right":load(a.right_audit)};model,world=load(a.model),load(a.world)
-    scene_profile=load(REPOSITORY/"config/ab_demo_deployment_profile.json")["scene"]
+    scene_profile=load(REPOSITORY/"config/scene_aware_motion.json")["scene"]
     roi=scene_profile["body_roi_m"]
     if a.targets and a.goal_delta_rad is not None:
         raise ValueError("--targets and --goal-delta-rad are mutually exclusive")

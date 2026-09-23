@@ -119,11 +119,14 @@ class LocalSceneService:
                      scene_dir=None, created_at_unix=None, timings_s=None)
         return self._write(value)
 
-    def scan(self, *, force: bool = False) -> dict:
+    def scan(self, *, force: bool = False, active_arm: str = "right") -> dict:
+        if active_arm not in ("left", "right"):
+            raise ValueError("active arm must be left or right")
         current = self.status()
         if current["state"] == SceneState.SCANNING.value:
             raise RuntimeError("local scene scan already in progress")
-        if current["state"] == SceneState.READY.value and not force:
+        if (current["state"] == SceneState.READY.value and not force and
+                current.get("active_arm") == active_arm):
             return current
         current.update(state=SceneState.SCANNING.value, reason="FRESH_SCAN_REQUESTED")
         self._write(current)
@@ -133,7 +136,13 @@ class LocalSceneService:
                        ("scene_" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
                         + "_" + uuid.uuid4().hex[:8]))
         try:
-            built = self.scene_builder(self.config, destination)
+            try:
+                built = self.scene_builder(self.config, destination, active_arm=active_arm)
+            except TypeError as exc:
+                # Backward-compatible injection seam for deterministic unit fixtures.
+                if "active_arm" not in str(exc):
+                    raise
+                built = self.scene_builder(self.config, destination)
             report = json.loads((Path(built["scene_dir"]) / "scene/scene_report.json").read_text())
         except Exception as exc:
             failed = self._read()
@@ -155,20 +164,23 @@ class LocalSceneService:
             tool_revision=report["tool_revision"],
             created_at_unix=self.clock(),
             timings_s=built.get("timing_s"),
+            active_arm=active_arm,
         )
         return self._write(value)
 
-    def ensure_fresh(self, reason: str, policy=ScenePolicy.AUTO_FRESH) -> dict:
+    def ensure_fresh(self, reason: str, policy=ScenePolicy.AUTO_FRESH,
+                     active_arm: str = "right") -> dict:
         policy = ScenePolicy(policy)
         current = self.status()
         if policy is ScenePolicy.FORCE_RESCAN:
             self.invalidate("FORCE_RESCAN:%s" % reason, required=True)
-            return self.scan(force=True)
-        if current["state"] == SceneState.READY.value:
+            return self.scan(force=True, active_arm=active_arm)
+        if (current["state"] == SceneState.READY.value and
+                current.get("active_arm") == active_arm):
             return current
         if policy is ScenePolicy.REUSE_IF_VALID:
             raise RuntimeError("scene is not reusable: %s" % current["state"])
-        return self.scan(force=True)
+        return self.scan(force=True, active_arm=active_arm)
 
     def snapshot(self) -> dict:
         current = self.status()
