@@ -47,6 +47,8 @@ def main():
     p.add_argument("--block-search", type=Path,
                    help="versioned A/B search artifact; required for BLOCK goal enclosure")
     p.add_argument("--candidate", type=int, default=1)
+    p.add_argument("--deployment-voxel-m", type=float, default=.0075,
+                   choices=(.005,.0075,.010), help="deployment scene voxel size")
     args = p.parse_args()
     output = args.output.resolve()
     if output.exists():
@@ -59,20 +61,22 @@ def main():
     # Pixel Pro acquisition briefly loads the shared controller network.  Let
     # it settle before independent, read-only JAKA state snapshots; retries
     # below still fail closed instead of using yesterday's joint positions.
-    time.sleep(2.0)
+    settle_at=time.perf_counter();time.sleep(.5);settle_s=time.perf_counter()-settle_at
     model = json.loads(Path(config["robot_collision"]["model"]).read_text())
     robot_urdf = Path(model["asset_root"]) / model["urdf"]
     left = output / "left_fk_audit.json"
     right = output / "right_fk_audit.json"
-    audit_with_readonly_retry(robot_urdf, left, "left")
-    audit_with_readonly_retry(robot_urdf, right, "right")
+    audit_at=time.perf_counter();audit_with_readonly_retry(robot_urdf, left, "left")
+    audit_with_readonly_retry(robot_urdf, right, "right");audit_s=time.perf_counter()-audit_at
     geometry = output / "whole_robot_geometry.json"
-    run(ROOT / "scripts/export_whole_robot_geometry.py", "--model",
+    geometry_at=time.perf_counter();run(ROOT / "scripts/export_whole_robot_geometry.py", "--model",
         config["robot_collision"]["model"], "--world", ROOT / "config/robot_world.json",
         "--left-audit", left, "--right-audit", right, "--output", geometry)
+    geometry_s=time.perf_counter()-geometry_at
     pointer = json.loads((manifest.parents[2] / "latest.json").read_text())
     pointer["manifest"] = str(manifest.resolve())
     pointer["camera_capture_elapsed_s"] = capture_s
+    pointer["capture_body_total_s"] = capture_s
     (output / "capture_pointer.json").write_text(json.dumps(pointer, indent=2)+"\n")
     scene = output / "scene"
     target_args = []
@@ -94,6 +98,7 @@ def main():
         "--manifest", manifest, "--geometry", geometry,
         "--left-audit", left, "--right-audit", right,
         "--obstacle-pipeline", "multi_primitive",
+        "--deployment-voxel-m", str(args.deployment_voxel_m),
         "--gripper-self-filter-margin-m", ".040", "--capture-pointer",
         output / "capture_pointer.json", "--output", scene, *target_args,
         python=str(args.open3d_python))
@@ -104,7 +109,12 @@ def main():
                "pointcloud_sha256": report["pointcloud_sha256"],
                "snapshot_id": report["snapshot_id"],
                "joint_snapshot_revision": report["joint_snapshot_revision"],
-               "mode": args.mode, "total_s": time.perf_counter()-started}
+               "mode": args.mode,
+               "timing_s":{"capture_body":capture_s,"network_settle":settle_s,
+                           "read_only_joint_audits":audit_s,
+                           "geometry_export":geometry_s,
+                           "scene_build":report["timing_s"]["total_post_capture"]},
+               "total_s": time.perf_counter()-started}
     (output / "fresh_scene_summary.json").write_text(json.dumps(summary, indent=2)+"\n")
     print(json.dumps(summary, indent=2))
 

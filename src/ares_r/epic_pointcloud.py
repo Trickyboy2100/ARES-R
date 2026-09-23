@@ -5,6 +5,7 @@ import math
 import re
 import struct
 import subprocess
+import socket
 import time
 import uuid
 from pathlib import Path
@@ -77,12 +78,48 @@ def planning_assessment(stats,config):
             "transform BODY -> right URDF base","cuRobo update_world/plan","freeze scene during execution"],blockers=blockers)
 
 
-def capture(config, output_root=None):
+def _fast_capture(config, root):
+    pc=config["epic_pointcloud"]
+    socket_path=Path("/tmp/ares_r_epic_capture.sock")
+    service=Path(__file__).resolve().parents[2]/"scripts"/"epic_capture_service.py"
+    def request():
+        directory=root/(time.strftime("%Y%m%d_%H%M%S_")+uuid.uuid4().hex[:8])
+        client=socket.socket(socket.AF_UNIX,socket.SOCK_STREAM)
+        client.settimeout(float(pc.get("timeout_s",120)))
+        client.connect(str(socket_path))
+        client.sendall((json.dumps({"command":"capture","endpoint":pc["endpoint"],
+                                   "output":str(directory)})+"\n").encode())
+        chunks=[]
+        while True:
+            block=client.recv(65536)
+            if not block: break
+            chunks.append(block)
+        client.close();response=json.loads(b"".join(chunks).decode())
+        if not response.get("ok"):
+            raise RuntimeError(response.get("error","Epic fast capture failed"))
+        return directory/"manifest.json"
+    try:
+        return request()
+    except (FileNotFoundError,ConnectionRefusedError,socket.timeout):
+        if socket_path.exists(): socket_path.unlink()
+        subprocess.Popen([str(pc["python"]),str(service),"--socket",str(socket_path)],
+                         cwd=str(service.parents[1]),stdout=subprocess.DEVNULL,
+                         stderr=subprocess.DEVNULL,start_new_session=True)
+        deadline=time.monotonic()+15.0
+        while not socket_path.exists():
+            if time.monotonic()>deadline: raise RuntimeError("Epic capture service failed to start")
+            time.sleep(.05)
+        return request()
+
+
+def capture(config, output_root=None, fast=False):
     pc=config["epic_pointcloud"];python=Path(pc["python"]);script=Path(pc["capture_script"])
     if pc.get("source_coordinate_unit")!="mm":
         raise RuntimeError("Epic capture source unit must be explicitly configured as mm")
     if not python.is_file() or not script.is_file(): raise RuntimeError("EpicEye SDK environment unavailable on this host")
     root=Path(output_root) if output_root is not None else Path(config["logging"]["directory"])/"epic_captures"
+    if fast:
+        return _fast_capture(config,root)
     directory=root/(time.strftime("%Y%m%d_%H%M%S_")+uuid.uuid4().hex[:8]);directory.mkdir(parents=True,exist_ok=False)
     started=time.time();result=subprocess.run([str(python),str(script),str(pc["endpoint"])],cwd=str(directory),
         capture_output=True,text=True,timeout=float(pc.get("timeout_s",120)))

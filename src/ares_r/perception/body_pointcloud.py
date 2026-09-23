@@ -132,6 +132,18 @@ def build_body_cloud(path: Path, config: dict) -> BodyPointCloud:
                                        source_sha256=source["sha256"], load_s=load_s)
 
 
+def build_body_cloud_npy(path: Path, source_sha256: str, config: dict) -> BodyPointCloud:
+    """Build the canonical cloud from the deployment capture's direct NPY."""
+    started = time.perf_counter()
+    points = np.load(Path(path), allow_pickle=False)
+    if points.ndim != 2 or points.shape[1] != 3:
+        raise ValueError("Epic fast point cloud must have shape (n, 3)")
+    colors = np.full(points.shape, 255, dtype=np.uint8)
+    return transform_camera_mm_to_body(
+        points, colors, config, source_ply=str(Path(path).resolve()),
+        source_sha256=source_sha256, load_s=time.perf_counter() - started)
+
+
 def fit_support_table(cloud: BodyPointCloud, expected_z_m: float = 0.750,
                       search_half_width_m: float = 0.10,
                       inlier_half_width_m: float = 0.012) -> dict:
@@ -233,9 +245,12 @@ def latest_manifest(config: dict) -> Path:
 def capture_body_cloud(config: dict) -> Path:
     """One camera scan followed by the canonical transform; no other device I/O."""
     root = artifact_root(config)
-    capture_manifest = capture_epic(config, root / "captures")
+    capture_manifest = capture_epic(config, root / "captures", fast=True)
     capture_data = json.loads(capture_manifest.read_text(encoding="utf-8"))
-    cloud = build_body_cloud(capture_manifest.parent / "pointcloud.ply", config)
+    if capture_data.get("kind") == "epic_fast_pointcloud_capture":
+        cloud = build_body_cloud_npy(capture_data["artifact"], capture_data["sha256"], config)
+    else:
+        cloud = build_body_cloud(capture_manifest.parent / "pointcloud.ply", config)
     table = fit_support_table(cloud)
     run_id = time.strftime("%Y%m%d_%H%M%S_") + uuid.uuid4().hex[:8]
     manifest = save_artifact(cloud, table, root / "artifacts" / run_id)
@@ -243,5 +258,6 @@ def capture_body_cloud(config: dict) -> Path:
     pointer.parent.mkdir(parents=True, exist_ok=True)
     pointer.write_text(json.dumps({"manifest": str(manifest.resolve()),
                                    "capture_manifest": str(capture_manifest.resolve()),
-                                   "camera_capture_elapsed_s": capture_data.get("elapsed_s")}, indent=2) + "\n")
+                                   "camera_capture_elapsed_s": capture_data.get("elapsed_s", capture_data.get("timing_s", {}).get("total")),
+                                   "camera_capture_timing_s": capture_data.get("timing_s")}, indent=2) + "\n")
     return manifest

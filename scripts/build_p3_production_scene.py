@@ -25,6 +25,23 @@ from ares_r.world import (CalibrationSet,PointCloudRef,PoseSE3,RobotState,Safety
 ROI=[[0.22,-0.76,0.70],[1.30,0.76,1.40]]
 
 
+def deployment_prefilter(points, voxel_m):
+    """Conservative ROI + one-point-per-voxel reduction before geometry tests."""
+    at=time.perf_counter();points=np.asarray(points)
+    low,high=np.asarray(ROI[0]),np.asarray(ROI[1])
+    mask=np.all((points>=low)&(points<=high),axis=1);cropped=points[mask]
+    if voxel_m<=0:
+        return cropped,{"enabled":False,"input_points":len(points),
+                        "roi_points":len(cropped),"output_points":len(cropped),
+                        "elapsed_s":time.perf_counter()-at}
+    keys=np.floor((cropped-low)/voxel_m).astype(np.int32)
+    _,indices=np.unique(keys,axis=0,return_index=True)
+    reduced=cropped[np.sort(indices)]
+    return reduced,{"enabled":True,"voxel_m":voxel_m,"input_points":len(points),
+                    "roi_points":len(cropped),"output_points":len(reduced),
+                    "elapsed_s":time.perf_counter()-at}
+
+
 def load(path):return json.loads(Path(path).read_text(encoding="utf-8"))
 
 
@@ -101,6 +118,8 @@ def main():
     p.add_argument("--obstacle-pipeline",choices=("single_aabb","multi_primitive"),
                    default="single_aabb",
                    help="retain P3 fail-closed baseline or use P3.1 support decomposition")
+    p.add_argument("--deployment-voxel-m",type=float,default=0.0,
+                   help="early conservative BODY ROI voxelization; 0 keeps legacy path")
     p.add_argument("--output",required=True);a=p.parse_args();started=time.perf_counter()
     out=Path(a.output);out.mkdir(parents=True,exist_ok=False)
     cloud,meta=load_artifact(Path(a.manifest));geometry=load_geometry_snapshot(Path(a.geometry))
@@ -111,18 +130,21 @@ def main():
     (out/"targets.json").write_text(json.dumps(contract,indent=2)+"\n")
     if not 0.0 <= a.self_filter_margin_m <= 0.05:
         raise ValueError("self-filter margin must be between 0 and 50 mm")
+    if a.deployment_voxel_m not in (0.0,.005,.0075,.010):
+        raise ValueError("deployment voxel must be 0, 5, 7.5, or 10 mm")
+    prefiltered,prefilter=deployment_prefilter(cloud.points_body_m,a.deployment_voxel_m)
     sf_at=time.perf_counter();robot_owned=None
     if a.obstacle_pipeline=="multi_primitive":
         robot_owned=build_robot_owned_filter(geometry,planning_sphere_cell_m=.035,
                                              obb_sensor_margin_m=.020,
                                              gripper_sensor_margin_m=a.gripper_self_filter_margin_m,
                                              sphere_sensor_margin_m=.003)
-        keep,sf=filter_robot_owned(cloud.points_body_m,robot_owned)
+        keep,sf=filter_robot_owned(prefiltered,robot_owned)
     else:
-        keep,sf=self_filter_body_cloud(cloud.points_body_m,geometry,a.self_filter_margin_m)
+        keep,sf=self_filter_body_cloud(prefiltered,geometry,a.self_filter_margin_m)
     sf_s=time.perf_counter()-sf_at
     profile=next(x for x in PROFILES if x.name==DEFAULT_PROFILE)
-    cleanup_at=time.perf_counter();clean,boxes,cleanup=clean_and_cluster(np.asarray(cloud.points_body_m)[keep],ROI,profile)
+    cleanup_at=time.perf_counter();clean,boxes,cleanup=clean_and_cluster(prefiltered[keep],ROI,profile)
     cleanup_s=time.perf_counter()-cleanup_at;np.savez_compressed(out/"clean_residual.npz",points_body_m=clean)
     decomposition=None;decomposition_s=0.0
     planning_boxes=boxes
@@ -203,13 +225,15 @@ def main():
         "compiled_scene_digest":compiled["digest"],"calibration_revision":cloud.transform_revision,
         "geometry_revision":geometry.geometry_revision,"joint_snapshot_revision":geometry.joint_snapshot_revision,
         "tool_revision":geometry.tool_revision,"inactive_arm_revision":inactive["revision"],
-        "obstacle_pipeline":a.obstacle_pipeline,"self_filter":sf,"cleanup":cleanup,
+        "obstacle_pipeline":a.obstacle_pipeline,"deployment_prefilter":prefilter,
+        "self_filter":sf,"cleanup":cleanup,
         "robot_owned_filter":robot_owned.as_dict() if robot_owned else None,
         "support_decomposition":decomposition,"old_single_aabb_obstacles":boxes,
         "objects":provenance,"T_body_model":T_body_model.tolist(),
         "timing_s":{"camera_capture":capture_pointer.get("camera_capture_elapsed_s"),
                     "capture_body_total":capture_pointer.get("capture_body_total_s"),
                     "camera_to_body":cloud.timings_s.get("unit_and_rigid_transform"),
+                    "early_roi_voxel":prefilter["elapsed_s"],
                     "self_filter":sf_s,"outlier_voxel_cluster_aabb":cleanup_s,
                     "support_decomposition_primitive_generation":decomposition_s,
                     "scene_snapshot_compiler":compile_s,"total_post_capture":time.perf_counter()-started}}
