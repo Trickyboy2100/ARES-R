@@ -28,7 +28,8 @@ except ImportError:  # pragma: no cover - readline is present on the target Linu
 
 HELP = """Commands:
   scene status|scan|invalidate [REASON]      canonical LocalSceneService
-  motion status|preview [PLAN_ID]|stop      generic SceneAwareMotionService
+  motion status|preview [PLAN_ID]|execute PLAN_ID|stop
+                                              generic SceneAwareMotionService
   motion plan SIDE Q1..Q6 [ORIENTATION]     AUTO_FRESH cuRobo free-space plan
   demo ab status|scan|plan-next|preview|preflight|execute-next|stop
                              P3.3A CLEAR backend; execute-next locked, no WebUI
@@ -386,6 +387,18 @@ def run_terminal(controller: TaskController) -> None:
                 from .scene_aware_dispatch import SceneAwareDispatcher
                 print(json.dumps(SceneAwareDispatcher(controller.config).motion_stop(),
                                  indent=2, ensure_ascii=False))
+            elif args[:2] == ["motion", "execute"] and len(args) == 3:
+                if controller.mode != "hardware-enabled":
+                    raise RuntimeError("scene-aware execution requires hardware-enabled mode")
+                phrase = "RIGHT SCENE_AWARE SUPERVISED"
+                if input("Type %s: " % phrase).strip() != phrase:
+                    print("Cancelled; no motion.");continue
+                import subprocess
+                output = Path("worklog/evidence/scene-aware-motion") / (
+                    "ART_execution_" + datetime.now().strftime("%Y%m%dT%H%M%S"))
+                subprocess.run([sys.executable, "scripts/run_scene_aware_supervised.py",
+                    "--plan-id", args[2], "--execute", "--authorization", phrase,
+                    "--onsite-observer-confirmed", "--output", str(output)], check=True)
             elif args[:2] == ["motion", "plan"]:
                 if controller.mode != "hardware-enabled":
                     raise RuntimeError("scene-aware planning requires hardware-enabled mode")
@@ -451,14 +464,12 @@ def run_terminal(controller: TaskController) -> None:
                 if action in ("scan", "plan-next", "preflight", "run-next") and controller.mode != "hardware-enabled":
                     raise RuntimeError("live CLEAR scan/plan/preflight requires hardware-enabled mode; motion remains locked")
                 if action == "run-next":
-                    import subprocess
-                    result = subprocess.run(
-                        [sys.executable, "scripts/run_ab_clear_loop.py", "--legs", "1",
-                         "--cycles", "1", "--max-runtime-s", "180"],
-                        cwd=Path.cwd(), check=False)
-                    if result.returncode:
-                        raise RuntimeError("demo ab run-next failed closed; inspect logs/ab_clear_loop.json")
-                    print(Path("logs/ab_clear_loop.json").read_text())
+                    from .motion.scene_aware_motion import build_services
+                    from .motion.ab_client import ABDemoClient
+                    _, motion = build_services(controller.config)
+                    result = ABDemoClient(motion).plan_next()
+                    print(json.dumps(result, indent=2, ensure_ascii=False))
+                    print("Plan ready. Execute exact plan with: motion execute %s" % result["plan_id"])
                     continue
                 result = {
                     "status": ab_fastlane.status,
