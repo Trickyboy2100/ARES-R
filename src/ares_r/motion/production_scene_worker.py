@@ -47,6 +47,7 @@ def bounded_validation_knots(points,max_joint_step_rad=.002):
 
 
 def main():
+    request_at=time.perf_counter()
     request=json.loads(Path(sys.argv[1]).read_text());output=Path(sys.argv[2])
     if request.get("planning_only") is not True or request.get("execution_allowed") is not False:
         raise RuntimeError("P3 request must be planning-only and execution-blocked")
@@ -190,6 +191,11 @@ def main():
         except Exception as exc:  # BLOCK may be rejected before an ordinary result is allocated.
             return None,time.perf_counter()-at,"%s: %s"%(type(exc).__name__,exc)
     warmup_s=0.0
+    warmup_policy=request.get("warmup_policy","ONCE_PER_RUNTIME")
+    if warmup_policy not in ("ONCE_PER_RUNTIME","NONE"):
+        raise ValueError("unknown planner warmup policy")
+    if warmup_policy=="NONE":
+        cached["warmup_done"]=True
     if not cached["warmup_done"]:
         _,warmup_s,_=solve()
         cached["warmup_done"]=True
@@ -204,6 +210,7 @@ def main():
     independent=None
     independent_validation_s=0.0
     orientation_validation=None
+    postprocess_at=time.perf_counter()
     if success:
         segments=[]
         for segment_index,part in enumerate(result):
@@ -291,6 +298,11 @@ def main():
             "max_tcp_z_m":(float(np.max(np.asarray(tcp_body)[:,2])) if tcp_body else None),
             "arc_height_above_endpoints_m":(float(np.max(np.asarray(tcp_body)[:,2])-
                 max(tcp_body[0][2],tcp_body[-1][2])) if tcp_body else None)}
+    payload["timing_s"]["postprocess_and_validation"]=time.perf_counter()-postprocess_at
+    payload["timing_s"]["request_wall_before_serialization"]=time.perf_counter()-request_at
+    serialization_at=time.perf_counter();encoded=json.dumps(payload,indent=2)+"\n"
+    payload["timing_s"]["serialization"]=time.perf_counter()-serialization_at
+    payload["timing_s"]["request_to_result_wall"]=time.perf_counter()-request_at
     output.write_text(json.dumps(payload,indent=2)+"\n")
     print(json.dumps({"mode":mode,"observed":observed,"expectation_met":payload["expectation_met"],
                       "minimum_clearance_m":path_gap,"planning_samples_s":samples}))

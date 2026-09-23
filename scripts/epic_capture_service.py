@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
 """Persistent Pixel Pro capture service for latency-sensitive scene scans."""
 
+import time
+PROCESS_STARTED=time.perf_counter()
 import argparse
 import hashlib
 import json
 import os
 from pathlib import Path
 import socket
-import time
-
+sdk_import_at=time.perf_counter()
 import epiceye
 import numpy as np
+SDK_IMPORT_S=time.perf_counter()-sdk_import_at
 
 
 def capture(endpoint: str, output: Path) -> dict:
@@ -29,6 +31,8 @@ def capture(endpoint: str, output: Path) -> dict:
         raise RuntimeError("Epic get_frame_in_epicraw failed")
     at = time.perf_counter()
     document = epiceye.try_load_epic_raw_document_from_bytes(raw)
+    raw_document_s=time.perf_counter()-at
+    at=time.perf_counter()
     points, width, height = epiceye.decode_point_cloud_from_epicraw(document)
     decode_s = time.perf_counter() - at
     if points is None:
@@ -49,8 +53,10 @@ def capture(endpoint: str, output: Path) -> dict:
         "height": int(height), "vertex_count": int(len(points)),
         "valid_point_count": int(valid.sum()), "valid_ratio": float(valid.mean()),
         "artifact": str(artifact.resolve()), "sha256": digest,
-        "timing_s": {"trigger": trigger_s, "download": download_s,
-                     "decode": decode_s, "npy_write": write_s,
+        "timing_s": {"process_startup_and_sdk_import":SDK_IMPORT_S,
+                     "service_uptime_before_request":total_at-PROCESS_STARTED,
+                     "trigger": trigger_s, "download": download_s,
+                     "raw_document_load":raw_document_s,"decode": decode_s, "npy_write": write_s,
                      "total": time.perf_counter() - total_at},
     }
     (output / "manifest.json").write_text(json.dumps(result, indent=2) + "\n")
