@@ -6,124 +6,149 @@ Master roadmap:
 docs/roadmaps/2026-09-20_BODY_POINTCLOUD_DUAL_ARM_AVOIDANCE_ROADMAP.md
 ~~~
 
-## Completed / established
+## Established
 
-P0 through P3.3 are established sufficiently for the current right-arm A/B demo.
+P0–P3.4 have established the current physical substrate:
 
-Current field state also includes:
-- real CURRENT→A execution;
-- real CLEAR A/B motion;
-- A/B-specific self-filter handling for gripper residuals;
-- A/B-specific tracking threshold experiments;
-- successful 0.08 / 0.09 / 0.10 rad/s tests;
-- successful 0.20 rad/s B→A and A→B tests with about 9.49 s/leg;
-- A/B tracking stop currently tested at 1.5 deg;
-- latest local field commit around this speed work is not yet guaranteed to be consolidated/pushed with all P3.4 code.
+- commissioned CAMERA→BODY;
+- BODY pointcloud and whole dual-arm geometry;
+- robot-owned self-filter;
+- generic support/object multi-primitive scene;
+- fresh SceneSnapshot planning;
+- persistent cuRobo runtime;
+- real right-arm CLEAR execution;
+- real A/B speed commissioning up to the current demo profile;
+- P3.5 S0 fresh-scene planning-only and S1 random obstacle scan/planning evidence.
+
+Current integration GitHub HEAD observed during redesign:
+
+~~~text
+d7c9428bf1b66b796eebe701bfbb846e4fba9621
+~~~
+
+## Architecture correction
+
+The next step is NOT to continue adding random-box cases through the old A/B-specific post-planning gate.
+
+Read:
+
+~~~text
+docs/architecture/2026-09-23_SCENE_AWARE_MOTION_STACK.md
+~~~
+
+Key correction:
+
+~~~text
+obstacle avoidance belongs to the low-level Scene-Aware Motion layer
+
+task/skill/LLM
+→ goal + constraints
+→ ensure fresh local scene
+→ cuRobo collision-aware planning
+→ hard execution validation
+→ JAKA
+~~~
+
+Planner preferred clearance belongs inside cuRobo/planner policy.
+
+Independent/SafetyKernel validation remains for hard collision validity, stale binding, dynamics, controller state and execution authority; it must not act as a second demo-specific trajectory optimizer.
 
 ## Active now
 
-### P3.4 — deployment acceleration
-
-Execute/finish:
-
-~~~text
-docs/work_orders/2026-09-23_P3_4_DEPLOYMENT_ACCELERATION.md
-~~~
-
-Remaining P3.4 goals:
-
-~~~text
-consolidate/push current field changes
-→ finish fast camera path
-→ finish fast scene pipeline
-→ persistent cuRobo planner
-→ remove per-request discarded solve
-→ choose fast planner profile
-→ reconcile A/B-demo-only 0.20 rad/s commissioned profile
-→ run fast CLEAR/AVOID with scan-before-each-leg
-~~~
-
-P3.4 is not complete until it reports:
-
-~~~text
-FAST_CAMERA_PATH_READY
-FAST_SCENE_PIPELINE_READY
-PERSISTENT_PLANNER_READY
-FAST_PLANNER_PROFILE_READY
-PLANNER_WARM_P50_S
-SCAN_TO_TRAJECTORY_P50_S
-AB_SPEED_PROFILE_COMMISSIONED
-AB_COMMISSIONED_SPEED_RAD_S
-AB_TRACKING_STOP_THRESHOLD_DEG
-AB_LEG_DURATION_S
-CLEAR_FAST_ROUNDTRIP_EXECUTED
-AVOID_FAST_ROUNDTRIP_EXECUTED
-~~~
-
-## Next after P3.4
-
-### P3.5 — scene-agnostic fresh-scan obstacle avoidance
+### P3.6 — Scene-Aware Motion control-layer refactor
 
 Execute:
 
 ~~~text
-docs/work_orders/2026-09-23_P3_5_SCENE_AGNOSTIC_POINTCLOUD_AVOIDANCE.md
+docs/work_orders/2026-09-23_P3_6_SCENE_AWARE_MOTION_CONTROL.md
 ~~~
 
-Purpose:
+Main order:
 
 ~~~text
-prove runtime is not hard-coded to the current dock/box scene
-
-fresh arbitrary visible scene
-→ generic reconstruction
-→ cuRobo
-→ execute or fail closed
+preserve current field state
+→ LocalSceneService
+→ base-motion scene invalidation
+→ generic SceneAwareMotionService
+→ reusable planner constraints
+→ correct planner-clearance vs hard-validation layering
+→ start-near-obstacle escape semantics
+→ migrate A/B demo to generic motion client
+→ arbitrary-obstacle physical demo
+→ minimal scene-aware UI
 ~~~
 
-Validation includes:
-- empty scene;
-- same box at two NEW arbitrary placements with no coordinates given to software;
-- different object;
-- multiple objects;
-- blocked scene.
+P3.5 is retained as evidence/test design but its old execution path is superseded by P3.6.
 
-A/B may remain fixed; the environment must not be fixed.
-
-## Important demo policy
-
-For the right-arm A/B demo:
+## Required mobile-manipulation behavior
 
 ~~~text
-every leg uses a fresh scan
-every point-to-point leg uses cuRobo
-no explicit waypoint
-no stale SceneSnapshot or trajectory reuse
-inactive left arm remains in collision world
+AMR starts moving
+→ current local scene INVALID
+
+AMR settles
+→ base_pose_revision increments
+→ SCENE REQUIRED
+
+next arm motion request
+→ automatic fresh Pixel Pro scan
+→ generic local world
+→ cuRobo plan
+→ hard validation
+→ execute
 ~~~
 
-## Speed consistency
+Higher-level tasks must not manually manage obstacle geometry.
 
-Field evidence has now tested 0.20 rad/s successfully for both directions, while older global site config still contains 0.10 rad/s.
+## Demo after refactor
 
-Before general deployment, P3.4 must create an explicit RIGHT_AB_DEMO_ONLY versioned profile rather than leaving actual execution and config contradictory.
+Use A/B only as convenient target poses.
 
-Do not silently raise unrelated motion modes.
+The demo must prove:
 
-## Recorded later
+~~~text
+arbitrary visible obstacle placement
+→ no coordinate given to software
+→ fresh pointcloud scan
+→ generic collision world
+→ cuRobo avoidance
+→ execute
 
-### P4 — WebUI / Terminal frontend
-Start after P3.5 demonstrates scene-agnostic backend behavior.
+move obstacle elsewhere
+→ old scene/plan stale
+→ fresh scan
+→ different fresh plan
+→ execute
+~~~
 
-### P5 — broader throughput/watchdog / reactive upgrades
-Keep for deeper general performance work after the static scan-plan-execute demo is reliable.
+No object-specific avoidance code.
 
-## User action rule
+## UI after backend correction
 
-One physical user action at a time, using the work-order templates.
+Use:
+
+~~~text
+docs/work_orders/2026-09-23_P4_SCENE_AWARE_WEBUI.md
+~~~
+
+The old 2026-09-20 P4 draft is superseded.
+
+UI priorities:
+
+- BODY 3D pointcloud + collision primitives + robot + target + trajectory;
+- BASE/SCENE/PLANNER/EXECUTION state ribbon;
+- scene epoch/base pose revision/freshness;
+- generic MotionRequest panel;
+- planner constraints panel;
+- task/demo convenience clients;
+- embedded ART using the same backend.
+
+No browser hardware API.
 
 ## Git policy
 
 No force-push.
-No coworker AMR dirty changes in this task.
-Consolidate .32 field state and leave .32/GitHub aligned.
+Preserve coworker AMR dirty changes separately.
+Use small commits.
+After validated subphases, fast-forward only if remote HEAD remains compatible.
+Leave .32 and GitHub aligned.
