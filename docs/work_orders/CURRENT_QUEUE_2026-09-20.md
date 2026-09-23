@@ -8,122 +8,122 @@ docs/roadmaps/2026-09-20_BODY_POINTCLOUD_DUAL_ARM_AVOIDANCE_ROADMAP.md
 
 ## Completed / established
 
-### P0 — BODY-camera calibration
-Completed.
+P0 through P3.3 are established sufficiently for the current right-arm A/B demo.
 
-### P1 — BODY pointcloud + viewer
-Completed.
-
-### P1.5 — .32 Git realignment
-Completed.
-
-### P2 — whole dual-arm collision model + self-filter + mutual-arm substrate
-Completed.
-
-### P3 / P3.1 — production pointcloud planning substrate
-Completed.
-
-### P3.2 — cuRobo-only A/B planning checkpoint
-Completed.
-
-### P3.3 / P3.3A — execution hardening + first physical CLEAR evidence
-Partially completed in the field.
-
-Field results now include:
-
+Current field state also includes:
 - real CURRENT→A execution;
-- at least one successful B→A CLEAR leg;
-- one A→B abort on A/B tracking threshold;
-- A/B-specific self-filter adjustment for gripper residuals;
-- A/B-specific tracking-stop adjustment experiments;
-- bounded background CLEAR loop runner;
-- current local field commits not all yet consolidated/pushed.
-
-Do not restart P3.3 design work unless needed by P3.4.
+- real CLEAR A/B motion;
+- A/B-specific self-filter handling for gripper residuals;
+- A/B-specific tracking threshold experiments;
+- successful 0.08 / 0.09 / 0.10 rad/s tests;
+- successful 0.20 rad/s B→A and A→B tests with about 9.49 s/leg;
+- A/B tracking stop currently tested at 1.5 deg;
+- latest local field commit around this speed work is not yet guaranteed to be consolidated/pushed with all P3.4 code.
 
 ## Active now
 
-### P3.4 — same-day deployment acceleration
+### P3.4 — deployment acceleration
 
-Execute:
+Execute/finish:
 
 ~~~text
 docs/work_orders/2026-09-23_P3_4_DEPLOYMENT_ACCELERATION.md
 ~~~
 
-Today's goal:
+Remaining P3.4 goals:
 
 ~~~text
-reduce scan→scene latency
-→ remove planner cold-start/redundant solve overhead
+consolidate/push current field changes
+→ finish fast camera path
+→ finish fast scene pipeline
 → persistent cuRobo planner
-→ benchmark/choose fast planner profile
-→ commission faster A/B-only joint speed up to site ceiling
-→ 2–3 fast CLEAR round trips
-→ real-box fast AVOID round trip if stable
+→ remove per-request discarded solve
+→ choose fast planner profile
+→ reconcile A/B-demo-only 0.20 rad/s commissioned profile
+→ run fast CLEAR/AVOID with scan-before-each-leg
 ~~~
 
-Target operating behavior remains:
-
-- every leg fresh scan / fresh scene;
-- every point-to-point leg uses cuRobo;
-- no explicit waypoint;
-- A/B unchanged unless a real feasibility issue requires change;
-- right-arm only for this demo;
-- inactive left arm remains part of collision world.
-
-## Current measured bottlenecks
-
-Approximate recent values:
+P3.4 is not complete until it reports:
 
 ~~~text
-camera + scene prep: ~15.2 s
-cuRobo request→result: ~54–57 s
-  including one discarded warm-up solve + one formal solve
-formal cuRobo solve: ~19 s
-A/B motion around 0.07 rad/s: ~25 s / leg
+FAST_CAMERA_PATH_READY
+FAST_SCENE_PIPELINE_READY
+PERSISTENT_PLANNER_READY
+FAST_PLANNER_PROFILE_READY
+PLANNER_WARM_P50_S
+SCAN_TO_TRAJECTORY_P50_S
+AB_SPEED_PROFILE_COMMISSIONED
+AB_COMMISSIONED_SPEED_RAD_S
+AB_TRACKING_STOP_THRESHOLD_DEG
+AB_LEG_DURATION_S
+CLEAR_FAST_ROUNDTRIP_EXECUTED
+AVOID_FAST_ROUNDTRIP_EXECUTED
 ~~~
 
-P3.4 should attack these directly.
+## Next after P3.4
 
-## Physical speed policy for P3.4
+### P3.5 — scene-agnostic fresh-scan obstacle avoidance
 
-The site ceiling remains:
+Execute:
 
 ~~~text
-max joint velocity = 0.10 rad/s
-max joint acceleration = 0.20 rad/s²
+docs/work_orders/2026-09-23_P3_5_SCENE_AGNOSTIC_POINTCLOUD_AVOIDANCE.md
 ~~~
 
-P3.4 may commission an A/B-DEMO-ONLY faster profile up to this ceiling.
-
-Tracking-stop threshold may be tuned only for the A/B demo and must remain an explicit logged setting. Do not alter controller estop/collision/limit protections or unrelated motion modes.
-
-## User actions
-
-Codex asks one physical action at a time using the format in the P3.4 work order.
-
-First expected action:
+Purpose:
 
 ~~~text
-USER ACTION 1
-“CLEAR速度测试现场已就绪”
+prove runtime is not hard-coded to the current dock/box scene
+
+fresh arbitrary visible scene
+→ generic reconstruction
+→ cuRobo
+→ execute or fail closed
 ~~~
 
-After that confirmation Codex may run the predefined right-arm speed ladder automatically until a failure/abort condition.
+Validation includes:
+- empty scene;
+- same box at two NEW arbitrary placements with no coordinates given to software;
+- different object;
+- multiple objects;
+- blocked scene.
 
-## Recorded next
+A/B may remain fixed; the environment must not be fixed.
+
+## Important demo policy
+
+For the right-arm A/B demo:
+
+~~~text
+every leg uses a fresh scan
+every point-to-point leg uses cuRobo
+no explicit waypoint
+no stale SceneSnapshot or trajectory reuse
+inactive left arm remains in collision world
+~~~
+
+## Speed consistency
+
+Field evidence has now tested 0.20 rad/s successfully for both directions, while older global site config still contains 0.10 rad/s.
+
+Before general deployment, P3.4 must create an explicit RIGHT_AB_DEMO_ONLY versioned profile rather than leaving actual execution and config contradictory.
+
+Do not silently raise unrelated motion modes.
+
+## Recorded later
 
 ### P4 — WebUI / Terminal frontend
-Do not start until P3.4 produces a responsive deployed backend.
+Start after P3.5 demonstrates scene-agnostic backend behavior.
 
-### P5 — broader throughput/watchdog optimization
-P3.4 may implement the highest-value same-day optimizations. P5 remains for deeper/general performance work.
+### P5 — broader throughput/watchdog / reactive upgrades
+Keep for deeper general performance work after the static scan-plan-execute demo is reliable.
+
+## User action rule
+
+One physical user action at a time, using the work-order templates.
 
 ## Git policy
 
-P3.4 first preserves/consolidates the .32 local field state.
-
 No force-push.
-No unrelated AMR dirty changes.
-Leave .32/GitHub aligned at the end of the day.
+No coworker AMR dirty changes in this task.
+Consolidate .32 field state and leave .32/GitHub aligned.
