@@ -49,7 +49,7 @@ class DualArmSafetyKernel:
         self.speed_profiles = speed_profiles
 
     def preflight_execution_candidate(self, candidate, live, native_audit, *, now=None,
-                                      speed_profile="slow"):
+                                      speed_profile="slow", execution_limits=None):
         """Report every P3.3 gate without minting a permit or sending motion.
 
         This diagnostic deliberately does not invoke ``authorize``; that
@@ -82,6 +82,25 @@ class DualArmSafetyKernel:
                      "CONTROLLER_TOOL_POSE_MM_RAD_CHANGED", "EXECUTION_TOOL_ENVELOPE_REVISION_CHANGED")
         profile = self.speed_profiles.get(speed_profile)
         profile_state = (getattr(profile, "state", None) if profile is not None else None)
+        if execution_limits is None:
+            velocity_limit = min(0.015 if speed_profile == "precision" else 0.070,
+                                 NATIVE_TRACKING_SPEED_CAP_RAD_S if speed_profile == "precision"
+                                 else SUPERVISED_TRACKING_SPEED_CAP_RAD_S)
+            acceleration_limit = 0.03 if speed_profile == "precision" else 0.10
+            tracking_limit = (NATIVE_TRACKING_BUDGET_DEG if speed_profile == "precision"
+                              else SUPERVISED_TRACKING_BUDGET_DEG)
+        else:
+            # The deployment override is deliberately narrow: callers cannot
+            # use this diagnostic hook to raise limits for another motion mode.
+            if execution_limits.get("scope") != "RIGHT_ARM_AB_DEMO_ONLY":
+                raise ValueError("execution limits require RIGHT_ARM_AB_DEMO_ONLY scope")
+            velocity_limit = float(execution_limits["max_velocity_rad_s"])
+            acceleration_limit = float(execution_limits["max_acceleration_rad_s2"])
+            tracking_limit = float(execution_limits["tracking_stop_threshold_deg"])
+            if not (0 < velocity_limit <= 0.10 and
+                    0 < acceleration_limit <= 0.20 and
+                    0 < tracking_limit <= 1.0):
+                raise ValueError("A/B demo execution limits exceed versioned site bounds")
         gates = {
             "START_MATCH": bool(start_match),
             "SCENE_FRESH": bool(scene_fresh),
@@ -97,11 +116,9 @@ class DualArmSafetyKernel:
                 and candidate.get("explicit_waypoints") == []),
             "CENTRAL_EXCLUSION": candidate.get("central_tcp_margin_m", -math.inf) > 0,
             "VELOCITY": native_audit.get("max_joint_speed_rad_s", math.inf)
-                        <= min(0.015 if speed_profile == "precision" else 0.070,
-                               NATIVE_TRACKING_SPEED_CAP_RAD_S if speed_profile == "precision"
-                               else SUPERVISED_TRACKING_SPEED_CAP_RAD_S) + 1e-12,
+                        <= velocity_limit + 1e-12,
             "ACCELERATION": native_audit.get("max_joint_accel_rad_s2", math.inf)
-                            <= (0.03 if speed_profile == "precision" else 0.10) + 1e-12,
+                            <= acceleration_limit + 1e-12,
             "NATIVE_SENDER_LIMITS": (
                 native_audit.get("sample_period_s") == 0.08
                 and 2 <= native_audit.get("sample_count", 0) <= 10000
@@ -112,8 +129,7 @@ class DualArmSafetyKernel:
                 and live.get("native_sender_binary_sha256")
                     == candidate.get("native_sender_binary_sha256")),
             "TRACKING_PREDICTION": native_audit.get("predicted_tracking_gate_deg", math.inf)
-                                   <= (NATIVE_TRACKING_BUDGET_DEG if speed_profile == "precision"
-                                       else SUPERVISED_TRACKING_BUDGET_DEG) + 1e-9,
+                                   <= tracking_limit + 1e-9,
             "EXECUTION_ENABLED": self.execution_enabled,
             "SPEED_PROFILE_COMMISSIONED": profile_state == "COMMISSIONED",
         }

@@ -213,6 +213,51 @@ class P33HardeningTests(unittest.TestCase):
         self.assertIsNone(session.execution_candidate_id)
         self.assertIsNone(session.execution_lease_id)
 
+    def test_ab_demo_deployment_limits_are_explicit_and_scoped(self):
+        plan = self._plan(0.04)
+        selection = trial_summary(plan, expected_envelope_revision=self.envelope["revision"])
+        report = {"calibration_revision": {"T_body_camera": "CAL"},
+                  "geometry_revision": "WHOLE", "inactive_arm_revision": "LEFT",
+                  "tool_revision": "TOOL"}
+        candidate = make_candidate_manifest(
+            plan=plan, selection=selection, scene_report=report,
+            pointcloud_sha256="CLOUD", actual_start_joints_rad=plan["start_rad"],
+            tool_id=1, controller_tool_pose_mm_rad=self.tool,
+            planner_profile_revision="PROFILE", timing_profile_revision="TIMING",
+            native_trajectory_hash="NATIVE", native_duration_s=30,
+            native_sender_binary_sha256="SENDER", expected_destination="B",
+            scene_captured_at_unix=990, created_at_unix=1000, ttl_s=300)
+        live = {key: candidate[key] for key in (
+            "scene_snapshot_id", "scene_digest", "pointcloud_sha256",
+            "T_body_camera_revision", "whole_robot_geometry_revision",
+            "inactive_left_arm_revision", "tool_revision", "controller_tool_id",
+            "controller_tool_pose_mm_rad", "execution_tool_envelope_revision",
+            "planner_profile_revision", "trajectory_hash", "native_trajectory_hash",
+            "timing_profile_revision", "native_sender_binary_sha256")}
+        live.update(actual_start_joints_rad=plan["start_rad"], base_stationary=True,
+                    inactive_arm_known=True)
+        native = {"sample_period_s": 0.08, "sample_count": 200, "duration_s": 15.92,
+                  "max_excursion_rad": 0.004, "max_joint_geometry_error_rad": 0,
+                  "native_file_sha256": "NATIVE", "max_joint_speed_rad_s": 0.08,
+                  "max_joint_accel_rad_s2": 0.20, "predicted_tracking_gate_deg": 1.0}
+        kernel = DualArmSafetyKernel(False, {
+            "ab_demo_deployment": SimpleNamespace(state="UNCOMMISSIONED")})
+        legacy = kernel.preflight_execution_candidate(
+            candidate, live, native, now=1010, speed_profile="ab_demo_deployment")
+        self.assertFalse(legacy["gates"]["VELOCITY"])
+        limits = {"scope": "RIGHT_ARM_AB_DEMO_ONLY", "max_velocity_rad_s": 0.10,
+                  "max_acceleration_rad_s2": 0.20, "tracking_stop_threshold_deg": 1.0}
+        scoped = kernel.preflight_execution_candidate(
+            candidate, live, native, now=1010, speed_profile="ab_demo_deployment",
+            execution_limits=limits)
+        self.assertTrue(scoped["gates"]["VELOCITY"])
+        self.assertTrue(scoped["gates"]["ACCELERATION"])
+        self.assertTrue(scoped["gates"]["TRACKING_PREDICTION"])
+        with self.assertRaises(ValueError):
+            kernel.preflight_execution_candidate(
+                candidate, live, native, now=1010, speed_profile="ab_demo_deployment",
+                execution_limits=dict(limits, scope="GLOBAL"))
+
 
 if __name__ == "__main__":
     unittest.main()

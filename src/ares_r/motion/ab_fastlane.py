@@ -306,11 +306,25 @@ def preflight(config):
                 base_stationary=base["stationary"], inactive_arm_known=left_unchanged)
     sender_sha = verify_installed_sender(SENDER)
     live["native_sender_binary_sha256"] = sender_sha
-    speed_profile = "precision" if session["direction"] == "CURRENT_to_A" else "slow"
-    speed_state = read_json(ROOT / "config/speed_profiles.json")["profiles"][speed_profile]["state"]
+    deployment_limits = None
+    if session["direction"] == "CURRENT_to_A":
+        speed_profile = "precision"
+        speed_state = read_json(ROOT / "config/speed_profiles.json")["profiles"][speed_profile]["state"]
+    else:
+        deployment = read_json(ROOT / "config/ab_demo_deployment_profile.json")
+        motion = deployment["motion"]
+        speed_profile = "ab_demo_deployment"
+        speed_state = "UNCOMMISSIONED"
+        deployment_limits = {
+            "scope": deployment["scope"],
+            "max_velocity_rad_s": max(motion["commissioning_speeds_rad_s"]),
+            "max_acceleration_rad_s2": 0.20,
+            "tracking_stop_threshold_deg": motion["tracking_stop_threshold_deg"],
+        }
     kernel = DualArmSafetyKernel(False, {speed_profile: SimpleNamespace(state=speed_state)})
     result = kernel.preflight_execution_candidate(candidate, live, native,
-                                                  speed_profile=speed_profile)
+                                                  speed_profile=speed_profile,
+                                                  execution_limits=deployment_limits)
     result.update({"candidate_id": candidate["candidate_id"],
                    "speed_profile": speed_profile,
                    "base_evidence": str(evidence / "base_stationarity.json"),
