@@ -36,3 +36,11 @@ class ABDemoClient:
     def plan(self, destination: str):
         return self.motion_service.plan(self.request_for(destination))
 
+    def next_destination(self, actual_joints_rad, tolerance_rad=0.02):
+        def close(name):
+            return max(abs(float(a)-float(b)) for a,b in zip(
+                actual_joints_rad,self.contract[name+"_joints_rad"]))<=tolerance_rad
+        if close("A"):return "B"
+        if close("B"):return "A"
+        return "A"
+

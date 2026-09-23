@@ -20,5 +20,10 @@ class ABGenericClientTests(unittest.TestCase):
         self.assertFalse(hasattr(request, "obstacle_ids"))
         self.assertFalse(hasattr(request, "clearance_gate_m"))
 
+    def test_only_endpoint_selection_remains_in_demo_client(self):
+        service=Service();client=ABDemoClient(service)
+        self.assertEqual(client.next_destination(client.contract["A_joints_rad"]),"B")
+        self.assertEqual(client.next_destination(client.contract["B_joints_rad"]),"A")
+
 
 if __name__ == "__main__": unittest.main()
