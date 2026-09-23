@@ -64,8 +64,9 @@ def main():
     import torch,yaml,curobo
     from curobo.motion_planner import MotionPlanner,MotionPlannerCfg
     from curobo._src.cost.tool_pose_criteria import ToolPoseCriteria
-    from curobo.types import GoalToolPose,JointState,Pose
+    from curobo.types import JointState
     from curobo._src.geom.types import SceneCfg
+    from ares_r.motion.runtime_goal_ik import RuntimeGoalIK
     import_s=time.perf_counter()-imported
     if not torch.cuda.is_available():raise RuntimeError("CUDA required; no fallback")
     source=Path(curobo.__file__).resolve().parent.parent;manifest=json.loads((source/"ARES_R_SOURCE_MANIFEST.json").read_text())
@@ -145,30 +146,18 @@ def main():
             return [np.asarray(row,dtype=float) for row in
                     (request.get("goal_candidates_rad") or [request["goal_rad"]])],[]
         target_position=np.asarray(runtime_goal["position_m"],dtype=float)
-        body_from_model=np.asarray(request["T_body_model"],dtype=float)
-        model_from_body=np.linalg.inv(body_from_model)
-        tcp_from_link6=np.asarray(request["T_link6_tcp"],dtype=float)
+        solver=RuntimeGoalIK(request["robot_yaml_urdf"],request["T_body_model"],
+                             request["T_link6_tcp"])
         candidates=[];metadata=[]
         for pose_index,item in enumerate(request.get("goal_candidate_metadata") or []):
-            body_tcp=np.eye(4);body_tcp[:3,:3]=np.asarray(item["rotation"],dtype=float)
-            body_tcp[:3,3]=target_position
-            model_link6=model_from_body@body_tcp@np.linalg.inv(tcp_from_link6)
-            goal_pose=GoalToolPose.from_poses({"link6":Pose(
-                position=torch.tensor(model_link6[None,:3,3],device="cuda:0",dtype=torch.float32),
-                rotation=torch.tensor(model_link6[None,:3,:3],device="cuda:0",dtype=torch.float32))},
-                ordered_tool_frames=["link6"],num_goalset=1)
-            solved=planner.ik_solver.solve_pose(goal_pose,current_state=state(start[None,:]),
-                                                return_seeds=int(params["num_ik_seeds"]))
-            mask=solved.success.detach().cpu().numpy().reshape(-1)
-            rows=solved.solution.detach().cpu().numpy().reshape(-1,6)
-            rows=rows[:,[names.index(name) for name in ARM_NAMES]]
-            for solution_index,row in enumerate(rows):
-                if not bool(mask[solution_index]):continue
-                candidates.append(np.asarray(row,dtype=float))
-                metadata.append(dict(item,pose_candidate_index=pose_index,
-                    ik_solution_index=solution_index,
-                    joint_distance_rad=float(np.linalg.norm(row-start)),
-                    curobo_ik_total_time_s=float(solved.total_time)))
+            try: solved=solver.solve(target_position,item["rotation"],start)
+            except ValueError:continue
+            row=np.asarray(solved.joints_rad,dtype=float);candidates.append(row)
+            metadata.append(dict(item,pose_candidate_index=pose_index,
+                joint_distance_rad=float(np.linalg.norm(row-start)),
+                ik_position_error_m=solved.position_error_m,
+                ik_orientation_error_deg=math.degrees(solved.orientation_error_rad),
+                ik_backend="PINNED_MODEL_NUMERICAL_IN_PERSISTENT_RUNTIME"))
         if not candidates:
             raise RuntimeError("runtime BODY target is unreachable; no A/B fallback")
         order=sorted(range(len(candidates)),key=lambda index:metadata[index]["joint_distance_rad"])
