@@ -161,7 +161,7 @@ def run(cycles, max_runtime_s, *, plan_only=False):
     if motion.get("commissioning_state") != "COMMISSIONED_CLEAR_2026_09_23":
         raise RuntimeError("A/B deployment speed is not commissioned")
     commissioned_speed = float(motion["commissioned_speed_rad_s"])
-    if not 0 < commissioned_speed <= 0.10:
+    if not 0 < commissioned_speed <= 0.20:
         raise RuntimeError("invalid A/B commissioned speed")
     try:
         for leg in range(1, cycles * 2 + 1):

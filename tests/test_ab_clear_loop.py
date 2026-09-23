@@ -31,7 +31,7 @@ class BoundedLoopTest(unittest.TestCase):
                         "state": "SCENE_READY", "scene_snapshot_id": "fresh"}), \
                     patch.object(loop.ab_fastlane, "plan_next", return_value={
                         "direction": "B_to_A", "dense_clearance_m": .04,
-                        "native_speed_rad_s": .10, "trajectory_hash": "sha256:test"}) as plan, \
+                        "native_speed_rad_s": .20, "trajectory_hash": "sha256:test"}) as plan, \
                     patch.object(loop.ab_fastlane, "preflight", return_value={
                         "blockers": sorted(loop.EXPECTED_BLOCKERS)}), \
                     patch.object(loop, "_run_leg") as native:
@@ -41,7 +41,7 @@ class BoundedLoopTest(unittest.TestCase):
                 status = loop.ab_fastlane.read_json(root / "loop.json")
                 self.assertEqual(status["state"], "PLAN_ONLY_VALIDATED")
                 self.assertEqual(status["direction"], "B_to_A")
-                self.assertEqual(plan.call_args.args[1], .10)
+                self.assertEqual(plan.call_args.args[1], .20)
 
     def test_stop_does_not_signal_unverified_process(self):
         with tempfile.TemporaryDirectory() as directory:

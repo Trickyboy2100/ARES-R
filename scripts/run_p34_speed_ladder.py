@@ -39,9 +39,9 @@ def main():
     if args.execute and args.authorization!=AUTHORIZATION:
         raise PermissionError("exact scoped speed-ladder authorization required")
     config=load_config(str(ROOT/"config/system.json"))
+    deployment=ab_fastlane.read_json(ROOT/"config/ab_demo_deployment_profile.json")
     configured=tuple(float(value) for value in
-                     ab_fastlane.read_json(ROOT/"config/ab_demo_deployment_profile.json")
-                     ["motion"]["commissioning_speeds_rad_s"])
+                     deployment["motion"]["commissioning_speeds_rad_s"])
     speeds=tuple(args.speeds) if args.speeds else configured
     if not speeds or any(speed not in configured for speed in speeds):
         raise ValueError("speeds must be selected from the versioned commissioning ladder")
@@ -63,7 +63,7 @@ def main():
         records.append(record)
         if "fault" in record:
             result={"schema_version":1,"scope":"RIGHT_ARM_AB_DEMO_ONLY",
-                    "profile_revision":"AB_DEPLOYMENT_PROFILE_2026_09_23_V1",
+                    "profile_revision":deployment["revision"],
                     "executed":args.execute,"records":records,
                     "completed_speeds_rad_s":[],"finished_at_unix":time.time()}
             ab_fastlane.write_json(run_dir/"speed_ladder_result.json",result)
@@ -90,7 +90,7 @@ def main():
             record["fault"]=repr(exc);records.append(record)
             break
     result={"schema_version":1,"scope":"RIGHT_ARM_AB_DEMO_ONLY",
-            "profile_revision":"AB_DEPLOYMENT_PROFILE_2026_09_23_V1",
+            "profile_revision":deployment["revision"],
             "executed":args.execute,"records":records,
             "completed_speeds_rad_s":[r["requested_speed_rad_s"] for r in records
                 if r["stage"]=="speed_ladder" and r.get("execution",{}).get("success")],
