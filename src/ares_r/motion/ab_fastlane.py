@@ -239,23 +239,30 @@ def base_stationarity(config, *, count=3, interval_s=1.0,
         with urlopen(url, timeout=5) as response:
             item = json.load(response)
         info = item["info"]
+        log = item.get("log") or {}
         samples.append({"at_unix": time.time(), "x_m": float(info["x"]),
                         "y_m": float(info["y"]), "yaw_deg": float(info["yawNumber"]),
                         "map_id": info["mapId"],
                         "state": item["state"]["current"]["state"],
-                        "confidence": info.get("confidence")})
+                        "confidence": info.get("confidence"),
+                        "motion_log_id": log.get("id"),
+                        "motion_queue_id": log.get("queueId")})
     drift_m = max(math.hypot(row["x_m"]-samples[0]["x_m"],
                              row["y_m"]-samples[0]["y_m"]) for row in samples)
     yaw_drift_deg = max(abs(row["yaw_deg"]-samples[0]["yaw_deg"]) for row in samples)
     idle = all(row["state"] == "IDLE" and row["map_id"] == samples[0]["map_id"]
                for row in samples)
     map_stable = drift_m <= 0.005 and yaw_drift_deg <= 0.1
-    stationary = bool(idle and map_stable)
+    control_marker = (samples[0]["motion_log_id"], samples[0]["motion_queue_id"])
+    controller_idle_stable = (None not in control_marker and all(
+        (row["motion_log_id"], row["motion_queue_id"]) == control_marker for row in samples))
+    stationary = bool(idle and controller_idle_stable)
     return {"stationary": stationary, "amr_idle": idle,
+            "controller_idle_marker_stable": controller_idle_stable,
             "map_pose_stable": map_stable, "cloud_check": None,
             "translation_drift_m": drift_m,
             "yaw_drift_deg": yaw_drift_deg, "samples": samples,
-            "method": "fresh current AMR IDLE plus map-pose stability; no historical cloud input"}
+            "method": "fresh current AMR IDLE plus stable motion log/queue marker; map drift is localization diagnostic only; no historical cloud input"}
 
 
 def preflight(config):
@@ -307,7 +314,9 @@ def preflight(config):
         deployment = read_json(ROOT / "config/ab_demo_deployment_profile.json")
         motion = deployment["motion"]
         speed_profile = "ab_demo_deployment"
-        speed_state = "UNCOMMISSIONED"
+        speed_state = ("COMMISSIONED" if
+                       motion.get("commissioning_state") == "COMMISSIONED_CLEAR_2026_09_23"
+                       else "UNCOMMISSIONED")
         deployment_limits = {
             "scope": deployment["scope"],
             "max_velocity_rad_s": max(motion["commissioning_speeds_rad_s"]),

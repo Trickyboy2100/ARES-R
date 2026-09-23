@@ -76,11 +76,11 @@ class FastLaneTests(unittest.TestCase):
     def test_base_stationarity_needs_idle_and_low_drift(self):
         responses = [
             {"info": {"x": 1.0, "y": 2.0, "yawNumber": 3.0, "mapId": 1},
-             "state": {"current": {"state": "IDLE"}}},
+             "state": {"current": {"state": "IDLE"}}, "log": {"id": 7, "queueId": 9}},
             {"info": {"x": 1.001, "y": 2.001, "yawNumber": 3.01, "mapId": 1},
-             "state": {"current": {"state": "IDLE"}}},
+             "state": {"current": {"state": "IDLE"}}, "log": {"id": 7, "queueId": 9}},
             {"info": {"x": 1.002, "y": 2.002, "yawNumber": 3.02, "mapId": 1},
-             "state": {"current": {"state": "IDLE"}}},
+             "state": {"current": {"state": "IDLE"}}, "log": {"id": 7, "queueId": 9}},
         ]
         class Response:
             def __init__(self, value):
