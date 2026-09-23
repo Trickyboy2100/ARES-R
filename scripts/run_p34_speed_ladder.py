@@ -34,10 +34,17 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--execute",action="store_true")
     parser.add_argument("--authorization")
+    parser.add_argument("--speeds",type=float,nargs="+")
     args=parser.parse_args()
     if args.execute and args.authorization!=AUTHORIZATION:
         raise PermissionError("exact scoped speed-ladder authorization required")
     config=load_config(str(ROOT/"config/system.json"))
+    configured=tuple(float(value) for value in
+                     ab_fastlane.read_json(ROOT/"config/ab_demo_deployment_profile.json")
+                     ["motion"]["commissioning_speeds_rad_s"])
+    speeds=tuple(args.speeds) if args.speeds else configured
+    if not speeds or any(speed not in configured for speed in speeds):
+        raise ValueError("speeds must be selected from the versioned commissioning ladder")
     run_dir=ab_fastlane.EVIDENCE/("p34_speed_ladder_"+time.strftime("%Y%m%dT%H%M%SZ",time.gmtime()))
     run_dir.mkdir(parents=True,exist_ok=False)
     records=[];leg=0;deadline=time.monotonic()+900
@@ -66,7 +73,7 @@ def main():
         # The prepared candidate is intentionally discarded: every ladder leg
         # below obtains a scan made immediately before its own plan.
         ab_fastlane.stop()
-    for speed in (.12,.14,.16,.18,.20):
+    for speed in speeds:
         leg+=1
         _,planned,preflight,scan_s,plan_s=prepare_leg(config,speed)
         if planned["direction"] not in ("A_to_B","B_to_A"):
