@@ -1,5 +1,6 @@
 import unittest
-from ares_r.motion.production_scene_worker import grid_spheres,path_metrics
+import numpy as np
+from ares_r.motion.production_scene_worker import bounded_validation_knots,grid_spheres,path_metrics
 
 
 class ProductionGeometryTest(unittest.TestCase):
@@ -22,6 +23,13 @@ class ProductionGeometryTest(unittest.TestCase):
         fine=grid_spheres(box,.035)
         self.assertGreater(len(fine),len(coarse))
         self.assertLess(fine[0]["radius"],coarse[0]["radius"])
+
+    def test_bounded_validation_knots_remove_only_time_redundancy(self):
+        rows=np.linspace(np.zeros(6),np.full(6,.01),101)
+        knots=bounded_validation_knots(rows,.002)
+        self.assertLess(len(knots),len(rows))
+        self.assertTrue(np.array_equal(knots[0],rows[0]))
+        self.assertTrue(np.array_equal(knots[-1],rows[-1]))
 
 
 if __name__=="__main__":unittest.main()

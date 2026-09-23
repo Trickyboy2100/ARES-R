@@ -10,6 +10,7 @@ from pathlib import Path
 import sys,time,xml.etree.ElementTree as ET
 
 ARM_NAMES=["joint%d"%i for i in range(1,7)]
+_RUNTIME_CACHE={}
 from ares_r.perception.robot_owned_filter import grid_spheres_local as grid_spheres
 from ares_r.motion.ab_demo_state import classify_reference_corridor,validate_curobo_only_policy
 from ares_r.motion.execution_tool_envelope import verify_execution_tool_envelope
@@ -33,6 +34,16 @@ def path_metrics(points):
     t=np.linspace(0,1,len(p))[:,None];line=p[0]+t*(p[-1]-p[0]);deviation=float(np.linalg.norm(p-line,axis=1).max())
     return {"path_length_m":length,"endpoint_distance_m":direct,
             "length_ratio":length/direct if direct>1e-9 else None,"max_straight_line_deviation_m":deviation}
+
+
+def bounded_validation_knots(points,max_joint_step_rad=.002):
+    import numpy as np
+    q=np.asarray(points,dtype=float);selected=[q[0]];last=q[0]
+    for row in q[1:-1]:
+        if float(np.max(np.abs(row-last)))>=max_joint_step_rad:
+            selected.append(row);last=row
+    if len(selected)==1 or not np.array_equal(selected[-1],q[-1]):selected.append(q[-1])
+    return np.asarray(selected)
 
 
 def main():
@@ -85,22 +96,33 @@ def main():
         for origin,angle in zip(origins,q):value=value@origin@transform([0,0,0],[0,0,float(angle)])
         return value@tool
     torch.manual_seed(params["random_seed"])
-    cuboids=dict(scene["cuboids"]);world_at=time.perf_counter()
-    cfg=MotionPlannerCfg.create(robot=robot,scene_model={"cuboid":cuboids},
-        collision_cache={"cuboid":max(64,len(cuboids)+8)},interpolation_dt=params["interpolation_dt"],
-        interpolation_buffer_size=params["interpolation_buffer_size"],num_trajopt_seeds=params["num_trajopt_seeds"],
-        num_ik_seeds=params["num_ik_seeds"],use_cuda_graph=params["use_cuda_graph"],
-        self_collision_check=True,random_seed=params["random_seed"],
-        optimizer_collision_activation_distance=params["optimizer_collision_activation_distance"])
-    planner=MotionPlanner(cfg);world_init_s=time.perf_counter()-world_at;names=list(planner.joint_names)
     orientation_lock=request.get("orientation_lock")
-    if orientation_lock is not None:
-        if (orientation_lock.get("policy")!="BODY_FORWARD_HORIZONTAL_V1" or
-                not np.allclose(orientation_lock.get("target_R_body_tcp"),
-                                HORIZONTAL_FORWARD_R_BODY,atol=1e-8)):
-            raise ValueError("unknown BODY TCP orientation contract")
-        planner.update_tool_pose_criteria({"link6":ToolPoseCriteria.track_orientation(
-            rpy=[1.0,1.0,1.0],non_terminal_scale=1.0)})
+    static_signature=hashlib.sha256(json.dumps({"robot":robot,"spheres":spheres,
+        "parameters":params,"orientation_lock":orientation_lock},sort_keys=True,
+        separators=(",",":")).encode()).hexdigest()
+    cuboids=dict(scene["cuboids"]);world_at=time.perf_counter()
+    cached=_RUNTIME_CACHE.get(static_signature)
+    if cached is None:
+        cfg=MotionPlannerCfg.create(robot=robot,scene_model={"cuboid":cuboids},
+            collision_cache={"cuboid":max(512,len(cuboids)+32)},interpolation_dt=params["interpolation_dt"],
+            interpolation_buffer_size=params["interpolation_buffer_size"],num_trajopt_seeds=params["num_trajopt_seeds"],
+            num_ik_seeds=params["num_ik_seeds"],use_cuda_graph=params["use_cuda_graph"],
+            self_collision_check=True,random_seed=params["random_seed"],
+            optimizer_collision_activation_distance=params["optimizer_collision_activation_distance"])
+        planner=MotionPlanner(cfg);names=list(planner.joint_names)
+        if orientation_lock is not None:
+            if (orientation_lock.get("policy")!="BODY_FORWARD_HORIZONTAL_V1" or
+                    not np.allclose(orientation_lock.get("target_R_body_tcp"),
+                                    HORIZONTAL_FORWARD_R_BODY,atol=1e-8)):
+                raise ValueError("unknown BODY TCP orientation contract")
+            planner.update_tool_pose_criteria({"link6":ToolPoseCriteria.track_orientation(
+                rpy=[1.0,1.0,1.0],non_terminal_scale=1.0)})
+        cached={"planner":planner,"names":names,"warmup_done":False}
+        _RUNTIME_CACHE[static_signature]=cached
+        runtime_reused=False
+    else:
+        planner=cached["planner"];names=cached["names"];runtime_reused=True
+    world_init_s=time.perf_counter()-world_at
     def state(rows):
         rows=np.asarray(rows,dtype=float).reshape(-1,6);ordered=rows[:,[ARM_NAMES.index(x) for x in names]]
         return JointState.from_position(torch.tensor(ordered,device="cuda:0",dtype=torch.float32).contiguous(),joint_names=names)
@@ -167,7 +189,10 @@ def main():
             torch.cuda.synchronize();return [value],time.perf_counter()-at,None
         except Exception as exc:  # BLOCK may be rejected before an ordinary result is allocated.
             return None,time.perf_counter()-at,"%s: %s"%(type(exc).__name__,exc)
-    solve() # warmup
+    warmup_s=0.0
+    if not cached["warmup_done"]:
+        _,warmup_s,_=solve()
+        cached["warmup_done"]=True
     samples=[];errors=[];result=None
     for _ in range(int(request.get("benchmark_runs",3))):
         result,elapsed,error=solve();samples.append(elapsed)
@@ -177,6 +202,7 @@ def main():
     central_margin=None
     smoothness=None
     independent=None
+    independent_validation_s=0.0
     orientation_validation=None
     if success:
         segments=[]
@@ -203,13 +229,17 @@ def main():
             "time_scaled_accel_bound_rad_s2":max_a/slow_scale**2,
             "time_scaled_jerk_bound_rad_s3":max_j/slow_scale**3,
             "physical_execution_commissioned":False}
-        dense=np.concatenate([a+(b-a)*np.arange(4)[:,None]/4 for a,b in zip(q,q[1:])]+[q[-1:]])
+        validation_knots=bounded_validation_knots(q)
+        dense=np.concatenate([a+(b-a)*np.arange(4)[:,None]/4
+                              for a,b in zip(validation_knots,validation_knots[1:])]+[validation_knots[-1:]])
         path_details=clearance_details(dense)
         path_gap=min(path_details.values()) if path_details else float("inf")
         if central_margin<=0 or path_gap<=0 or not np.isfinite(q).all() or max_step>.15:
             success=False;points=[];tcp_body=[];path_gap=None;path_details={}
         elif envelope is not None:
+            validation_at=time.perf_counter()
             independent=validate_dense_world(points,request,subdivisions=4)
+            independent_validation_s=time.perf_counter()-validation_at
             if not independent["collision_free"]:
                 success=False
         if success and orientation_lock is not None:
@@ -233,13 +263,17 @@ def main():
         "path_clearance_by_object_m":path_details,
         "path_limiting_object_id":min(path_details,key=path_details.get) if path_details else None,
         "central_tcp_margin_m":central_margin,
+        "dense_post_validation_samples":len(dense) if success else None,
         "orientation_validation":orientation_validation,
         "smoothness":smoothness,
         "independent_dense_validation":independent,
         "endpoint_clearance_by_object_m":{"start":start_details,"goal":goal_details},
         "timing_s":{"cuda_import":import_s,"curobo_world_and_planner_init":world_init_s,
+                    "persistent_runtime_reused":runtime_reused,
+                    "one_time_warmup_s":warmup_s,
                     "world_update_samples":updates,"planning_samples":samples,
                     "planning_errors":errors,
+                    "independent_dense_validation":independent_validation_s,
                     "planning_reported_total":sum(float(x.total_time) for x in result) if result else None,
                     "planning_reported_solve":sum(float(x.solve_time) for x in result) if result else None},
         "gpu":torch.cuda.get_device_name(0),"curobo_version":str(curobo.__version__),"source_commit":manifest["commit"]}

@@ -10,7 +10,6 @@ import argparse
 import json
 import os
 from pathlib import Path
-import subprocess
 import sys
 
 import numpy as np
@@ -22,6 +21,7 @@ from ares_r.motion.curobo import CUROBO_COMMIT
 from ares_r.motion.curobo_params import planning_profile
 from ares_r.motion.se3 import pose_mm_rad_to_matrix
 from ares_r.motion.execution_tool_envelope import build_execution_tool_envelope
+from ares_r.motion.planner_service_client import plan as persistent_plan
 from ares_r.motion.tcp_orientation import HORIZONTAL_FORWARD_R_BODY, MAX_ORIENTATION_ERROR_DEG
 from search_p32_ab import build_solver
 
@@ -42,6 +42,9 @@ def main():
                    help="P3.3 conservative link6 gripper plus controller-TCP envelope")
     p.add_argument("--collision-activation-distance-m", type=float,
                    help="planning-only cuRobo optimizer obstacle activation distance")
+    p.add_argument("--num-ik-seeds", type=int)
+    p.add_argument("--num-trajopt-seeds", type=int)
+    p.add_argument("--use-cuda-graph", action=argparse.BooleanOptionalAction, default=None)
     p.add_argument("--output", type=Path, required=True)
     a = p.parse_args()
     if a.output.exists():
@@ -79,6 +82,14 @@ def main():
               "reference_ik_errors": errors,
               "planner_mode": "CUROBO_DIRECT", "explicit_waypoints": []}
     parameters = planning_profile(config)
+    if a.num_ik_seeds is not None:
+        parameters["num_ik_seeds"] = a.num_ik_seeds
+    if a.num_trajopt_seeds is not None:
+        parameters["num_trajopt_seeds"] = a.num_trajopt_seeds
+    if a.use_cuda_graph is not None:
+        parameters["use_cuda_graph"] = a.use_cuda_graph
+    if not 1 <= parameters["num_ik_seeds"] <= 32 or not 1 <= parameters["num_trajopt_seeds"] <= 32:
+        raise ValueError("seed counts must be between 1 and 32")
     if a.collision_activation_distance_m is not None:
         if not .005 <= a.collision_activation_distance_m <= .08:
             raise ValueError("activation distance must be between 5 and 80 mm")
@@ -122,14 +133,10 @@ def main():
         "ab_contract": candidate, "explicit_waypoints": [],
         "orientation_lock": request["orientation_lock"]}
     (a.output / "ab_plan_contract.json").write_text(json.dumps(metadata, indent=2)+"\n")
-    env = dict(os.environ, PYTHONPATH=str(ROOT / "src"))
-    with (a.output / "planner.log").open("w") as stream:
-        completed = subprocess.run([config["curobo"]["python"], "-m",
-            "ares_r.motion.production_scene_worker", str(a.output/"planner_request.json"),
-            str(a.output/"planning.json")], cwd=ROOT, env=env,
-            stdout=stream, stderr=subprocess.STDOUT,
-            timeout=float(config["curobo"]["timeout_s"]), check=False)
-    if completed.returncode or not (a.output/"planning.json").exists():
+    persistent_plan(config["curobo"]["python"], ROOT,
+                    a.output/"planner_request.json", a.output/"planning.json",
+                    a.output/"planner.log", float(config["curobo"]["timeout_s"]))
+    if not (a.output/"planning.json").exists():
         raise RuntimeError(f"planning contract failed; inspect {a.output/'planner.log'}")
     result = load(a.output/"planning.json")
     print(json.dumps({"direction": a.direction, "policy": a.policy,

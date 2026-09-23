@@ -51,9 +51,23 @@ def _dense_points(points, subdivisions):
                            for before, after in zip(q, q[1:])] + [q[-1:]])
 
 
+def _bounded_knots(points, max_joint_step_rad=0.002):
+    """Drop time-resampling redundancy while bounding validation joint gaps."""
+    q=np.asarray(points,dtype=float)
+    selected=[q[0]];last=q[0]
+    for row in q[1:-1]:
+        if float(np.max(np.abs(row-last))) >= max_joint_step_rad:
+            selected.append(row);last=row
+    if len(selected)==1 or not np.array_equal(selected[-1],q[-1]):
+        selected.append(q[-1])
+    return np.asarray(selected)
+
+
 def validate_dense_world(points, request, *, subdivisions=4):
     """Return worst signed sphere/cuboid gap and BODY central TCP margin."""
-    q = _dense_points(points, subdivisions)
+    input_count=len(points)
+    knots=_bounded_knots(points)
+    q = _dense_points(knots, subdivisions)
     model = request["collision_model"]
     cell = float(request["planning_parameters"].get("active_sphere_cell_m", 0.035))
     local = {link: grid_spheres_local(box, cell)
@@ -104,6 +118,9 @@ def validate_dense_world(points, request, *, subdivisions=4):
     minimum_name = min(by_object, key=by_object.get) if by_object else None
     minimum = by_object[minimum_name] if minimum_name else float("inf")
     return {"validator": "independent_cpu_urdf_sphere_cuboid_v1",
+            "input_trajectory_samples":int(input_count),
+            "validation_knots":int(len(knots)),
+            "maximum_knot_joint_step_rad":float(np.max(np.abs(np.diff(knots,axis=0)))),
             "dense_samples": int(len(q)), "subdivisions": subdivisions,
             "min_clearance_m": minimum, "limiting_object_id": minimum_name,
             "central_tcp_margin_m": central_margin,
