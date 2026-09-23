@@ -65,6 +65,19 @@ class SafetyKernelTest(unittest.TestCase):
         self.assertAlmostEqual(left["offset_m"], -.13)
         self.assertAlmostEqual(right["offset_m"], -.13)
 
+    def test_scene_aware_gate_is_hard_collision_only(self):
+        candidate = {
+            "motion_contract": "SCENE_AWARE_FREE_SPACE_V1",
+            "hard_validity": {
+                "hard_valid": True,
+                "hard_min_gap_m": .008,
+                "validator_role": "HARD_COLLISION_AND_BINDING_ONLY",
+            },
+        }
+        self.assertTrue(DualArmSafetyKernel.scene_aware_collision_gate(candidate))
+        candidate["hard_validity"]["hard_min_gap_m"] = 0.0
+        self.assertFalse(DualArmSafetyKernel.scene_aware_collision_gate(candidate))
+
 
 if __name__ == "__main__":
     unittest.main()

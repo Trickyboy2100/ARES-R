@@ -157,9 +157,7 @@ def preflight(config, local_scene, candidate, native_audit, profile):
         "TOOL_REVISION_MATCH": (
             right["tool_id"] == manifest["controller_tool_id"] and
             right["tool_data"]["pose_mm_rad"] == manifest["controller_tool_pose_mm_rad"]),
-        "TRAJECTORY_COLLISION_CHECKED": (
-            manifest["hard_validity"]["hard_valid"] is True and
-            manifest["hard_validity"]["hard_min_gap_m"] > 0),
+        "TRAJECTORY_COLLISION_CHECKED": DualArmSafetyKernel.scene_aware_collision_gate(manifest),
         "CENTRAL_EXCLUSION": manifest["central_tcp_margin_m"] > 0,
         "VELOCITY": native_audit["max_joint_speed_rad_s"] <= speed["max_velocity_rad_s"] + 1e-12,
         "ACCELERATION": native_audit["max_joint_accel_rad_s2"] <= speed["max_acceleration_rad_s2"] + 1e-12,
@@ -180,4 +178,3 @@ def preflight(config, local_scene, candidate, native_audit, profile):
               "base": base, "evidence_dir": str(evidence)}
     _write(evidence / "preflight.json", result)
     return result
-
