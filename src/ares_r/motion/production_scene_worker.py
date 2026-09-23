@@ -64,7 +64,7 @@ def main():
     import torch,yaml,curobo
     from curobo.motion_planner import MotionPlanner,MotionPlannerCfg
     from curobo._src.cost.tool_pose_criteria import ToolPoseCriteria
-    from curobo.types import JointState
+    from curobo.types import GoalToolPose,JointState,Pose
     from curobo._src.geom.types import SceneCfg
     import_s=time.perf_counter()-imported
     if not torch.cuda.is_available():raise RuntimeError("CUDA required; no fallback")
@@ -139,6 +139,40 @@ def main():
     def state(rows):
         rows=np.asarray(rows,dtype=float).reshape(-1,6);ordered=rows[:,[ARM_NAMES.index(x) for x in names]]
         return JointState.from_position(torch.tensor(ordered,device="cuda:0",dtype=torch.float32).contiguous(),joint_names=names)
+    def runtime_goal_candidates(start):
+        runtime_goal=request.get("runtime_motion_goal")
+        if runtime_goal is None:
+            return [np.asarray(row,dtype=float) for row in
+                    (request.get("goal_candidates_rad") or [request["goal_rad"]])],[]
+        target_position=np.asarray(runtime_goal["position_m"],dtype=float)
+        body_from_model=np.asarray(request["T_body_model"],dtype=float)
+        model_from_body=np.linalg.inv(body_from_model)
+        tcp_from_link6=np.asarray(request["T_link6_tcp"],dtype=float)
+        candidates=[];metadata=[]
+        for pose_index,item in enumerate(request.get("goal_candidate_metadata") or []):
+            body_tcp=np.eye(4);body_tcp[:3,:3]=np.asarray(item["rotation"],dtype=float)
+            body_tcp[:3,3]=target_position
+            model_link6=model_from_body@body_tcp@np.linalg.inv(tcp_from_link6)
+            goal_pose=GoalToolPose.from_poses({"link6":Pose(
+                position=torch.tensor(model_link6[None,:3,3],device="cuda:0",dtype=torch.float32),
+                rotation=torch.tensor(model_link6[None,:3,:3],device="cuda:0",dtype=torch.float32))},
+                ordered_tool_frames=["link6"],num_goalset=1)
+            solved=planner.ik_solver.solve_pose(goal_pose,current_state=state(start[None,:]),
+                                                return_seeds=int(params["num_ik_seeds"]))
+            mask=solved.success.detach().cpu().numpy().reshape(-1)
+            rows=solved.solution.detach().cpu().numpy().reshape(-1,6)
+            rows=rows[:,[names.index(name) for name in ARM_NAMES]]
+            for solution_index,row in enumerate(rows):
+                if not bool(mask[solution_index]):continue
+                candidates.append(np.asarray(row,dtype=float))
+                metadata.append(dict(item,pose_candidate_index=pose_index,
+                    ik_solution_index=solution_index,
+                    joint_distance_rad=float(np.linalg.norm(row-start)),
+                    curobo_ik_total_time_s=float(solved.total_time)))
+        if not candidates:
+            raise RuntimeError("runtime BODY target is unreachable; no A/B fallback")
+        order=sorted(range(len(candidates)),key=lambda index:metadata[index]["joint_distance_rad"])
+        return [candidates[index] for index in order],[metadata[index] for index in order]
     def quaternion_rotation(q):
         w,x,y,z=[float(v) for v in q]
         return np.asarray([[1-2*(y*y+z*z),2*(x*y-z*w),2*(x*z+y*w)],
@@ -200,8 +234,7 @@ def main():
     for _ in range(int(request.get("benchmark_runs",3))):
         at=time.perf_counter();planner.update_world(typed);torch.cuda.synchronize();updates.append(time.perf_counter()-at)
     start=np.asarray(request["start_rad"],dtype=float)
-    goal_candidates=[np.asarray(row,dtype=float) for row in
-                     request.get("goal_candidates_rad",[request["goal_rad"]])]
+    goal_candidates,resolved_goal_metadata=runtime_goal_candidates(start)
     def solve_segment(begin,end):
         return planner.plan_cspace(state(end),state(begin),max_attempts=params["max_attempts"],
                                    enable_graph_attempt=params["enable_graph_attempt"])
@@ -311,8 +344,8 @@ def main():
         "world_cuboid_ids":list(cuboids),"start_rad":start.tolist(),"goal_rad":goal.tolist(),
         "selected_goal_candidate_index":selected_goal_index,
         "selected_goal_candidate_metadata":(
-            request.get("goal_candidate_metadata",[])[selected_goal_index]
-            if selected_goal_index is not None and request.get("goal_candidate_metadata") else None),
+            resolved_goal_metadata[selected_goal_index]
+            if selected_goal_index is not None and resolved_goal_metadata else None),
         "runtime_motion_goal":request.get("runtime_motion_goal"),
         "goal_position_error_m":goal_position_error_m,
         "trajectory_points_rad":points,"tcp_path_body_m":tcp_body,"path_metrics":path_metrics(tcp_body),

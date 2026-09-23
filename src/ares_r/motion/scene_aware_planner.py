@@ -12,7 +12,6 @@ from .curobo import CUROBO_COMMIT
 from .curobo_params import planning_profile
 from .execution_tool_envelope import build_execution_tool_envelope
 from .planner_service_client import plan as persistent_plan
-from .runtime_goal_ik import RuntimeGoalIK
 from .scene_aware_motion import MotionRequest, OrientationMode
 from .se3 import pose_mm_rad_to_matrix
 from .tcp_orientation import (HORIZONTAL_FORWARD_R_BODY, MAX_ORIENTATION_ERROR_DEG,
@@ -54,17 +53,16 @@ def _orientation_lock(request: MotionRequest, report, audit, collision_model):
             "non_terminal_orientation_cost": True}
 
 
-def _runtime_goal_candidates(request, report, audit, collision_model):
-    """Resolve a BODY MotionGoal without consulting A/B fixtures."""
+def _runtime_goal_spec(request, report, audit, collision_model):
+    """Build runtime pose candidates; cuRobo owns IK and path selection."""
     if request.goal is None:
         return ([float(v) for v in request.goal_joints_rad],), None
     goal = request.goal
     start = np.asarray(audit["diagnostics"]["joint_position_rad"], dtype=float)
     tool = pose_mm_rad_to_matrix(audit["diagnostics"]["tool_data"]["pose_mm_rad"])
-    solver = RuntimeGoalIK(
-        Path(collision_model["asset_root"]) / collision_model["urdf"],
-        np.asarray(report["T_body_model"], dtype=float), tool)
-    current_rotation = solver.fk(start)[:3, :3]
+    urdf = Path(collision_model["asset_root"]) / collision_model["urdf"]
+    link6 = arm_link_transforms(urdf, start)["link6"]
+    current_rotation = (np.asarray(report["T_body_model"]) @ link6 @ tool)[:3, :3]
     mode = goal.orientation
     if mode is OrientationMode.LEVEL_YAW_FREE:
         current_yaw = tcp_yaw_rad(current_rotation)
@@ -79,25 +77,9 @@ def _runtime_goal_candidates(request, report, audit, collision_model):
         rotations = [(0.0, HORIZONTAL_FORWARD_R_BODY)]
     else:
         rotations = [(tcp_yaw_rad(current_rotation), current_rotation)]
-    candidates = []
-    for yaw, rotation in rotations:
-        try:
-            solution = solver.solve(goal.position_m, rotation, start)
-        except ValueError:
-            continue
-        joints = [float(v) for v in solution.joints_rad]
-        candidates.append({
-            "joints_rad": joints,
-            "yaw_rad": yaw,
-            "rotation": np.asarray(rotation).tolist(),
-            "joint_distance_rad": float(np.linalg.norm(np.asarray(joints) - start)),
-            "position_error_m": solution.position_error_m,
-            "orientation_error_deg": float(np.degrees(solution.orientation_error_rad)),
-        })
-    if not candidates:
-        raise RuntimeError("runtime BODY target is unreachable; no A/B fallback")
-    candidates.sort(key=lambda item: (item["joint_distance_rad"], item["position_error_m"]))
-    return tuple(item["joints_rad"] for item in candidates), candidates
+    candidates = [{"yaw_rad": yaw, "rotation": np.asarray(rotation).tolist()}
+                  for yaw,rotation in rotations]
+    return None, candidates
 
 
 class PersistentCuroboPlanner:
@@ -126,7 +108,7 @@ class PersistentCuroboPlanner:
         tool = audit["diagnostics"]["tool_data"]["pose_mm_rad"]
         envelope = build_execution_tool_envelope(collision_model, tool,
                                                   observed_demo_only=False)
-        goal_candidates, goal_candidate_metadata = _runtime_goal_candidates(
+        goal_candidates, goal_candidate_metadata = _runtime_goal_spec(
             motion, report, audit, collision_model)
         orientation_lock = _orientation_lock(motion, report, audit, collision_model)
         if motion.goal is not None and motion.goal.orientation in (
@@ -153,8 +135,10 @@ class PersistentCuroboPlanner:
             "scene_snapshot_id": compiled["scene_snapshot_id"],
             "scene_digest": compiled["digest"],
             "start_rad": audit["diagnostics"]["joint_position_rad"],
-            "goal_rad": list(goal_candidates[0]),
-            "goal_candidates_rad": [list(row) for row in goal_candidates],
+            "goal_rad": (list(goal_candidates[0]) if goal_candidates is not None
+                         else audit["diagnostics"]["joint_position_rad"]),
+            "goal_candidates_rad": ([list(row) for row in goal_candidates]
+                                    if goal_candidates is not None else None),
             "goal_candidate_metadata": goal_candidate_metadata,
             "active_arm": motion.arm,
             "T_body_model": report["T_body_model"],
