@@ -1,3 +1,6 @@
+> SUPERSEDED by docs/work_orders/2026-09-23_P4_SCENE_AWARE_WEBUI.md.
+> Retained only as the earlier UI draft.
+
 # P4 — WebUI frontend over ARES-R Terminal/backend
 
 ## 0. Principle
