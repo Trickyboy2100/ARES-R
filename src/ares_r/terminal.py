@@ -400,12 +400,22 @@ def run_terminal(controller: TaskController) -> None:
             elif args[:2] == ["demo", "ab"]:
                 if len(args) != 3 or args[2] not in (
                         "status", "scan", "plan-next", "preview", "preflight",
-                        "execute-next", "stop"):
-                    raise ValueError("usage: demo ab status|scan|plan-next|preview|preflight|execute-next|stop")
+                        "execute-next", "run-next", "stop"):
+                    raise ValueError("usage: demo ab status|scan|plan-next|preview|preflight|execute-next|run-next|stop")
                 from .motion import ab_fastlane
                 action = args[2]
-                if action in ("scan", "plan-next", "preflight") and controller.mode != "hardware-enabled":
+                if action in ("scan", "plan-next", "preflight", "run-next") and controller.mode != "hardware-enabled":
                     raise RuntimeError("live CLEAR scan/plan/preflight requires hardware-enabled mode; motion remains locked")
+                if action == "run-next":
+                    import subprocess
+                    result = subprocess.run(
+                        [sys.executable, "scripts/run_ab_clear_loop.py", "--legs", "1",
+                         "--cycles", "1", "--max-runtime-s", "180"],
+                        cwd=Path.cwd(), check=False)
+                    if result.returncode:
+                        raise RuntimeError("demo ab run-next failed closed; inspect logs/ab_clear_loop.json")
+                    print(Path("logs/ab_clear_loop.json").read_text())
+                    continue
                 result = {
                     "status": ab_fastlane.status,
                     "scan": lambda: ab_fastlane.scan(controller.config),

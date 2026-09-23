@@ -136,10 +136,13 @@ def _run_leg(direction, trajectory_hash, leg_number, run_dir, deadline):
             os.close(slave)
 
 
-def run(cycles, max_runtime_s, *, plan_only=False):
+def run(cycles, max_runtime_s, *, plan_only=False, legs=None):
     global _stop_requested
     if not 1 <= cycles <= MAX_CYCLES or not 60 <= max_runtime_s <= MAX_RUNTIME_S:
         raise ValueError("bounded service accepts 1-3 cycles and 60-600 s")
+    leg_limit = int(legs) if legs is not None else cycles * 2
+    if not 1 <= leg_limit <= MAX_CYCLES * 2:
+        raise ValueError("bounded service accepts 1-6 legs")
     LOCK.parent.mkdir(parents=True, exist_ok=True)
     lock = LOCK.open("a+")
     fcntl.flock(lock.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
@@ -151,11 +154,12 @@ def run(cycles, max_runtime_s, *, plan_only=False):
     deadline = started + max_runtime_s
     ab_fastlane.write_json(MANIFEST, {
         "pid": os.getpid(), "start_ticks": _start_ticks(os.getpid()),
-        "state": "STARTED", "cycles_limit": cycles, "cycles_completed": 0,
+        "state": "STARTED", "cycles_limit": cycles, "legs_limit": leg_limit,
+        "cycles_completed": 0,
         "max_runtime_s": max_runtime_s, "run_dir": str(run_dir),
         "plan_only": bool(plan_only),
         "stop_command": "python3 scripts/run_ab_clear_loop.py --stop"})
-    expected = "B_to_A"
+    expected = None
     deployment = ab_fastlane.read_json(ROOT / "config/ab_demo_deployment_profile.json")
     motion = deployment["motion"]
     if motion.get("commissioning_state") != "COMMISSIONED_CLEAR_2026_09_23":
@@ -164,7 +168,7 @@ def run(cycles, max_runtime_s, *, plan_only=False):
     if not 0 < commissioned_speed <= 0.20:
         raise RuntimeError("invalid A/B commissioned speed")
     try:
-        for leg in range(1, cycles * 2 + 1):
+        for leg in range(1, leg_limit + 1):
             _check_stop(deadline)
             _write_status(state="SCANNING", leg=leg, direction=expected)
             session = ab_fastlane.scan(load_config(str(ROOT / "config/system.json")))
@@ -176,8 +180,11 @@ def run(cycles, max_runtime_s, *, plan_only=False):
             planned = ab_fastlane.plan_next(load_config(str(ROOT / "config/system.json")),
                                             commissioned_speed)
             _check_stop(deadline)
-            if planned["direction"] != expected:
+            if planned["direction"] not in ("A_to_B", "B_to_A"):
+                raise RuntimeError("run-next requires the right arm to be at A or B")
+            if expected is not None and planned["direction"] != expected:
                 raise RuntimeError("expected %s, planned %s" % (expected, planned["direction"]))
+            expected = planned["direction"]
             if (planned["dense_clearance_m"] < .030 or
                     planned["native_speed_rad_s"] > commissioned_speed + 1e-12):
                 raise RuntimeError("fresh plan outside commissioned bounded-loop envelope")
@@ -187,6 +194,7 @@ def run(cycles, max_runtime_s, *, plan_only=False):
                 raise RuntimeError("unexpected preflight blockers: %s" % preflight["blockers"])
             if plan_only:
                 _write_status(state="PLAN_ONLY_VALIDATED", leg=leg,
+                              direction=expected,
                               trajectory_hash=planned["trajectory_hash"],
                               ended_at_unix=time.time())
                 return
@@ -221,6 +229,7 @@ def stop():
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--cycles", type=int, default=MAX_CYCLES)
+    parser.add_argument("--legs", type=int)
     parser.add_argument("--max-runtime-s", type=int, default=MAX_RUNTIME_S)
     parser.add_argument("--stop", action="store_true")
     parser.add_argument("--status", action="store_true")
@@ -232,7 +241,7 @@ def main():
         print(json.dumps(ab_fastlane.read_json(MANIFEST) if MANIFEST.exists() else
                          {"state": "NOT_STARTED"}, indent=2))
     else:
-        run(args.cycles, args.max_runtime_s, plan_only=args.plan_only)
+        run(args.cycles, args.max_runtime_s, plan_only=args.plan_only, legs=args.legs)
 
 
 if __name__ == "__main__":

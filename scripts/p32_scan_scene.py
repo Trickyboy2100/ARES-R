@@ -40,14 +40,14 @@ def audit_with_readonly_retry(urdf, output, side):
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--mode", choices=("CLEAR", "AVOID", "BLOCK"), required=True)
+    p.add_argument("--mode", choices=("LIVE", "CLEAR", "AVOID", "BLOCK"), required=True)
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--open3d-python", type=Path, required=True,
                    help="site Python with Open3D for residual decomposition")
     p.add_argument("--block-search", type=Path,
                    help="versioned A/B search artifact; required for BLOCK goal enclosure")
     p.add_argument("--candidate", type=int, default=1)
-    p.add_argument("--deployment-voxel-m", type=float, default=.0075,
+    p.add_argument("--deployment-voxel-m", type=float,
                    choices=(.005,.0075,.010), help="deployment scene voxel size")
     args = p.parse_args()
     output = args.output.resolve()
@@ -55,6 +55,10 @@ def main():
         raise ValueError("refusing to overwrite prior capture")
     output.mkdir(parents=True)
     config = json.loads((ROOT / "config/system.json").read_text())
+    deployment = json.loads((ROOT / "config/ab_demo_deployment_profile.json").read_text())
+    scene_profile = deployment["scene"]
+    deployment_voxel = (float(args.deployment_voxel_m) if args.deployment_voxel_m is not None
+                        else float(scene_profile["deployment_voxel_m"]))
     started = time.perf_counter()
     manifest = capture_body_cloud(config)
     capture_s = time.perf_counter() - started
@@ -98,8 +102,10 @@ def main():
         "--manifest", manifest, "--geometry", geometry,
         "--left-audit", left, "--right-audit", right,
         "--obstacle-pipeline", "multi_primitive",
-        "--deployment-voxel-m", str(args.deployment_voxel_m),
-        "--gripper-self-filter-margin-m", ".040", "--capture-pointer",
+        "--deployment-voxel-m", str(deployment_voxel),
+        "--self-filter-margin-m", str(scene_profile["robot_self_filter_margin_m"]),
+        "--gripper-self-filter-margin-m", str(scene_profile["gripper_self_filter_margin_m"]),
+        "--capture-pointer",
         output / "capture_pointer.json", "--output", scene, *target_args,
         python=str(args.open3d_python))
     report = json.loads((scene / "scene_report.json").read_text())

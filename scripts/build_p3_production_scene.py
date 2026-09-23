@@ -22,13 +22,10 @@ from ares_r.perception.support_decomposition import (decompose_support_objects,
 from ares_r.world import (CalibrationSet,PointCloudRef,PoseSE3,RobotState,SafetyConstraint,
     SceneObject,SceneObjectRole,WorldModel,compile_snapshot,snapshot_dict)
 
-ROI=[[0.22,-0.76,0.70],[1.30,0.76,1.40]]
-
-
-def deployment_prefilter(points, voxel_m):
+def deployment_prefilter(points, voxel_m, roi):
     """Conservative ROI + one-point-per-voxel reduction before geometry tests."""
     at=time.perf_counter();points=np.asarray(points)
-    low,high=np.asarray(ROI[0]),np.asarray(ROI[1])
+    low,high=np.asarray(roi[0]),np.asarray(roi[1])
     mask=np.all((points>=low)&(points<=high),axis=1);cropped=points[mask]
     if voxel_m<=0:
         return cropped,{"enabled":False,"input_points":len(points),
@@ -102,7 +99,7 @@ def add(objects,observation,identifier,role,center,dims,inflation,source):
 
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument("--mode",choices=("CLEAR","AVOID","BLOCK"),required=True)
+    p=argparse.ArgumentParser();p.add_argument("--mode",choices=("LIVE","CLEAR","AVOID","BLOCK"),required=True)
     p.add_argument("--manifest",required=True);p.add_argument("--geometry",required=True)
     p.add_argument("--left-audit",required=True);p.add_argument("--right-audit",required=True)
     p.add_argument("--model",default="config/robot_collision_model.json");p.add_argument("--world",default="config/robot_world.json")
@@ -124,6 +121,8 @@ def main():
     out=Path(a.output);out.mkdir(parents=True,exist_ok=False)
     cloud,meta=load_artifact(Path(a.manifest));geometry=load_geometry_snapshot(Path(a.geometry))
     audits={"left":load(a.left_audit),"right":load(a.right_audit)};model,world=load(a.model),load(a.world)
+    scene_profile=load(REPOSITORY/"config/ab_demo_deployment_profile.json")["scene"]
+    roi=scene_profile["body_roi_m"]
     if a.targets and a.goal_delta_rad is not None:
         raise ValueError("--targets and --goal-delta-rad are mutually exclusive")
     contract=targets(a.active,audits[a.active],world,model,a.targets,a.goal_delta_rad)
@@ -132,7 +131,7 @@ def main():
         raise ValueError("self-filter margin must be between 0 and 50 mm")
     if a.deployment_voxel_m not in (0.0,.005,.0075,.010):
         raise ValueError("deployment voxel must be 0, 5, 7.5, or 10 mm")
-    prefiltered,prefilter=deployment_prefilter(cloud.points_body_m,a.deployment_voxel_m)
+    prefiltered,prefilter=deployment_prefilter(cloud.points_body_m,a.deployment_voxel_m,roi)
     sf_at=time.perf_counter();robot_owned=None
     if a.obstacle_pipeline=="multi_primitive":
         robot_owned=build_robot_owned_filter(geometry,planning_sphere_cell_m=.035,
@@ -144,7 +143,7 @@ def main():
         keep,sf=self_filter_body_cloud(prefiltered,geometry,a.self_filter_margin_m)
     sf_s=time.perf_counter()-sf_at
     profile=next(x for x in PROFILES if x.name==DEFAULT_PROFILE)
-    cleanup_at=time.perf_counter();clean,boxes,cleanup=clean_and_cluster(prefiltered[keep],ROI,profile)
+    cleanup_at=time.perf_counter();clean,boxes,cleanup=clean_and_cluster(prefiltered[keep],roi,profile)
     cleanup_s=time.perf_counter()-cleanup_at;np.savez_compressed(out/"clean_residual.npz",points_body_m=clean)
     decomposition=None;decomposition_s=0.0
     planning_boxes=boxes
@@ -226,6 +225,7 @@ def main():
         "geometry_revision":geometry.geometry_revision,"joint_snapshot_revision":geometry.joint_snapshot_revision,
         "tool_revision":geometry.tool_revision,"inactive_arm_revision":inactive["revision"],
         "obstacle_pipeline":a.obstacle_pipeline,"deployment_prefilter":prefilter,
+        "generic_scene_profile":scene_profile,
         "self_filter":sf,"cleanup":cleanup,
         "robot_owned_filter":robot_owned.as_dict() if robot_owned else None,
         "support_decomposition":decomposition,"old_single_aabb_obstacles":boxes,

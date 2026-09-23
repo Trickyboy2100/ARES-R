@@ -21,13 +21,14 @@ from .execution_candidate import (digest, make_candidate_manifest,
                                   make_execution_lease_draft, trial_summary)
 from .native_execution_package import package_native_preview, verify_installed_sender
 from .safety_kernel import DualArmSafetyKernel
+from .live_scene import build_live_planning_scene
 
 ROOT = Path(__file__).resolve().parents[3]
 SEARCH = ROOT / "config/ab_demo_horizontal_forward.json"
 SENDER = Path("/home/yikun/ares-r-curobo-assets/jaka_right_supervised_path_v5")
 STATE = ROOT / "logs/ab_fastlane_session.json"
 ACTIVE_NATIVE = ROOT / "logs/ab_native_active.json"
-EVIDENCE = ROOT / "worklog/evidence/2026-09-22-p3-3a-clear-fastlane"
+EVIDENCE = ROOT / "worklog/evidence/2026-09-23-p3-5-live-scenes"
 JOINT_MATCH_RAD = math.radians(0.02)
 
 
@@ -62,25 +63,26 @@ def status():
 
 
 def scan(config):
-    """Capture one new box-free scene; never reuse a previous scene pointer."""
-    destination = EVIDENCE / ("art_scan_" + _stamp())
-    python = config["epic_pointcloud"]["body_cloud_viewer_python"]
+    """Build a generic live scene; no obstacle coordinates or prior scene input."""
+    destination = EVIDENCE / ("live_scan_" + _stamp())
     # Camera acquisition itself invalidates the old scene, even if a later
     # JAKA state read or cloud process fails.
     write_json(STATE, {"state": "SCANNING", "candidate_id": None,
                        "plan_dir": None, "scene_dir": None, "execution_enabled": False})
     try:
-        _run((python, ROOT / "scripts/p32_scan_scene.py", "--mode", "CLEAR",
-              "--output", destination, "--open3d-python", python), timeout=240)
+        result = build_live_planning_scene(config, destination)
     except Exception:
         write_json(STATE, {"state": "SCENE_INVALID", "candidate_id": None,
                            "failed_capture_dir": str(destination),
                            "execution_enabled": False})
         raise
-    result = read_json(destination / "fresh_scene_summary.json")
     session = {"state": "SCENE_READY", "scene_dir": str(destination),
                "scene_snapshot_id": result["snapshot_id"], "plan_dir": None,
-               "candidate_id": None, "scanned_at_unix": time.time()}
+               "candidate_id": None, "scanned_at_unix": time.time(),
+               "pointcloud_sha256": result["pointcloud_sha256"],
+               "primitive_count": result["primitive_count"],
+               "scan_scene_timing_s": result["timing_s"],
+               "scan_scene_total_s": result["total_s"]}
     write_json(STATE, session)
     return status()
 
@@ -124,7 +126,8 @@ def prepare_plan(scene_dir, plan_dir, speed_ceiling_rad_s=None):
     deployment=read_json(ROOT/"config/ab_demo_deployment_profile.json")
     tracking_stop=float(deployment["motion"]["tracking_stop_threshold_deg"])
     speed_cap=(0.015 if direction=="CURRENT_to_A" else
-               float(speed_ceiling_rad_s if speed_ceiling_rad_s is not None else .070))
+               float(speed_ceiling_rad_s if speed_ceiling_rad_s is not None else
+                     deployment["motion"]["commissioned_speed_rad_s"]))
     accel_cap=0.03 if direction=="CURRENT_to_A" else .20
     if direction != "CURRENT_to_A":
         # Operator-authorized A/B commissioning override. Keep the generic
@@ -227,7 +230,7 @@ def preview():
 
 def base_stationarity(config, *, count=3, interval_s=1.0,
                       scene_dir=None, evidence_dir=None):
-    """Read-only IDLE plus map stability or independent static-cloud check."""
+    """Read-only current AMR IDLE and map-pose stability check."""
     url = config["base"]["base_url"].rstrip("/") + "/robot/status"
     samples = []
     for index in range(count):
@@ -247,28 +250,12 @@ def base_stationarity(config, *, count=3, interval_s=1.0,
     idle = all(row["state"] == "IDLE" and row["map_id"] == samples[0]["map_id"]
                for row in samples)
     map_stable = drift_m <= 0.005 and yaw_drift_deg <= 0.1
-    cloud = None
-    if idle and not map_stable and scene_dir is not None and evidence_dir is not None:
-        scene_dir = Path(scene_dir)
-        current = scene_dir / "scene/clean_residual.npz"
-        current_report = read_json(scene_dir / "scene/scene_report.json")
-        prior = sorted((p for p in EVIDENCE.glob("*/scene/clean_residual.npz")
-                        if p != current and p.stat().st_mtime < current.stat().st_mtime
-                        and read_json(p.parent / "scene_report.json").get("calibration_revision")
-                        == current_report.get("calibration_revision")),
-                       key=lambda p: p.stat().st_mtime, reverse=True)
-        if prior:
-            output = Path(evidence_dir) / "cloud_stationarity.json"
-            python = config["epic_pointcloud"]["body_cloud_viewer_python"]
-            _run((python, ROOT / "scripts/check_base_stationary_cloud.py",
-                  prior[0], current, "--output", output), timeout=60)
-            cloud = read_json(output)
-    stationary = bool(idle and (map_stable or (cloud and cloud["stationary"])))
+    stationary = bool(idle and map_stable)
     return {"stationary": stationary, "amr_idle": idle,
-            "map_pose_stable": map_stable, "cloud_check": cloud,
+            "map_pose_stable": map_stable, "cloud_check": None,
             "translation_drift_m": drift_m,
             "yaw_drift_deg": yaw_drift_deg, "samples": samples,
-            "method": "AMR IDLE plus map stability OR independent static-scene cloud registration; not safety-rated"}
+            "method": "fresh current AMR IDLE plus map-pose stability; no historical cloud input"}
 
 
 def preflight(config):

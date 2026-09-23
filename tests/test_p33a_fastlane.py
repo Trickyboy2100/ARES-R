@@ -38,7 +38,8 @@ class FastLaneTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             state = Path(directory) / "state.json"
             with patch.object(ab_fastlane, "STATE", state), \
-                    patch.object(ab_fastlane, "_run", side_effect=RuntimeError("camera failed")):
+                    patch.object(ab_fastlane, "build_live_planning_scene",
+                                 side_effect=RuntimeError("camera failed")):
                 ab_fastlane.write_json(state, {"state": "PLANNED", "candidate_id": "old"})
                 with self.assertRaisesRegex(RuntimeError, "camera failed"):
                     ab_fastlane.scan({"epic_pointcloud": {"body_cloud_viewer_python": "python"}})
