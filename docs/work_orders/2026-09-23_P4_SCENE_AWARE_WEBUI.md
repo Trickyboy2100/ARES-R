@@ -78,14 +78,15 @@ Inputs:
 ~~~text
 arm
 target source:
+  runtime BODY XYZ
   named target
-  BODY XYZ
   full pose
+  external module target
 
 orientation:
-  FREE
+  LEVEL_YAW_FREE
+  LEVEL_YAW_TARGET
   CURRENT
-  BODY_FORWARD_HORIZONTAL
   EXPLICIT
 
 speed profile
@@ -155,6 +156,7 @@ POST /api/motion/{plan_id}/execute
 POST /api/motion/stop
 
 POST /api/task/ab/run-next
+POST /api/motion/plan-arbitrary
 
 WS   /api/events
 WS   /api/scene/stream
@@ -236,3 +238,25 @@ WEBUI_PLAN_STALE_INVALIDATION = YES/NO
 WEBUI_ARBITRARY_SCENE_VISUALIZATION = YES/NO
 WEBUI_ART_EMBEDDED = YES/NO
 ~~~
+
+
+## 7. Arbitrary-target requirement
+
+A/B is a demo/regression preset only.
+
+The main Motion panel must accept arbitrary runtime BODY targets and must not preload A/B coordinates.
+
+For LEVEL_YAW_FREE:
+
+- TCP stays level relative to BODY/ground;
+- yaw about BODY +Z is planner-free;
+- UI displays the final/planned yaw range.
+
+For LEVEL_YAW_TARGET:
+
+- user/upstream module supplies desired final yaw;
+- level constraint remains active.
+
+The 3D viewport must allow placing or editing a target marker independently from obstacle geometry.
+
+Future pick/place target markers are external semantic targets and must feed the same generic MotionRequest API.
