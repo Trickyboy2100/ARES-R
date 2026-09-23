@@ -16,6 +16,67 @@ HORIZONTAL_FORWARD_R_BODY = np.array(
 MAX_ORIENTATION_ERROR_DEG = 3.0
 
 
+def level_rotation(yaw_rad):
+    """Return the established level gripper branch at a BODY +Z yaw."""
+    c, s = math.cos(float(yaw_rad)), math.sin(float(yaw_rad))
+    return np.array([[c, -s, 0.0], [s, c, 0.0], [0.0, 0.0, 1.0]]) @ HORIZONTAL_FORWARD_R_BODY
+
+
+def tcp_yaw_rad(rotation):
+    """Yaw of the TCP +Z approach axis projected onto the BODY plane."""
+    rotation = np.asarray(rotation, dtype=float)
+    return math.atan2(float(rotation[1, 2]), float(rotation[0, 2]))
+
+
+def validate_level_path(fk_body_tcp, joints, *, subdivisions=4,
+                        tolerance_deg=MAX_ORIENTATION_ERROR_DEG,
+                        final_yaw_rad=None):
+    """Validate horizontal TCP axes while deliberately allowing BODY yaw."""
+    rows = np.asarray(joints, dtype=float)
+    if rows.ndim != 2 or rows.shape[1] != 6 or len(rows) < 2 or not np.isfinite(rows).all():
+        raise ValueError("finite six-joint path with at least two samples required")
+    yaws = []
+    worst_forward = worst_finger = 0.0
+    for index in range(len(rows) - 1):
+        samples = [rows[index] + fraction / subdivisions * (rows[index + 1] - rows[index])
+                   for fraction in range(subdivisions)]
+        for q in samples:
+            rotation = np.asarray(fk_body_tcp(q), dtype=float)[:3, :3]
+            worst_forward = max(worst_forward, math.degrees(math.asin(
+                min(1.0, abs(float(rotation[2, 2]))))))
+            worst_finger = max(worst_finger, math.degrees(math.asin(
+                min(1.0, abs(float(rotation[2, 0]))))))
+            yaws.append(tcp_yaw_rad(rotation))
+    rotation = np.asarray(fk_body_tcp(rows[-1]), dtype=float)[:3, :3]
+    worst_forward = max(worst_forward, math.degrees(math.asin(
+        min(1.0, abs(float(rotation[2, 2]))))))
+    worst_finger = max(worst_finger, math.degrees(math.asin(
+        min(1.0, abs(float(rotation[2, 0]))))))
+    yaws.append(tcp_yaw_rad(rotation))
+    unwrapped = np.unwrap(np.asarray(yaws, dtype=float))
+    final_error = None
+    if final_yaw_rad is not None:
+        final_error = abs(math.degrees(math.atan2(
+            math.sin(yaws[-1] - float(final_yaw_rad)),
+            math.cos(yaws[-1] - float(final_yaw_rad)))))
+    maximum = max(worst_forward, worst_finger)
+    passed = maximum <= tolerance_deg and (final_error is None or final_error <= tolerance_deg)
+    return {
+        "passed": passed,
+        "mode": "LEVEL_YAW_TARGET" if final_yaw_rad is not None else "LEVEL_YAW_FREE",
+        "max_level_error_deg": maximum,
+        "max_forward_tilt_deg": worst_forward,
+        "max_finger_axis_tilt_deg": worst_finger,
+        "yaw_range_deg": math.degrees(float(unwrapped.max() - unwrapped.min())),
+        "final_yaw_deg": math.degrees(float(yaws[-1])),
+        "final_yaw_error_deg": final_error,
+        "tolerance_deg": tolerance_deg,
+        "dense_samples": len(yaws),
+        "tcp_forward_axis": "+Z",
+        "finger_closing_axis": "X",
+    }
+
+
 def validate_path(fk_body_tcp, joints, *, subdivisions=4,
                   tolerance_deg=MAX_ORIENTATION_ERROR_DEG,
                   target_rotation=HORIZONTAL_FORWARD_R_BODY):

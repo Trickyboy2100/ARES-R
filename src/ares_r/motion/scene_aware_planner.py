@@ -12,9 +12,11 @@ from .curobo import CUROBO_COMMIT
 from .curobo_params import planning_profile
 from .execution_tool_envelope import build_execution_tool_envelope
 from .planner_service_client import plan as persistent_plan
+from .runtime_goal_ik import RuntimeGoalIK
 from .scene_aware_motion import MotionRequest, OrientationMode
 from .se3 import pose_mm_rad_to_matrix
-from .tcp_orientation import HORIZONTAL_FORWARD_R_BODY, MAX_ORIENTATION_ERROR_DEG
+from .tcp_orientation import (HORIZONTAL_FORWARD_R_BODY, MAX_ORIENTATION_ERROR_DEG,
+                              level_rotation, tcp_yaw_rad)
 from ares_r.perception.robot_collision import arm_link_transforms
 
 
@@ -30,7 +32,8 @@ def load_profile(path=None):
 
 
 def _orientation_lock(request: MotionRequest, report, audit, collision_model):
-    mode = request.constraints.orientation
+    mode = (request.goal.orientation if request.goal is not None
+            else request.constraints.orientation)
     if mode is OrientationMode.FREE:
         return None
     if mode is OrientationMode.BODY_FORWARD_HORIZONTAL:
@@ -49,6 +52,52 @@ def _orientation_lock(request: MotionRequest, report, audit, collision_model):
     return {"policy": policy, "target_R_body_tcp": np.asarray(rotation).tolist(),
             "max_error_deg": MAX_ORIENTATION_ERROR_DEG,
             "non_terminal_orientation_cost": True}
+
+
+def _runtime_goal_candidates(request, report, audit, collision_model):
+    """Resolve a BODY MotionGoal without consulting A/B fixtures."""
+    if request.goal is None:
+        return ([float(v) for v in request.goal_joints_rad],), None
+    goal = request.goal
+    start = np.asarray(audit["diagnostics"]["joint_position_rad"], dtype=float)
+    tool = pose_mm_rad_to_matrix(audit["diagnostics"]["tool_data"]["pose_mm_rad"])
+    solver = RuntimeGoalIK(
+        Path(collision_model["asset_root"]) / collision_model["urdf"],
+        np.asarray(report["T_body_model"], dtype=float), tool)
+    current_rotation = solver.fk(start)[:3, :3]
+    mode = goal.orientation
+    if mode is OrientationMode.LEVEL_YAW_FREE:
+        current_yaw = tcp_yaw_rad(current_rotation)
+        offsets = [0, 15, -15, 30, -30, 45, -45, 60, -60, 90, -90, 120, -120, 180]
+        rotations = [(current_yaw + np.deg2rad(value),
+                      level_rotation(current_yaw + np.deg2rad(value))) for value in offsets]
+    elif mode is OrientationMode.LEVEL_YAW_TARGET:
+        rotations = [(float(goal.yaw_target_rad), level_rotation(goal.yaw_target_rad))]
+    elif mode is OrientationMode.EXPLICIT:
+        rotations = [(None, np.asarray(goal.explicit_rotation, dtype=float))]
+    elif mode is OrientationMode.BODY_FORWARD_HORIZONTAL:
+        rotations = [(0.0, HORIZONTAL_FORWARD_R_BODY)]
+    else:
+        rotations = [(tcp_yaw_rad(current_rotation), current_rotation)]
+    candidates = []
+    for yaw, rotation in rotations:
+        try:
+            solution = solver.solve(goal.position_m, rotation, start)
+        except ValueError:
+            continue
+        joints = [float(v) for v in solution.joints_rad]
+        candidates.append({
+            "joints_rad": joints,
+            "yaw_rad": yaw,
+            "rotation": np.asarray(rotation).tolist(),
+            "joint_distance_rad": float(np.linalg.norm(np.asarray(joints) - start)),
+            "position_error_m": solution.position_error_m,
+            "orientation_error_deg": float(np.degrees(solution.orientation_error_rad)),
+        })
+    if not candidates:
+        raise RuntimeError("runtime BODY target is unreachable; no A/B fallback")
+    candidates.sort(key=lambda item: (item["joint_distance_rad"], item["position_error_m"]))
+    return tuple(item["joints_rad"] for item in candidates), candidates
 
 
 class PersistentCuroboPlanner:
@@ -77,7 +126,22 @@ class PersistentCuroboPlanner:
         tool = audit["diagnostics"]["tool_data"]["pose_mm_rad"]
         envelope = build_execution_tool_envelope(collision_model, tool,
                                                   observed_demo_only=False)
+        goal_candidates, goal_candidate_metadata = _runtime_goal_candidates(
+            motion, report, audit, collision_model)
         orientation_lock = _orientation_lock(motion, report, audit, collision_model)
+        if motion.goal is not None and motion.goal.orientation in (
+                OrientationMode.LEVEL_YAW_FREE, OrientationMode.LEVEL_YAW_TARGET):
+            orientation_lock = {
+                "policy": motion.goal.orientation.value + "_V1",
+                "criteria_rpy": [1.0, 1.0, 0.0],
+                "max_error_deg": float(motion.goal.orientation_tolerance_deg),
+                "candidate_target_rotations": [item["rotation"]
+                                               for item in goal_candidate_metadata],
+                "candidate_yaws_rad": [item["yaw_rad"] for item in goal_candidate_metadata],
+                "final_yaw_target_rad": (float(motion.goal.yaw_target_rad)
+                                         if motion.goal.yaw_target_rad is not None else None),
+                "non_terminal_orientation_cost": True,
+            }
         planner_request = {
             "schema_version": 3,
             "planning_only": True,
@@ -89,7 +153,9 @@ class PersistentCuroboPlanner:
             "scene_snapshot_id": compiled["scene_snapshot_id"],
             "scene_digest": compiled["digest"],
             "start_rad": audit["diagnostics"]["joint_position_rad"],
-            "goal_rad": [float(v) for v in motion.goal_joints_rad],
+            "goal_rad": list(goal_candidates[0]),
+            "goal_candidates_rad": [list(row) for row in goal_candidates],
+            "goal_candidate_metadata": goal_candidate_metadata,
             "active_arm": motion.arm,
             "T_body_model": report["T_body_model"],
             "T_link6_tcp": pose_mm_rad_to_matrix(tool),
@@ -115,11 +181,22 @@ class PersistentCuroboPlanner:
                     planner_profile["optimizer_collision_activation_distance_m"],
             },
             "motion_constraints": {
-                "orientation": motion.constraints.orientation.value,
+                "orientation": (motion.goal.orientation.value if motion.goal is not None
+                                else motion.constraints.orientation.value),
                 "central_exclusion": motion.constraints.central_exclusion,
                 "keepout_ids": list(motion.constraints.keepout_ids),
                 "attached_object_revision": motion.constraints.attached_object_revision,
             },
+            "runtime_motion_goal": (None if motion.goal is None else {
+                "schema_version": motion.goal.schema_version,
+                "frame": motion.goal.frame,
+                "position_m": [float(v) for v in motion.goal.position_m],
+                "orientation": motion.goal.orientation.value,
+                "yaw_target_rad": motion.goal.yaw_target_rad,
+                "position_tolerance_m": motion.goal.position_tolerance_m,
+                "orientation_tolerance_deg": motion.goal.orientation_tolerance_deg,
+                "source": motion.goal.source,
+            }),
         }
         request_path = output / "planner_request.json"
         result_path = output / "planning.json"
@@ -132,4 +209,3 @@ class PersistentCuroboPlanner:
         result["motion_constraints"] = planner_request["motion_constraints"]
         result_path.write_text(json.dumps(result, indent=2) + "\n")
         return result
-

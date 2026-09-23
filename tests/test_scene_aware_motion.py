@@ -6,7 +6,7 @@ import unittest
 from ares_r.motion.base_scene_bridge import SceneAwareBase
 from ares_r.motion.local_scene_service import LocalSceneService, ScenePolicy
 from ares_r.motion.scene_aware_motion import (
-    ClearancePolicy, MotionRequest, SceneAwareMotionService,
+    ClearancePolicy, MotionGoal, MotionRequest, OrientationMode, SceneAwareMotionService,
     StartClearanceState, evaluate_hard_validity,
 )
 
@@ -81,6 +81,20 @@ class LocalSceneServiceTests(unittest.TestCase):
 
 
 class SceneAwareMotionTests(unittest.TestCase):
+    def test_runtime_goal_is_body_finite_and_has_no_ab_fallback(self):
+        goal = MotionGoal([.70, -.52, 1.01], source="TEST_RUNTIME")
+        request = MotionRequest("right", goal=goal)
+        request.validate()
+        self.assertIsNone(request.goal_joints_rad)
+        self.assertEqual(request.goal.orientation, OrientationMode.LEVEL_YAW_FREE)
+        with self.assertRaisesRegex(ValueError, "BODY"):
+            MotionRequest("right", goal=MotionGoal([.7, -.5, 1.0], frame="CAMERA")).validate()
+
+    def test_level_yaw_target_requires_yaw(self):
+        with self.assertRaisesRegex(ValueError, "yaw_target"):
+            MotionGoal([.7, -.5, 1.0],
+                       orientation=OrientationMode.LEVEL_YAW_TARGET).validate()
+
     def test_near_start_escape_is_not_rejected_for_missing_preferred_margin(self):
         policy = ClearancePolicy("test", .030)
         result = evaluate_hard_validity(

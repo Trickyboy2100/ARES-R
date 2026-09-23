@@ -19,6 +19,8 @@ class OrientationMode(str, Enum):
     FREE = "FREE"
     CURRENT = "CURRENT"
     BODY_FORWARD_HORIZONTAL = "BODY_FORWARD_HORIZONTAL"
+    LEVEL_YAW_FREE = "LEVEL_YAW_FREE"
+    LEVEL_YAW_TARGET = "LEVEL_YAW_TARGET"
     EXPLICIT = "EXPLICIT"
 
 
@@ -38,9 +40,45 @@ class MotionConstraints:
 
 
 @dataclass(frozen=True)
+class MotionGoal:
+    """Versioned runtime target in the robot BODY frame."""
+
+    position_m: Sequence[float]
+    frame: str = "BODY"
+    orientation: OrientationMode = OrientationMode.LEVEL_YAW_FREE
+    yaw_target_rad: Optional[float] = None
+    explicit_rotation: Optional[Sequence[Sequence[float]]] = None
+    position_tolerance_m: float = 0.003
+    orientation_tolerance_deg: float = 3.0
+    source: str = "runtime"
+    schema_version: int = 1
+
+    def validate(self) -> None:
+        if self.schema_version != 1 or self.frame != "BODY":
+            raise ValueError("MotionGoal v1 requires BODY frame")
+        if (len(self.position_m) != 3 or
+                not all(math.isfinite(float(v)) for v in self.position_m)):
+            raise ValueError("three finite BODY target coordinates required")
+        if not 0 < float(self.position_tolerance_m) <= 0.05:
+            raise ValueError("invalid target position tolerance")
+        if not 0 < float(self.orientation_tolerance_deg) <= 10:
+            raise ValueError("invalid target orientation tolerance")
+        if self.orientation is OrientationMode.LEVEL_YAW_TARGET:
+            if self.yaw_target_rad is None or not math.isfinite(float(self.yaw_target_rad)):
+                raise ValueError("LEVEL_YAW_TARGET requires finite yaw_target_rad")
+        elif self.yaw_target_rad is not None:
+            raise ValueError("yaw_target_rad is only valid for LEVEL_YAW_TARGET")
+        if self.orientation is OrientationMode.EXPLICIT:
+            rotation = self.explicit_rotation
+            if rotation is None or len(rotation) != 3 or any(len(row) != 3 for row in rotation):
+                raise ValueError("EXPLICIT MotionGoal requires a 3x3 rotation")
+
+
+@dataclass(frozen=True)
 class MotionRequest:
     arm: str
-    goal_joints_rad: Sequence[float]
+    goal_joints_rad: Optional[Sequence[float]] = None
+    goal: Optional[MotionGoal] = None
     goal_pose_body_m_rad: Optional[Sequence[float]] = None
     constraints: MotionConstraints = field(default_factory=MotionConstraints)
     speed_profile: str = "slow"
@@ -50,9 +88,14 @@ class MotionRequest:
     def validate(self) -> None:
         if self.arm not in ("left", "right"):
             raise ValueError("arm must be left or right")
-        if (len(self.goal_joints_rad) != 6 or
+        if self.goal_joints_rad is None and self.goal is None:
+            raise ValueError("runtime MotionGoal or six goal joints required")
+        if self.goal_joints_rad is not None and (
+                len(self.goal_joints_rad) != 6 or
                 not all(math.isfinite(float(v)) for v in self.goal_joints_rad)):
             raise ValueError("six finite goal joints required")
+        if self.goal is not None:
+            self.goal.validate()
         if self.constraints.orientation is OrientationMode.EXPLICIT:
             rotation = self.constraints.explicit_rotation
             if rotation is None or len(rotation) != 3 or any(len(row) != 3 for row in rotation):
@@ -185,6 +228,8 @@ class SceneAwareMotionService:
         request_payload = asdict(request)
         request_payload["scene_policy"] = request.scene_policy.value
         request_payload["constraints"]["orientation"] = request.constraints.orientation.value
+        if request.goal is not None:
+            request_payload["goal"]["orientation"] = request.goal.orientation.value
         handle = {
             "schema_version": 1,
             "plan_id": plan_id,

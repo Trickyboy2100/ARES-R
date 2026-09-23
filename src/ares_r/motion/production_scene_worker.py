@@ -15,7 +15,8 @@ from ares_r.perception.robot_owned_filter import grid_spheres_local as grid_sphe
 from ares_r.motion.ab_demo_state import classify_reference_corridor,validate_curobo_only_policy
 from ares_r.motion.execution_tool_envelope import verify_execution_tool_envelope
 from ares_r.motion.independent_path_validation import validate_dense_world
-from ares_r.motion.tcp_orientation import HORIZONTAL_FORWARD_R_BODY,validate_path
+from ares_r.motion.tcp_orientation import (HORIZONTAL_FORWARD_R_BODY,validate_level_path,
+                                           validate_path)
 
 
 def transform(xyz,rpy):
@@ -98,8 +99,14 @@ def main():
         return value@tool
     torch.manual_seed(params["random_seed"])
     orientation_lock=request.get("orientation_lock")
+    signature_orientation=orientation_lock
+    if orientation_lock is not None and orientation_lock.get("policy") in (
+            "LEVEL_YAW_FREE_V1","LEVEL_YAW_TARGET_V1"):
+        signature_orientation={key:value for key,value in orientation_lock.items()
+            if key not in ("candidate_target_rotations","candidate_yaws_rad",
+                           "final_yaw_target_rad")}
     static_signature=hashlib.sha256(json.dumps({"robot":robot,"spheres":spheres,
-        "parameters":params,"orientation_lock":orientation_lock},sort_keys=True,
+        "parameters":params,"orientation_lock":signature_orientation},sort_keys=True,
         separators=(",",":")).encode()).hexdigest()
     cuboids=dict(scene["cuboids"]);world_at=time.perf_counter()
     cached=_RUNTIME_CACHE.get(static_signature)
@@ -112,15 +119,17 @@ def main():
             optimizer_collision_activation_distance=params["optimizer_collision_activation_distance"])
         planner=MotionPlanner(cfg);names=list(planner.joint_names)
         if orientation_lock is not None:
-            target_rotation=np.asarray(orientation_lock.get("target_R_body_tcp"),dtype=float)
-            if (orientation_lock.get("policy") not in
-                    ("BODY_FORWARD_HORIZONTAL_V1", "FIXED_ROTATION_V1") or
+            policy=orientation_lock.get("policy")
+            target_rotation=np.asarray(orientation_lock.get("target_R_body_tcp",
+                orientation_lock.get("candidate_target_rotations",[np.eye(3)])[0]),dtype=float)
+            if (policy not in ("BODY_FORWARD_HORIZONTAL_V1", "FIXED_ROTATION_V1",
+                               "LEVEL_YAW_FREE_V1", "LEVEL_YAW_TARGET_V1") or
                     target_rotation.shape!=(3,3) or
                     not np.allclose(target_rotation.T@target_rotation,np.eye(3),atol=1e-5) or
                     not np.isclose(np.linalg.det(target_rotation),1.0,atol=1e-5)):
                 raise ValueError("unknown or invalid BODY TCP orientation contract")
             planner.update_tool_pose_criteria({"link6":ToolPoseCriteria.track_orientation(
-                rpy=[1.0,1.0,1.0],non_terminal_scale=1.0)})
+                rpy=orientation_lock.get("criteria_rpy",[1.0,1.0,1.0]),non_terminal_scale=1.0)})
         cached={"planner":planner,"names":names,"warmup_done":False}
         _RUNTIME_CACHE[static_signature]=cached
         runtime_reused=False
@@ -190,16 +199,16 @@ def main():
     updates=[]
     for _ in range(int(request.get("benchmark_runs",3))):
         at=time.perf_counter();planner.update_world(typed);torch.cuda.synchronize();updates.append(time.perf_counter()-at)
-    start=np.asarray(request["start_rad"],dtype=float);goal=np.asarray(request["goal_rad"],dtype=float)
-    baseline=np.linspace(start,goal,101);start_details=clearance_details([start]);goal_details=clearance_details([goal])
-    start_gap=min(start_details.values());goal_gap=min(goal_details.values());baseline_gap=clearance(baseline)
+    start=np.asarray(request["start_rad"],dtype=float)
+    goal_candidates=[np.asarray(row,dtype=float) for row in
+                     request.get("goal_candidates_rad",[request["goal_rad"]])]
     def solve_segment(begin,end):
         return planner.plan_cspace(state(end),state(begin),max_attempts=params["max_attempts"],
                                    enable_graph_attempt=params["enable_graph_attempt"])
-    def solve():
+    def solve(goal_value):
         at=time.perf_counter()
         try:
-            value=solve_segment(start,goal)
+            value=solve_segment(start,goal_value)
             torch.cuda.synchronize();return [value],time.perf_counter()-at,None
         except Exception as exc:  # BLOCK may be rejected before an ordinary result is allocated.
             return None,time.perf_counter()-at,"%s: %s"%(type(exc).__name__,exc)
@@ -210,12 +219,18 @@ def main():
     if warmup_policy=="NONE":
         cached["warmup_done"]=True
     if not cached["warmup_done"]:
-        _,warmup_s,_=solve()
+        _,warmup_s,_=solve(goal_candidates[0])
         cached["warmup_done"]=True
-    samples=[];errors=[];result=None
-    for _ in range(int(request.get("benchmark_runs",3))):
-        result,elapsed,error=solve();samples.append(elapsed)
-        if error:errors.append(error)
+    samples=[];errors=[];result=None;selected_goal_index=None
+    for candidate_index,candidate_goal in enumerate(goal_candidates):
+        for _ in range(int(request.get("benchmark_runs",3))):
+            result,elapsed,error=solve(candidate_goal);samples.append(elapsed)
+            if error:errors.append(error)
+        if result is not None and all(bool(torch.all(part.success).item()) for part in result):
+            selected_goal_index=candidate_index;break
+    goal=goal_candidates[selected_goal_index if selected_goal_index is not None else 0]
+    baseline=np.linspace(start,goal,101);start_details=clearance_details([start]);goal_details=clearance_details([goal])
+    start_gap=min(start_details.values());goal_gap=min(goal_details.values());baseline_gap=clearance(baseline)
     success=result is not None and all(bool(torch.all(part.success).item()) for part in result);points=[];tcp_body=[];path_gap=None
     path_details={}
     central_margin=None
@@ -224,6 +239,7 @@ def main():
     planner_clearance_trace=[]
     independent_validation_s=0.0
     orientation_validation=None
+    goal_position_error_m=None
     postprocess_at=time.perf_counter()
     if success:
         segments=[]
@@ -233,6 +249,10 @@ def main():
             segments.append(row if segment_index==0 else row[1:])
         q=np.concatenate(segments);points=q.tolist();T=np.asarray(request["T_body_model"])
         tcp=np.asarray([(T@fk(row))[:3,3] for row in q]);tcp_body=tcp.tolist()
+        runtime_goal=request.get("runtime_motion_goal")
+        if runtime_goal is not None:
+            goal_position_error_m=float(np.linalg.norm(
+                tcp[-1]-np.asarray(runtime_goal["position_m"],dtype=float)))
         central_margin=float((-tcp[:,1]-.07).min() if request["active_arm"]=="right"
                              else (tcp[:,1]-.07).min())
         dt=float(params["interpolation_dt"])
@@ -256,7 +276,9 @@ def main():
         path_details=clearance_details(dense)
         planner_clearance_trace=clearance_trace(dense)
         path_gap=min(path_details.values()) if path_details else float("inf")
-        if central_margin<=0 or path_gap<=0 or not np.isfinite(q).all() or max_step>.15:
+        if (central_margin<=0 or path_gap<=0 or not np.isfinite(q).all() or max_step>.15 or
+                (runtime_goal is not None and goal_position_error_m>
+                 float(runtime_goal["position_tolerance_m"]))):
             success=False;points=[];tcp_body=[];path_gap=None;path_details={}
         elif envelope is not None:
             validation_at=time.perf_counter()
@@ -265,10 +287,16 @@ def main():
             if not independent["collision_free"]:
                 success=False
         if success and orientation_lock is not None:
-            orientation_validation=validate_path(
-                lambda row:T@fk(row),q,subdivisions=4,
-                tolerance_deg=float(orientation_lock["max_error_deg"]),
-                target_rotation=orientation_lock["target_R_body_tcp"])
+            if orientation_lock["policy"] in ("LEVEL_YAW_FREE_V1","LEVEL_YAW_TARGET_V1"):
+                orientation_validation=validate_level_path(
+                    lambda row:T@fk(row),q,subdivisions=4,
+                    tolerance_deg=float(orientation_lock["max_error_deg"]),
+                    final_yaw_rad=orientation_lock.get("final_yaw_target_rad"))
+            else:
+                orientation_validation=validate_path(
+                    lambda row:T@fk(row),q,subdivisions=4,
+                    tolerance_deg=float(orientation_lock["max_error_deg"]),
+                    target_rotation=orientation_lock["target_R_body_tcp"])
             if not orientation_validation["passed"]:
                 success=False
     mode=request["mode"];expected="FAILURE" if mode=="BLOCK" else "SUCCESS";observed="SUCCESS" if success else "FAILURE"
@@ -281,6 +309,12 @@ def main():
         "execution_tool_envelope_revision":envelope["revision"] if envelope else None,
         "active_collision_sphere_cell_m":sphere_cell_m,
         "world_cuboid_ids":list(cuboids),"start_rad":start.tolist(),"goal_rad":goal.tolist(),
+        "selected_goal_candidate_index":selected_goal_index,
+        "selected_goal_candidate_metadata":(
+            request.get("goal_candidate_metadata",[])[selected_goal_index]
+            if selected_goal_index is not None and request.get("goal_candidate_metadata") else None),
+        "runtime_motion_goal":request.get("runtime_motion_goal"),
+        "goal_position_error_m":goal_position_error_m,
         "trajectory_points_rad":points,"tcp_path_body_m":tcp_body,"path_metrics":path_metrics(tcp_body),
         "clearance_m":{"start":start_gap,"goal":goal_gap,"joint_linear_baseline":baseline_gap,"planned_path":path_gap},
         "path_clearance_by_object_m":path_details,
