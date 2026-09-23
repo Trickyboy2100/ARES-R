@@ -60,7 +60,9 @@ def _check_exact(session, expected_hash, direction):
     if hashlib.sha256(text).hexdigest() != candidate["native_trajectory_hash"]:
         raise RuntimeError("native file hash changed")
     deployment=ab_fastlane.read_json(ROOT/"config/ab_demo_deployment_profile.json")
-    speed_cap = 0.015 if direction == "CURRENT_to_A" else 0.10
+    speed_cap = (0.015 if direction == "CURRENT_to_A" else
+                 max(float(value) for value in
+                     deployment["motion"]["commissioning_speeds_rad_s"]))
     accel_cap = 0.03 if direction == "CURRENT_to_A" else 0.20
     expected_tracking=float(deployment["motion"]["tracking_stop_threshold_deg"])
     if (native["native_sender_mode_for_future_review"] != "supervised_path"
