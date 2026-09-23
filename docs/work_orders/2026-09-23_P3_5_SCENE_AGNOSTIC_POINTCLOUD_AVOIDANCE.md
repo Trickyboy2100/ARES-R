@@ -1,3 +1,6 @@
+> SUPERSEDED FOR EXECUTION BY P3.6.
+> Retain this file as P3.5 scene-agnostic evidence/test design. The next implementation step is the control-layer refactor in docs/work_orders/2026-09-23_P3_6_SCENE_AWARE_MOTION_CONTROL.md.
+
 # P3.5 — Scene-agnostic scan → reconstruct → cuRobo → execute demo
 
 Date: 2026-09-23
