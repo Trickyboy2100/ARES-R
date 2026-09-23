@@ -27,6 +27,9 @@ except ImportError:  # pragma: no cover - readline is present on the target Linu
 
 
 HELP = """Commands:
+  scene status|scan|invalidate [REASON]      canonical LocalSceneService
+  motion status|preview [PLAN_ID]|stop      generic SceneAwareMotionService
+  motion plan SIDE Q1..Q6 [ORIENTATION]     AUTO_FRESH cuRobo free-space plan
   demo ab status|scan|plan-next|preview|preflight|execute-next|stop
                              P3.3A CLEAR backend; execute-next locked, no WebUI
   planner service start|status|stop|benchmark  persistent right-arm cuRobo runtime
@@ -235,6 +238,7 @@ def _allowed_in_hardware(args) -> bool:
         or args == ["world", "view"]
         or args == ["world", "status"]
         or args[:2] in (["pose", "list"], ["pose", "show"], ["pose", "go"])
+        or args[0] in ("scene", "motion")
         or args[:2] in (["motion", "inspect"], ["motion", "validate"])
         or args[:2] == ["calib", "body-camera"]
         or args[:2] == ["scene", "body-cloud"]
@@ -354,6 +358,46 @@ def run_terminal(controller: TaskController) -> None:
                 raise RuntimeError("command blocked: combined task/base execution is not commissioned")
             if args[0] in ("quit", "exit"): break
             if args[0] == "help": print(help_text)
+            elif args[:2] == ["scene", "status"] and len(args) == 2:
+                from .scene_aware_dispatch import SceneAwareDispatcher
+                print(json.dumps(SceneAwareDispatcher(controller.config).scene_status(),
+                                 indent=2, ensure_ascii=False))
+            elif args[:2] == ["scene", "scan"] and len(args) in (2, 3):
+                if controller.mode != "hardware-enabled":
+                    raise RuntimeError("scene scan requires hardware-enabled mode")
+                from .scene_aware_dispatch import SceneAwareDispatcher
+                side = args[2] if len(args) == 3 else "right"
+                print(json.dumps(SceneAwareDispatcher(controller.config).scene_scan(True, side),
+                                 indent=2, ensure_ascii=False))
+            elif args[:2] == ["scene", "invalidate"]:
+                from .scene_aware_dispatch import SceneAwareDispatcher
+                reason = " ".join(args[2:]) or "ART_INVALIDATION"
+                print(json.dumps(SceneAwareDispatcher(controller.config).scene_invalidate(reason),
+                                 indent=2, ensure_ascii=False))
+            elif args[:2] == ["motion", "status"] and len(args) == 2:
+                from .scene_aware_dispatch import SceneAwareDispatcher
+                print(json.dumps(SceneAwareDispatcher(controller.config).motion_status(),
+                                 indent=2, ensure_ascii=False))
+            elif args[:2] == ["motion", "preview"] and len(args) in (2, 3):
+                from .scene_aware_dispatch import SceneAwareDispatcher
+                print(json.dumps(SceneAwareDispatcher(controller.config).motion_preview(
+                    args[2] if len(args) == 3 else None), indent=2, ensure_ascii=False))
+            elif args[:2] == ["motion", "stop"] and len(args) == 2:
+                from .scene_aware_dispatch import SceneAwareDispatcher
+                print(json.dumps(SceneAwareDispatcher(controller.config).motion_stop(),
+                                 indent=2, ensure_ascii=False))
+            elif args[:2] == ["motion", "plan"]:
+                if controller.mode != "hardware-enabled":
+                    raise RuntimeError("scene-aware planning requires hardware-enabled mode")
+                if len(args) not in (9, 10):
+                    raise ValueError("usage: motion plan SIDE Q1 Q2 Q3 Q4 Q5 Q6 [ORIENTATION]")
+                from .scene_aware_dispatch import SceneAwareDispatcher
+                payload = {"arm": args[2], "goal_joints_rad": [float(v) for v in args[3:9]],
+                           "orientation": args[9] if len(args) == 10 else "FREE",
+                           "scene_policy": "AUTO_FRESH", "speed_profile": "slow",
+                           "request_label": "ART_FREE_SPACE"}
+                print(json.dumps(SceneAwareDispatcher(controller.config).motion_plan(payload),
+                                 indent=2, ensure_ascii=False))
             elif args[:2] == ["planner", "service"]:
                 if len(args)!=3 or args[2] not in ("start","status","stop","benchmark"):
                     raise ValueError("usage: planner service start|status|stop|benchmark")
