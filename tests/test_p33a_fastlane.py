@@ -46,6 +46,21 @@ class FastLaneTests(unittest.TestCase):
                 self.assertEqual(ab_fastlane.status()["state"], "SCENE_INVALID")
                 self.assertIsNone(ab_fastlane.status()["candidate_id"])
 
+    def test_scan_records_generic_live_scene_result(self):
+        with tempfile.TemporaryDirectory() as directory:
+            state = Path(directory) / "state.json"
+            evidence = Path(directory) / "evidence"
+            result = {"scene_snapshot_id": "SCENE_NEW", "pointcloud_sha256": "CLOUD",
+                      "primitive_count": 4, "timing_s": {"scene_build": 1.0},
+                      "total_s": 2.0}
+            with patch.object(ab_fastlane, "STATE", state), \
+                    patch.object(ab_fastlane, "EVIDENCE", evidence), \
+                    patch.object(ab_fastlane, "build_live_planning_scene",
+                                 return_value=result):
+                session = ab_fastlane.scan({})
+            self.assertEqual(session["scene_snapshot_id"], "SCENE_NEW")
+            self.assertEqual(session["pointcloud_sha256"], "CLOUD")
+
     def test_future_keyboard_callbacks_abort_disable_invalidate(self):
         calls = []
         controls = ab_fastlane.FutureSupervisedKeyboardAbort(

@@ -77,7 +77,7 @@ def scan(config):
                            "execution_enabled": False})
         raise
     session = {"state": "SCENE_READY", "scene_dir": str(destination),
-               "scene_snapshot_id": result["snapshot_id"], "plan_dir": None,
+               "scene_snapshot_id": result["scene_snapshot_id"], "plan_dir": None,
                "candidate_id": None, "scanned_at_unix": time.time(),
                "pointcloud_sha256": result["pointcloud_sha256"],
                "primitive_count": result["primitive_count"],
