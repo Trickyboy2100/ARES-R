@@ -67,6 +67,18 @@ class LocalSceneServiceTests(unittest.TestCase):
         self.assertEqual(result, {"ok": True})
         self.assertEqual(events, ["moving", (.1, 0, 0), "settled"])
 
+    def test_amr_failure_leaves_scene_invalid(self):
+        events=[]
+        class Base:
+            def run_task(self, _task): raise RuntimeError("controller rejected")
+        class Scene:
+            def base_motion_started(self): events.append("moving")
+            def base_settled(self): events.append("settled")
+            def invalidate(self, reason): events.append(reason)
+        with self.assertRaises(RuntimeError):
+            SceneAwareBase(Base(), Scene()).run_task("T")
+        self.assertEqual(events,["moving","BASE_MOTION_ERROR"])
+
 
 class SceneAwareMotionTests(unittest.TestCase):
     def test_near_start_escape_is_not_rejected_for_missing_preferred_margin(self):

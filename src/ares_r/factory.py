@@ -51,6 +51,13 @@ def build_controller(config: Dict[str, object], mode: str) -> TaskController:
             arms = build_jaka_arms(config["jaka"], motion_enabled=True)
             grippers = {name: SerialGripper(name, values) for name, values in config["grippers"].items()}
             base = AmrHttpBase(config["base"])
+        if scope in ("all", "calibration"):
+            # Scene lifecycle is below task code: every AMR command invalidates
+            # the old local world before dispatch and requires a new scan after
+            # the commissioned blocking move call returns.
+            from .motion.base_scene_bridge import SceneAwareBase
+            from .motion.local_scene_service import LocalSceneService
+            base = SceneAwareBase(base, LocalSceneService(config))
     else:
         raise RuntimeError("hardware mode is intentionally locked until JAKA, gripper and base adapters pass commissioning")
     controller = TaskController(mode, perception, arms, grippers, base, config, EventLog(str(config["logging"]["directory"])))
