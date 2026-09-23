@@ -133,7 +133,8 @@ Initial constraints:
 
 - target TCP pose;
 - fixed/free orientation;
-- BODY_FORWARD_HORIZONTAL;
+- LEVEL_YAW_FREE (TCP level, yaw about BODY +Z planner-free);
+- LEVEL_YAW_TARGET (TCP level, final yaw supplied);
 - keep-out region;
 - central BODY exclusion;
 - speed profile;
@@ -252,6 +253,21 @@ Runtime obstacle avoidance must not depend on object class, object ID, current b
 The scene is simply observed occupied geometry.
 
 A target may be task-specific; the collision world is not.
+
+## 3.1 Target independence
+
+The collision world and the target are independent inputs.
+
+The long-term service must accept arbitrary runtime reachable BODY targets. A/B coordinates are not part of the Scene Service and are not required by the Motion Service.
+
+The live start is the actual current robot state. A runtime target P or Q may come from UI, perception, a Skill, a Scheme or a Task.
+
+The next default free-space orientation contract is LEVEL_YAW_FREE:
+
+- TCP/gripper remains level relative to the BODY horizontal plane;
+- roll/pitch level condition remains constrained along the trajectory;
+- yaw about BODY +Z may change during cuRobo planning;
+- an upper layer may instead request LEVEL_YAW_TARGET.
 
 ## 4. Revised A/B demo role
 
