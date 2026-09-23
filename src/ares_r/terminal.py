@@ -30,7 +30,9 @@ HELP = """Commands:
   scene status|scan|invalidate [REASON]      canonical LocalSceneService
   motion status|preview [PLAN_ID]|execute PLAN_ID|stop
                                               generic SceneAwareMotionService
-  motion plan SIDE Q1..Q6 [ORIENTATION]     AUTO_FRESH cuRobo free-space plan
+  motion plan SIDE --xyz X Y Z [--orientation LEVEL_YAW_FREE|LEVEL_YAW_TARGET] [--yaw DEG]
+                                              runtime BODY target; AUTO_FRESH cuRobo
+  motion plan SIDE Q1..Q6 [ORIENTATION]     legacy joint-goal regression route
   demo ab status|scan|plan-next|preview|preflight|execute-next|stop
                              P3.3A CLEAR backend; execute-next locked, no WebUI
   planner service start|status|stop|benchmark  persistent right-arm cuRobo runtime
@@ -402,9 +404,13 @@ def run_terminal(controller: TaskController) -> None:
             elif args[:2] == ["motion", "plan"]:
                 if controller.mode != "hardware-enabled":
                     raise RuntimeError("scene-aware planning requires hardware-enabled mode")
-                if len(args) not in (9, 10):
-                    raise ValueError("usage: motion plan SIDE Q1 Q2 Q3 Q4 Q5 Q6 [ORIENTATION]")
                 from .scene_aware_dispatch import SceneAwareDispatcher
+                if "--xyz" in args:
+                    print(json.dumps(SceneAwareDispatcher(controller.config).dispatch(line),
+                                     indent=2, ensure_ascii=False))
+                    continue
+                if len(args) not in (9, 10):
+                    raise ValueError("usage: motion plan SIDE --xyz X Y Z [--orientation MODE] [--yaw DEG]")
                 payload = {"arm": args[2], "goal_joints_rad": [float(v) for v in args[3:9]],
                            "orientation": args[9] if len(args) == 10 else "FREE",
                            "scene_policy": "AUTO_FRESH", "speed_profile": "slow",

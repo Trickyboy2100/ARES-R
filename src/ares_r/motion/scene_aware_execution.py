@@ -46,6 +46,9 @@ class GenericNativePackager:
         if (speed["scope"] == "RIGHT_ARM_AB_DEMO_ONLY" and
                 not motion.request_label.startswith("AB_DEMO_")):
             raise RuntimeError("A/B commissioned speed cannot be used by another motion client")
+        if (speed["scope"] == "RIGHT_ARM_SCENE_AWARE_FREE_SPACE" and
+                (motion.arm != "right" or motion.goal is None)):
+            raise RuntimeError("generic free-space speed requires a right-arm runtime MotionGoal")
         output = Path(output)
         request = _load(output / "planner_request.json")
         scene_root = Path(scene["scene_dir"])
@@ -80,6 +83,8 @@ class GenericNativePackager:
             "explicit_waypoints": [],
             "arm": motion.arm,
             "request_label": motion.request_label,
+            "runtime_motion_goal": plan.get("runtime_motion_goal"),
+            "orientation_validation": plan.get("orientation_validation"),
             "actual_start_joints_rad": audit["joint_position_rad"],
             "planned_start_joints_rad": plan["start_rad"],
             "destination_joints_rad": plan["goal_rad"],
