@@ -156,6 +156,13 @@ def run(cycles, max_runtime_s, *, plan_only=False):
         "plan_only": bool(plan_only),
         "stop_command": "python3 scripts/run_ab_clear_loop.py --stop"})
     expected = "B_to_A"
+    deployment = ab_fastlane.read_json(ROOT / "config/ab_demo_deployment_profile.json")
+    motion = deployment["motion"]
+    if motion.get("commissioning_state") != "COMMISSIONED_CLEAR_2026_09_23":
+        raise RuntimeError("A/B deployment speed is not commissioned")
+    commissioned_speed = float(motion["commissioned_speed_rad_s"])
+    if not 0 < commissioned_speed <= 0.10:
+        raise RuntimeError("invalid A/B commissioned speed")
     try:
         for leg in range(1, cycles * 2 + 1):
             _check_stop(deadline)
@@ -166,11 +173,13 @@ def run(cycles, max_runtime_s, *, plan_only=False):
                 raise RuntimeError("scan did not freeze a fresh scene")
             _write_status(state="PLANNING", leg=leg, direction=expected,
                           scene_snapshot_id=session["scene_snapshot_id"])
-            planned = ab_fastlane.plan_next(load_config(str(ROOT / "config/system.json")))
+            planned = ab_fastlane.plan_next(load_config(str(ROOT / "config/system.json")),
+                                            commissioned_speed)
             _check_stop(deadline)
             if planned["direction"] != expected:
                 raise RuntimeError("expected %s, planned %s" % (expected, planned["direction"]))
-            if planned["dense_clearance_m"] < .030 or planned["native_speed_rad_s"] > .070 + 1e-12:
+            if (planned["dense_clearance_m"] < .030 or
+                    planned["native_speed_rad_s"] > commissioned_speed + 1e-12):
                 raise RuntimeError("fresh plan outside commissioned bounded-loop envelope")
             preflight = ab_fastlane.preflight(load_config(str(ROOT / "config/system.json")))
             _check_stop(deadline)
