@@ -36,6 +36,14 @@ class ABDemoClient:
     def plan(self, destination: str):
         return self.motion_service.plan(self.request_for(destination))
 
+    def plan_next(self):
+        """Resolve only the next endpoint from a fresh generic scene/state."""
+        scene = self.motion_service.local_scene.ensure_fresh(
+            "AB_ENDPOINT_RESOLUTION", "FORCE_RESCAN", active_arm="right")
+        audit = json.loads((Path(scene["scene_dir"]) / "right_fk_audit.json").read_text())
+        destination = self.next_destination(audit["diagnostics"]["joint_position_rad"])
+        return self.motion_service.plan(self.request_for(destination, force_rescan=False))
+
     def next_destination(self, actual_joints_rad, tolerance_rad=0.02):
         def close(name):
             return max(abs(float(a)-float(b)) for a,b in zip(
@@ -43,4 +51,3 @@ class ABDemoClient:
         if close("A"):return "B"
         if close("B"):return "A"
         return "A"
-

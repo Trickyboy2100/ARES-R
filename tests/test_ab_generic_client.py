@@ -4,7 +4,7 @@ from ares_r.motion.ab_client import ABDemoClient
 
 
 class Service:
-    def __init__(self): self.requests = []
+    def __init__(self): self.requests = [];self.local_scene=None
     def plan(self, request):
         self.requests.append(request)
         return {"plan_id": "generic"}
