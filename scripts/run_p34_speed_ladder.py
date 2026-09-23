@@ -49,8 +49,19 @@ def main():
                 "requested_speed_rad_s":.015,"scan_s":scan_s,"plan_s":plan_s,
                 "trajectory_hash":planned["trajectory_hash"],"preflight":preflight}
         if args.execute:
-            record["execution"]=_run_leg("CURRENT_to_A",planned["trajectory_hash"],leg,run_dir,deadline)
+            try:
+                record["execution"]=_run_leg("CURRENT_to_A",planned["trajectory_hash"],leg,run_dir,deadline)
+            except BaseException as exc:
+                record["fault"]=repr(exc)
         records.append(record)
+        if "fault" in record:
+            result={"schema_version":1,"scope":"RIGHT_ARM_AB_DEMO_ONLY",
+                    "profile_revision":"AB_DEPLOYMENT_PROFILE_2026_09_23_V1",
+                    "executed":args.execute,"records":records,
+                    "completed_speeds_rad_s":[],"finished_at_unix":time.time()}
+            ab_fastlane.write_json(run_dir/"speed_ladder_result.json",result)
+            print(json.dumps(dict(result,artifact=str(run_dir)),indent=2))
+            raise SystemExit(2)
     else:
         # The prepared candidate is intentionally discarded: every ladder leg
         # below obtains a scan made immediately before its own plan.
