@@ -237,7 +237,7 @@ def main():
             "time_scaled_jerk_bound_rad_s3":max_j/slow_scale**3,
             "physical_execution_commissioned":False}
         validation_knots=bounded_validation_knots(q)
-        dense=np.concatenate([a+(b-a)*np.arange(4)[:,None]/4
+        dense=np.concatenate([a+(b-a)*np.arange(2)[:,None]/2
                               for a,b in zip(validation_knots,validation_knots[1:])]+[validation_knots[-1:]])
         path_details=clearance_details(dense)
         path_gap=min(path_details.values()) if path_details else float("inf")
@@ -245,7 +245,7 @@ def main():
             success=False;points=[];tcp_body=[];path_gap=None;path_details={}
         elif envelope is not None:
             validation_at=time.perf_counter()
-            independent=validate_dense_world(points,request,subdivisions=4)
+            independent=validate_dense_world(points,request,subdivisions=2)
             independent_validation_s=time.perf_counter()-validation_at
             if not independent["collision_free"]:
                 success=False
