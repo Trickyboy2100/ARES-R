@@ -138,6 +138,16 @@ class DualArmSafetyKernel:
                 "blockers": [name for name, passed in gates.items() if not passed],
                 "ready": all(gates.values())}
 
+    @staticmethod
+    def scene_aware_collision_gate(candidate):
+        """Hard-only collision gate for the generic scene-aware contract."""
+        if candidate.get("motion_contract") != "SCENE_AWARE_FREE_SPACE_V1":
+            raise SafetyViolation("generic scene-aware motion contract required")
+        hard = candidate.get("hard_validity") or {}
+        return bool(hard.get("hard_valid") and
+                    float(hard.get("hard_min_gap_m", -math.inf)) > 0 and
+                    hard.get("validator_role") == "HARD_COLLISION_AND_BINDING_ONLY")
+
     def authorize(self, *, arm, points, sample_period_s, geometry_samples,
                   speed_profile, live_start, tool_revision, planned_tool_revision,
                   scene_snapshot_id, collision_checked, base_stationary,

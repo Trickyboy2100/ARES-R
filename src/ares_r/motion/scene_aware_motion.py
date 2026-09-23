@@ -124,12 +124,14 @@ class SceneAwareMotionService:
 
     def __init__(self, config: Mapping[str, object], local_scene: LocalSceneService,
                  planner: Callable[[MotionRequest, Mapping[str, object], Path], Mapping[str, object]],
+                 packager: Optional[Callable] = None,
                  *, state_path="logs/scene_aware_motion.json",
                  clearance_policy: Optional[ClearancePolicy] = None,
                  clock: Callable[[], float] = time.time) -> None:
         self.config = config
         self.local_scene = local_scene
         self.planner = planner
+        self.packager = packager
         self.state_path = Path(state_path)
         self.clock = clock
         self.clearance_policy = clearance_policy or ClearancePolicy(
@@ -177,7 +179,9 @@ class SceneAwareMotionService:
                          "plan_id": None, "reason": "%s:%s" % (type(exc).__name__, exc)})
             raise
         trajectory = plan.get("trajectory_points_rad") or []
-        digest = hashlib.sha256(json.dumps(trajectory, separators=(",", ":")).encode()).hexdigest()
+        digest_value = hashlib.sha256(json.dumps(trajectory, separators=(",", ":")).encode()).hexdigest()
+        package = (self.packager(request, scene, output, plan, validity)
+                   if self.packager is not None else None)
         request_payload = asdict(request)
         request_payload["scene_policy"] = request.scene_policy.value
         request_payload["constraints"]["orientation"] = request.constraints.orientation.value
@@ -191,10 +195,12 @@ class SceneAwareMotionService:
             "scene_digest": scene["scene_digest"],
             "pointcloud_sha256": scene["pointcloud_sha256"],
             "base_pose_revision": scene["base_pose_revision"],
-            "trajectory_hash": "sha256:" + digest,
+            "trajectory_hash": (package["candidate"]["trajectory_hash"] if package else
+                                "sha256:" + digest_value),
             "planner_clearance_policy": asdict(self.clearance_policy),
             "hard_validity": validity,
             "plan_artifact": str(output),
+            "package_dir": package["package_dir"] if package else None,
             "created_at_unix": self.clock(),
         }
         output.mkdir(parents=True, exist_ok=True)
@@ -233,6 +239,7 @@ def build_services(config: Mapping[str, object], *, scene_state_path=None,
                    motion_state_path=None):
     """Construct the shared backend used by ART, scripts and the Web UI."""
     from .scene_aware_planner import PersistentCuroboPlanner, load_profile
+    from .scene_aware_execution import GenericNativePackager
     profile = load_profile()
     merged = dict(config)
     merged["scene_aware_motion"] = {
@@ -249,6 +256,7 @@ def build_services(config: Mapping[str, object], *, scene_state_path=None,
     )
     motion = SceneAwareMotionService(
         merged, scene, PersistentCuroboPlanner(config, profile),
+        GenericNativePackager(config, profile),
         state_path=motion_state_path or "logs/scene_aware_motion.json",
         clearance_policy=clearance)
     return scene, motion
