@@ -15,6 +15,7 @@ import numpy as np
 
 def capture(endpoint: str, output: Path) -> dict:
     output.mkdir(parents=True, exist_ok=False)
+    captured_at_unix=time.time()
     total_at = time.perf_counter()
     at = time.perf_counter()
     frame_id = epiceye.trigger_frame(endpoint, pointcloud=True)
@@ -42,6 +43,7 @@ def capture(endpoint: str, output: Path) -> dict:
     result = {
         "schema_version": 1, "kind": "epic_fast_pointcloud_capture",
         "frame_id": str(frame_id), "endpoint": endpoint,
+        "captured_at_unix":captured_at_unix,
         "coordinate_frame": "Epic depth/pointcloud camera",
         "source_coordinate_unit": "mm", "width": int(width),
         "height": int(height), "vertex_count": int(len(points)),

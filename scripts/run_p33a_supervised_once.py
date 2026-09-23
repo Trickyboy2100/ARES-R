@@ -59,10 +59,12 @@ def _check_exact(session, expected_hash, direction):
     import hashlib
     if hashlib.sha256(text).hexdigest() != candidate["native_trajectory_hash"]:
         raise RuntimeError("native file hash changed")
-    speed_cap = 0.015 if direction == "CURRENT_to_A" else 0.070
-    accel_cap = 0.03 if direction == "CURRENT_to_A" else 0.10
+    deployment=ab_fastlane.read_json(ROOT/"config/ab_demo_deployment_profile.json")
+    speed_cap = 0.015 if direction == "CURRENT_to_A" else 0.10
+    accel_cap = 0.03 if direction == "CURRENT_to_A" else 0.20
+    expected_tracking=float(deployment["motion"]["tracking_stop_threshold_deg"])
     if (native["native_sender_mode_for_future_review"] != "supervised_path"
-            or native["native_sender_hard_tracking_gate_deg"] != 0.5
+            or native["native_sender_hard_tracking_gate_deg"] != expected_tracking
             or native["max_joint_speed_rad_s"] > speed_cap + 1e-12
             or native["max_joint_accel_rad_s2"] > accel_cap + 1e-12):
         raise RuntimeError("leg speed/tracking gate or sender mode mismatch")
@@ -168,9 +170,29 @@ def _monitor_native(package, native, output, candidate_id):
                 pass
     cleanup = any(e.get("event") == "servo_disabled" and e.get("code") == 0 for e in events)
     reached = any(e.get("event") == "target_reached" for e in events)
+    samples=[e for e in events if e.get("event")=="sample"]
+    tracking=[float(e["tracking_error_deg"]) for e in samples]
+    deadline=[float(e["deadline_lag_ms"]) for e in samples]
+    final=next((e for e in reversed(events) if e.get("event")=="target_reached"),{})
+    target=ab_fastlane.read_json(package/"candidate_manifest.json")["actual_start_joints_rad"]
+    native_targets=[]
+    with (package/"native_preview.txt").open() as stream:
+        header=stream.readline();stream.readline();stream.readline();stream.readline()
+        native_targets=[[float(x) for x in line.split()] for line in stream if line.strip()]
+    goal=native_targets[-1] if native_targets else target
+    final_q=final.get("actual_rad")
+    final_error_deg=(max(abs(a-b) for a,b in zip(final_q,goal))*180/3.141592653589793
+                     if final_q else None)
+    import statistics
     result = {"returncode": code, "aborted": aborted, "reason": reason,
               "target_reached": reached, "servo_disabled_confirmed": cleanup,
               "elapsed_s": time.monotonic()-started, "log": str(log_path),
+              "tracking_error_deg":{"max":max(tracking) if tracking else None,
+                  "p95":sorted(tracking)[min(len(tracking)-1,int(.95*len(tracking)))] if tracking else None,
+                  "rms":(sum(x*x for x in tracking)/len(tracking))**.5 if tracking else None},
+              "deadline_lag_ms":{"max":max(deadline) if deadline else None,
+                                  "p95":sorted(deadline)[min(len(deadline)-1,int(.95*len(deadline)))] if deadline else None},
+              "final_joint_error_deg":final_error_deg,"final_tcp_mm_rad":final.get("tcp_mm_rad"),
               "success": code == 0 and reached and cleanup and not aborted}
     ab_fastlane.write_json(output / "execution_result.json", result)
     return result

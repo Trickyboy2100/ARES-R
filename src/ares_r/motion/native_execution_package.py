@@ -29,7 +29,7 @@ FIRST_DEMO_SPEED_RAD_S = SUPERVISED_MAX_JOINT_SPEED_RAD_S
 FIRST_DEMO_ACCEL_RAD_S2 = SUPERVISED_MAX_JOINT_ACCEL_RAD_S2
 # Built from the explicit supervised_path source with the site SDK.  The old
 # demo/pregrasp binary is intentionally not accepted for an A/B package.
-AUDITED_SITE_SENDER_SHA256 = "20339e7c88dd276bb9c4fbafc48382e840523519e30b249033eb932145360676"
+AUDITED_SITE_SENDER_SHA256 = "0d5de69b6b277a8f585232ced8a035eebb568dad60f66365cc4edc810f237dac"
 
 
 def verify_installed_sender(path):
@@ -61,7 +61,8 @@ def package_native_preview(points, source_dt_s, site_limits, *, tool_id,
                            controller_tool_pose_mm_rad, captured_at_unix,
                            max_duration_s=NATIVE_MAX_DURATION_S,
                            speed_ceiling_rad_s=FIRST_DEMO_SPEED_RAD_S,
-                           accel_ceiling_rad_s2=FIRST_DEMO_ACCEL_RAD_S2):
+                           accel_ceiling_rad_s2=FIRST_DEMO_ACCEL_RAD_S2,
+                           tracking_stop_threshold_deg=SUPERVISED_HARD_TRACKING_GATE_DEG):
     """Return native file text and audit, or raise without writing a file."""
     source = [[float(v) for v in row] for row in points]
     if (len(source) < 2 or any(len(row) != 6 or not all(math.isfinite(v) for v in row)
@@ -75,6 +76,8 @@ def package_native_preview(points, source_dt_s, site_limits, *, tool_id,
     soft = float(site_limits["soft_limit_margin_rad"])
     if not 0 < speed_ceiling_rad_s <= FIRST_DEMO_SPEED_RAD_S or not 0 < accel_ceiling_rad_s2 <= FIRST_DEMO_ACCEL_RAD_S2:
         raise ValueError("supervised sender speed/acceleration ceiling exceeded")
+    if not 0 < tracking_stop_threshold_deg <= SUPERVISED_HARD_TRACKING_GATE_DEG:
+        raise ValueError("A/B tracking stop threshold outside versioned site maximum")
     speed = [min(float(site_limits["max_velocity_rad_s"][i]),
                  SUPERVISED_MAX_JOINT_SPEED_RAD_S, SUPERVISED_TRACKING_SPEED_CAP_RAD_S,
                  speed_ceiling_rad_s) for i in range(6)]
@@ -104,10 +107,12 @@ def package_native_preview(points, source_dt_s, site_limits, *, tool_id,
     if violations:
         raise ValueError("native velocity/acceleration cap: %s" % violations[:3])
     predicted_tracking = predicted_tracking_gate_deg(sampled, NATIVE_DT_S)
-    if predicted_tracking > SUPERVISED_TRACKING_BUDGET_DEG + 1e-9:
+    tracking_budget=min(SUPERVISED_TRACKING_BUDGET_DEG,tracking_stop_threshold_deg-.02)
+    if predicted_tracking > tracking_budget + 1e-9:
         raise ValueError("predicted native tracking budget")
-    rows = ["ARES_R_RIGHT_V1 %d %.17g %d %d" % (
-                len(sampled), NATIVE_DT_S, int(captured_at_unix), int(tool_id)),
+    rows = ["ARES_R_RIGHT_V2 %d %.17g %d %d %.17g %.17g %.17g" % (
+                len(sampled), NATIVE_DT_S, int(captured_at_unix), int(tool_id),
+                speed_ceiling_rad_s,accel_ceiling_rad_s2,tracking_stop_threshold_deg),
             " ".join("%.17g" % float(v) for v in controller_tool_pose_mm_rad),
             " ".join("%.17g" % (v + soft) for v in lower),
             " ".join("%.17g" % (v - soft) for v in upper)]
@@ -119,7 +124,7 @@ def package_native_preview(points, source_dt_s, site_limits, *, tool_id,
                            - (sampled[j-1][i]-sampled[j-2][i]) / NATIVE_DT_S)
                        / NATIVE_DT_S for j in range(2, len(sampled)) for i in range(6))
     audit = {
-        "format": "ARES_R_RIGHT_V1", "native_sender_mode_for_future_review": "supervised_path",
+        "format": "ARES_R_RIGHT_V2", "native_sender_mode_for_future_review": "supervised_path",
         "planning_only": True, "execution_allowed": False,
         "sample_period_s": NATIVE_DT_S, "sample_count": len(sampled),
         "duration_s": duration, "max_joint_speed_rad_s": velocity,
@@ -127,10 +132,10 @@ def package_native_preview(points, source_dt_s, site_limits, *, tool_id,
         "speed_cap_rad_s": min(speed), "accel_cap_rad_s2": min(accel),
         "tracking_speed_cap_rad_s": SUPERVISED_TRACKING_SPEED_CAP_RAD_S,
         "predicted_tracking_gate_deg": predicted_tracking,
-        "tracking_budget_deg": SUPERVISED_TRACKING_BUDGET_DEG,
-        "tracking_margin_deg": SUPERVISED_TRACKING_BUDGET_DEG-predicted_tracking,
-        "native_sender_hard_tracking_gate_deg": SUPERVISED_HARD_TRACKING_GATE_DEG,
-        "predicted_margin_to_sender_hard_gate_deg": SUPERVISED_HARD_TRACKING_GATE_DEG-predicted_tracking,
+        "tracking_budget_deg": tracking_budget,
+        "tracking_margin_deg": tracking_budget-predicted_tracking,
+        "native_sender_hard_tracking_gate_deg": tracking_stop_threshold_deg,
+        "predicted_margin_to_sender_hard_gate_deg": tracking_stop_threshold_deg-predicted_tracking,
         "max_excursion_rad": excursion,
         "max_joint_geometry_error_rad": geometry_error,
         "native_file_sha256": hashlib.sha256(content.encode()).hexdigest(),

@@ -24,6 +24,11 @@ def serve(path: Path) -> None:
                 request=json.loads(connection.recv(65536).decode())
                 if request.get("command")=="stop":
                     connection.sendall(b'{"ok":true}\n');return
+                if request.get("command")=="status":
+                    response={"ok":True,"state":"READY",
+                              "runtime_count":len(production_scene_worker._RUNTIME_CACHE),
+                              "pid":os.getpid()}
+                    connection.sendall((json.dumps(response)+"\n").encode());continue
                 try:
                     log=Path(request["log"]);log.parent.mkdir(parents=True,exist_ok=True)
                     old=sys.argv

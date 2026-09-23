@@ -97,7 +97,7 @@ def _direction(scene_dir):
     return "CURRENT_to_A"
 
 
-def prepare_plan(scene_dir, plan_dir):
+def prepare_plan(scene_dir, plan_dir, speed_ceiling_rad_s=None):
     """Package exactly one already planned cuRobo path, with leg-specific gate."""
     scene_dir, plan_dir = Path(scene_dir), Path(plan_dir)
     plan = read_json(plan_dir / "planning.json")
@@ -121,15 +121,20 @@ def prepare_plan(scene_dir, plan_dir):
     capture = read_json(read_json(scene_dir / "capture_pointer.json")["capture_manifest"])
     captured_at = float(capture["captured_at_unix"])
     site = read_json(ROOT / "config/jaka_mini2_motion.site.json")
+    deployment=read_json(ROOT/"config/ab_demo_deployment_profile.json")
+    tracking_stop=float(deployment["motion"]["tracking_stop_threshold_deg"])
+    speed_cap=(0.015 if direction=="CURRENT_to_A" else
+               float(speed_ceiling_rad_s if speed_ceiling_rad_s is not None else .070))
+    accel_cap=0.03 if direction=="CURRENT_to_A" else .20
     native_text, native_audit = package_native_preview(
         plan["trajectory_points_rad"], plan["smoothness"]["sample_period_s"], site,
         tool_id=audit["tool_id"],
         controller_tool_pose_mm_rad=audit["tool_data"]["pose_mm_rad"],
         captured_at_unix=captured_at,
-        speed_ceiling_rad_s=0.015 if direction == "CURRENT_to_A" else 0.070,
-        accel_ceiling_rad_s2=0.03 if direction == "CURRENT_to_A" else 0.10)
+        speed_ceiling_rad_s=speed_cap,accel_ceiling_rad_s2=accel_cap,
+        tracking_stop_threshold_deg=tracking_stop)
     sender_hash = verify_installed_sender(SENDER)
-    destination = plan_dir / "supervised_path_package_v4"
+    destination = plan_dir / "supervised_path_package_v5"
     if destination.exists():
         raise FileExistsError("package cannot overwrite a previewed trajectory")
     destination.mkdir()
@@ -164,7 +169,7 @@ def prepare_plan(scene_dir, plan_dir):
             "tracking_prediction_deg": native_audit["predicted_tracking_gate_deg"]}
 
 
-def plan_next(config):
+def plan_next(config, speed_ceiling_rad_s=None):
     session = status()
     if session["state"] != "SCENE_READY":
         raise RuntimeError("fresh demo ab scan required before every leg")
@@ -181,7 +186,7 @@ def plan_next(config):
               "--audit", scene_dir / "right_fk_audit.json", "--search", SEARCH,
               "--candidate", "0", "--direction", direction, "--policy", "DIRECT",
               "--execution-tool-envelope", "--output", output), timeout=240)
-        package = prepare_plan(scene_dir, output)
+        package = prepare_plan(scene_dir, output,speed_ceiling_rad_s)
     except Exception:
         write_json(STATE, dict(session, state="FAULT", candidate_id=None,
                                plan_dir=None, package_dir=None))

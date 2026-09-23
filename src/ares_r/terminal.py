@@ -4,6 +4,7 @@ import atexit
 import json
 import math
 import shlex
+import sys
 from datetime import datetime
 from pathlib import Path
 from .controller import TaskController
@@ -28,6 +29,10 @@ except ImportError:  # pragma: no cover - readline is present on the target Linu
 HELP = """Commands:
   demo ab status|scan|plan-next|preview|preflight|execute-next|stop
                              P3.3A CLEAR backend; execute-next locked, no WebUI
+  planner service start|status|stop|benchmark  persistent right-arm cuRobo runtime
+  scene fast-scan / scene timing             deployment scan and latest timings
+  demo ab speed status|speed-test            A/B-only versioned speed profile
+  demo ab start-clear-loop --cycles N         bounded fresh-scan CLEAR loop
   curobo demo start show|save|replace  persistent current right start (no motion)
   curobo demo reset           cuRobo reset to saved start + live dashboard
   curobo demo plan-reset      plan current -> fixed start without motion
@@ -349,6 +354,49 @@ def run_terminal(controller: TaskController) -> None:
                 raise RuntimeError("command blocked: combined task/base execution is not commissioned")
             if args[0] in ("quit", "exit"): break
             if args[0] == "help": print(help_text)
+            elif args[:2] == ["planner", "service"]:
+                if len(args)!=3 or args[2] not in ("start","status","stop","benchmark"):
+                    raise ValueError("usage: planner service start|status|stop|benchmark")
+                from .motion import planner_service_client
+                if args[2]=="status":result=planner_service_client.status()
+                elif args[2]=="start":result=planner_service_client.start(
+                    controller.config["curobo"]["python"],Path.cwd())
+                elif args[2]=="stop":result=planner_service_client.stop()
+                else:
+                    report=Path("worklog/evidence/2026-09-23-p3-4/benchmark_summary.json")
+                    result=json.loads(report.read_text()) if report.exists() else {"state":"NO_BENCHMARK_ARTIFACT"}
+                print(json.dumps(result,indent=2,ensure_ascii=False))
+            elif args==["scene","fast-scan"]:
+                if controller.mode!="hardware-enabled":raise RuntimeError("fast scan requires hardware-enabled mode")
+                from .motion import ab_fastlane
+                print(json.dumps(ab_fastlane.scan(controller.config),indent=2,ensure_ascii=False))
+            elif args==["scene","timing"]:
+                from .motion import ab_fastlane
+                session=ab_fastlane.status();scene=Path(session.get("scene_dir",''))
+                summary=scene/"fresh_scene_summary.json";report=scene/"scene/scene_report.json"
+                if not summary.exists() or not report.exists():raise RuntimeError("no fresh scene timing")
+                print(json.dumps({"scan":json.loads(summary.read_text()).get("timing_s"),
+                    "scene":json.loads(report.read_text()).get("timing_s")},indent=2))
+            elif args[:3]==["demo","ab","speed"]:
+                if len(args)!=4 or args[3] not in ("status","speed-test"):
+                    raise ValueError("usage: demo ab speed status|speed-test")
+                profile=json.loads(Path("config/ab_demo_deployment_profile.json").read_text())
+                if args[3]=="status":
+                    results=sorted(Path("worklog/evidence/2026-09-22-p3-3a-clear-fastlane").glob(
+                        "p34_speed_ladder_*/speed_ladder_result.json"))
+                    print(json.dumps({"profile":profile,"latest":json.loads(results[-1].read_text()) if results else None},indent=2))
+                else:
+                    phrase="RIGHT AB DEPLOYMENT SPEED LADDER"
+                    if input("Type %s: "%phrase).strip()!=phrase:print("Cancelled; no motion.");continue
+                    import subprocess
+                    subprocess.run([sys.executable,"scripts/run_p34_speed_ladder.py","--execute",
+                        "--authorization",phrase],check=True)
+            elif args[:3]==["demo","ab","start-clear-loop"]:
+                if len(args)!=5 or args[3]!="--cycles":raise ValueError("usage: demo ab start-clear-loop --cycles N")
+                cycles=int(args[4]);import subprocess
+                child=subprocess.Popen([sys.executable,"scripts/run_ab_clear_loop.py","--cycles",str(cycles)],
+                    start_new_session=True,stdout=open("logs/ab_clear_loop.out","a"),stderr=subprocess.STDOUT)
+                print(json.dumps({"state":"STARTED","pid":child.pid,"stop":"demo ab stop"},indent=2))
             elif args[:2] == ["demo", "ab"]:
                 if len(args) != 3 or args[2] not in (
                         "status", "scan", "plan-next", "preview", "preflight",

@@ -82,6 +82,10 @@ def main():
               "reference_ik_errors": errors,
               "planner_mode": "CUROBO_DIRECT", "explicit_waypoints": []}
     parameters = planning_profile(config)
+    deployment=load(ROOT/"config/ab_demo_deployment_profile.json")["planner"]
+    parameters["num_ik_seeds"]=deployment["num_ik_seeds"]
+    parameters["num_trajopt_seeds"]=deployment["num_trajopt_seeds"]
+    parameters["use_cuda_graph"]=deployment["use_cuda_graph"]
     if a.num_ik_seeds is not None:
         parameters["num_ik_seeds"] = a.num_ik_seeds
     if a.num_trajopt_seeds is not None:

@@ -59,15 +59,19 @@ static State read(JAKAZuRobot& robot,bool tool_data=false){
     if(tool_data){check(robot.get_tool_data(s.tool_id,&tcp),"tool data");s.tool=pose(tcp);}
     return s;
 }
-struct Path{std::vector<Q> q;double dt,captured;int tool_id;Q tool,lo,hi;};
+struct Path{std::vector<Q> q;double dt,captured;int tool_id;Q tool,lo,hi;double speed_cap=.070,accel_cap=.10,tracking_stop_deg=.5;};
 static Path load(const char* file,bool micro,bool reset,bool pregrasp,bool supervised_path){
     // A pregrasp move is a reposition-class motion, so it reuses the already
     // commissioned reset envelope rather than inventing new tuned numbers.
     const bool long_move=reset||pregrasp||supervised_path;
     std::ifstream f(file);std::string magic,extra;int n=0;Path p{};
     f>>magic>>n>>p.dt>>p.captured>>p.tool_id;
-    if(!f||magic!="ARES_R_RIGHT_V1"||n<2||n>10000||!std::isfinite(p.dt)||std::abs(p.dt-.08)>1e-9)
+    if(magic=="ARES_R_RIGHT_V2")f>>p.speed_cap>>p.accel_cap>>p.tracking_stop_deg;
+    if(!f||(magic!="ARES_R_RIGHT_V1"&&magic!="ARES_R_RIGHT_V2")||n<2||n>10000||!std::isfinite(p.dt)||std::abs(p.dt-.08)>1e-9)
         throw std::runtime_error("invalid trajectory header");
+    if(supervised_path&&(!(p.speed_cap>0&&p.speed_cap<=.10)||!(p.accel_cap>0&&p.accel_cap<=.20)||
+            !(p.tracking_stop_deg>0&&p.tracking_stop_deg<=1.0)))
+        throw std::runtime_error("invalid A/B demo profile limits");
     if(!std::isfinite(p.captured)||std::time(nullptr)-p.captured<0||std::time(nullptr)-p.captured>300)
         throw std::runtime_error("expired live planning snapshot");
     for(auto* row:{&p.tool,&p.lo,&p.hi})for(double& v:*row)if(!(f>>v)||!std::isfinite(v))throw std::runtime_error("invalid metadata");
@@ -80,14 +84,14 @@ static Path load(const char* file,bool micro,bool reset,bool pregrasp,bool super
             const double cap=micro?(j==5?.5001:.005):(long_move?150:20);
             if(std::abs(p.q[i][j]-p.q[0][j])>rad(cap))throw std::runtime_error("excursion cap");
             double v=i?(p.q[i][j]-p.q[i-1][j])/p.dt:0;
-            const double speed_cap=supervised_path?.070:rad(micro?.5:3.0);
-            const double accel_cap=supervised_path?.10:(micro?rad(1):.2);
+            const double speed_cap=supervised_path?p.speed_cap:rad(micro?.5:3.0);
+            const double accel_cap=supervised_path?p.accel_cap:(micro?rad(1):.2);
             if(std::abs(v)>speed_cap+1e-10||std::abs(v-previous_v[j])/p.dt>accel_cap+1e-10)
                 throw std::runtime_error("velocity/acceleration cap");
             previous_v[j]=v;
         }
     }
-    for(double v:previous_v)if(std::abs(v)/p.dt>(supervised_path?.10:(micro?rad(1):.2))+1e-10)throw std::runtime_error("end acceleration");
+    for(double v:previous_v)if(std::abs(v)/p.dt>(supervised_path?p.accel_cap:(micro?rad(1):.2))+1e-10)throw std::runtime_error("end acceleration");
     if(f>>extra)throw std::runtime_error("trailing data");
     if((n-1)*p.dt>(long_move?240:115))throw std::runtime_error("duration cap");
     return p;
@@ -107,7 +111,7 @@ int main(int argc,char**argv){
     const pid_t launch_parent=getppid();
     if(!snapshot&&!validate_supervised&&(!(micro||demo||reset||pregrasp||supervised_path)||std::string(argv[3])!="CONFIRMED_RIGHT_CLEAR")){std::cerr<<"invalid explicit mode/confirmation\n";return 2;}
     Path path;try{if(!snapshot)path=load(argv[2],micro,reset,pregrasp,supervised_path||validate_supervised);}catch(const std::exception&e){std::cerr<<e.what()<<std::endl;return 2;}
-    if(validate_supervised){std::cout<<"VALID_SUPERVISED_PATH samples="<<path.q.size()<<" duration_s="<<(path.q.size()-1)*path.dt<<"; no controller connection"<<std::endl;return 0;}
+    if(validate_supervised){std::cout<<"VALID_SUPERVISED_PATH samples="<<path.q.size()<<" duration_s="<<(path.q.size()-1)*path.dt<<" speed_cap_rad_s="<<path.speed_cap<<" accel_cap_rad_s2="<<path.accel_cap<<" tracking_stop_deg="<<path.tracking_stop_deg<<"; no controller connection"<<std::endl;return 0;}
     int lock=open("/tmp/ares-r-right-servo.lock",O_CREAT|O_RDWR,0600);
     if(lock<0||flock(lock,LOCK_EX|LOCK_NB)){std::cerr<<"right lock occupied\n";if(lock>=0)close(lock);return 2;}
     JAKAZuRobot robot;bool logged=false,servo=false;int result=1;
@@ -141,7 +145,7 @@ int main(int argc,char**argv){
                 if(lag>.04)throw std::runtime_error("feedback/send deadline");
                 if(actual.tool_id!=start.tool_id||actual.user_id!=start.user_id)throw std::runtime_error("tool/user changed");
                 if(distance(actual.tool,start.tool)>1e-6)throw std::runtime_error("tool offset changed");
-                if(distance(actual.q,previous)>rad(micro?.1:(supervised_path?.5:.2)))throw std::runtime_error("tracking error");
+                if(distance(actual.q,previous)>rad(micro?.1:(supervised_path?path.tracking_stop_deg:.2)))throw std::runtime_error("tracking error");
                 double tcp_displacement=0;for(int j=0;j<3;++j)tcp_displacement+=std::pow(actual.tcp[j]-start.tcp[j],2);
                 if(std::sqrt(tcp_displacement)>(micro?5:(long_move?1500:250)))throw std::runtime_error("actual TCP displacement cap");
                 JointValue target{};for(int j=0;j<6;++j)target.jVal[j]=path.q[i][j];
