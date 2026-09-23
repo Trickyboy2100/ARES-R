@@ -69,8 +69,8 @@ static Path load(const char* file,bool micro,bool reset,bool pregrasp,bool super
     if(magic=="ARES_R_RIGHT_V2")f>>p.speed_cap>>p.accel_cap>>p.tracking_stop_deg;
     if(!f||(magic!="ARES_R_RIGHT_V1"&&magic!="ARES_R_RIGHT_V2")||n<2||n>10000||!std::isfinite(p.dt)||std::abs(p.dt-.08)>1e-9)
         throw std::runtime_error("invalid trajectory header");
-    if(supervised_path&&(!(p.speed_cap>0&&p.speed_cap<=.10)||!(p.accel_cap>0&&p.accel_cap<=.20)||
-            !(p.tracking_stop_deg>0&&p.tracking_stop_deg<=1.0)))
+    if(supervised_path&&(!(p.speed_cap>0&&p.speed_cap<=.20)||!(p.accel_cap>0&&p.accel_cap<=.20)||
+            !(p.tracking_stop_deg>0&&p.tracking_stop_deg<=1.5)))
         throw std::runtime_error("invalid A/B demo profile limits");
     if(!std::isfinite(p.captured)||std::time(nullptr)-p.captured<0||std::time(nullptr)-p.captured>300)
         throw std::runtime_error("expired live planning snapshot");

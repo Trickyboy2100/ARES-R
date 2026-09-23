@@ -29,7 +29,7 @@ FIRST_DEMO_SPEED_RAD_S = SUPERVISED_MAX_JOINT_SPEED_RAD_S
 FIRST_DEMO_ACCEL_RAD_S2 = SUPERVISED_MAX_JOINT_ACCEL_RAD_S2
 # Built from the explicit supervised_path source with the site SDK.  The old
 # demo/pregrasp binary is intentionally not accepted for an A/B package.
-AUDITED_SITE_SENDER_SHA256 = "0d5de69b6b277a8f585232ced8a035eebb568dad60f66365cc4edc810f237dac"
+AUDITED_SITE_SENDER_SHA256 = "e5e3d82c4d4dd1ca8846cab7e59cfd3fb366035b7bd3135698a35dc51cd4ff9c"
 
 
 def verify_installed_sender(path):

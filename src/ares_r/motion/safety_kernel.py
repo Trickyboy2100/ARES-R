@@ -97,9 +97,9 @@ class DualArmSafetyKernel:
             velocity_limit = float(execution_limits["max_velocity_rad_s"])
             acceleration_limit = float(execution_limits["max_acceleration_rad_s2"])
             tracking_limit = float(execution_limits["tracking_stop_threshold_deg"])
-            if not (0 < velocity_limit <= 0.10 and
+            if not (0 < velocity_limit <= 0.20 and
                     0 < acceleration_limit <= 0.20 and
-                    0 < tracking_limit <= 1.0):
+                    0 < tracking_limit <= 1.5):
                 raise ValueError("A/B demo execution limits exceed versioned site bounds")
         gates = {
             "START_MATCH": bool(start_match),

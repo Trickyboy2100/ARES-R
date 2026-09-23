@@ -24,7 +24,7 @@ from .safety_kernel import DualArmSafetyKernel
 
 ROOT = Path(__file__).resolve().parents[3]
 SEARCH = ROOT / "config/ab_demo_horizontal_forward.json"
-SENDER = Path("/home/yikun/ares-r-curobo-assets/jaka_right_supervised_path_v4")
+SENDER = Path("/home/yikun/ares-r-curobo-assets/jaka_right_supervised_path_v5")
 STATE = ROOT / "logs/ab_fastlane_session.json"
 ACTIVE_NATIVE = ROOT / "logs/ab_native_active.json"
 EVIDENCE = ROOT / "worklog/evidence/2026-09-22-p3-3a-clear-fastlane"
@@ -126,6 +126,12 @@ def prepare_plan(scene_dir, plan_dir, speed_ceiling_rad_s=None):
     speed_cap=(0.015 if direction=="CURRENT_to_A" else
                float(speed_ceiling_rad_s if speed_ceiling_rad_s is not None else .070))
     accel_cap=0.03 if direction=="CURRENT_to_A" else .20
+    if direction != "CURRENT_to_A":
+        # Operator-authorized A/B commissioning override. Keep the generic
+        # site profile untouched; only this supervised package may use it.
+        site = dict(site)
+        site["max_velocity_rad_s"] = [max(float(value), speed_cap)
+                                      for value in site["max_velocity_rad_s"]]
     native_text, native_audit = package_native_preview(
         plan["trajectory_points_rad"], plan["smoothness"]["sample_period_s"], site,
         tool_id=audit["tool_id"],

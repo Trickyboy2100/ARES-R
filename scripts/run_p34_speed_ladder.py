@@ -66,7 +66,7 @@ def main():
         # The prepared candidate is intentionally discarded: every ladder leg
         # below obtains a scan made immediately before its own plan.
         ab_fastlane.stop()
-    for speed in (.08,.09,.10):
+    for speed in (.12,.14,.16,.18,.20):
         leg+=1
         _,planned,preflight,scan_s,plan_s=prepare_leg(config,speed)
         if planned["direction"] not in ("A_to_B","B_to_A"):

@@ -6,7 +6,7 @@ sdk_include="/home/yikun/ws/SDK v2.2.2/04 Linux/c&c++/inc_of_c++"
 sdk_library="/home/yikun/JAKA/lib"
 case "${1:-}" in
   "") demo_output="/home/yikun/ares-r-curobo-assets/jaka_right_demo" ;;
-  --supervised-path) demo_output="/home/yikun/ares-r-curobo-assets/jaka_right_supervised_path_v4" ;;
+  --supervised-path) demo_output="/home/yikun/ares-r-curobo-assets/jaka_right_supervised_path_v5" ;;
   *) echo "usage: build_jaka_right_demo.sh [--supervised-path]" >&2; exit 2 ;;
 esac
 test -f "$sdk_include/JAKAZuRobot.h"

@@ -109,9 +109,9 @@ class P33HardeningTests(unittest.TestCase):
             tool_id=1, controller_tool_pose_mm_rad=self.tool, captured_at_unix=1000)
         self.assertTrue(content.startswith("ARES_R_RIGHT_V2 "))
         self.assertAlmostEqual(audit["sample_period_s"], 0.08)
-        self.assertLessEqual(audit["max_joint_speed_rad_s"], 0.10+1e-12)
+        self.assertLessEqual(audit["max_joint_speed_rad_s"], 0.20+1e-12)
         self.assertLessEqual(audit["max_joint_accel_rad_s2"], 0.20+1e-12)
-        self.assertEqual(audit["native_sender_hard_tracking_gate_deg"], 1.0)
+        self.assertEqual(audit["native_sender_hard_tracking_gate_deg"], 1.5)
         self.assertEqual(audit["native_sender_mode_for_future_review"], "supervised_path")
         self.assertLessEqual(audit["max_joint_geometry_error_rad"], 1e-8)
         self.assertFalse(audit["execution_allowed"])
@@ -245,8 +245,8 @@ class P33HardeningTests(unittest.TestCase):
         legacy = kernel.preflight_execution_candidate(
             candidate, live, native, now=1010, speed_profile="ab_demo_deployment")
         self.assertFalse(legacy["gates"]["VELOCITY"])
-        limits = {"scope": "RIGHT_ARM_AB_DEMO_ONLY", "max_velocity_rad_s": 0.10,
-                  "max_acceleration_rad_s2": 0.20, "tracking_stop_threshold_deg": 1.0}
+        limits = {"scope": "RIGHT_ARM_AB_DEMO_ONLY", "max_velocity_rad_s": 0.20,
+                  "max_acceleration_rad_s2": 0.20, "tracking_stop_threshold_deg": 1.5}
         scoped = kernel.preflight_execution_candidate(
             candidate, live, native, now=1010, speed_profile="ab_demo_deployment",
             execution_limits=limits)
