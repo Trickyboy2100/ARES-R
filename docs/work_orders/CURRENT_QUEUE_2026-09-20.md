@@ -1,4 +1,4 @@
-# CURRENT QUEUE — 2026-09-22
+# CURRENT QUEUE — 2026-09-23
 
 Master roadmap:
 
@@ -6,7 +6,7 @@ Master roadmap:
 docs/roadmaps/2026-09-20_BODY_POINTCLOUD_DUAL_ARM_AVOIDANCE_ROADMAP.md
 ~~~
 
-## Completed and pushed
+## Completed / established
 
 ### P0 — BODY-camera calibration
 Completed.
@@ -21,161 +21,109 @@ Completed.
 Completed.
 
 ### P3 / P3.1 — production pointcloud planning substrate
-Completed and pushed.
+Completed.
 
 ### P3.2 — cuRobo-only A/B planning checkpoint
-Completed and pushed.
+Completed.
 
-GitHub integration HEAD:
+### P3.3 / P3.3A — execution hardening + first physical CLEAR evidence
+Partially completed in the field.
 
-~~~text
-d258c30476868b2789c1cd61ac5c402a93b5ebf6
-~~~
+Field results now include:
 
-Canonical operator overrides now locked for this demo:
+- real CURRENT→A execution;
+- at least one successful B→A CLEAR leg;
+- one A→B abort on A/B tracking threshold;
+- A/B-specific self-filter adjustment for gripper residuals;
+- A/B-specific tracking-stop adjustment experiments;
+- bounded background CLEAR loop runner;
+- current local field commits not all yet consolidated/pushed.
 
-~~~text
-1. CURRENT→A, A→B and B→A all use cuRobo.
-2. No explicit waypoint is allowed.
-3. CLEAR/AVOID both use one direct cuRobo start→goal request.
-4. The operator visually approved the current trajectory style.
-~~~
-
-Current A/B:
-
-~~~text
-A BODY TCP = [0.710, -0.600, 1.000] m
-B BODY TCP = [0.710, -0.130, 1.000] m
-lateral span = 0.470 m
-~~~
-
-Planning-only checkpoint:
-
-~~~text
-CLEAR both directions = SUCCESS
-AVOID both directions = SUCCESS
-BLOCK = expected FAILURE / no fallback
-
-AVOID path rises about 155 mm above endpoints.
-CLEAR-vs-AVOID max TCP separation about 202–204 mm.
-~~~
-
-Physical execution remains disabled.
+Do not restart P3.3 design work unless needed by P3.4.
 
 ## Active now
 
-### P3.3 — execution hardening for the approved cuRobo-only A/B demo
+### P3.4 — same-day deployment acceleration
 
 Execute:
 
 ~~~text
-docs/work_orders/2026-09-22_P3_3_EXECUTION_HARDENING.md
+docs/work_orders/2026-09-23_P3_4_DEPLOYMENT_ACCELERATION.md
 ~~~
 
-Purpose:
+Today's goal:
 
 ~~~text
-FAST LANE P3.3A:
-  get first supervised CLEAR motion ready today
-  CURRENT→A → fresh A→B CLEAR → fresh B→A CLEAR
-
-then P3.3B:
-  harden AVOID repeatability
+reduce scan→scene latency
+→ remove planner cold-start/redundant solve overhead
+→ persistent cuRobo planner
+→ benchmark/choose fast planner profile
+→ commission faster A/B-only joint speed up to site ceiling
+→ 2–3 fast CLEAR round trips
+→ real-box fast AVOID round trip if stable
 ~~~
 
-Main hardening:
-- preserve approved A/B and cuRobo-only/no-waypoint policy;
-- reconcile physical gripper geometry;
-- package selected path for native ServoJ;
-- bind fresh scene/start/tool lease;
-- SafetyKernel dry-run;
-- request-readiness for first supervised CURRENT→A motion.
+Target operating behavior remains:
 
-No hardware movement in P3.3.
+- every leg fresh scan / fresh scene;
+- every point-to-point leg uses cuRobo;
+- no explicit waypoint;
+- A/B unchanged unless a real feasibility issue requires change;
+- right-arm only for this demo;
+- inactive left arm remains part of collision world.
 
-## Tool/TCP note
+## Current measured bottlenecks
 
-Current evidence:
+Approximate recent values:
 
 ~~~text
-manual flange→grasp center ≈ 145 mm
-pinned ARES gripper distal extent ≈ 149 mm
-controller active TCP Z ≈ 184 mm
+camera + scene prep: ~15.2 s
+cuRobo request→result: ~54–57 s
+  including one discarded warm-up solve + one formal solve
+formal cuRobo solve: ~19 s
+A/B motion around 0.07 rad/s: ~25 s / leg
 ~~~
 
-Do not change controller TCP in P3.3.
+P3.4 should attack these directly.
 
-The manual physical grasp-center measurement (~145 mm) agrees closely with the pinned ARES gripper distal extent (~149 mm). For this movement-only demo, the pinned gripper remains the physical collision body; the controller TCP at ~184 mm is treated as a task frame unless physical material is observed there.
+## Physical speed policy for P3.4
 
-Do not invent collision geometry solely to fill a virtual TCP offset. The semantic difference remains documented.
-
-## Execution blocker observed in P3.2
-
-Same frozen AVOID scene produced modeled minimum clearance ranging from about:
+The site ceiling remains:
 
 ~~~text
-35.4 mm
-to
-9.3 mm
+max joint velocity = 0.10 rad/s
+max joint acceleration = 0.20 rad/s²
 ~~~
 
-Repeat planning success alone is not an execution certificate.
+P3.4 may commission an A/B-DEMO-ONLY faster profile up to this ceiling.
 
-P3.3 must establish a repeatable modeled-clearance gate before any motion request.
+Tracking-stop threshold may be tuned only for the A/B demo and must remain an explicit logged setting. Do not alter controller estop/collision/limit protections or unrelated motion modes.
+
+## User actions
+
+Codex asks one physical action at a time using the format in the P3.4 work order.
+
+First expected action:
+
+~~~text
+USER ACTION 1
+“CLEAR速度测试现场已就绪”
+~~~
+
+After that confirmation Codex may run the predefined right-arm speed ladder automatically until a failure/abort condition.
 
 ## Recorded next
 
-### First supervised physical demo
-Only after P3.3 review and a separate explicit user authorization.
+### P4 — WebUI / Terminal frontend
+Do not start until P3.4 produces a responsive deployed backend.
 
-Expected order:
+### P5 — broader throughput/watchdog optimization
+P3.4 may implement the highest-value same-day optimizations. P5 remains for deeper/general performance work.
 
-~~~text
-CURRENT→A
-→ fresh scan
-→ A→B
-→ fresh scan
-→ B→A
-~~~
+## Git policy
 
-Every leg uses new cuRobo planning and no explicit waypoint.
+P3.4 first preserves/consolidates the .32 local field state.
 
-### P4
-~~~text
-docs/work_orders/2026-09-20_P4_WEBUI_TERMINAL_FRONTEND.md
-~~~
-
-### P5
-~~~text
-docs/work_orders/2026-09-20_P5_POINTCLOUD_THROUGHPUT_WATCHDOG.md
-~~~
-
-## Stage push policy
-
-1. finish phase;
-2. run tests;
-3. local commit;
-4. STOP and report;
-5. do not push automatically;
-6. user returns to ChatGPT;
-7. push/execution only after review.
-
-No force-push. No blanket reset/revert.
-
-## User action rule
-
-When physical user input is required, ask exactly one action:
-
-~~~text
-USER ACTION N
-目的：
-你现在做：
-完成后回复：
-安全边界：
-~~~
-
-## Current motion boundary
-
-P3.3 may capture camera and read robot state.
-
-AMR/arm/gripper motion is NOT authorized in P3.3.
+No force-push.
+No unrelated AMR dirty changes.
+Leave .32/GitHub aligned at the end of the day.
