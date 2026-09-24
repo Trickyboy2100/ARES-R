@@ -38,6 +38,9 @@ def load_task_parameters(path="config/tray_to_groove_v2.json") -> dict:
         raise ValueError("semantic visibility-clear target is required")
     if value["retreat"].get("semantic") != "VERTICAL_CLEARANCE_RETREAT":
         raise ValueError("versioned retreat contract is required")
+    binding=value["target_binding"]
+    if not binding.get("pick_preferred_semantics") or not binding.get("place_preferred_semantics"):
+        raise ValueError("purpose-specific target binding semantics are required")
     return value
 
 

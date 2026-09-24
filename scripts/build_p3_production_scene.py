@@ -175,7 +175,10 @@ def main():
         target_body=base_tcp_to_world(world["arms"][arm],
             [float(value)*1000 for value in values[:3]]+[float(value) for value in values[3:]])[:3]
         task=load(REPOSITORY/"config/tray_to_groove_v2.json")
-        preferred=set(task["target_binding"]["preferred_semantics"])
+        detection_kind=str(detection_artifact.get("kind", "pick")).split(":",1)[0]
+        semantic_key=("place_preferred_semantics" if detection_kind=="place"
+                      else "pick_preferred_semantics")
+        preferred=set(task["target_binding"][semantic_key])
         candidates=[(point_aabb_distance(target_body,box),
                      0 if box.get("semantic") in preferred else 1,box)
                     for box in planning_boxes]
@@ -188,7 +191,8 @@ def main():
         target_binding={"detection_id":detection_artifact["request_id"],
             "target_body_m":target_body,"primitive_id":target_primitive_id,
             "primitive_semantic":bound.get("semantic","UNKNOWN"),
-            "aabb_distance_m":distance,"policy":"NEAREST_PREFERRED_OBSERVED_PRIMITIVE_V1"}
+            "aabb_distance_m":distance,"detection_kind":detection_kind,
+            "policy":"NEAREST_PURPOSE_SPECIFIC_OBSERVED_PRIMITIVE_V2"}
     runtime="p3-%s-%d"%(a.mode.lower(),time.time_ns());noww,nowm=time.time_ns(),time.monotonic_ns()
     wm=WorldModel(runtime_id=runtime,snapshot_ttl_s=3600,environment_ttl_s=3600)
     wm.update_robot_state(RobotState(noww,nowm,runtime,left_joints_rad=tuple(geometry.joints_rad["left"]),

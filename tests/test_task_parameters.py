@@ -9,6 +9,7 @@ class TaskParameterTests(unittest.TestCase):
         self.assertEqual([gripper_percent_to_raw(p,value) for p in (50,40,20)],
                          [500,400,200])
         self.assertEqual(value["base_contracts"]["PLACE_BASE_POSE_V1"]["y_m"],-.40)
+        self.assertIn("SUPPORT_SURFACE",value["target_binding"]["place_preferred_semantics"])
 
 
 if __name__ == "__main__": unittest.main()
