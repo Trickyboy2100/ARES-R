@@ -22,6 +22,7 @@ class OrientationMode(str, Enum):
     LEVEL_YAW_FREE = "LEVEL_YAW_FREE"
     LEVEL_YAW_TARGET = "LEVEL_YAW_TARGET"
     EXPLICIT = "EXPLICIT"
+    TERMINAL_EXPLICIT = "TERMINAL_EXPLICIT"
 
 
 class StartClearanceState(str, Enum):
@@ -109,10 +110,11 @@ class MotionRequest:
             raise ValueError("start override is allowed only for an explicit simulated rehearsal")
         if self.goal is not None:
             self.goal.validate()
-        if self.constraints.orientation is OrientationMode.EXPLICIT:
+        if self.constraints.orientation in (OrientationMode.EXPLICIT,
+                                             OrientationMode.TERMINAL_EXPLICIT):
             rotation = self.constraints.explicit_rotation
             if rotation is None or len(rotation) != 3 or any(len(row) != 3 for row in rotation):
-                raise ValueError("EXPLICIT orientation requires a 3x3 rotation")
+                raise ValueError("explicit orientation requires a 3x3 rotation")
         attached = self.constraints.attached_object_geometry
         if attached is not None:
             from ares_r.manipulation.attached_collision import verify_attached_collision

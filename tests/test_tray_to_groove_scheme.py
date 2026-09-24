@@ -47,6 +47,8 @@ class TraySchemeTests(unittest.TestCase):
             self.assertTrue(package["task_run_locked"])
             self.assertTrue(all(call["physical_state"]=="SIMULATED_FOR_SCHEME_REHEARSAL"
                                 for call in calls))
+            self.assertTrue(all(call["collision_fidelity"]["gripper_max_opening_percent"] == 40
+                                for call in calls))
             self.assertTrue((Path(root)/"run/scheme_execution_package.json").exists())
 
     def test_wrong_observation_purpose_fails(self):

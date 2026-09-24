@@ -129,7 +129,8 @@ class PlanningOnlyScheme:
                        "scene_snapshot_id": observation["scene_snapshot_id"],
                        "scene_digest": observation["scene_digest"],
                        "pointcloud_sha256": observation["pointcloud_sha256"],
-                       "attachment": attached}
+                       "attachment": attached,
+                       "collision_fidelity": inputs.parameters["collision_fidelity"]}
             result = dict(self.free_space_plan(request))
             required = ("trajectory_hash", "goal_joints_rad", "minimum_hard_clearance_m",
                         "preferred_planner_clearance_m", "predicted_duration_s")
@@ -192,4 +193,3 @@ class PlanningOnlyScheme:
             "state": "COMPLETE_PLANNING_ONLY", "scheme_id": SCHEME_ID,
             "package_digest": package_body["package_digest"], "execution_allowed": False})
         return package_body
-

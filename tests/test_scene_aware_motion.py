@@ -125,6 +125,13 @@ class SceneAwareMotionTests(unittest.TestCase):
                 constraints=MotionConstraints(
                     gripper_max_opening_percent=40, active_sphere_cell_m=.010)).validate()
 
+    def test_terminal_explicit_orientation_keeps_auditable_rotation(self):
+        request = MotionRequest("right", [0.1] * 6,
+            constraints=MotionConstraints(
+                orientation=OrientationMode.TERMINAL_EXPLICIT,
+                explicit_rotation=((1, 0, 0), (0, 1, 0), (0, 0, 1))))
+        request.validate()
+
     def test_near_start_escape_is_not_rejected_for_missing_preferred_margin(self):
         policy = ClearancePolicy("test", .030)
         result = evaluate_hard_validity(

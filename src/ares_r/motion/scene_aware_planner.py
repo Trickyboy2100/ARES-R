@@ -36,6 +36,11 @@ def _orientation_lock(request: MotionRequest, report, audit, collision_model):
             else request.constraints.orientation)
     if mode is OrientationMode.FREE:
         return None
+    if mode is OrientationMode.TERMINAL_EXPLICIT:
+        # The terminal joint solution is computed against this rotation before
+        # cuRobo is called.  Free-space path orientation remains unconstrained;
+        # the following contact Skill owns the fixed-orientation corridor.
+        return None
     if mode is OrientationMode.BODY_FORWARD_HORIZONTAL:
         rotation = HORIZONTAL_FORWARD_R_BODY
         policy = "BODY_FORWARD_HORIZONTAL_V1"
