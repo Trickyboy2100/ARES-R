@@ -1,3 +1,7 @@
+> UPDATE 2026-09-24: implementation is now split into P3.8A audit → P3.8B planning-only Scheme → P3.8C supervised physical execution.
+> First execute docs/work_orders/2026-09-24_P3_8A_TRAY_TO_GROOVE_SYSTEM_AUDIT.md.
+> Owner-confirmed physical sequence is recorded in docs/schemes/2026-09-24_RIGHT_ARM_TRAY_TO_GROOVE_STAGE_DEMO_V2.md and supersedes generic placeholders in this older draft where they differ.
+
 # P3.8 — Tray→Groove manipulation Skills + Scheme planning
 
 Date: 2026-09-23
