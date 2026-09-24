@@ -1,176 +1,117 @@
 # CURRENT QUEUE — 2026-09-24
 
-## Current canonical integration baseline
+## Canonical field state
+
+Integration branch currently includes P3.8B live pregrasp checkpoint:
 
 ~~~text
-feat/e2e-v0-integration-20260917
-GitHub HEAD = d19cea78ffe3664fbf36423b6a6f80f371918de5
+75b5c2c2e7962de86bba606ea7a938b1fa0c924a
 ~~~
 
-P3.7 arbitrary-target scene-aware free-space motion is complete and physically demonstrated.
+Established:
 
-P3.8A system/interface audit is complete locally as an audit and must be cleanly preserved/pushed before blocker-closure refactoring.
+- arbitrary-target fresh-scene motion physically executed;
+- P3.8B0 production blockers closed;
+- right_pick and right_place_rightmost mappings established;
+- atomic 5700 + Pixel Pro manipulation observation exists;
+- CURRENT→50 mm pregrasp real-scene cuRobo planning succeeds;
+- 40% opening-aware gripper envelope implemented;
+- pregrasp free-space path uses terminal orientation only, not whole-path lock.
 
-## What P3.8A established
+## Current true blocker
+
+Exact grasp endpoint is blocked by collision abstraction, not task reachability.
+
+Evidence:
 
 ~~~text
-HW_STATE_AUDIT = PASS
-RIGHT_PICK_5700_MAPPING_VERIFIED = YES
-RIGHT_PICK_DETECTION_REPEATABLE = YES
-PICK_BASE_POSE_V1_RECORDED = YES_RELATIVE_PROVENANCE
-PLACE_BASE_POSE_V1_RECORDED = YES_RELATIVE_PROVENANCE
-LEFT_HOLD_CURRENT_FEASIBLE = YES_PLANNING_ONLY
-DUAL_ARM_CONCURRENT_EXECUTION_READY = NO
-SKILL_SCHEME_AUDIT_READY = YES
-READY_FOR_P3_8B_PLANNING_ONLY_SCHEME = NO
+single gripper union abstraction
++ old whole-tool inflation
++ already-inflated support scene
+→ false dock/support overlap (~17.2 mm model overlap)
 ~~~
 
-Effective field facts:
-
-~~~text
-AMR:
-  x+ forward
-  x- backward
-  y+ left
-  y- right
-  yaw degrees
-  negative yaw clockwise
-
-pickup audit move:
-  y = +0.30 m
-
-placement audit move from pickup pose:
-  y = -0.40 m
-
-right_pick:
-  320,2,1,1,1,0
-  space=2 object=1 camera=1
-  COMMISSIONED
-
-rightmost-place:
-  object 3 / 320,2,3,1,1,0 is the strongest current candidate
-  NOT YET COMMISSIONED
-~~~
+Detailed pinned EG2-4C2 component geometry shows that this should be resolved by a component-level opening-specific gripper model, not by moving the base again or deleting support geometry.
 
 ## Active now
 
-### P3.8B0 — close production blockers
+### P3.8B1 — Fast grasp collision-model correction
 
 Execute:
 
 ~~~text
-docs/work_orders/2026-09-24_P3_8B0_PRODUCTION_BLOCKER_CLOSURE.md
+docs/work_orders/2026-09-24_P3_8B1_FAST_GRASP_COLLISION_CORRECTION.md
 ~~~
 
-This phase is implementation, not another broad audit.
-
-Close:
+Priority is SPEED:
 
 ~~~text
-1 truthful asynchronous AMR completion observer
-2 atomic 5700 + 5000 + robot-state ObservationTransaction
-3 right_place_rightmost exact mapping/pose semantics
-4 bounded TargetContactPolicy
-5 attached-object collision geometry through planner/validator/SafetyKernel
-6 local TCP scene-delta + grasp verification
+component gripper geometry
+→ remove duplicate contact-stage inflation
+→ validate exact grasp/contact segment
+→ package FIRST REAL PICK
+→ real grasp + 100 mm lift checkpoint
 ~~~
 
-Also parameterize manipulation targets/gripper percentages and expose reusable Skill adapters.
+Do not restart broad audits.
 
-AMR/camera may be used for evidence; arm/gripper physical movement waits for P3.8C.
+Do not move the base again solely to hide the geometry abstraction issue.
 
-Exit:
+## First physical checkpoint after B1
 
-~~~text
-READY_FOR_P3_8B_FULL_SCHEME_PLANNING = YES
-~~~
-
-## Next
-
-### P3.8B — full planning-only Scheme rehearsal
+Once B1 produces an immutable accepted package, the first physical package is intentionally short:
 
 ~~~text
-docs/work_orders/2026-09-24_P3_8B_FULL_SCHEME_PLANNING.md
-~~~
-
-Run the complete owner Scheme with live AMR/camera observations, simulated manipulation state, attached-object geometry and replaceable target interfaces.
-
-Exit:
-
-~~~text
-READY_FOR_P3_8C_SUPERVISED_EXECUTION = YES
-~~~
-
-### P3.8C — supervised physical customer demo
-
-~~~text
-docs/work_orders/2026-09-24_P3_8C_SUPERVISED_EXECUTION.md
-~~~
-
-First-demo policy:
-
-~~~text
-right arm manipulates
-left arm HOLD_CURRENT
-no simultaneous dual-arm motion
-~~~
-
-Physical sequence:
-
-~~~text
-presentation + gripper50
-→ pickup base
-→ atomic right_pick observation
-→ pregrasp + gripper40
+pregrasp
+→ gripper 40%
 → bounded contact approach
-→ grasp + local verification
-→ attach
-→ lift z≈1.20
+→ close
+→ delayed readback + local TCP scene delta
+→ lift 100 mm
+→ HOLD
+~~~
+
+This isolates grasp/contact correctness before the full transfer/place Scheme.
+
+## After first pick succeeds
+
+Immediately continue P3.8B full Scheme planning for:
+
+~~~text
+attached-object transfer
+→ z≈1.20
 → visibility clear
-→ placement base
-→ atomic right_place_rightmost observation
+→ place base
+→ right_place_rightmost
 → preplace
-→ vertical place to target+5mm
-→ gripper20
-→ detach
-→ retreat arm/base
-→ verify task
+→ vertical place +5 mm
+→ release
+→ retreat
 ~~~
 
-## Scheme source
+Then enter P3.8C full customer demo.
 
-Owner-confirmed Scheme:
+## Architecture rule
+
+Free-space motion:
 
 ~~~text
-docs/schemes/2026-09-24_RIGHT_ARM_TRAY_TO_GROOVE_STAGE_DEMO_V2.md
+SceneAwareMotionService + cuRobo
 ~~~
 
-Historical/local source that Codex must also read:
+Contact:
 
 ~~~text
-/home/yikun/ARES-R/docs/work_orders/2026-09-21_RIGHT_ARM_TRAY_TO_GROOVE_PICK_PLACE_ORDER.md
+TargetContactPolicy + component-level tool geometry
 ~~~
 
-## Architecture
+Do not globally delete TARGET or SUPPORT geometry.
 
-~~~text
-Task
-→ Scheme
-→ Skills
-→ SceneAwareMotionService
-→ LocalSceneService + cuRobo
-→ execution authority
-→ robot
-~~~
+Obstacle avoidance remains below Skills.
 
-Obstacle avoidance is not a Skill.
-
-Free-space manipulation Skills always inherit scene-aware pointcloud avoidance.
-
-## Git policy
+## Git
 
 No force-push.
-Preserve coworker AMR/gripper-exit work.
-Small commits per blocker/subphase.
-Do not mix unrelated dirty changes.
-Leave .32 and GitHub aligned after reviewed subphases.
+Small commits.
+Keep coworker AMR/gripper changes isolated.
+Leave .32 and GitHub aligned after reviewed checkpoints.
