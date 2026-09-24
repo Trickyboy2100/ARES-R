@@ -41,7 +41,14 @@ def main() -> None:
     try:
         run_terminal(controller)
     finally:
-        devices = [controller.perception] + list(controller.arms.values()) + list(controller.grippers.values()) + [controller.base]
+        # Grippers are deliberately NOT released here.  Gripper.close() is a motion command
+        # (0x54 -> min_position, i.e. drive the jaws fully shut), not a resource hand-back, and
+        # SerialGripper holds no session at all: every command opens and closes the serial port
+        # inside _exchange().  So there is nothing to release, and calling close() on this path
+        # made both grippers slam shut on every exit (quit, exit, Ctrl-D, any exception).
+        # Resource-style close() exists only on the Epic socket, the JAKA SDK session and
+        # DisabledDevice, which are the devices listed below.
+        devices = [controller.perception] + list(controller.arms.values()) + [controller.base]
         for device in devices:
             close = getattr(device, "close", None)
             if close:

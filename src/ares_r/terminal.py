@@ -922,7 +922,7 @@ def run_terminal(controller: TaskController) -> None:
                     x,y,yaw_deg=map(float,args[2:5]);optional=list(map(float,args[5:8])) if len(args)==8 else [None,None,None]
                     phrase="MOVE AMR RELATIVE %s %s %s"%(args[2],args[3],args[4])
                     if input("Type %s: "%phrase).strip()!=phrase: print("Cancelled; no AMR command sent.");continue
-                    result=base.move_relative(x,y,math.radians(yaw_deg),*optional)
+                    result=base.move_relative(x,y,yaw_deg,*optional)
                     controller.events.write("amr_move_relative_sent",x_m=x,y_m=y,yaw_deg=yaw_deg,response=result)
                     print(json.dumps(result,ensure_ascii=False,indent=2))
                 elif args[:2]==["amr","run-task"] and len(args)==3:

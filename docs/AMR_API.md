@@ -52,7 +52,7 @@ http://192.168.99.30:11375/openapi
 >           x-
 > ```
 
-> `orientation` 在 ART 输入端使用度，发送前转换为弧度。`x/y/orientation` 属于 AMR 厂商接口的相对运动约定；在现场用小位移确认轴向前，不得直接等同于 ARES-R BODY 坐标。碰撞检测固定为 `1`，Terminal 不提供关闭入口。
+> `orientation` 单位是**度**，ART 输入端同样使用度，发送前**不做任何单位换算**（2026-09-21 实测确认，见 `docs/AMR_MOTION_ROTATION_COMMISSIONING_2026-09-21.md`）。负值 = 顺时针。注意 `maxAngularspeed` 仍是 **rad/s**：该接口角度用度、角速用弧度。`x/y/orientation` 属于 AMR 厂商接口的相对运动约定；在现场用小位移确认轴向前，不得直接等同于 ARES-R BODY 坐标。碰撞检测固定为 `1`，Terminal 不提供关闭入口。
 
 ### R300 v0.3.18 兼容载荷
 
@@ -78,6 +78,18 @@ http://192.168.99.30:11375/openapi
 - `10:41:31` 下发 `x=0, y=+0.6, yaw=0`，任务 `8e36728f-04b6-46b1-9871-d65eb9da9e92`，用于原路返回。
 - 第二个任务查询返回 `Done`，但控制器返回的任务时间错误地落在 2020 年，不能把该时间字段作为可信证据。
 - 本轮没有同步采集起终点点云，因此“请求已执行”和“精确移动/返回 0.6 m”必须区分。厘米级精度仍需点云或高可信外部定位验收。
+
+### 旋转（yaw）— 2026-09-21 实测
+
+| 项 | 现场实测结论 |
+| --- | --- |
+| `orientation` 单位 | **度**，一比一（请求 `-30` → 实测 `-29.6°`） |
+| 符号 | **负值 = 顺时针**，正值 = 逆时针 |
+| `maxAngularspeed` | **rad/s**（与 `orientation` 的单位不同） |
+
+所以 `amr move-relative 0 0 -30` 就是原地顺时针 30°。旋转上限由 `config/system.json` 的 `max_relative_rotation_deg`（`180`）约束。
+
+> 2026-09-21 之前适配器把度换算成弧度再发送，`-30` 实际只转 `0.52°`，宏观上完全看不出来。该缺陷已修复，详见 `docs/AMR_MOTION_ROTATION_COMMISSIONING_2026-09-21.md`。
 
 `http://192.168.99.30:11378/twist` 不属于本兼容接口。曾向其发送标准 ROS 嵌套 `Twist.linear.y`，现场结果为旋转而非横移；在获得厂商私有协议前禁止由 ART 调用。
 
@@ -120,4 +132,6 @@ amr stop
 }
 ```
 
-当前仅完成接口与只读连通性验证。运动接口尚未现场 commissioning，首次动作必须空载、低速、小位移、现场观察并可使用物理急停。
+已现场 commissioning 的运动能力：`x`/`y` 相对平移（2026-09-20，`docs/AMR_MOTION_COMMISSIONING_2026-09-20.md`）与 `orientation` 原地旋转（2026-09-21，`docs/AMR_MOTION_ROTATION_COMMISSIONING_2026-09-21.md`）。命名工位导航 `nav pick|place` 仍未 commissioning，`base.positions` 保持空配置。
+
+任何运动仍须空载、低速、小位移、现场观察并可使用物理急停。改动代码后必须重启 Terminal 才生效——运行中的进程不会重新加载已修改的模块。

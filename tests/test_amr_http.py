@@ -16,7 +16,7 @@ class _Response:
 class AmrHttpTest(unittest.TestCase):
     def setUp(self):
         self.config=dict(base_url="http://192.168.99.30:11375/openapi",request_timeout_s=1,
-            max_retries=3,max_relative_translation_m=1,max_relative_rotation_rad=3.14,
+            max_retries=3,max_relative_translation_m=1,max_relative_rotation_deg=180.0,
             default_linear_speed_mps=.2,max_linear_speed_mps=.5,
             default_angular_speed_radps=.2,max_angular_speed_radps=.3,
             default_motion_timeout_s=30,max_motion_timeout_s=120,positions={})
@@ -39,8 +39,9 @@ class AmrHttpTest(unittest.TestCase):
     def test_relative_move_enforces_envelope_and_collision_detection(self):
         with self.assertRaises(ValueError):self.base.move_relative(1,1,0)
         with self.assertRaises(ValueError):self.base.move_relative(.1,0,0,linear_mps=.6)
+        with self.assertRaises(ValueError):self.base.move_relative(0,0,181)
         with patch("ares_r.adapters.amr_http.urlopen",return_value=_Response({"ok":True})) as open_:
-            self.base.move_relative(.1,-.2,.3)
+            self.base.move_relative(.1,-.2,-30)
             request=open_.call_args.args[0]
             body=json.loads(request.data)
             self.assertEqual(request.method,"POST")
@@ -48,9 +49,24 @@ class AmrHttpTest(unittest.TestCase):
                 "http://192.168.99.30:11375/openapi/control/move/relative")
             # Compatibility payload commissioned on the R300 v0.3.18
             # controller.  Do not silently rename or rescale these fields.
-            self.assertEqual(body,{"x":.1,"y":-.2,"orientation":.3,
+            # ``orientation`` stays in DEGREES: rescaling it to radians is the
+            # defect fixed on 2026-09-21; see the rotation commissioning record.
+            self.assertEqual(body,{"x":.1,"y":-.2,"orientation":-30.0,
                 "maxLinearspeed":.2,"maxAngularspeed":.2,
                 "collisiondetection":1,"timeout":30.0})
+
+    def test_rotation_is_degrees_and_forwarded_without_conversion(self):
+        # Measured on 2026-09-21: ``orientation`` is degrees, so a degree value
+        # must reach the wire untouched.
+        with patch("ares_r.adapters.amr_http.urlopen",return_value=_Response({"status":3})) as open_:
+            self.base.move_relative(0,0,-30)
+            self.assertEqual(json.loads(open_.call_args.args[0].data)["orientation"],-30.0)
+
+    def test_rotation_envelope_is_expressed_in_degrees(self):
+        with patch("ares_r.adapters.amr_http.urlopen",return_value=_Response({"status":3})):
+            self.base.move_relative(0,0,180.0)
+        for degrees in (-180.0001,180.0001):
+            with self.assertRaises(ValueError):self.base.move_relative(0,0,degrees)
 
     def test_lateral_sign_is_forwarded_without_axis_remapping(self):
         with patch("ares_r.adapters.amr_http.urlopen",return_value=_Response({"status":3})) as open_:

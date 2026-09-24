@@ -64,13 +64,17 @@ class AmrHttpBase(MobileBase):
         self._station=str(position_name)
         return result
 
-    def move_relative(self,x_m,y_m,yaw_rad,linear_mps=None,angular_radps=None,timeout_s=None):
-        values=[float(x_m),float(y_m),float(yaw_rad)]
+    #: ``orientation`` is DEGREES on the R300 v0.3.18 controller, measured 1:1
+    #: on 2026-09-21 (a ``-30`` request produced `-29.6 deg`).  ``angular_radps``
+    #: is a separate rad/s field: the vendor deliberately mixes the two units.
+    #: Changing either unit again requires a new commissioning record.
+    def move_relative(self,x_m,y_m,yaw_deg,linear_mps=None,angular_radps=None,timeout_s=None):
+        values=[float(x_m),float(y_m),float(yaw_deg)]
         if not all(math.isfinite(value) for value in values): raise ValueError("AMR relative pose must be finite")
         translation=math.hypot(values[0],values[1])
         if translation>float(self.config["max_relative_translation_m"]):
             raise ValueError("AMR relative translation exceeds configured envelope")
-        if abs(values[2])>float(self.config["max_relative_rotation_rad"]):
+        if abs(values[2])>float(self.config["max_relative_rotation_deg"]):
             raise ValueError("AMR relative rotation exceeds configured envelope")
         linear=float(linear_mps if linear_mps is not None else self.config["default_linear_speed_mps"])
         angular=float(angular_radps if angular_radps is not None else self.config["default_angular_speed_radps"])

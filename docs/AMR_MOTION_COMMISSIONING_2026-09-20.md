@@ -23,7 +23,9 @@ BODY/底盘方向约定：
           -X 后
 ```
 
-ART 输入的 `x/y` 不做交换或符号翻转；`yaw` 由度转换为弧度后写入 `orientation`。
+ART 输入的 `x/y` 不做交换或符号翻转。
+
+> **本节关于 yaw 单位的说明已于 2026-09-21 被取代。** 当时记录的“`yaw` 由度转换为弧度后写入 `orientation`”正是导致 `-30` 只转 `0.52°` 的缺陷。实测确认 `orientation` 的单位是**度**，适配器现已改为直传，详见 `docs/AMR_MOTION_ROTATION_COMMISSIONING_2026-09-21.md`。
 
 ## 当日实机证据
 
