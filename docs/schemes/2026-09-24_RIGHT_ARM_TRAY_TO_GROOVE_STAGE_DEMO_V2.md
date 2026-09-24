@@ -235,3 +235,47 @@ This document records the target Scheme only.
 Current next phase is AUDIT: AMR movement + Epic/Pixel Pro sensing are allowed after one USER ACTION; arm and gripper motion are forbidden.
 
 Arm/gripper execution starts only in a later reviewed work order.
+
+## 7. P3.8A audited facts (2026-09-24)
+
+The implementation must now use these evidence-backed facts:
+
+~~~text
+AMR effective local semantics:
+  x+ forward
+  x- backward
+  y+ left
+  y- right
+  orientation degrees
+  negative yaw clockwise
+  maxAngularspeed rad/s
+
+PICK_BASE_POSE_V1 audit move:
+  relative y = +0.30 m
+
+PLACE_BASE_POSE_V1 audit move from pickup pose:
+  relative y = -0.40 m
+
+right material-pick:
+  profile right_pick
+  command 320,2,1,1,1,0
+  space=2 object=1 camera=1
+  frame=right_arm_base_candidate
+  orientation=ZYX
+  approach_axis=+z
+  state=COMMISSIONED
+
+rightmost-placement current strongest candidate:
+  object 3
+  candidate command 320,2,3,1,1,0
+  NOT YET COMMISSIONED
+~~~
+
+Important:
+
+- AMR accepted/status IDLE is not completion. Use the production BaseMotionObserver before declaring a station reached.
+- 5700 detection and Pixel Pro pointcloud must be committed into one ObservationEpoch before manipulation planning.
+- rightmost-placement object 3 remains a candidate until the Epic solution mapping and pose/contact-axis semantics are proven.
+- final contact must use TargetContactPolicy; target removal from the entire collision world is not acceptable.
+- transfer after grasp must use attached-object collision geometry.
+- left arm stays HOLD_CURRENT for the first right-arm customer demo; concurrent dual-arm execution is not required.
