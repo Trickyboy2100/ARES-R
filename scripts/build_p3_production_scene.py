@@ -21,6 +21,7 @@ from ares_r.perception.support_decomposition import (decompose_support_objects,
     refine_robot_adjacent_primitives)
 from ares_r.world import (CalibrationSet,PointCloudRef,PoseSE3,RobotState,SafetyConstraint,
     SceneObject,SceneObjectRole,WorldModel,compile_snapshot,snapshot_dict)
+from ares_r.world_geometry import base_tcp_to_world
 
 def deployment_prefilter(points, voxel_m, roi):
     """Conservative ROI + one-point-per-voxel reduction before geometry tests."""
@@ -60,6 +61,12 @@ def obb_aabb(box):
                         for x in (-1,1) for y in (-1,1) for z in (-1,1)])
     low,high=corners.min(0),corners.max(0)
     return ((low+high)/2).tolist(),(high-low).tolist()
+
+
+def point_aabb_distance(point,box):
+    return float(np.linalg.norm(np.maximum(
+        np.abs(np.asarray(point)-np.asarray(box["center_m"]))-
+        np.asarray(box["dims_m"])/2,0)))
 
 
 def targets(active,audit,world,model,existing=None,goal_delta_rad=None):
@@ -156,6 +163,32 @@ def main():
         decomposition_s=time.perf_counter()-decomposition_at
         planning_boxes=decomposition["primitives"]
         (out/"support_decomposition.json").write_text(json.dumps(decomposition,indent=2)+"\n")
+    detection_artifact=load(a.detection_artifact) if a.detection_artifact else None
+    target_binding=None
+    target_primitive_id=None
+    if detection_artifact is not None:
+        pose=detection_artifact.get("pose") or {}
+        values=pose.get("values") or []
+        arm=str((detection_artifact.get("meta") or {}).get("robot_arm",a.active))
+        if len(values)!=6 or arm not in world["arms"]:
+            raise RuntimeError("detection artifact lacks an arm-base Cartesian pose")
+        target_body=base_tcp_to_world(world["arms"][arm],
+            [float(value)*1000 for value in values[:3]]+[float(value) for value in values[3:]])[:3]
+        task=load(REPOSITORY/"config/tray_to_groove_v2.json")
+        preferred=set(task["target_binding"]["preferred_semantics"])
+        candidates=[(point_aabb_distance(target_body,box),
+                     0 if box.get("semantic") in preferred else 1,box)
+                    for box in planning_boxes]
+        if not candidates:
+            raise RuntimeError("detection cannot bind into an empty observed scene")
+        distance,_,bound=min(candidates,key=lambda row:(row[1],row[0]))
+        if distance>float(task["target_binding"]["maximum_aabb_distance_m"]):
+            raise RuntimeError("detected target has no matching observed pointcloud primitive")
+        target_primitive_id=bound.get("primitive_id",bound.get("object_id"))
+        target_binding={"detection_id":detection_artifact["request_id"],
+            "target_body_m":target_body,"primitive_id":target_primitive_id,
+            "primitive_semantic":bound.get("semantic","UNKNOWN"),
+            "aabb_distance_m":distance,"policy":"NEAREST_PREFERRED_OBSERVED_PRIMITIVE_V1"}
     runtime="p3-%s-%d"%(a.mode.lower(),time.time_ns());noww,nowm=time.time_ns(),time.monotonic_ns()
     wm=WorldModel(runtime_id=runtime,snapshot_ttl_s=3600,environment_ttl_s=3600)
     wm.update_robot_state(RobotState(noww,nowm,runtime,left_joints_rad=tuple(geometry.joints_rad["left"]),
@@ -174,7 +207,10 @@ def main():
             inflation=box["inflation_m"]
         else:
             identifier=box["object_id"];source="clean Pixel Pro residual";inflation=.015
-        provenance.append(add(objects,obs,identifier,SceneObjectRole.OBSTACLE,
+        role=(SceneObjectRole.TARGET if target_primitive_id is not None and
+              box.get("primitive_id",box.get("object_id"))==target_primitive_id
+              else SceneObjectRole.OBSTACLE)
+        provenance.append(add(objects,obs,identifier,role,
                               box["center_m"],box["dims_m"],inflation,source))
     inactive=inactive_arm_obstacles(geometry,a.active)
     for box in inactive["boxes"]:
@@ -204,9 +240,7 @@ def main():
                               "P3 explicitly labelled synthetic goal enclosure"))
     wm.register_obstacles(obs,objects,cloud_ref.pointcloud_id,cloud_ref.sha256)
     detection_ids=[]
-    detection_artifact=None
     if a.detection_artifact:
-        detection_artifact=load(a.detection_artifact)
         detection_id=str(detection_artifact.get("request_id", ""))
         if not detection_id or detection_artifact.get("success") is not True:
             raise RuntimeError("detection artifact must contain a successful request_id")
@@ -237,6 +271,7 @@ def main():
         "tool_revision":geometry.tool_revision,"inactive_arm_revision":inactive["revision"],
         "observation_id":obs,"detection_ids":detection_ids,
         "detection_artifact":str(Path(a.detection_artifact).resolve()) if a.detection_artifact else None,
+        "target_binding":target_binding,
         "obstacle_pipeline":a.obstacle_pipeline,"deployment_prefilter":prefilter,
         "generic_scene_profile":scene_profile,
         "self_filter":sf,"cleanup":cleanup,

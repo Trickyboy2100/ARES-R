@@ -53,7 +53,8 @@ def transform_body_cuboid(center_m, dimensions_m, T_arm_body):
     return center.tolist(), list(dimensions_m), _quaternion_wxyz(transform[:3, :3])
 
 
-def compile_snapshot(snapshot, arm: str, T_body_model, planning_scope="DEMO_OFFLINE_ONLY") -> Mapping[str, object]:
+def compile_snapshot(snapshot, arm: str, T_body_model, planning_scope="DEMO_OFFLINE_ONLY",
+                     target_policy="HARD") -> Mapping[str, object]:
     if arm not in ("left", "right"):
         raise ValueError("arm must be left or right")
     body_model = _matrix(T_body_model, "T_body_model")
@@ -72,25 +73,30 @@ def compile_snapshot(snapshot, arm: str, T_body_model, planning_scope="DEMO_OFFL
             center, dims = transform_body_aabb(item.pose.xyz_m, inflated, model_body)
             orientation = [1, 0, 0, 0]
         entry = {"dims": dims, "pose": center + orientation, "inflation_m": item.inflation_m}
-        # The object about to be grasped has to be entered by the gripper, so it
-        # cannot double as a solid obstacle. It is moved to ``targets`` rather
-        # than dropped, so the scene still accounts for every observed object.
         if item.role is SceneObjectRole.TARGET:
             targets[item.object_id] = entry
+            if target_policy not in ("HARD", "CONTACT_CORRIDOR"):
+                raise ValueError("target_policy must be HARD or CONTACT_CORRIDOR")
+            if target_policy == "HARD":
+                cuboids[item.object_id] = {"dims": entry["dims"], "pose": entry["pose"]}
         else:
             cuboids[item.object_id] = {"dims": entry["dims"], "pose": entry["pose"]}
         provenance.append({"object_id": item.object_id, "role": item.role.value,
                            "source_observation_id": item.source_observation_id,
                            "inflation_m": item.inflation_m,
-                           "used_as": "target" if item.role is SceneObjectRole.TARGET
-                           else "obstacle"})
+                           "used_as": ("hard_target" if item.role is SceneObjectRole.TARGET
+                                       and target_policy == "HARD" else
+                                       "contact_corridor_target" if item.role is SceneObjectRole.TARGET
+                                       else "obstacle")
+                           })
     payload = {
         "schema_version": 1, "frame": "curobo_model_base", "arm": arm,
         "source": "scene_snapshot_compiler", "planning_scope": planning_scope,
         "execution_allowed": False, "scene_snapshot_id": snapshot.snapshot_id,
         "planning_context_digest": snapshot.planning_context_digest,
         "calibration_revision": dict(snapshot.calibration_revision),
-        "cuboids": cuboids, "targets": targets, "provenance": provenance,
+        "cuboids": cuboids, "targets": targets, "target_policy": target_policy,
+        "provenance": provenance,
     }
     payload["digest"] = hashlib.sha256(json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
     return payload

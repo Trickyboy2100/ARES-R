@@ -52,6 +52,23 @@ class SceneCompilerTest(unittest.TestCase):
         self.assertAlmostEqual(sum(x*x for x in oriented["cuboids"]["box"]["pose"][3:]),1.)
         self.assertNotEqual(oriented["cuboids"]["box"]["pose"][3:],[1,0,0,0])
 
+    def test_target_is_hard_for_free_space_and_selective_for_contact(self):
+        runtime="target-runtime";wall,mono=time.time_ns(),time.monotonic_ns()
+        world=WorldModel(runtime_id=runtime,snapshot_ttl_s=30,environment_ttl_s=30)
+        world.update_robot_state(RobotState(wall,mono,runtime,right_joints_rad=(0,)*6))
+        obs=world.begin_observation("OBS_TARGET",wall,mono)
+        cloud=PointCloudRef("cloud","b"*64,"body")
+        world.register_pointcloud(obs,cloud)
+        target=SceneObject("tray",SceneObjectRole.TARGET,"cuboid",
+            PoseSE3("body",(.7,-.3,.9),(1,0,0,0)),(.1,.1,.1),0,obs)
+        world.register_obstacles(obs,(target,),cloud.pointcloud_id,cloud.sha256)
+        world.register_calibration(obs,CalibrationSet((("T_body_camera","CAL"),)))
+        world.commit_observation(obs);snapshot=world.freeze_snapshot("ROBOT","TOOL")
+        free=compile_snapshot(snapshot,"right",np.eye(4))
+        self.assertIn("tray",free["cuboids"]);self.assertIn("tray",free["targets"])
+        contact=compile_snapshot(snapshot,"right",np.eye(4),target_policy="CONTACT_CORRIDOR")
+        self.assertNotIn("tray",contact["cuboids"]);self.assertIn("tray",contact["targets"])
+
 
 if __name__ == "__main__":
     unittest.main()
