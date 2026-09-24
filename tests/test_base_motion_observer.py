@@ -1,3 +1,5 @@
+import json
+from pathlib import Path
 import unittest
 
 from ares_r.motion.base_motion_observer import (
@@ -45,6 +47,37 @@ class BaseMotionObserverTest(unittest.TestCase):
                   obs(0, yaw=-30.05), obs(0, yaw=-30.05), obs(0, yaw=-30.05)]
         result = self.observer(values).wait(obs(0), expected_yaw_deg=-30)
         self.assertEqual(result["phase"], "SETTLED")
+
+    def test_replay_p38a_pick_and_place_logs(self):
+        root = (Path(__file__).resolve().parents[1] /
+                "worklog/evidence/2026-09-24-p3-8a-system-audit")
+        for name in ("pick_base_move_v2.json", "place_base_move.json"):
+            payload = json.loads((root / name).read_text())
+            raw = list(payload["samples"]) + list(payload["stationarity"]["samples"])
+            rows = [BaseObservation(
+                float(item.get("t", item.get("at_unix"))),
+                float(item.get("x", item.get("x_m"))),
+                float(item.get("y", item.get("y_m"))),
+                float(item.get("yaw", item.get("yaw_deg"))),
+                item.get("log_id", item.get("motion_log_id")),
+                item.get("queue_id", item.get("motion_queue_id"))) for item in raw]
+            now = [float(payload["started_at_unix"])]
+            iterator = iter(rows)
+            def sample():
+                value = next(iterator)
+                now[0] = value.captured_at_unix
+                return value
+            before = payload.get("before_status", payload.get("before"))[-1]
+            baseline = BaseObservation(before["t"], before["x"], before["y"], before["yaw"],
+                                       before["log_id"], before["queue_id"])
+            observer = BaseMotionObserver(sample, {
+                "revision": "p38a-replay-v1", "poll_interval_s": .01,
+                "timeout_s": 120, "stable_samples": 5,
+                "settle_translation_m": .04, "settle_yaw_deg": 1.5,
+                "minimum_observed_motion_s": 1.5},
+                sleep=lambda _value: None, clock=lambda: now[0])
+            result = observer.wait(baseline, expected_translation_m=.3)
+            self.assertEqual(result["result"], "SETTLED", name)
 
 
 if __name__ == "__main__":
