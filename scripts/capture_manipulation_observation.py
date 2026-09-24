@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Capture right_pick 5700 + Pixel Pro cloud as one immutable epoch.
+"""Capture one commissioned right-arm 5700 target + Pixel Pro cloud epoch.
 
 This command reads both arms but has no motion or gripper command path.
 """
@@ -21,6 +21,8 @@ from ares_r.motion.live_scene import build_live_planning_scene
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--profile", choices=("right_pick", "right_place_rightmost"),
+                        default="right_pick")
     args = parser.parse_args()
     config = json.loads((ROOT / "config/system.json").read_text(encoding="utf-8"))
     model = json.loads(Path(config["robot_collision"]["model"]).read_text())
@@ -40,9 +42,10 @@ def main():
 
     epic = EpicClient(config["epic"])
     transaction = ManipulationObservationTransaction(
-        config, detect=lambda name: epic._detect_profile(name, "pick"),
+        config, detect=lambda name: epic._detect_profile(
+            name, config["epic"]["task_profiles"][name]["purpose"]),
         read_robot_state=read_state, scene_builder=build_live_planning_scene)
-    artifact = transaction.capture(args.output)
+    artifact = transaction.capture(args.output, profile=args.profile)
     print(json.dumps(artifact, indent=2))
 
 

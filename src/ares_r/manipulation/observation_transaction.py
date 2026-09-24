@@ -74,12 +74,17 @@ class ManipulationObservationTransaction:
         if not detection.success or detection.pose is None:
             raise RuntimeError("Epic detection failed; pointcloud transaction not committed")
         meta = detection.meta
-        if profile != "right_pick" or meta.get("epic_profile") != "right_pick":
-            raise RuntimeError("P3.8 first demo requires the commissioned right_pick profile")
+        profile_config = self.config["epic"]["task_profiles"].get(profile)
+        if profile_config is None or meta.get("epic_profile") != profile:
+            raise RuntimeError("detection does not match the requested Epic task profile")
+        arm = str(profile_config["arm"])
+        purpose = str(profile_config["purpose"])
+        if arm != "right" or purpose not in ("pick", "place"):
+            raise RuntimeError("P3.8 first demo accepts commissioned right-arm pick/place profiles")
         if meta.get("profile_state") != "COMMISSIONED":
-            raise RuntimeError("right_pick Epic profile is not commissioned")
+            raise RuntimeError("requested Epic profile is not commissioned")
         scene = self.scene_builder(self.config, destination / "live_scene",
-                                   active_arm="right",
+                                   active_arm=arm,
                                    detection_artifact=detection_path)
         after = self.read_robot_state("after")
         maximum_delta = max(abs(a-b) for side in ("left", "right")
@@ -95,11 +100,11 @@ class ManipulationObservationTransaction:
             raise RuntimeError("pointcloud provenance differs inside the transaction")
         world = json.loads(Path("config/robot_world.json").read_text(encoding="utf-8"))
         pose = detection.pose.values()
-        body_pose = base_tcp_to_world(world["arms"]["right"],
+        body_pose = base_tcp_to_world(world["arms"][arm],
                                       [value * 1000.0 for value in pose[:3]] + pose[3:])
         artifact = {
             "schema_version": self.SCHEMA_VERSION,
-            "transaction_state": "COMMITTED", "arm": "right", "purpose": "pick",
+            "transaction_state": "COMMITTED", "arm": arm, "purpose": purpose,
             "observation_id": epoch["observation_id"],
             "scene_snapshot_id": scene["scene_snapshot_id"],
             "scene_digest": scene["scene_digest"],
@@ -108,11 +113,13 @@ class ManipulationObservationTransaction:
             "detection_profile": meta.get("epic_profile"),
             "detection_command": meta.get("request_command"),
             "space_id": meta.get("space_id"), "object_id": meta.get("object_id"),
-            "camera_id": self.config["epic"]["task_profiles"][profile]["camera_id"],
+            "camera_id": profile_config["camera_id"],
             "detection_raw_sha256": hashlib.sha256(
                 detection.raw_response.encode("utf-8")).hexdigest(),
             "target": {"frame": "BODY", "pose_m_rad": body_pose,
-                       "source_profile": "right_pick"},
+                       "source_profile": profile,
+                       "approach_axis": profile_config["approach_axis"],
+                       "orientation_convention": profile_config["orientation_convention"]},
             "robot_state_before": before, "robot_state_after": after,
             "maximum_joint_delta_rad": maximum_delta,
             "calibration_revision": meta.get("calibration_revision"),

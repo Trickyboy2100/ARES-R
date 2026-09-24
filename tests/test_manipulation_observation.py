@@ -31,7 +31,11 @@ class ManipulationObservationTests(unittest.TestCase):
                 "scene_digest": "b"*64, "pointcloud_sha256": "a"*64}
 
     def config(self):
-        return {"epic":{"task_profiles":{"right_pick":{"camera_id":1}}}}
+        return {"epic":{"task_profiles":{"right_pick":{
+            "camera_id":1,"arm":"right","purpose":"pick",
+            "approach_axis":"+z","orientation_convention":"ZYX"},
+            "right_place_rightmost":{"camera_id":1,"arm":"right","purpose":"place",
+            "approach_axis":"BODY_-Z","orientation_convention":"ZYX"}}}}
 
     def test_detection_and_cloud_are_bound_to_one_epoch(self):
         with tempfile.TemporaryDirectory() as root:
@@ -60,6 +64,21 @@ class ManipulationObservationTests(unittest.TestCase):
                 read_robot_state=state, scene_builder=self.builder)
             with self.assertRaisesRegex(RuntimeError, "moved"):
                 transaction.capture(Path(root) / "epoch")
+
+    def test_commissioned_place_uses_same_atomic_transaction(self):
+        self.detection.request_id = "DET_RIGHT_PLACE"
+        self.detection.kind = "place"
+        self.detection.meta.update(epic_profile="right_place_rightmost",
+                                   profile_state="COMMISSIONED")
+        with tempfile.TemporaryDirectory() as root:
+            transaction = ManipulationObservationTransaction(
+                self.config(), detect=lambda _name: self.detection,
+                read_robot_state=lambda _label: self.state,
+                scene_builder=self.builder)
+            result = transaction.capture(Path(root) / "epoch",
+                                         profile="right_place_rightmost")
+            self.assertEqual(result["purpose"], "place")
+            self.assertEqual(result["target"]["approach_axis"], "BODY_-Z")
 
     def test_uncommissioned_profile_fails_before_camera_cloud(self):
         self.detection.meta["profile_state"] = "UNCOMMISSIONED"
