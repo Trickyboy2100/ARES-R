@@ -18,6 +18,7 @@ class AttachedCollisionTests(unittest.TestCase):
         value=build_attached_collision(self.attached(),T)
         self.assertAlmostEqual(value["link6_aabb"]["center_m"][0],.13)
         self.assertAlmostEqual(value["link6_aabb"]["center_m"][2],.28)
+        self.assertAlmostEqual(value["link6_aabb"]["half_extents_m"][0],.108)
         self.assertTrue(verify_attached_collision(value,value["revision"]))
         request=MotionRequest("right",goal_joints_rad=[0]*6,
             constraints=MotionConstraints(attached_object_revision=value["revision"],

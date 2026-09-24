@@ -88,7 +88,8 @@ def build_attached_collision(attached, T_link6_tcp: Sequence[Sequence[float]],
     low=[min(row[i] for row in corners) for i in range(3)]
     high=[max(row[i] for row in corners) for i in range(3)]
     box={"center_m":[(a+b)/2 for a,b in zip(low,high)],
-         "dims_m":[b-a for a,b in zip(low,high)]}
+         "dims_m":[b-a for a,b in zip(low,high)],
+         "half_extents_m":[(b-a)/2 for a,b in zip(low,high)]}
     core={"schema_version":1,"object_id":attached.object_id,
           "attached_to":attached.attached_to,"source_revision":attached.source_revision,
           "source_observation_id":attached.collision_geometry.source_observation_id,
@@ -110,6 +111,10 @@ def verify_attached_collision(value: Mapping[str, object], expected_revision=Non
     if len(box["center_m"])!=3 or len(box["dims_m"])!=3 or any(
             not math.isfinite(float(v)) or float(v)<=0 for v in box["dims_m"]):
         raise ValueError("invalid attached-object link6 AABB")
+    if (len(box.get("half_extents_m",())) != 3 or any(
+            abs(float(h)*2-float(d)) > 1e-9
+            for h,d in zip(box.get("half_extents_m",()),box["dims_m"]))):
+        raise ValueError("attached-object half extents mismatch")
     return True
 
 
