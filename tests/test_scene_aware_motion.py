@@ -63,9 +63,30 @@ class LocalSceneServiceTests(unittest.TestCase):
             def base_motion_started(self): events.append("moving")
             def base_settled(self): events.append("settled")
             def invalidate(self, reason): events.append(reason)
-        result = SceneAwareBase(Base(), Scene()).move_relative(.1, 0, 0)
-        self.assertEqual(result, {"ok": True})
+        class Completion:
+            def capture(self): return "baseline"
+            def wait(self, baseline, **kwargs):
+                self.baseline = baseline
+                self.kwargs = kwargs
+                return {"result": "SETTLED"}
+        completion = Completion()
+        result = SceneAwareBase(Base(), Scene(), completion).move_relative(.1, 0, 0)
+        self.assertEqual(result, {"ok": True, "completion": {"result": "SETTLED"}})
+        self.assertEqual(completion.baseline, "baseline")
         self.assertEqual(events, ["moving", (.1, 0, 0), "settled"])
+
+    def test_amr_bridge_without_completion_observer_fails_closed(self):
+        events = []
+        class Base:
+            def move_relative(self, *_args): return {"ok": True}
+            def stop(self): events.append("stop")
+        class Scene:
+            def base_motion_started(self): events.append("moving")
+            def base_settled(self): events.append("settled")
+            def invalidate(self, reason): events.append(reason)
+        with self.assertRaisesRegex(RuntimeError, "BaseMotionObserver"):
+            SceneAwareBase(Base(), Scene()).move_relative(.1, 0, 0)
+        self.assertEqual(events, ["moving", "BASE_MOTION_ERROR", "stop"])
 
     def test_amr_failure_leaves_scene_invalid(self):
         events=[]
