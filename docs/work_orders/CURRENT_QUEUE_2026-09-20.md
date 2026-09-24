@@ -1,117 +1,123 @@
 # CURRENT QUEUE — 2026-09-24
 
-## Canonical field state
+## Canonical field checkpoint
 
-Integration branch currently includes P3.8B live pregrasp checkpoint:
+Integration branch contains the P3.8B live pregrasp checkpoint and fine gripper-collision work is in progress locally.
 
-~~~text
-75b5c2c2e7962de86bba606ea7a938b1fa0c924a
-~~~
-
-Established:
-
-- arbitrary-target fresh-scene motion physically executed;
-- P3.8B0 production blockers closed;
-- right_pick and right_place_rightmost mappings established;
-- atomic 5700 + Pixel Pro manipulation observation exists;
-- CURRENT→50 mm pregrasp real-scene cuRobo planning succeeds;
-- 40% opening-aware gripper envelope implemented;
-- pregrasp free-space path uses terminal orientation only, not whole-path lock.
-
-## Current true blocker
-
-Exact grasp endpoint is blocked by collision abstraction, not task reachability.
-
-Evidence:
+Current strategic override:
 
 ~~~text
-single gripper union abstraction
-+ old whole-tool inflation
-+ already-inflated support scene
-→ false dock/support overlap (~17.2 mm model overlap)
+DO NOT make the fine component-level gripper collision model a blocker for the first customer demo.
+Preserve the work; defer its commissioning to post-demo hardening.
 ~~~
-
-Detailed pinned EG2-4C2 component geometry shows that this should be resolved by a component-level opening-specific gripper model, not by moving the base again or deleting support geometry.
 
 ## Active now
 
-### P3.8B1 — Fast grasp collision-model correction
+### P3.8B1A — CONTACT_BYPASS_V1 first-pick path
 
 Execute:
 
 ~~~text
-docs/work_orders/2026-09-24_P3_8B1_FAST_GRASP_COLLISION_CORRECTION.md
+docs/work_orders/2026-09-24_P3_8B1A_CONTACT_BYPASS_FIRST_PICK.md
 ~~~
 
-Priority is SPEED:
+Read policy:
 
 ~~~text
-component gripper geometry
-→ remove duplicate contact-stage inflation
-→ validate exact grasp/contact segment
-→ package FIRST REAL PICK
-→ real grasp + 100 mm lift checkpoint
+docs/decisions/2026-09-24_CONTACT_COLLISION_DEMO_POLICY.md
 ~~~
 
-Do not restart broad audits.
-
-Do not move the base again solely to hide the geometry abstraction issue.
-
-## First physical checkpoint after B1
-
-Once B1 produces an immutable accepted package, the first physical package is intentionally short:
+Future hardening TODO:
 
 ~~~text
-pregrasp
+docs/todo/2026-09-24_MANIPULATION_COLLISION_HARDENING_TODO.md
+~~~
+
+## V1 stage policy
+
+Free-space motion remains full collision-aware:
+
+~~~text
+fresh LocalScene
+→ SceneAwareMotionService
+→ cuRobo
+→ ordinary pointcloud avoidance
+~~~
+
+Only bounded contact stages use CONTACT_BYPASS_V1:
+
+~~~text
+pregrasp → grasp → close → initial BODY +Z lift 100 mm
+
+preplace → vertical place → release → initial vertical retreat
+~~~
+
+During bypass:
+
+~~~text
+ignore only active right gripper/tool ↔ observed pointcloud world
+
+keep hard:
+  arm links ↔ environment
+  self collision
+  inactive left arm
+  BODY central exclusion
+  controller collision/limits/estop/fault
+  native tracking/watchdog
+~~~
+
+CONTACT_BYPASS_V1 expires automatically after the bounded contact/escape segment.
+
+## First physical checkpoint
+
+Use the already successful 50 mm pregrasp.
+
+Target package:
+
+~~~text
+FIRST_PICK_EXECUTION_PACKAGE
+
+fresh atomic right_pick observation
+→ cuRobo current→50 mm pregrasp
 → gripper 40%
-→ bounded contact approach
+→ CONTACT_BYPASS_V1 straight approach
 → close
-→ delayed readback + local TCP scene delta
-→ lift 100 mm
+→ delayed readback + local 15 cm scene delta
+→ if verified: BODY +Z lift 100 mm
+→ bypass OFF
+→ coarse attached-object AABB
 → HOLD
 ~~~
 
-This isolates grasp/contact correctness before the full transfer/place Scheme.
+Do not continue automatically to place in this first package.
 
-## After first pick succeeds
+## Fine component model status
 
-Immediately continue P3.8B full Scheme planning for:
+The detailed EG2-4C2 component collision implementation is NOT discarded.
+
+Keep it as optional diagnostics/tests and future SELECTIVE_CONTACT_COMPONENTS_V2.
+
+Do not continue inflation sweeps or make its exact-contact clearance a V1 execution gate unless explicitly requested.
+
+## After first real pick
+
+Resume the existing P3.8B/P3.8C path:
 
 ~~~text
-attached-object transfer
-→ z≈1.20
-→ visibility clear
+coarse attached object
+→ full SceneAwareMotion transfer
+→ z≈1.20 visibility clear
 → place base
 → right_place_rightmost
 → preplace
-→ vertical place +5 mm
-→ release
-→ retreat
+→ CONTACT_BYPASS_V1 place/release/retreat
+→ full task verification
 ~~~
-
-Then enter P3.8C full customer demo.
-
-## Architecture rule
-
-Free-space motion:
-
-~~~text
-SceneAwareMotionService + cuRobo
-~~~
-
-Contact:
-
-~~~text
-TargetContactPolicy + component-level tool geometry
-~~~
-
-Do not globally delete TARGET or SUPPORT geometry.
-
-Obstacle avoidance remains below Skills.
 
 ## Git
 
+Do not revert the already implemented component model.
 No force-push.
+Keep coworker changes isolated.
 Small commits.
-Keep coworker AMR/gripper changes isolated.
-Leave .32 and GitHub aligned after reviewed checkpoints.
+Leave .32/GitHub aligned at reviewed checkpoints.
