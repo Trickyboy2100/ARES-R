@@ -56,8 +56,11 @@ def build_controller(config: Dict[str, object], mode: str) -> TaskController:
             # the old local world before dispatch and requires a new scan after
             # the commissioned blocking move call returns.
             from .motion.base_scene_bridge import SceneAwareBase
+            from .motion.base_motion_observer import BaseMotionObserver, amr_status_sampler
             from .motion.local_scene_service import LocalSceneService
-            base = SceneAwareBase(base, LocalSceneService(config))
+            observer = BaseMotionObserver(
+                amr_status_sampler(base), config["base"].get("completion_observer", {}))
+            base = SceneAwareBase(base, LocalSceneService(config), observer)
     else:
         raise RuntimeError("hardware mode is intentionally locked until JAKA, gripper and base adapters pass commissioning")
     controller = TaskController(mode, perception, arms, grippers, base, config, EventLog(str(config["logging"]["directory"])))
