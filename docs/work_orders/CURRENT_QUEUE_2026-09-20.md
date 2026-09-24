@@ -1,88 +1,157 @@
 # CURRENT QUEUE — 2026-09-24
 
-## Established
-
-P3.7 arbitrary-target scene-aware motion is complete and pushed on the integration branch.
-
-Current integration GitHub HEAD:
+## Current canonical integration baseline
 
 ~~~text
-d19cea78ffe3664fbf36423b6a6f80f371918de5
-docs(p3.7): record arbitrary target obstacle roundtrip
+feat/e2e-v0-integration-20260917
+GitHub HEAD = d19cea78ffe3664fbf36423b6a6f80f371918de5
 ~~~
 
-P3.7 established:
+P3.7 arbitrary-target scene-aware free-space motion is complete and physically demonstrated.
 
-- fresh-scene generic obstacle world;
-- arbitrary runtime BODY targets;
-- LEVEL_YAW_FREE;
-- ART + WebUI target input;
-- real obstacle-crossing execution;
-- no fixed A/B dependence in the low-level motion service.
+P3.8A system/interface audit is complete locally as an audit and must be cleanly preserved/pushed before blocker-closure refactoring.
+
+## What P3.8A established
+
+~~~text
+HW_STATE_AUDIT = PASS
+RIGHT_PICK_5700_MAPPING_VERIFIED = YES
+RIGHT_PICK_DETECTION_REPEATABLE = YES
+PICK_BASE_POSE_V1_RECORDED = YES_RELATIVE_PROVENANCE
+PLACE_BASE_POSE_V1_RECORDED = YES_RELATIVE_PROVENANCE
+LEFT_HOLD_CURRENT_FEASIBLE = YES_PLANNING_ONLY
+DUAL_ARM_CONCURRENT_EXECUTION_READY = NO
+SKILL_SCHEME_AUDIT_READY = YES
+READY_FOR_P3_8B_PLANNING_ONLY_SCHEME = NO
+~~~
+
+Effective field facts:
+
+~~~text
+AMR:
+  x+ forward
+  x- backward
+  y+ left
+  y- right
+  yaw degrees
+  negative yaw clockwise
+
+pickup audit move:
+  y = +0.30 m
+
+placement audit move from pickup pose:
+  y = -0.40 m
+
+right_pick:
+  320,2,1,1,1,0
+  space=2 object=1 camera=1
+  COMMISSIONED
+
+rightmost-place:
+  object 3 / 320,2,3,1,1,0 is the strongest current candidate
+  NOT YET COMMISSIONED
+~~~
 
 ## Active now
 
-### P3.8A — Tray→Groove system/interface audit
+### P3.8B0 — close production blockers
 
-Read:
+Execute:
+
+~~~text
+docs/work_orders/2026-09-24_P3_8B0_PRODUCTION_BLOCKER_CLOSURE.md
+~~~
+
+This phase is implementation, not another broad audit.
+
+Close:
+
+~~~text
+1 truthful asynchronous AMR completion observer
+2 atomic 5700 + 5000 + robot-state ObservationTransaction
+3 right_place_rightmost exact mapping/pose semantics
+4 bounded TargetContactPolicy
+5 attached-object collision geometry through planner/validator/SafetyKernel
+6 local TCP scene-delta + grasp verification
+~~~
+
+Also parameterize manipulation targets/gripper percentages and expose reusable Skill adapters.
+
+AMR/camera may be used for evidence; arm/gripper physical movement waits for P3.8C.
+
+Exit:
+
+~~~text
+READY_FOR_P3_8B_FULL_SCHEME_PLANNING = YES
+~~~
+
+## Next
+
+### P3.8B — full planning-only Scheme rehearsal
+
+~~~text
+docs/work_orders/2026-09-24_P3_8B_FULL_SCHEME_PLANNING.md
+~~~
+
+Run the complete owner Scheme with live AMR/camera observations, simulated manipulation state, attached-object geometry and replaceable target interfaces.
+
+Exit:
+
+~~~text
+READY_FOR_P3_8C_SUPERVISED_EXECUTION = YES
+~~~
+
+### P3.8C — supervised physical customer demo
+
+~~~text
+docs/work_orders/2026-09-24_P3_8C_SUPERVISED_EXECUTION.md
+~~~
+
+First-demo policy:
+
+~~~text
+right arm manipulates
+left arm HOLD_CURRENT
+no simultaneous dual-arm motion
+~~~
+
+Physical sequence:
+
+~~~text
+presentation + gripper50
+→ pickup base
+→ atomic right_pick observation
+→ pregrasp + gripper40
+→ bounded contact approach
+→ grasp + local verification
+→ attach
+→ lift z≈1.20
+→ visibility clear
+→ placement base
+→ atomic right_place_rightmost observation
+→ preplace
+→ vertical place to target+5mm
+→ gripper20
+→ detach
+→ retreat arm/base
+→ verify task
+~~~
+
+## Scheme source
+
+Owner-confirmed Scheme:
 
 ~~~text
 docs/schemes/2026-09-24_RIGHT_ARM_TRAY_TO_GROOVE_STAGE_DEMO_V2.md
-docs/work_orders/2026-09-24_P3_8A_TRAY_TO_GROOVE_SYSTEM_AUDIT.md
+~~~
+
+Historical/local source that Codex must also read:
+
+~~~text
 /home/yikun/ARES-R/docs/work_orders/2026-09-21_RIGHT_ARM_TRAY_TO_GROOVE_PICK_PLACE_ORDER.md
 ~~~
 
-Goal:
-
-~~~text
-prepare the real customer staged pickup/place demo
-without moving either arm or either gripper
-~~~
-
-Allowed after one USER ACTION:
-
-- bounded AMR relative movement;
-- AMR stop;
-- Epic 5700 detection;
-- Pixel Pro 5000 pointcloud;
-- ART/WebUI/backend services;
-- read-only JAKA/gripper state;
-- planning-only IK/cuRobo for either arm.
-
-Forbidden in P3.8A:
-
-- JAKA arm motion;
-- ServoJ enable;
-- gripper motion;
-- physical grasp/lift/place.
-
-## Owner-confirmed staged demo
-
-~~~text
-right arm presentation/up posture + gripper 50%
-→ AMR ~0.30 m to pickup-side base pose
-→ Epic 5700 物料抓取
-→ configurable pregrasp 0.03–0.05 m
-→ scene-aware move to pregrasp
-→ contact approach to detected grasp pose
-→ grasp
-→ local 10–20 cm TCP-neighborhood rescan/change check
-→ attach object model
-→ lift to BODY z≈1.20 m
-→ move to right-front visibility-clear region
-→ AMR ~0.40 m toward robot-right
-→ Epic 5700 物料放置最右点
-→ scene-aware move above placement
-→ vertical descent to detected target +5 mm
-→ gripper 20%
-→ retreat arm
-→ retreat base
-→ verify complete
-~~~
-
-Key coordinates/poses are interfaces, not Scheme literals.
-
-## Important architecture
+## Architecture
 
 ~~~text
 Task
@@ -90,75 +159,18 @@ Task
 → Skills
 → SceneAwareMotionService
 → LocalSceneService + cuRobo
-→ hard execution authority
+→ execution authority
 → robot
 ~~~
 
-Obstacle avoidance is NOT a Skill.
+Obstacle avoidance is not a Skill.
 
-Free-space Skills inherit fresh pointcloud avoidance from SceneAwareMotionService.
-
-Contact approach/grasp/place need explicit target/contact semantics; do not globally delete the target obstacle just to reach the grasp point.
-
-## USER ACTION 1 expected from Codex
-
-~~~text
-底盘和相机audit现场已就绪
-~~~
-
-After this single confirmation, Codex may run the bounded AMR + camera audit automatically until a fault/site-state change.
-
-## Key audit questions
-
-P3.8A must resolve:
-
-- effective local AMR x/y/yaw semantics including the current dirty yaw fix;
-- how to record PICK_BASE_POSE_V1 and PLACE_BASE_POSE_V1;
-- exact 5700 mapping for right-arm 物料抓取;
-- exact 5700 mapping/pose semantics for 物料放置最右点;
-- configurable pregrasp distance 0.03/0.04/0.05 planning-only comparison;
-- CONTACT_TARGET final approach semantics;
-- gripper percentage/raw mapping and grasp-verification gap;
-- post-grasp local scene-delta around TCP;
-- attached-object collision pipeline;
-- lift to z≈1.20 m + right-front visibility-clear planning;
-- vertical placement geometry and +5 mm stop;
-- whether left arm can remain current or needs a clearance-UP pose;
-- whether concurrent dual-arm execution is actually ready;
-- Skill/Scheme implementation matrix.
-
-## Next after P3.8A
-
-### P3.8B — planning-only full Scheme
-
-Only after P3.8A report says READY_FOR_P3_8B_PLANNING_ONLY_SCHEME=YES.
-
-Build and simulate the complete Scheme with replaceable target interfaces. No grasp execution yet.
-
-### P3.8C — supervised physical customer demo
-
-Only after P3.8B and explicit owner review.
-
-Execute stages incrementally with real arm/gripper motion.
-
-## UI
-
-Keep current WebUI running as the scene/motion visualization frontend.
-
-Later extend it with:
-
-- Scheme step state;
-- pick/place target markers;
-- gripper/attachment state;
-- AMR pickup/place base pose evidence;
-- task start/stop controls.
-
-Do not let UI bypass backend services.
+Free-space manipulation Skills always inherit scene-aware pointcloud avoidance.
 
 ## Git policy
 
 No force-push.
-Preserve coworker AMR/gripper changes.
-Use small commits.
+Preserve coworker AMR/gripper-exit work.
+Small commits per blocker/subphase.
 Do not mix unrelated dirty changes.
 Leave .32 and GitHub aligned after reviewed subphases.
