@@ -152,6 +152,7 @@ class PersistentCuroboPlanner:
             "robot_yaml_urdf": str(Path(collision_model["asset_root"]) /
                                    collision_model["urdf"]),
             "execution_tool_envelope": envelope,
+            "attached_object_collision": motion.constraints.attached_object_geometry,
             "controller_tool_pose_mm_rad": tool,
             "robot_yaml": self.config["curobo"]["robot_yaml"],
             "expected_commit": CUROBO_COMMIT,

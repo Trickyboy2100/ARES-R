@@ -37,6 +37,7 @@ class MotionConstraints:
     central_exclusion: bool = True
     keepout_ids: tuple = ()
     attached_object_revision: Optional[str] = None
+    attached_object_geometry: Optional[Mapping[str, object]] = None
 
 
 @dataclass(frozen=True)
@@ -100,6 +101,12 @@ class MotionRequest:
             rotation = self.constraints.explicit_rotation
             if rotation is None or len(rotation) != 3 or any(len(row) != 3 for row in rotation):
                 raise ValueError("EXPLICIT orientation requires a 3x3 rotation")
+        attached = self.constraints.attached_object_geometry
+        if attached is not None:
+            from ares_r.manipulation.attached_collision import verify_attached_collision
+            verify_attached_collision(attached, self.constraints.attached_object_revision)
+        elif self.constraints.attached_object_revision not in (None, "none"):
+            raise ValueError("attached object revision requires collision geometry")
 
 
 @dataclass(frozen=True)

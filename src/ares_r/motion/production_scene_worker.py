@@ -14,6 +14,7 @@ _RUNTIME_CACHE={}
 from ares_r.perception.robot_owned_filter import grid_spheres_local as grid_spheres
 from ares_r.motion.ab_demo_state import classify_reference_corridor,validate_curobo_only_policy
 from ares_r.motion.execution_tool_envelope import verify_execution_tool_envelope
+from ares_r.manipulation.attached_collision import verify_attached_collision
 from ares_r.motion.independent_path_validation import validate_dense_world
 from ares_r.motion.tcp_orientation import (HORIZONTAL_FORWARD_R_BODY,validate_level_path,
                                            validate_path)
@@ -87,6 +88,11 @@ def main():
         spheres["link6"].extend(grid_spheres(envelope["box"],sphere_cell_m))
     else:
         spheres["link6"].extend(grid_spheres(collision_model["gripper_max_envelope_link6"],sphere_cell_m))
+    attached=request.get("attached_object_collision")
+    if attached is not None:
+        verify_attached_collision(attached,
+            request.get("motion_constraints",{}).get("attached_object_revision"))
+        spheres["link6"].extend(grid_spheres(attached["link6_aabb"],sphere_cell_m))
     for link in robot["kinematics"]["collision_spheres"]:robot["kinematics"]["collision_spheres"][link]=spheres.get(link,[])
     active_revision="sha256:"+hashlib.sha256(json.dumps(spheres,sort_keys=True,separators=(",",":")).encode()).hexdigest()
     urdf=ET.parse(robot["kinematics"]["urdf_path"]).getroot();origins=[]
@@ -329,6 +335,7 @@ def main():
         "geometry_revision":request["geometry_revision"],"inactive_arm_revision":request["inactive_arm_revision"],
         "active_collision_revision":active_revision,"active_collision_sphere_count":sum(map(len,spheres.values())),
         "execution_tool_envelope_revision":envelope["revision"] if envelope else None,
+        "attached_object_collision_revision":attached["revision"] if attached else None,
         "active_collision_sphere_cell_m":sphere_cell_m,
         "world_cuboid_ids":list(cuboids),"start_rad":start.tolist(),"goal_rad":goal.tolist(),
         "selected_goal_candidate_index":selected_goal_index,

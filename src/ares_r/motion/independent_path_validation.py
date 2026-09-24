@@ -76,6 +76,12 @@ def validate_dense_world(points, request, *, subdivisions=4):
                 if request.get("execution_tool_envelope")
                 else model["gripper_max_envelope_link6"])
     local["link6"].extend(grid_spheres_local(tool_box, cell))
+    attached = request.get("attached_object_collision")
+    if attached is not None:
+        from ares_r.manipulation.attached_collision import verify_attached_collision
+        verify_attached_collision(attached,
+            request.get("motion_constraints", {}).get("attached_object_revision"))
+        local["link6"].extend(grid_spheres_local(attached["link6_aabb"], cell))
     origins = _urdf_joint_origins(request["robot_yaml_urdf"])
     tool = np.asarray(request["T_link6_tcp"], dtype=float)
     body_model = np.asarray(request["T_body_model"], dtype=float)
