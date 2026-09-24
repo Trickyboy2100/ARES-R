@@ -19,7 +19,8 @@ class GraspVerificationTests(unittest.TestCase):
         readings=delayed_gripper_readback(lambda:next(values),[.25,.75,1.5],
                                          sleep=slept.append,clock=lambda:10)
         self.assertEqual(slept,[.25,.5,.75])
-        delta={"removed_voxels":50,"removed_fraction":.5,"revision":"sha256:"+"a"*64}
+        delta={"before_voxels":100,"after_voxels":60,"removed_voxels":50,
+               "removed_fraction":.5,"added_fraction":.1,"revision":"sha256:"+"a"*64}
         result=verify_grasp_v1(delta,readings,load_task_parameters())
         self.assertEqual(result["result"],"PASS")
         delta["removed_voxels"]=0
@@ -28,7 +29,8 @@ class GraspVerificationTests(unittest.TestCase):
     def test_gripper_signal_alone_never_passes(self):
         params=load_task_parameters()
         readings=[{"position_raw":200},{"position_raw":200}]
-        delta={"removed_voxels":0,"removed_fraction":0,"revision":"sha256:"+"b"*64}
+        delta={"before_voxels":100,"after_voxels":100,"removed_voxels":0,
+               "removed_fraction":0,"added_fraction":0,"revision":"sha256:"+"b"*64}
         self.assertEqual(verify_grasp_v1(delta,readings,params)["result"],"FAIL")
 
 

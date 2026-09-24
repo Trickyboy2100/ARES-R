@@ -24,7 +24,7 @@ def load_task_parameters(path="config/tray_to_groove_v2.json") -> dict:
     if not .10 <= low <= radius <= high <= .20:
         raise ValueError("local TCP delta radius must stay in 10..20 cm")
     percentages = [value["gripper"][name]
-                   for name in ("open_percent", "precontact_percent", "grasp_percent")]
+                   for name in ("prepare_percent", "pregrasp_percent", "release_percent")]
     if percentages != [50, 40, 20]:
         raise ValueError("first demo gripper percentages must remain 50/40/20")
     for item in (value["place"]["preplace_height_m"],

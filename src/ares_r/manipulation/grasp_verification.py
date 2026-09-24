@@ -63,11 +63,24 @@ def delayed_gripper_readback(read_position: Callable[[], int], delays_s,
     return result
 
 
+def classify_scene_delta(scene_delta: Mapping[str, object], parameters: Mapping[str, object]):
+    cfg=parameters["grasp_verification"]
+    before=int(scene_delta["before_voxels"]);after=int(scene_delta["after_voxels"])
+    if before == 0 or after == 0:
+        return "UNKNOWN"
+    expected=(int(scene_delta["removed_voxels"])>=int(cfg["minimum_removed_voxels"])
+              and float(scene_delta["removed_fraction"])>=float(cfg["minimum_removed_fraction"]))
+    unexpected=float(scene_delta["added_fraction"])>float(cfg["maximum_unexpected_added_fraction"])
+    if unexpected:
+        return "CHANGED_UNEXPECTED"
+    return "CHANGED_EXPECTED" if expected else "PASS"
+
+
 def verify_grasp_v1(scene_delta: Mapping[str, object], readbacks,
                     parameters: Mapping[str, object]) -> dict:
     cfg=parameters["grasp_verification"];positions=[int(row["position_raw"]) for row in readbacks]
-    scene_pass=(int(scene_delta["removed_voxels"])>=int(cfg["minimum_removed_voxels"])
-                and float(scene_delta["removed_fraction"])>=float(cfg["minimum_removed_fraction"]))
+    classification=classify_scene_delta(scene_delta,parameters)
+    scene_pass=classification == "CHANGED_EXPECTED"
     stable=max(positions)-min(positions)<=int(cfg["maximum_readback_spread_raw"])
     closed=int(parameters["gripper"]["raw_closed"])
     hold=min(positions)>closed+int(cfg["minimum_hold_above_closed_raw"])
@@ -75,5 +88,6 @@ def verify_grasp_v1(scene_delta: Mapping[str, object], readbacks,
            "GRIPPER_NOT_FULLY_CLOSED":hold}
     return {"schema_version":1,"verifier_revision":parameters["revision"]+":grasp-v1",
             "result":"PASS" if all(gates.values()) else "FAIL","gates":gates,
+            "scene_delta_result":classification,
             "local_scene_delta_revision":scene_delta["revision"],"readbacks":list(readbacks),
             "rule":"scene delta AND delayed stable non-closed gripper; neither signal passes alone"}
