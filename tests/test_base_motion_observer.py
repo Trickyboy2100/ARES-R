@@ -42,6 +42,24 @@ class BaseMotionObserverTest(unittest.TestCase):
         self.assertEqual(result["result"], "SETTLED")
         self.assertGreaterEqual(result["stable_samples"], 3)
 
+    def test_partial_motion_then_pause_does_not_settle(self):
+        values = [obs(.03,log=2,queue=2),obs(.07,log=2,queue=2),
+                  obs(.07,log=2,queue=2),obs(.07,log=2,queue=2),obs(.07,log=2,queue=2)]
+        observer=self.observer(values)
+        with self.assertRaises((BaseMotionTimeout,StopIteration)):
+            observer.wait(obs(0),expected_translation_m=.20)
+
+    def test_explicit_completion_marker_allows_localization_disagreement(self):
+        clock=_Clock();values=iter([
+            BaseObservation(0,.03,0,0,2,2,motion_status="RelativeMove running"),
+            BaseObservation(0,.07,0,0,2,2,motion_status="任务【RelativeMove】已完成"),
+            BaseObservation(0,.07,0,0,2,2,motion_status="任务【RelativeMove】已完成"),
+            BaseObservation(0,.07,0,0,2,2,motion_status="任务【RelativeMove】已完成"),
+            BaseObservation(0,.07,0,0,2,2,motion_status="任务【RelativeMove】已完成")])
+        result=BaseMotionObserver(lambda:next(values),self.config(),sleep=clock.sleep,
+                                  clock=clock).wait(obs(0),expected_translation_m=.20)
+        self.assertEqual(result["result"],"SETTLED")
+
     def test_yaw_only_motion_is_observed(self):
         values = [obs(0, yaw=-3), obs(0, yaw=-20), obs(0, yaw=-30),
                   obs(0, yaw=-30.05), obs(0, yaw=-30.05), obs(0, yaw=-30.05)]
@@ -53,14 +71,21 @@ class BaseMotionObserverTest(unittest.TestCase):
                 "worklog/evidence/2026-09-24-p3-8a-system-audit")
         for name in ("pick_base_move_v2.json", "place_base_move.json"):
             payload = json.loads((root / name).read_text())
-            raw = list(payload["samples"]) + list(payload["stationarity"]["samples"])
+            motion_rows=list(payload["samples"])
+            raw = motion_rows + list(payload["stationarity"]["samples"])
             rows = [BaseObservation(
                 float(item.get("t", item.get("at_unix"))),
                 float(item.get("x", item.get("x_m"))),
                 float(item.get("y", item.get("y_m"))),
                 float(item.get("yaw", item.get("yaw_deg"))),
                 item.get("log_id", item.get("motion_log_id")),
-                item.get("queue_id", item.get("motion_queue_id"))) for item in raw]
+                item.get("queue_id", item.get("motion_queue_id")),
+                motion_status=("RelativeMove completed" if index>=len(motion_rows) else ""))
+                    for index,item in enumerate(raw)]
+            # The archived audit stopped recording immediately after its own
+            # stationarity check. Repeat the final settled observation so the
+            # production observer can prove its full five-sample window.
+            rows.append(rows[-1])
             now = [float(payload["started_at_unix"])]
             iterator = iter(rows)
             def sample():
