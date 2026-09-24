@@ -136,6 +136,15 @@ class WorkflowTest(unittest.TestCase):
             cuboids={"box":dict(dims=[.1,.2,.3],pose=[0,0,0,1,0,0,0])})
         with self.assertRaisesRegex(ValueError,"direct loading is forbidden"):scene_cuboids(data)
 
+    def test_compiled_scene_accepts_explicit_target_policy(self):
+        data=dict(schema_version=1,frame="curobo_model_base",arm="right",
+            source="scene_snapshot_compiler",planning_scope="test",execution_allowed=False,
+            scene_snapshot_id="SCENE",planning_context_digest="CTX",
+            calibration_revision={},cuboids={"box":dict(dims=[.1,.1,.1],
+                pose=[0,0,0,1,0,0,0])},targets={},target_policy="HARD",
+            provenance=[],digest="DIGEST")
+        self.assertIn("box",scene_cuboids(data))
+
     def test_tmp_waypoint_units_and_spline_endpoints(self):
         with tempfile.TemporaryDirectory() as tmp:
             path=Path(tmp)/"w.json"

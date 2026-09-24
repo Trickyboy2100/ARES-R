@@ -27,7 +27,8 @@ COMPILED_FRAME = "curobo_model_base"
 MANUAL_FIELDS = {"schema_version", "frame", "source", "revision", "cuboids", "digest"}
 COMPILED_FIELDS = {"schema_version", "frame", "arm", "source", "planning_scope",
                    "execution_allowed", "scene_snapshot_id", "planning_context_digest",
-                   "calibration_revision", "cuboids", "targets", "provenance", "digest"}
+                   "calibration_revision", "cuboids", "targets", "target_policy",
+                   "provenance", "digest"}
 
 
 def load_scene(config):
