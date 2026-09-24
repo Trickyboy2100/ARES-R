@@ -5,7 +5,8 @@ from pathlib import Path
 
 import numpy as np
 
-from ares_r.motion.scene_aware_motion import MotionConstraints, MotionRequest, OrientationMode
+from ares_r.motion.scene_aware_motion import (MotionConstraints, MotionGoal, MotionRequest,
+                                              OrientationMode)
 from ares_r.motion import scene_aware_planner
 
 
@@ -25,6 +26,11 @@ class SceneAwarePlannerContractTests(unittest.TestCase):
     def test_free_orientation_has_no_worker_lock(self):
         request = MotionRequest("left", [0] * 6)
         self.assertIsNone(scene_aware_planner._orientation_lock(request, {}, {}, {}))
+
+    def test_runtime_level_goal_uses_level_yaw_mode(self):
+        request = MotionRequest("right", goal=MotionGoal([.7, -.5, 1.0]))
+        self.assertEqual(request.goal.orientation, OrientationMode.LEVEL_YAW_FREE)
+        self.assertEqual(scene_aware_planner.LEVEL_YAW_CRITERIA_RPY, (1.0, 0.0, 1.0))
 
 
 if __name__ == "__main__":

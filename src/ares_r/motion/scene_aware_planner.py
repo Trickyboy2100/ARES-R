@@ -20,6 +20,7 @@ from ares_r.perception.robot_collision import arm_link_transforms
 
 
 ROOT = Path(__file__).resolve().parents[3]
+LEVEL_YAW_CRITERIA_RPY = (1.0, 0.0, 1.0)
 
 
 def _load(path):
@@ -115,7 +116,9 @@ class PersistentCuroboPlanner:
                 OrientationMode.LEVEL_YAW_FREE, OrientationMode.LEVEL_YAW_TARGET):
             orientation_lock = {
                 "policy": motion.goal.orientation.value + "_V1",
-                "criteria_rpy": [1.0, 1.0, 0.0],
+                # This commissioned level branch has TCP local Y vertical;
+                # BODY +Z yaw is consequently rotation about TCP local Y.
+                "criteria_rpy": list(LEVEL_YAW_CRITERIA_RPY),
                 "max_error_deg": float(motion.goal.orientation_tolerance_deg),
                 "candidate_target_rotations": [item["rotation"]
                                                for item in goal_candidate_metadata],
