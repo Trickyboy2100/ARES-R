@@ -142,7 +142,8 @@ def _check_frame(profile: Dict[str, object], detection: DetectionResult,
 
 
 def build_grasp_plan(config: Dict[str, object], detection: DetectionResult,
-                     arm: Optional[str] = None, allow_unverified_frame: bool = False) -> GraspPlan:
+                     arm: Optional[str] = None, allow_unverified_frame: bool = False,
+                     approach_m: Optional[float] = None) -> GraspPlan:
     """Build the grasp and pre-grasp targets for one detection.
 
     ``allow_unverified_frame`` exists for on-site inspection before the frame is
@@ -166,7 +167,10 @@ def build_grasp_plan(config: Dict[str, object], detection: DetectionResult,
         raise ValueError("insertion_mode must be one of %s"
                          % ", ".join(SUPPORTED_INSERTION_MODES))
     approach_axis = str(profile.get("approach_axis", "UNKNOWN"))
-    approach_m = float(grasp["approach_m"])
+    task_override = approach_m is not None
+    approach_m = float(grasp["approach_m"] if approach_m is None else approach_m)
+    if task_override and not .03 <= approach_m <= .05:
+        raise ValueError("task pregrasp approach_m must be within [0.03, 0.05] m")
     if not 0.0 < approach_m <= 0.5:
         raise ValueError("approach_m must be within (0, 0.5] m, got %r" % approach_m)
     lift_m = float(grasp.get("lift_m", config.get("motion", {}).get("lift_m", 0.0)))

@@ -174,6 +174,11 @@ class GraspPlanGateTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "approach_m"):
             build_grasp_plan(config(approach_m=0.0), detection(**RIGHT_ARM_SITE))
 
+    def test_task_interface_overrides_profile_standoff_without_mutating_config(self):
+        source=config();plan=build_grasp_plan(source,detection(**RIGHT_ARM_SITE),approach_m=.03)
+        self.assertAlmostEqual(plan.approach_m,.03)
+        self.assertAlmostEqual(source["epic"]["task_profiles"]["right_pick"]["grasp"]["approach_m"],.06)
+
     def test_missing_grasp_section_is_refused(self):
         with self.assertRaisesRegex(RuntimeError, "no grasp section"):
             build_grasp_plan({"epic": {"task_profiles": {"right_pick": {

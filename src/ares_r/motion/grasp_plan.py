@@ -40,7 +40,8 @@ def _require_separation(declared):
 
 def prepare(config, arm, case_id, reader, profile, other_arm_separated,
             detection=None, scene_snapshot=None, perception=None, stop="pregrasp",
-            acknowledge_standoff_skipped=False, observation_bundle=None):
+            acknowledge_standoff_skipped=False, observation_bundle=None,
+            pregrasp_distance_m=None):
     """Build a scene-bound IK case from an already committed observation.
 
     Capturing from Epic inside this function is intentionally forbidden: the
@@ -86,7 +87,7 @@ def prepare(config, arm, case_id, reader, profile, other_arm_separated,
 
     if not detection.success:
         raise RuntimeError("the camera returned no grasp point: %s" % (detection.error,))
-    plan = build_grasp_plan(config, detection, arm)
+    plan = build_grasp_plan(config, detection, arm, approach_m=pregrasp_distance_m)
 
     diagnostics = dict(joint_position_rad=start["joint_position_rad"],
                        tcp_pose_mm_rad=start["tcp_pose_mm_rad"])
