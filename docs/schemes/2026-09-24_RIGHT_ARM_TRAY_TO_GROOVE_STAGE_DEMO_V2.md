@@ -279,3 +279,40 @@ Important:
 - final contact must use TargetContactPolicy; target removal from the entire collision world is not acceptable.
 - transfer after grasp must use attached-object collision geometry.
 - left arm stays HOLD_CURRENT for the first right-arm customer demo; concurrent dual-arm execution is not required.
+
+## 8. Owner override — first-demo contact collision policy
+
+For the first customer demo, fine articulated gripper contact collision is deferred.
+
+Active policy:
+
+~~~text
+CONTACT_COLLISION_POLICY = CONTACT_BYPASS_V1
+~~~
+
+Free-space movement still uses full fresh-scene cuRobo collision avoidance.
+
+During the short contact phases only:
+
+~~~text
+pregrasp → grasp → close → initial +100 mm BODY-Z lift
+
+preplace → place → release → initial vertical retreat
+~~~
+
+ignore active right gripper/tool vs observed pointcloud collision geometry.
+
+Still keep hard:
+
+- right arm links vs environment;
+- self collision;
+- inactive left arm;
+- BODY central exclusion;
+- controller collision/limits/estop/fault;
+- native tracking/watchdog.
+
+The bypass expires automatically after the bounded contact/escape phase.
+
+After grasp +100 mm lift, create a coarse attached-object AABB from the bound target primitive, reacquire/freshen the local scene, and resume normal SceneAwareMotion + cuRobo.
+
+The detailed component-level gripper collision model is preserved for future SELECTIVE_CONTACT_COMPONENTS_V2 hardening and must not change the Scheme API.
