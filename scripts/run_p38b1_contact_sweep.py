@@ -90,7 +90,7 @@ def main():
     world={name:box_body(name,value,T) for name,value in request["compiled_scene"]["cuboids"].items()}
     if target_id not in world: raise RuntimeError("epoch target primitive missing from frozen scene")
     target=world[target_id];obstacles={k:v for k,v in world.items() if k!=target_id}
-    trials=[];selected=None
+    trials=[];selected=None;selected_pregrasp_request=None
     for inflation in (.004,.002,0.0):
         component=build_gripper_component_model(request["collision_model"],40,inflation_m=inflation)
         envelope=build_execution_tool_envelope(request["collision_model"],
@@ -119,6 +119,10 @@ def main():
         trials.append(row)
         if row["hard_valid"] and selected is None:
             selected=row
+            selected_pregrasp_request=dict(request,execution_tool_envelope=envelope,
+                motion_constraints=dict(request.get("motion_constraints",{}),
+                    gripper_max_opening_percent=40,gripper_component_geometry=True,
+                    gripper_component_inflation_m=inflation))
             break
     payload={"schema_version":1,"planning_only":True,"hardware_io":False,
         "source_scene_snapshot_id":request["scene_snapshot_id"],
@@ -135,6 +139,8 @@ def main():
     core=json.dumps(payload,sort_keys=True,separators=(",",":")).encode()
     payload["artifact_sha256"]=hashlib.sha256(core).hexdigest()
     write(args.output/"contact_inflation_sweep.json",payload)
+    if selected_pregrasp_request is not None:
+        write(args.output/"component_pregrasp_request.json",selected_pregrasp_request)
     print(json.dumps({k:payload[k] for k in ("target_id","approach_length_m",
         "selected_component_inflation_m","selected_component_revision",
         "GRASP_ENDPOINT_HARD_VALID","PREGRASP_TO_GRASP_CONTACT_PLAN_READY")},indent=2))
