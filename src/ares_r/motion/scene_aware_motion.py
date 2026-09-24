@@ -43,6 +43,7 @@ class MotionConstraints:
     active_sphere_cell_m: Optional[float] = None
     gripper_component_geometry: bool = False
     gripper_component_inflation_m: float = 0.0
+    contact_bypass_policy_id: Optional[str] = None
 
 
 @dataclass(frozen=True)
@@ -134,6 +135,8 @@ class MotionRequest:
         component_inflation = float(self.constraints.gripper_component_inflation_m)
         if not 0.0 <= component_inflation <= 0.008:
             raise ValueError("component gripper inflation must be 0..8 mm")
+        if self.constraints.contact_bypass_policy_id is not None:
+            raise ValueError("generic free-space motion cannot request contact bypass")
 
 
 @dataclass(frozen=True)
