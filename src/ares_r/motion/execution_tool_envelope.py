@@ -32,10 +32,16 @@ def build_execution_tool_envelope(collision_model, tool_pose_mm_rad, *, inflatio
         if float(max_opening_percent) != int(max_opening_percent):
             raise ValueError("gripper opening profile must be an integer percent")
         profiles = collision_model.get("gripper_envelopes_link6_by_max_opening_percent", {})
-        if key not in profiles:
+        if key not in profiles and use_component_geometry:
+            # Exact opening component meshes do not need a precomputed swept
+            # union. Keep the full union only as non-active provenance/fallback.
+            source = collision_model["gripper_max_envelope_link6"]
+            opening_policy = "PINNED_COMPONENTS_AT_%s_PERCENT" % key
+        elif key not in profiles:
             raise ValueError("no pinned gripper envelope for maximum opening %s%%" % key)
-        source = profiles[key]
-        opening_policy = "PINNED_MESH_UNION_0_TO_%s_PERCENT" % key
+        else:
+            source = profiles[key]
+            opening_policy = "PINNED_MESH_UNION_0_TO_%s_PERCENT" % key
     center = [float(v) for v in source["center_m"]]
     half = [float(v) for v in source["half_extents_m"]]
     # B-point Pixel Pro hold-out (2026-09-22, cloud SHA a9198f13...)

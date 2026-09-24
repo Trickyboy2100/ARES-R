@@ -66,6 +66,11 @@ class GripperComponentCollisionTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "known opening"):
             build_execution_tool_envelope(self.model, self.tool,
                                           use_component_geometry=True)
+        closed = build_execution_tool_envelope(
+            self.model, self.tool, max_opening_percent=0,
+            use_component_geometry=True)
+        self.assertEqual(closed["component_model"]["opening_percent"], 0)
+        verify_execution_tool_envelope(closed, self.model, self.tool)
 
     def test_safety_kernel_rejects_geometry_revision_divergence(self):
         envelope = build_execution_tool_envelope(
