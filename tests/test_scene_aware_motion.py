@@ -6,7 +6,7 @@ import unittest
 from ares_r.motion.base_scene_bridge import SceneAwareBase
 from ares_r.motion.local_scene_service import LocalSceneService, ScenePolicy
 from ares_r.motion.scene_aware_motion import (
-    ClearancePolicy, MotionGoal, MotionRequest, OrientationMode, SceneAwareMotionService,
+    ClearancePolicy, MotionConstraints, MotionGoal, MotionRequest, OrientationMode, SceneAwareMotionService,
     StartClearanceState, evaluate_hard_validity,
 )
 
@@ -115,6 +115,15 @@ class SceneAwareMotionTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "yaw_target"):
             MotionGoal([.7, -.5, 1.0],
                        orientation=OrientationMode.LEVEL_YAW_TARGET).validate()
+
+    def test_manipulation_collision_fidelity_is_bounded(self):
+        MotionRequest("right", [0.1] * 6,
+            constraints=MotionConstraints(
+                gripper_max_opening_percent=40, active_sphere_cell_m=.015)).validate()
+        with self.assertRaisesRegex(ValueError, "15..60"):
+            MotionRequest("right", [0.1] * 6,
+                constraints=MotionConstraints(
+                    gripper_max_opening_percent=40, active_sphere_cell_m=.010)).validate()
 
     def test_near_start_escape_is_not_rejected_for_missing_preferred_margin(self):
         policy = ClearancePolicy("test", .030)

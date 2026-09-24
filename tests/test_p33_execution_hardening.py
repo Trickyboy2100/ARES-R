@@ -54,6 +54,19 @@ class P33HardeningTests(unittest.TestCase):
         self.assertNotEqual(observed["revision"], self.envelope["revision"])
         verify_execution_tool_envelope(observed, self.model, self.tool)
 
+    def test_opening_bound_envelope_uses_pinned_mesh_not_full_open_union(self):
+        bounded = build_execution_tool_envelope(
+            self.model, self.tool, max_opening_percent=40)
+        self.assertEqual(bounded["maximum_opening_percent"], 40)
+        self.assertLess(bounded["box"]["half_extents_m"][0],
+                        self.envelope["box"]["half_extents_m"][0])
+        self.assertEqual(bounded["opening_geometry_policy"],
+                         "PINNED_MESH_UNION_0_TO_40_PERCENT")
+        verify_execution_tool_envelope(bounded, self.model, self.tool)
+        with self.assertRaisesRegex(ValueError, "no pinned"):
+            build_execution_tool_envelope(
+                self.model, self.tool, max_opening_percent=37)
+
     def _plan(self, gap):
         q = [[0.0]*6, [0.002]*6, [0.004]*6]
         return {"observed_result": "SUCCESS", "execution_tool_envelope_revision":

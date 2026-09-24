@@ -64,7 +64,7 @@ def main():
                            "mesh": str(path.relative_to(root))}
         mesh_audit[link] = {"vertices": int(len(vertices)), "bounds_min_m": low.tolist(),
                             "bounds_max_m": high.tolist()}
-    all_points=[]; gripper_mesh_audit={}
+    all_points=[]; gripper_mesh_audit={}; bounded_points={40:[],50:[]}
     for opening in (0.0, 0.41, 0.82):
         transforms = gripper_transforms(robot, opening)
         for link in ["4C2_baselink"] + ["4C2_Link%d" % i for i in range(1,7)]:
@@ -74,6 +74,14 @@ def main():
             all_points.append((transforms[link] @ homogeneous.T).T[:, :3])
             gripper_mesh_audit[link] = {"vertices": int(len(vertices)),
                                         "bounds_min_m": low.tolist(), "bounds_max_m": high.tolist()}
+    for percent in bounded_points:
+        for opening in np.linspace(0.0, .82*percent/100.0, 9):
+            transforms = gripper_transforms(robot, float(opening))
+            for link in ["4C2_baselink"] + ["4C2_Link%d" % i for i in range(1,7)]:
+                vertices, _, _ = mesh_bounds(root / "eg2_4c2_meshes" / (link+".STL"))
+                homogeneous = np.column_stack((vertices, np.ones(len(vertices))))
+                bounded_points[percent].append(
+                    (transforms[link] @ homogeneous.T).T[:, :3])
     points=np.concatenate(all_points); low=points.min(0); high=points.max(0)
     hashes[urdf.name]=sha(urdf); hashes["jaka_minicobo_curobo.yml"]=sha(root/"jaka_minicobo_curobo.yml")
     payload={"schema_version":1,"asset_revision":"Trickyboy2100/ARES@b978cbd669b5a3f6bc0bd19defcbe5256692f145",
@@ -82,6 +90,7 @@ def main():
              "gripper_max_envelope_link6":{"center_m":((low+high)/2).tolist(),
                  "half_extents_m":((high-low)/2).tolist(),"opening_samples_rad":[0.0,0.41,0.82],
                  "source":"union of all pinned EG2-4C2 meshes over full opening range"},
+             "gripper_envelopes_link6_by_max_opening_percent":{},
              "mesh_audit":{"arm":mesh_audit,"gripper":gripper_mesh_audit},
              "fixed_body_boxes":[
                  {"geometry_id":"body/chassis","owner":"chassis","kind":"chassis_conservative_proxy",
@@ -95,6 +104,13 @@ def main():
                  "gripper_mesh_mount":"VALIDATED_AFTER_SITE_CHECK","gripper_opening":"CONSERVATIVE_PROXY",
                  "tool_tcp":"VALIDATED_AFTER_SITE_CHECK","body_base_transforms":"VALIDATED_AFTER_SITE_CHECK",
                  "chassis":"CONSERVATIVE_PROXY"}}
+    for percent, rows in bounded_points.items():
+        bounded=np.concatenate(rows); bounded_low=bounded.min(0); bounded_high=bounded.max(0)
+        payload["gripper_envelopes_link6_by_max_opening_percent"][str(percent)] = {
+            "center_m":((bounded_low+bounded_high)/2).tolist(),
+            "half_extents_m":((bounded_high-bounded_low)/2).tolist(),
+            "opening_range_rad":[0.0,.82*percent/100.0],
+            "source":"union of pinned EG2-4C2 meshes sampled over 0..%d percent opening"%percent}
     payload["geometry_revision"]="sha256:"+hashlib.sha256(json.dumps(payload,sort_keys=True,separators=(",",":")).encode()).hexdigest()
     args.output.parent.mkdir(parents=True,exist_ok=True)
     args.output.write_text(json.dumps(payload,indent=2)+"\n",encoding="utf-8")

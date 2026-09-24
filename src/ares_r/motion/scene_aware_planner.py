@@ -108,9 +108,13 @@ class PersistentCuroboPlanner:
             optimizer_collision_activation_distance=float(
                 planner_profile["optimizer_collision_activation_distance_m"]),
         )
+        if motion.constraints.active_sphere_cell_m is not None:
+            parameters["active_sphere_cell_m"] = float(
+                motion.constraints.active_sphere_cell_m)
         tool = audit["diagnostics"]["tool_data"]["pose_mm_rad"]
         envelope = build_execution_tool_envelope(collision_model, tool,
-                                                  observed_demo_only=False)
+            observed_demo_only=False,
+            max_opening_percent=motion.constraints.gripper_max_opening_percent)
         goal_candidates, goal_candidate_metadata = _runtime_goal_spec(
             motion, report, audit, collision_model)
         orientation_lock = _orientation_lock(motion, report, audit, collision_model)
@@ -177,6 +181,9 @@ class PersistentCuroboPlanner:
                 "central_exclusion": motion.constraints.central_exclusion,
                 "keepout_ids": list(motion.constraints.keepout_ids),
                 "attached_object_revision": motion.constraints.attached_object_revision,
+                "gripper_max_opening_percent":
+                    motion.constraints.gripper_max_opening_percent,
+                "active_sphere_cell_m": motion.constraints.active_sphere_cell_m,
             },
             "runtime_motion_goal": (None if motion.goal is None else {
                 "schema_version": motion.goal.schema_version,

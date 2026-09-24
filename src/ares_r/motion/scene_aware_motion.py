@@ -38,6 +38,8 @@ class MotionConstraints:
     keepout_ids: tuple = ()
     attached_object_revision: Optional[str] = None
     attached_object_geometry: Optional[Mapping[str, object]] = None
+    gripper_max_opening_percent: Optional[int] = None
+    active_sphere_cell_m: Optional[float] = None
 
 
 @dataclass(frozen=True)
@@ -117,6 +119,12 @@ class MotionRequest:
             verify_attached_collision(attached, self.constraints.attached_object_revision)
         elif self.constraints.attached_object_revision not in (None, "none"):
             raise ValueError("attached object revision requires collision geometry")
+        opening = self.constraints.gripper_max_opening_percent
+        if opening is not None and (type(opening) is not int or not 0 <= opening <= 100):
+            raise ValueError("gripper maximum opening must be an integer percent")
+        cell = self.constraints.active_sphere_cell_m
+        if cell is not None and not 0.015 <= float(cell) <= 0.060:
+            raise ValueError("active collision sphere cell must be 15..60 mm")
 
 
 @dataclass(frozen=True)

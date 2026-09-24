@@ -13,7 +13,7 @@ def _digest(value):
 
 
 def build_execution_tool_envelope(collision_model, tool_pose_mm_rad, *, inflation_m=0.008,
-                                  observed_demo_only=False):
+                                  observed_demo_only=False, max_opening_percent=None):
     """Return the pinned maximum-open ARES gripper box with sensor inflation.
 
     Controller TCP is a kinematic/task frame, not measured physical material.
@@ -22,7 +22,18 @@ def build_execution_tool_envelope(collision_model, tool_pose_mm_rad, *, inflatio
     if len(tool_pose_mm_rad) != 6:
         raise ValueError("six-value controller tool pose required")
     tool_pose = [float(v) for v in tool_pose_mm_rad]
-    source = collision_model["gripper_max_envelope_link6"]
+    if max_opening_percent is None:
+        source = collision_model["gripper_max_envelope_link6"]
+        opening_policy = "UNKNOWN_USE_FULL_OPENING_UNION"
+    else:
+        key = str(int(max_opening_percent))
+        if float(max_opening_percent) != int(max_opening_percent):
+            raise ValueError("gripper opening profile must be an integer percent")
+        profiles = collision_model.get("gripper_envelopes_link6_by_max_opening_percent", {})
+        if key not in profiles:
+            raise ValueError("no pinned gripper envelope for maximum opening %s%%" % key)
+        source = profiles[key]
+        opening_policy = "PINNED_MESH_UNION_0_TO_%s_PERCENT" % key
     center = [float(v) for v in source["center_m"]]
     half = [float(v) for v in source["half_extents_m"]]
     # B-point Pixel Pro hold-out (2026-09-22, cloud SHA a9198f13...)
@@ -50,6 +61,8 @@ def build_execution_tool_envelope(collision_model, tool_pose_mm_rad, *, inflatio
         "frame": "link6", "unit": "m", "box": box,
         "pinned_ares_gripper": {"center_m": center, "half_extents_m": half,
                                 "asset_revision": collision_model["asset_revision"]},
+        "maximum_opening_percent": max_opening_percent,
+        "opening_geometry_policy": opening_policy,
         "controller_tcp_task_frame_translation_m": tool,
         "controller_tcp_is_physical_collision_body": False,
         "observed_demo_only": bool(observed_demo_only),
@@ -68,7 +81,8 @@ def build_execution_tool_envelope(collision_model, tool_pose_mm_rad, *, inflatio
 def verify_execution_tool_envelope(envelope, collision_model, tool_pose_mm_rad):
     expected = build_execution_tool_envelope(
         collision_model, tool_pose_mm_rad, inflation_m=float(envelope["inflation_m"]),
-        observed_demo_only=envelope.get("observed_demo_only") is True)
+        observed_demo_only=envelope.get("observed_demo_only") is True,
+        max_opening_percent=envelope.get("maximum_opening_percent"))
     if envelope != expected:
         raise ValueError("execution tool envelope revision/source mismatch")
     return expected
