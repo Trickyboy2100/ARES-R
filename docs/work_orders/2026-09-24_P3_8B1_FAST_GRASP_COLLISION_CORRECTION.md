@@ -1,3 +1,5 @@
+> STEERED 2026-09-24: the detailed component-level gripper collision path is no longer a blocking dependency for the first customer demo. Preserve already implemented/tested work, but continue the V1 demo through docs/work_orders/2026-09-24_P3_8B1A_CONTACT_BYPASS_FIRST_PICK.md. Fine contact collision is deferred to docs/todo/2026-09-24_MANIPULATION_COLLISION_HARDENING_TODO.md.
+
 # P3.8B1 — Fast grasp collision-model correction and first real pick gate
 
 Date: 2026-09-24
