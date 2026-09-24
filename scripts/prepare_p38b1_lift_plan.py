@@ -66,7 +66,7 @@ def main():
         motion_constraints=dict(request.get("motion_constraints",{}),
             attached_object_revision=attached_collision["revision"],gripper_max_opening_percent=0,
             gripper_component_geometry=True,gripper_component_inflation_m=0.),
-        runtime_motion_goal=None,orientation_lock={"policy":"P38B1_VERTICAL_LIFT_FIXED_ORIENTATION",
+        runtime_motion_goal=None,orientation_lock={"policy":"FIXED_ROTATION_V1",
             "target_R_body_tcp":T_body_tcp[:3,:3].tolist(),"max_error_deg":3.0},
         motion_contract="TARGET_ATTACHED_VERTICAL_LIFT_PLANNING_ONLY_V1")
     (a.output/"lift_request.json").write_text(json.dumps(result,indent=2)+"\n")
