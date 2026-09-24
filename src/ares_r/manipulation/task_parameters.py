@@ -40,7 +40,7 @@ def load_task_parameters(path="config/tray_to_groove_v2.json") -> dict:
         raise ValueError("versioned retreat contract is required")
     fidelity=value["collision_fidelity"]
     if (fidelity.get("gripper_max_opening_percent") != 40 or
-            float(fidelity.get("active_sphere_cell_m", 0)) != .015 or
+            float(fidelity.get("active_sphere_cell_m", 0)) != .020 or
             float(fidelity.get("tool_envelope_inflation_m", 0)) != .008):
         raise ValueError("pinned 40-percent manipulation collision profile required")
     binding=value["target_binding"]
