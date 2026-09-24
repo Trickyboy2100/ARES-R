@@ -29,6 +29,47 @@ def _transform_point(matrix, point):
             float(matrix[r][3]) for r in range(3)]
 
 
+def _rigid_inverse(matrix):
+    rotation=[[float(matrix[r][c]) for c in range(3)] for r in range(3)]
+    transpose=[[rotation[c][r] for c in range(3)] for r in range(3)]
+    translation=[float(matrix[r][3]) for r in range(3)]
+    inverse_translation=[-sum(transpose[r][k]*translation[k] for k in range(3))
+                         for r in range(3)]
+    return [transpose[0]+[inverse_translation[0]],transpose[1]+[inverse_translation[1]],
+            transpose[2]+[inverse_translation[2]],[0,0,0,1]]
+
+
+def _quaternion_wxyz(rotation):
+    trace=sum(float(rotation[i][i]) for i in range(3))
+    if trace > 0:
+        scale=math.sqrt(trace+1.0)*2
+        value=[.25*scale,(rotation[2][1]-rotation[1][2])/scale,
+               (rotation[0][2]-rotation[2][0])/scale,
+               (rotation[1][0]-rotation[0][1])/scale]
+    else:
+        index=max(range(3),key=lambda i:rotation[i][i]);j=(index+1)%3;k=(index+2)%3
+        scale=math.sqrt(1+rotation[index][index]-rotation[j][j]-rotation[k][k])*2
+        xyz=[0.,0.,0.];xyz[index]=.25*scale
+        xyz[j]=(rotation[j][index]+rotation[index][j])/scale
+        xyz[k]=(rotation[k][index]+rotation[index][k])/scale
+        w=(rotation[k][j]-rotation[j][k])/scale
+        value=[w]+xyz
+    norm=math.sqrt(sum(item*item for item in value))
+    return tuple(item/norm for item in value)
+
+
+def attach_scene_object(target, T_body_tcp, *, side: str, source_revision: str):
+    """Create the canonical attachment using inverse(T_body_tcp)*T_body_object."""
+    from ares_r.world import AttachedObject,PoseSE3
+    if target.pose.frame_id != "body":
+        raise ValueError("attachment target must be in BODY")
+    T_body_object=_pose_matrix(target.pose)
+    T_tcp_object=_matrix_multiply(_rigid_inverse(T_body_tcp),T_body_object)
+    pose=PoseSE3("tcp",tuple(float(T_tcp_object[i][3]) for i in range(3)),
+                 _quaternion_wxyz([row[:3] for row in T_tcp_object[:3]]))
+    return AttachedObject(target.object_id,side,pose,target,source_revision)
+
+
 def build_attached_collision(attached, T_link6_tcp: Sequence[Sequence[float]],
                              inflation_m: float=.008) -> dict:
     """Conservatively enclose an object's oriented cuboid in link6 coordinates."""

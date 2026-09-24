@@ -1,7 +1,7 @@
 import unittest
 
 from ares_r.manipulation.attached_collision import (attached_spheres_body,
-    build_attached_collision,verify_attached_collision)
+    attach_scene_object,build_attached_collision,verify_attached_collision)
 from ares_r.motion.scene_aware_motion import MotionConstraints,MotionRequest
 from ares_r.world import AttachedObject,PoseSE3,SceneObject,SceneObjectRole
 
@@ -39,6 +39,16 @@ class AttachedCollisionTests(unittest.TestCase):
             lambda box:[{"center":box["center_m"],"radius":.02}])
         self.assertEqual(len(spheres),1)
         self.assertAlmostEqual(spheres[0]["center_body_m"][0],.53)
+
+    def test_attachment_pose_is_inverse_body_tcp_times_body_object(self):
+        target=self.attached().collision_geometry
+        attached=attach_scene_object(target,
+            [[1,0,0,.5],[0,1,0,-.2],[0,0,1,.8],[0,0,0,1]],
+            side="right",source_revision="GRASP")
+        self.assertEqual(attached.tcp_to_object.frame_id,"tcp")
+        self.assertAlmostEqual(attached.tcp_to_object.xyz_m[0],.2)
+        self.assertAlmostEqual(attached.tcp_to_object.xyz_m[1],-.1)
+        self.assertAlmostEqual(attached.tcp_to_object.xyz_m[2],.1)
 
 
 if __name__ == "__main__": unittest.main()
