@@ -9,6 +9,7 @@ import numpy as np
 ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/"src"))
 from ares_r.manipulation.attached_collision import attach_scene_object,build_attached_collision
 from ares_r.manipulation.contact_bypass import ContactBypassPolicy,validate_bypass_segment
+from ares_r.manipulation.first_pick_package import verify_first_pick_package
 from ares_r.motion.runtime_goal_ik import RuntimeGoalIK
 from ares_r.perception.robot_collision import arm_link_transforms
 from ares_r.world import PoseSE3,SceneObject,SceneObjectRole
@@ -98,6 +99,7 @@ def main():
       "trajectories":{"pregrasp":planning["trajectory_points_rad"],"contact":q_contact,"lift":q_lift},
       "FIRST_PICK_EXECUTION_PACKAGE_READY":True,"place_included":False}
     package["package_sha256"]=sha(package)
+    verify_first_pick_package(package)
     (a.output/"first_pick_execution_package.json").write_text(json.dumps(package,indent=2)+"\n")
     summary={"CONTACT_BYPASS_V1_READY":True,"GENERIC_FREE_SPACE_STILL_FULL_COLLISION":True,
       "PREGRASP_TO_GRASP_BYPASS_PLAN_READY":True,"GRASP_VERIFICATION_READY":True,
