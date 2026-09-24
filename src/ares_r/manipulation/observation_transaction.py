@@ -105,6 +105,10 @@ class ManipulationObservationTransaction:
             "scene_digest": scene["scene_digest"],
             "pointcloud_sha256": scene["pointcloud_sha256"],
             "detection_id": serialized["request_id"],
+            "detection_profile": meta.get("epic_profile"),
+            "detection_command": meta.get("request_command"),
+            "space_id": meta.get("space_id"), "object_id": meta.get("object_id"),
+            "camera_id": self.config["epic"]["task_profiles"][profile]["camera_id"],
             "detection_raw_sha256": hashlib.sha256(
                 detection.raw_response.encode("utf-8")).hexdigest(),
             "target": {"frame": "BODY", "pose_m_rad": body_pose,

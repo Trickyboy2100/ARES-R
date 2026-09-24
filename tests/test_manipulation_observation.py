@@ -31,7 +31,7 @@ class ManipulationObservationTests(unittest.TestCase):
                 "scene_digest": "b"*64, "pointcloud_sha256": "a"*64}
 
     def config(self):
-        return {}
+        return {"epic":{"task_profiles":{"right_pick":{"camera_id":1}}}}
 
     def test_detection_and_cloud_are_bound_to_one_epoch(self):
         with tempfile.TemporaryDirectory() as root:
@@ -44,6 +44,7 @@ class ManipulationObservationTests(unittest.TestCase):
             self.assertEqual(result["transaction_state"], "COMMITTED")
             self.assertEqual(result["detection_id"], "DET_RIGHT_PICK")
             self.assertEqual(result["pointcloud_sha256"], "a"*64)
+            self.assertEqual(result["camera_id"],1)
 
     def test_motion_during_capture_fails_closed(self):
         calls = []

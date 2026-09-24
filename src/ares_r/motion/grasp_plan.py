@@ -40,7 +40,7 @@ def _require_separation(declared):
 
 def prepare(config, arm, case_id, reader, profile, other_arm_separated,
             detection=None, scene_snapshot=None, perception=None, stop="pregrasp",
-            acknowledge_standoff_skipped=False):
+            acknowledge_standoff_skipped=False, observation_bundle=None):
     """Build a scene-bound IK case from an already committed observation.
 
     Capturing from Epic inside this function is intentionally forbidden: the
@@ -72,6 +72,14 @@ def prepare(config, arm, case_id, reader, profile, other_arm_separated,
         raise RuntimeError("invalid SceneSnapshot")
     snapshot_id = scene_snapshot_id(scene_snapshot)
     scene_provenance = scene_identity(scene_snapshot)
+    if not isinstance(observation_bundle, dict):
+        raise RuntimeError("epoch-bound ManipulationObservation artifact is required")
+    if (observation_bundle.get("transaction_state") != "COMMITTED" or
+            observation_bundle.get("scene_snapshot_id") != snapshot_id or
+            observation_bundle.get("detection_id") != detection.request_id or
+            observation_bundle.get("pointcloud_sha256") !=
+            scene_snapshot["environment"]["observation"]["pointcloud"]["sha256"]):
+        raise RuntimeError("detection/pointcloud/SceneSnapshot observation binding mismatch")
 
     started = time.time()
     start_path, start = capture(config, "start", case_id, arm, reader)

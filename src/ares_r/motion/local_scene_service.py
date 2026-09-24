@@ -158,6 +158,7 @@ class LocalSceneService:
             scene_snapshot_id=built["scene_snapshot_id"],
             scene_digest=built["scene_digest"],
             pointcloud_sha256=built["pointcloud_sha256"],
+            detection_ids=list(built.get("detection_ids", [])),
             scene_dir=built["scene_dir"],
             calibration_revision=report["calibration_revision"],
             geometry_revision=report["geometry_revision"],

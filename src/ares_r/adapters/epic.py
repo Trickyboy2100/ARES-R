@@ -123,6 +123,7 @@ class EpicClient(Perception):
             calibration_revision=profile.calibration_revision,
             source_translation_unit=profile.translation_unit,
             source_rotation_unit=profile.rotation_unit,
+            request_command=profile.command,
         )
         return DetectionResult(True, request_id, kind, pose=candidates[0],
                                candidates=candidates, raw_response=raw, meta=meta)

@@ -55,6 +55,7 @@ class EpicProtocolTest(unittest.TestCase):
         self.assertEqual(result.meta["grasp_index"], 0)
         self.assertEqual(result.meta["total_grasp_count"], 1)
         self.assertEqual(result.meta["pose_type"], "cartesian")
+        self.assertEqual(result.meta["request_command"], "320,1,1,1,1,0")
         self.assertFalse(result.meta["pose_frame_verified"])
 
     def test_every_grasp_candidate_survives_parsing(self):
