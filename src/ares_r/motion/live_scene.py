@@ -23,7 +23,8 @@ def _stamp():
 
 
 def build_live_planning_scene(config: dict, destination: Path | None = None,
-                              active_arm: str = "right") -> dict:
+                              active_arm: str = "right",
+                              detection_artifact: Path | None = None) -> dict:
     """Build one immutable scene solely from a fresh scan and current state."""
     if active_arm not in ("left", "right"):
         raise ValueError("active arm must be left or right")
@@ -34,6 +35,8 @@ def build_live_planning_scene(config: dict, destination: Path | None = None,
     command = [str(python), str(ROOT / "scripts/p32_scan_scene.py"),
                "--mode", "LIVE", "--output", str(destination),
                "--open3d-python", str(python), "--active", active_arm]
+    if detection_artifact is not None:
+        command.extend(("--detection-artifact", str(Path(detection_artifact).resolve())))
     result = subprocess.run(command, cwd=ROOT,
                             env=dict(os.environ, PYTHONPATH=str(ROOT / "src")),
                             text=True, capture_output=True, timeout=240, check=False)
@@ -59,6 +62,7 @@ def build_live_planning_scene(config: dict, destination: Path | None = None,
         "total_s": summary["total_s"],
         "valid": True,
         "active_arm": active_arm,
+        "detection_ids": report.get("detection_ids", []),
         "runtime_inputs": ["fresh_camera", "current_robot_state",
                            "commissioned_calibration", "generic_scene_parameters"],
     }

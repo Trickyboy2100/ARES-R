@@ -50,6 +50,8 @@ def main():
     p.add_argument("--active", choices=("left", "right"), default="right")
     p.add_argument("--deployment-voxel-m", type=float,
                    choices=(.005,.0075,.010), help="deployment scene voxel size")
+    p.add_argument("--detection-artifact", type=Path,
+                   help="Epic detection captured in the same manipulation transaction")
     args = p.parse_args()
     output = args.output.resolve()
     if output.exists():
@@ -108,7 +110,9 @@ def main():
         "--self-filter-margin-m", str(scene_profile["robot_self_filter_margin_m"]),
         "--gripper-self-filter-margin-m", str(scene_profile["gripper_self_filter_margin_m"]),
         "--capture-pointer",
-        output / "capture_pointer.json", "--output", scene, *target_args,
+        output / "capture_pointer.json", "--output", scene,
+        *(["--detection-artifact", args.detection_artifact]
+          if args.detection_artifact is not None else []), *target_args,
         python=str(args.open3d_python))
     report = json.loads((scene / "scene_report.json").read_text())
     summary = {"planning_only": True, "execution_allowed": False,

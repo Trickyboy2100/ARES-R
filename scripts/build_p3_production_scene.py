@@ -117,6 +117,8 @@ def main():
                    help="retain P3 fail-closed baseline or use P3.1 support decomposition")
     p.add_argument("--deployment-voxel-m",type=float,default=0.0,
                    help="early conservative BODY ROI voxelization; 0 keeps legacy path")
+    p.add_argument("--detection-artifact",
+                   help="Epic detection bound to this ObservationEpoch")
     p.add_argument("--output",required=True);a=p.parse_args();started=time.perf_counter()
     out=Path(a.output);out.mkdir(parents=True,exist_ok=False)
     cloud,meta=load_artifact(Path(a.manifest));geometry=load_geometry_snapshot(Path(a.geometry))
@@ -201,6 +203,15 @@ def main():
                               contract["B"]["xyz_m"],[.24,.24,.24],.010,
                               "P3 explicitly labelled synthetic goal enclosure"))
     wm.register_obstacles(obs,objects,cloud_ref.pointcloud_id,cloud_ref.sha256)
+    detection_ids=[]
+    detection_artifact=None
+    if a.detection_artifact:
+        detection_artifact=load(a.detection_artifact)
+        detection_id=str(detection_artifact.get("request_id", ""))
+        if not detection_id or detection_artifact.get("success") is not True:
+            raise RuntimeError("detection artifact must contain a successful request_id")
+        detection_ids=[detection_id]
+        wm.register_detections(obs,detection_ids)
     filter_revision=(robot_owned.revision if robot_owned else "P2_OBB_MARGIN_%.3f"%a.self_filter_margin_m)
     decomposition_revision=("sha256:"+hashlib.sha256(json.dumps(decomposition,sort_keys=True,
         separators=(",",":")).encode()).hexdigest() if decomposition else "single_aabb")
@@ -224,6 +235,8 @@ def main():
         "compiled_scene_digest":compiled["digest"],"calibration_revision":cloud.transform_revision,
         "geometry_revision":geometry.geometry_revision,"joint_snapshot_revision":geometry.joint_snapshot_revision,
         "tool_revision":geometry.tool_revision,"inactive_arm_revision":inactive["revision"],
+        "observation_id":obs,"detection_ids":detection_ids,
+        "detection_artifact":str(Path(a.detection_artifact).resolve()) if a.detection_artifact else None,
         "obstacle_pipeline":a.obstacle_pipeline,"deployment_prefilter":prefilter,
         "generic_scene_profile":scene_profile,
         "self_filter":sf,"cleanup":cleanup,
