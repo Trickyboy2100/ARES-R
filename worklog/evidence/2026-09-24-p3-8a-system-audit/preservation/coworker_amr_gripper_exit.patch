@@ -1,0 +1,189 @@
+diff --git a/config/system.json b/config/system.json
+index e13a6b6b..70c18717 100644
+--- a/config/system.json
++++ b/config/system.json
+@@ -204,7 +204,7 @@
+     "request_timeout_s": 5.0,
+     "max_retries": 3,
+     "max_relative_translation_m": 1.0,
+-    "max_relative_rotation_rad": 3.141592653589793,
++    "max_relative_rotation_deg": 180.0,
+     "default_linear_speed_mps": 0.2,
+     "max_linear_speed_mps": 0.5,
+     "default_angular_speed_radps": 0.2,
+diff --git a/docs/AMR_API.md b/docs/AMR_API.md
+index a6578d4e..4644ad1e 100644
+--- a/docs/AMR_API.md
++++ b/docs/AMR_API.md
+@@ -52,7 +52,7 @@ http://192.168.99.30:11375/openapi
+ >           x-
+ > ```
+ 
+-> `orientation` 在 ART 输入端使用度，发送前转换为弧度。`x/y/orientation` 属于 AMR 厂商接口的相对运动约定；在现场用小位移确认轴向前，不得直接等同于 ARES-R BODY 坐标。碰撞检测固定为 `1`，Terminal 不提供关闭入口。
++> `orientation` 单位是**度**，ART 输入端同样使用度，发送前**不做任何单位换算**（2026-09-21 实测确认，见 `docs/AMR_MOTION_ROTATION_COMMISSIONING_2026-09-21.md`）。负值 = 顺时针。注意 `maxAngularspeed` 仍是 **rad/s**：该接口角度用度、角速用弧度。`x/y/orientation` 属于 AMR 厂商接口的相对运动约定；在现场用小位移确认轴向前，不得直接等同于 ARES-R BODY 坐标。碰撞检测固定为 `1`，Terminal 不提供关闭入口。
+ 
+ ### R300 v0.3.18 兼容载荷
+ 
+@@ -79,6 +79,18 @@ http://192.168.99.30:11375/openapi
+ - 第二个任务查询返回 `Done`，但控制器返回的任务时间错误地落在 2020 年，不能把该时间字段作为可信证据。
+ - 本轮没有同步采集起终点点云，因此“请求已执行”和“精确移动/返回 0.6 m”必须区分。厘米级精度仍需点云或高可信外部定位验收。
+ 
++### 旋转（yaw）— 2026-09-21 实测
++
++| 项 | 现场实测结论 |
++| --- | --- |
++| `orientation` 单位 | **度**，一比一（请求 `-30` → 实测 `-29.6°`） |
++| 符号 | **负值 = 顺时针**，正值 = 逆时针 |
++| `maxAngularspeed` | **rad/s**（与 `orientation` 的单位不同） |
++
++所以 `amr move-relative 0 0 -30` 就是原地顺时针 30°。旋转上限由 `config/system.json` 的 `max_relative_rotation_deg`（`180`）约束。
++
++> 2026-09-21 之前适配器把度换算成弧度再发送，`-30` 实际只转 `0.52°`，宏观上完全看不出来。该缺陷已修复，详见 `docs/AMR_MOTION_ROTATION_COMMISSIONING_2026-09-21.md`。
++
+ `http://192.168.99.30:11378/twist` 不属于本兼容接口。曾向其发送标准 ROS 嵌套 `Twist.linear.y`，现场结果为旋转而非横移；在获得厂商私有协议前禁止由 ART 调用。
+ 
+ ## ART 命令
+@@ -120,4 +132,6 @@ amr stop
+ }
+ ```
+ 
+-当前仅完成接口与只读连通性验证。运动接口尚未现场 commissioning，首次动作必须空载、低速、小位移、现场观察并可使用物理急停。
++已现场 commissioning 的运动能力：`x`/`y` 相对平移（2026-09-20，`docs/AMR_MOTION_COMMISSIONING_2026-09-20.md`）与 `orientation` 原地旋转（2026-09-21，`docs/AMR_MOTION_ROTATION_COMMISSIONING_2026-09-21.md`）。命名工位导航 `nav pick|place` 仍未 commissioning，`base.positions` 保持空配置。
++
++任何运动仍须空载、低速、小位移、现场观察并可使用物理急停。改动代码后必须重启 Terminal 才生效——运行中的进程不会重新加载已修改的模块。
+diff --git a/docs/AMR_MOTION_COMMISSIONING_2026-09-20.md b/docs/AMR_MOTION_COMMISSIONING_2026-09-20.md
+index d205208a..8c365145 100644
+--- a/docs/AMR_MOTION_COMMISSIONING_2026-09-20.md
++++ b/docs/AMR_MOTION_COMMISSIONING_2026-09-20.md
+@@ -23,7 +23,9 @@ BODY/底盘方向约定：
+           -X 后
+ ```
+ 
+-ART 输入的 `x/y` 不做交换或符号翻转；`yaw` 由度转换为弧度后写入 `orientation`。
++ART 输入的 `x/y` 不做交换或符号翻转。
++
++> **本节关于 yaw 单位的说明已于 2026-09-21 被取代。** 当时记录的“`yaw` 由度转换为弧度后写入 `orientation`”正是导致 `-30` 只转 `0.52°` 的缺陷。实测确认 `orientation` 的单位是**度**，适配器现已改为直传，详见 `docs/AMR_MOTION_ROTATION_COMMISSIONING_2026-09-21.md`。
+ 
+ ## 当日实机证据
+ 
+diff --git a/docs/AMR_MOTION_STATUS_2026-09-18.md b/docs/AMR_MOTION_STATUS_2026-09-18.md
+index df949079..e9eb28c3 100644
+--- a/docs/AMR_MOTION_STATUS_2026-09-18.md
++++ b/docs/AMR_MOTION_STATUS_2026-09-18.md
+@@ -1,5 +1,7 @@
+ # ARES-R 底盘运动现状（2026-09-18）
+ 
++> **后续进展（保留原文作为当日排查过程记录）**：本文提出的“字段大小写不匹配是横移失败首要原因”已被推翻——2026-09-20 用当前驼峰载荷成功横移（`docs/AMR_MOTION_COMMISSIONING_2026-09-20.md`）。旋转（yaw）已于 2026-09-21 实测完成并修复，其根因是 ART 单方面的度/弧度换算（`docs/AMR_MOTION_ROTATION_COMMISSIONING_2026-09-21.md`）。
++
+ ## 结论
+ 
+ R300 底盘具备全向横移能力，物理手柄已验证可以左右平移。当前 ARES-R 已验证前后相对移动，但代码横移尚未 commission。主要问题不是底盘机构不支持横移，而是 ARES-R 发送的相对移动字段与厂商 `0.3.17` 接口文档不完全一致，需要先修正请求格式，再进行小范围实机验证。
+diff --git a/src/ares_r/adapters/amr_http.py b/src/ares_r/adapters/amr_http.py
+index 084ea888..2fda9f2e 100644
+--- a/src/ares_r/adapters/amr_http.py
++++ b/src/ares_r/adapters/amr_http.py
+@@ -64,13 +64,17 @@ class AmrHttpBase(MobileBase):
+         self._station=str(position_name)
+         return result
+ 
+-    def move_relative(self,x_m,y_m,yaw_rad,linear_mps=None,angular_radps=None,timeout_s=None):
+-        values=[float(x_m),float(y_m),float(yaw_rad)]
++    #: ``orientation`` is DEGREES on the R300 v0.3.18 controller, measured 1:1
++    #: on 2026-09-21 (a ``-30`` request produced `-29.6 deg`).  ``angular_radps``
++    #: is a separate rad/s field: the vendor deliberately mixes the two units.
++    #: Changing either unit again requires a new commissioning record.
++    def move_relative(self,x_m,y_m,yaw_deg,linear_mps=None,angular_radps=None,timeout_s=None):
++        values=[float(x_m),float(y_m),float(yaw_deg)]
+         if not all(math.isfinite(value) for value in values): raise ValueError("AMR relative pose must be finite")
+         translation=math.hypot(values[0],values[1])
+         if translation>float(self.config["max_relative_translation_m"]):
+             raise ValueError("AMR relative translation exceeds configured envelope")
+-        if abs(values[2])>float(self.config["max_relative_rotation_rad"]):
++        if abs(values[2])>float(self.config["max_relative_rotation_deg"]):
+             raise ValueError("AMR relative rotation exceeds configured envelope")
+         linear=float(linear_mps if linear_mps is not None else self.config["default_linear_speed_mps"])
+         angular=float(angular_radps if angular_radps is not None else self.config["default_angular_speed_radps"])
+diff --git a/src/ares_r/cli.py b/src/ares_r/cli.py
+index cf290c61..48adfb14 100644
+--- a/src/ares_r/cli.py
++++ b/src/ares_r/cli.py
+@@ -41,7 +41,14 @@ def main() -> None:
+     try:
+         run_terminal(controller)
+     finally:
+-        devices = [controller.perception] + list(controller.arms.values()) + list(controller.grippers.values()) + [controller.base]
++        # Grippers are deliberately NOT released here.  Gripper.close() is a motion command
++        # (0x54 -> min_position, i.e. drive the jaws fully shut), not a resource hand-back, and
++        # SerialGripper holds no session at all: every command opens and closes the serial port
++        # inside _exchange().  So there is nothing to release, and calling close() on this path
++        # made both grippers slam shut on every exit (quit, exit, Ctrl-D, any exception).
++        # Resource-style close() exists only on the Epic socket, the JAKA SDK session and
++        # DisabledDevice, which are the devices listed below.
++        devices = [controller.perception] + list(controller.arms.values()) + [controller.base]
+         for device in devices:
+             close = getattr(device, "close", None)
+             if close:
+diff --git a/src/ares_r/terminal.py b/src/ares_r/terminal.py
+index 97460d6b..12598351 100644
+--- a/src/ares_r/terminal.py
++++ b/src/ares_r/terminal.py
+@@ -922,7 +922,7 @@ def run_terminal(controller: TaskController) -> None:
+                     x,y,yaw_deg=map(float,args[2:5]);optional=list(map(float,args[5:8])) if len(args)==8 else [None,None,None]
+                     phrase="MOVE AMR RELATIVE %s %s %s"%(args[2],args[3],args[4])
+                     if input("Type %s: "%phrase).strip()!=phrase: print("Cancelled; no AMR command sent.");continue
+-                    result=base.move_relative(x,y,math.radians(yaw_deg),*optional)
++                    result=base.move_relative(x,y,yaw_deg,*optional)
+                     controller.events.write("amr_move_relative_sent",x_m=x,y_m=y,yaw_deg=yaw_deg,response=result)
+                     print(json.dumps(result,ensure_ascii=False,indent=2))
+                 elif args[:2]==["amr","run-task"] and len(args)==3:
+diff --git a/tests/test_amr_http.py b/tests/test_amr_http.py
+index a827eec2..401d5fcd 100644
+--- a/tests/test_amr_http.py
++++ b/tests/test_amr_http.py
+@@ -16,7 +16,7 @@ class _Response:
+ class AmrHttpTest(unittest.TestCase):
+     def setUp(self):
+         self.config=dict(base_url="http://192.168.99.30:11375/openapi",request_timeout_s=1,
+-            max_retries=3,max_relative_translation_m=1,max_relative_rotation_rad=3.14,
++            max_retries=3,max_relative_translation_m=1,max_relative_rotation_deg=180.0,
+             default_linear_speed_mps=.2,max_linear_speed_mps=.5,
+             default_angular_speed_radps=.2,max_angular_speed_radps=.3,
+             default_motion_timeout_s=30,max_motion_timeout_s=120,positions={})
+@@ -39,8 +39,9 @@ class AmrHttpTest(unittest.TestCase):
+     def test_relative_move_enforces_envelope_and_collision_detection(self):
+         with self.assertRaises(ValueError):self.base.move_relative(1,1,0)
+         with self.assertRaises(ValueError):self.base.move_relative(.1,0,0,linear_mps=.6)
++        with self.assertRaises(ValueError):self.base.move_relative(0,0,181)
+         with patch("ares_r.adapters.amr_http.urlopen",return_value=_Response({"ok":True})) as open_:
+-            self.base.move_relative(.1,-.2,.3)
++            self.base.move_relative(.1,-.2,-30)
+             request=open_.call_args.args[0]
+             body=json.loads(request.data)
+             self.assertEqual(request.method,"POST")
+@@ -48,10 +49,25 @@ class AmrHttpTest(unittest.TestCase):
+                 "http://192.168.99.30:11375/openapi/control/move/relative")
+             # Compatibility payload commissioned on the R300 v0.3.18
+             # controller.  Do not silently rename or rescale these fields.
+-            self.assertEqual(body,{"x":.1,"y":-.2,"orientation":.3,
++            # ``orientation`` stays in DEGREES: rescaling it to radians is the
++            # defect fixed on 2026-09-21; see the rotation commissioning record.
++            self.assertEqual(body,{"x":.1,"y":-.2,"orientation":-30.0,
+                 "maxLinearspeed":.2,"maxAngularspeed":.2,
+                 "collisiondetection":1,"timeout":30.0})
+ 
++    def test_rotation_is_degrees_and_forwarded_without_conversion(self):
++        # Measured on 2026-09-21: ``orientation`` is degrees, so a degree value
++        # must reach the wire untouched.
++        with patch("ares_r.adapters.amr_http.urlopen",return_value=_Response({"status":3})) as open_:
++            self.base.move_relative(0,0,-30)
++            self.assertEqual(json.loads(open_.call_args.args[0].data)["orientation"],-30.0)
++
++    def test_rotation_envelope_is_expressed_in_degrees(self):
++        with patch("ares_r.adapters.amr_http.urlopen",return_value=_Response({"status":3})):
++            self.base.move_relative(0,0,180.0)
++        for degrees in (-180.0001,180.0001):
++            with self.assertRaises(ValueError):self.base.move_relative(0,0,degrees)
++
+     def test_lateral_sign_is_forwarded_without_axis_remapping(self):
+         with patch("ares_r.adapters.amr_http.urlopen",return_value=_Response({"status":3})) as open_:
+             self.base.move_relative(0,-.6,0)
