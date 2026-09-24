@@ -148,6 +148,26 @@ class DualArmSafetyKernel:
                     float(hard.get("hard_min_gap_m", -math.inf)) > 0 and
                     hard.get("validator_role") == "HARD_COLLISION_AND_BINDING_ONLY")
 
+    @staticmethod
+    def component_geometry_gate(candidate):
+        """Bind planner, dense validator and contact policy to one gripper model."""
+        envelope = candidate.get("execution_tool_envelope") or {}
+        component = envelope.get("component_model") or {}
+        revision = component.get("revision")
+        if not revision or envelope.get("active_collision_representation") != (
+                "PINNED_COMPONENT_OBB_SPHERES_NO_UNION"):
+            raise SafetyViolation("pinned component gripper geometry required")
+        observed = {
+            candidate.get("planner_gripper_component_revision"),
+            (candidate.get("independent_dense_validation") or {}).get(
+                "gripper_component_revision"),
+            (candidate.get("contact_validation") or {}).get(
+                "gripper_component_revision"),
+        }
+        if observed != {revision}:
+            raise SafetyViolation("planner/validator/contact gripper geometry mismatch")
+        return True
+
     def authorize(self, *, arm, points, sample_period_s, geometry_samples,
                   speed_profile, live_start, tool_revision, planned_tool_revision,
                   scene_snapshot_id, collision_checked, base_stationary,

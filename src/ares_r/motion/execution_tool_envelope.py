@@ -13,7 +13,9 @@ def _digest(value):
 
 
 def build_execution_tool_envelope(collision_model, tool_pose_mm_rad, *, inflation_m=0.008,
-                                  observed_demo_only=False, max_opening_percent=None):
+                                  observed_demo_only=False, max_opening_percent=None,
+                                  use_component_geometry=False,
+                                  component_inflation_m=0.0):
     """Return the pinned maximum-open ARES gripper box with sensor inflation.
 
     Controller TCP is a kinematic/task frame, not measured physical material.
@@ -75,6 +77,21 @@ def build_execution_tool_envelope(collision_model, tool_pose_mm_rad, *, inflatio
         "TOOL_TCP_PHYSICAL_SEMANTICS_UNRESOLVED": "YES",
         "EXECUTION_TOOL_ENVELOPE_CONSERVATIVE": "YES",
     }
+    if use_component_geometry:
+        if max_opening_percent is None:
+            raise ValueError("component geometry requires a known opening percent")
+        from ares_r.manipulation.gripper_component_collision import (
+            build_gripper_component_model)
+        provenance["component_model"] = build_gripper_component_model(
+            collision_model, int(max_opening_percent),
+            inflation_m=float(component_inflation_m))
+        provenance["active_collision_representation"] = (
+            "PINNED_COMPONENT_OBB_SPHERES_NO_UNION")
+        provenance["component_inflation_m"] = float(component_inflation_m)
+    else:
+        provenance["component_model"] = None
+        provenance["active_collision_representation"] = "UNION_BOX"
+        provenance["component_inflation_m"] = None
     return dict(provenance, revision=_digest(provenance))
 
 
@@ -82,7 +99,9 @@ def verify_execution_tool_envelope(envelope, collision_model, tool_pose_mm_rad):
     expected = build_execution_tool_envelope(
         collision_model, tool_pose_mm_rad, inflation_m=float(envelope["inflation_m"]),
         observed_demo_only=envelope.get("observed_demo_only") is True,
-        max_opening_percent=envelope.get("maximum_opening_percent"))
+        max_opening_percent=envelope.get("maximum_opening_percent"),
+        use_component_geometry=envelope.get("component_model") is not None,
+        component_inflation_m=(envelope.get("component_inflation_m") or 0.0))
     if envelope != expected:
         raise ValueError("execution tool envelope revision/source mismatch")
     return expected

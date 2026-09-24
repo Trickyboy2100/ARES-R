@@ -85,7 +85,14 @@ def main():
     envelope=request.get("execution_tool_envelope")
     if envelope is not None:
         verify_execution_tool_envelope(envelope,collision_model,request["controller_tool_pose_mm_rad"])
-        spheres["link6"].extend(grid_spheres(envelope["box"],sphere_cell_m))
+        if envelope.get("component_model") is not None:
+            from ares_r.manipulation.gripper_component_collision import component_spheres_link6
+            component_spheres=component_spheres_link6(
+                envelope["component_model"],collision_model,sphere_cell_m)
+            spheres["link6"].extend({"center":row["center"],"radius":row["radius"]}
+                for row in component_spheres)
+        else:
+            spheres["link6"].extend(grid_spheres(envelope["box"],sphere_cell_m))
     else:
         spheres["link6"].extend(grid_spheres(collision_model["gripper_max_envelope_link6"],sphere_cell_m))
     attached=request.get("attached_object_collision")
@@ -334,6 +341,8 @@ def main():
         "planning_context_digest":scene["planning_context_digest"],"calibration_revision":scene["calibration_revision"],
         "geometry_revision":request["geometry_revision"],"inactive_arm_revision":request["inactive_arm_revision"],
         "active_collision_revision":active_revision,"active_collision_sphere_count":sum(map(len,spheres.values())),
+        "planner_gripper_component_revision":(
+            envelope.get("component_model",{}).get("revision") if envelope else None),
         "execution_tool_envelope_revision":envelope["revision"] if envelope else None,
         "attached_object_collision_revision":attached["revision"] if attached else None,
         "active_collision_sphere_cell_m":sphere_cell_m,

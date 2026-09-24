@@ -6,6 +6,8 @@ from dataclasses import dataclass
 import math
 from typing import Callable, Mapping, Sequence
 
+from ares_r.perception.robot_collision import CollisionBox, obb_overlap
+
 
 def _vector(values, label):
     result = tuple(float(item) for item in values)
@@ -26,12 +28,20 @@ def _norm(a):
     return math.sqrt(_dot(a, a))
 
 
-def _aabb_overlap(first, second):
-    for axis in range(3):
-        if abs(float(first["center_body_m"][axis]) - float(second["center_body_m"][axis])) > (
-                float(first["dims_m"][axis]) + float(second["dims_m"][axis])) / 2.0:
-            return False
-    return True
+def _collision_box(value, identifier):
+    rotation = value.get("rotation_body", ((1, 0, 0), (0, 1, 0), (0, 0, 1)))
+    half = value.get("half_extents_m")
+    if half is None:
+        half = [float(item)/2.0 for item in value["dims_m"]]
+    return CollisionBox(identifier, "contact_validator", "contact_component",
+                        tuple(float(v) for v in value["center_body_m"]),
+                        tuple(tuple(float(v) for v in row) for row in rotation),
+                        tuple(float(v) for v in half), False, "P3.8B1")
+
+
+def _geometry_overlap(first, second):
+    return obb_overlap(_collision_box(first, first.get("geometry_id", "first")),
+                       _collision_box(second, second.get("geometry_id", "second")))
 
 
 @dataclass(frozen=True)
@@ -57,7 +67,8 @@ class TargetContactPolicy:
 def validate_contact_approach(samples: Sequence[Mapping[str, object]],
                               target: Mapping[str, object],
                               obstacles: Mapping[str, Mapping[str, object]],
-                              policy: TargetContactPolicy) -> dict:
+                              policy: TargetContactPolicy, *,
+                              expected_component_revision=None) -> dict:
     """Validate dense geometry; only tool/gripper may contact target at the end."""
     policy.validate()
     if len(samples) < 2:
@@ -81,10 +92,13 @@ def validate_contact_approach(samples: Sequence[Mapping[str, object]],
             raise RuntimeError("full arm/tool/gripper dense geometry is required")
         for component, boxes in components.items():
             for box in boxes:
+                if component == "gripper" and expected_component_revision is not None:
+                    if box.get("component_revision") != expected_component_revision:
+                        raise RuntimeError("gripper component geometry revision mismatch")
                 for obstacle_id, obstacle in obstacles.items():
-                    if _aabb_overlap(box, obstacle):
+                    if _geometry_overlap(box, obstacle):
                         raise RuntimeError("%s contacted non-target %s" % (component, obstacle_id))
-                if _aabb_overlap(box, target):
+                if _geometry_overlap(box, target):
                     if component == "arm_links":
                         raise RuntimeError("arm link contacted target")
                     if component not in ("tool", "gripper"):
@@ -98,6 +112,7 @@ def validate_contact_approach(samples: Sequence[Mapping[str, object]],
         raise RuntimeError("contact approach did not reach its terminal pose")
     return {"valid": True, "policy_revision": policy.revision,
             "target_object_id": policy.target_object_id,
+            "gripper_component_revision": expected_component_revision,
             "samples": len(samples), "contacts": contacts,
             "arm_target_contact_allowed": False,
             "tool_target_contact_scope": "FINAL_CONTACT_CORRIDOR_ONLY",
@@ -106,7 +121,8 @@ def validate_contact_approach(samples: Sequence[Mapping[str, object]],
 
 def plan_constrained_contact(start_pose_body, goal_pose_body, *, policy,
                              solve_ik: Callable, geometry_at: Callable,
-                             target, obstacles, dense_step_m=.002):
+                             target, obstacles, dense_step_m=.002,
+                             expected_component_revision=None):
     """Cartesian interpolation + continuous IK + target-aware dense validation."""
     start = _vector(start_pose_body[:3], "start pose")
     goal = _vector(goal_pose_body[:3], "goal pose")
@@ -127,8 +143,12 @@ def plan_constrained_contact(start_pose_body, goal_pose_body, *, policy,
             raise RuntimeError("continuous IK did not return six joints")
         poses.append(pose); joints.append(seed)
     samples = [geometry_at(joints[index], poses[index]) for index in range(count)]
-    validation = validate_contact_approach(samples, target, obstacles, policy)
+    validation = validate_contact_approach(
+        samples, target, obstacles, policy,
+        expected_component_revision=expected_component_revision)
     return {"schema_version": 1, "motion_contract": "TARGET_CONTACT_APPROACH_V1",
             "trajectory_points_rad": [list(row) for row in joints],
             "tcp_poses_body_m_rad": [list(row) for row in poses],
-            "contact_validation": validation, "execution_allowed": False}
+            "contact_validation": validation,
+            "gripper_component_revision": expected_component_revision,
+            "execution_allowed": False}

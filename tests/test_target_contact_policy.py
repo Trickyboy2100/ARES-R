@@ -52,5 +52,32 @@ class TargetContactPolicyTests(unittest.TestCase):
         self.assertEqual(result["motion_contract"],"TARGET_CONTACT_APPROACH_V1")
         self.assertIsNone(seen[0]); self.assertIsNotNone(seen[1])
 
+    def test_oriented_component_box_does_not_collapse_to_world_aabb(self):
+        # A long thin finger rotated about Z misses the small obstacle.  An
+        # axis-aligned union of its dimensions would incorrectly report hit.
+        rotated = box((0, 0, 0), (.10, .01, .01))
+        rotated["rotation_body"] = [[0, -1, 0], [1, 0, 0], [0, 0, 1]]
+        rows = self.samples()
+        rows[-1]["components"]["gripper"] = [rotated]
+        report = validate_contact_approach(
+            rows, box((.2, 0, 0)), {"corner": box((.045, 0, 0), (.01, .01, .01))},
+            self.policy())
+        self.assertTrue(report["valid"])
+
+    def test_component_revision_is_mandatory_when_bound(self):
+        rows = self.samples()
+        for row in rows:
+            for item in row["components"]["gripper"]:
+                item["component_revision"] = "COMPONENT_X"
+        report = validate_contact_approach(
+            rows, box((.2, 0, 0)), {}, self.policy(),
+            expected_component_revision="COMPONENT_X")
+        self.assertTrue(report["valid"])
+        rows[-1]["components"]["gripper"][0]["component_revision"] = "STALE"
+        with self.assertRaisesRegex(RuntimeError, "revision mismatch"):
+            validate_contact_approach(
+                rows, box((.2, 0, 0)), {}, self.policy(),
+                expected_component_revision="COMPONENT_X")
+
 
 if __name__ == "__main__": unittest.main()

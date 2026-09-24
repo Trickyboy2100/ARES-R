@@ -119,7 +119,9 @@ class PersistentCuroboPlanner:
         tool = audit["diagnostics"]["tool_data"]["pose_mm_rad"]
         envelope = build_execution_tool_envelope(collision_model, tool,
             observed_demo_only=False,
-            max_opening_percent=motion.constraints.gripper_max_opening_percent)
+            max_opening_percent=motion.constraints.gripper_max_opening_percent,
+            use_component_geometry=motion.constraints.gripper_component_geometry,
+            component_inflation_m=motion.constraints.gripper_component_inflation_m)
         goal_candidates, goal_candidate_metadata = _runtime_goal_spec(
             motion, report, audit, collision_model)
         orientation_lock = _orientation_lock(motion, report, audit, collision_model)
@@ -189,6 +191,10 @@ class PersistentCuroboPlanner:
                 "gripper_max_opening_percent":
                     motion.constraints.gripper_max_opening_percent,
                 "active_sphere_cell_m": motion.constraints.active_sphere_cell_m,
+                "gripper_component_geometry":
+                    motion.constraints.gripper_component_geometry,
+                "gripper_component_inflation_m":
+                    motion.constraints.gripper_component_inflation_m,
             },
             "runtime_motion_goal": (None if motion.goal is None else {
                 "schema_version": motion.goal.schema_version,

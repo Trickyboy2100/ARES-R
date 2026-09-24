@@ -41,6 +41,8 @@ class MotionConstraints:
     attached_object_geometry: Optional[Mapping[str, object]] = None
     gripper_max_opening_percent: Optional[int] = None
     active_sphere_cell_m: Optional[float] = None
+    gripper_component_geometry: bool = False
+    gripper_component_inflation_m: float = 0.0
 
 
 @dataclass(frozen=True)
@@ -127,6 +129,11 @@ class MotionRequest:
         cell = self.constraints.active_sphere_cell_m
         if cell is not None and not 0.015 <= float(cell) <= 0.060:
             raise ValueError("active collision sphere cell must be 15..60 mm")
+        if self.constraints.gripper_component_geometry and opening is None:
+            raise ValueError("component gripper geometry requires known opening")
+        component_inflation = float(self.constraints.gripper_component_inflation_m)
+        if not 0.0 <= component_inflation <= 0.008:
+            raise ValueError("component gripper inflation must be 0..8 mm")
 
 
 @dataclass(frozen=True)

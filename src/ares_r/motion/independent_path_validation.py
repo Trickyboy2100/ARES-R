@@ -72,16 +72,28 @@ def validate_dense_world(points, request, *, subdivisions=4):
     cell = float(request["planning_parameters"].get("active_sphere_cell_m", 0.035))
     local = {link: grid_spheres_local(box, cell)
              for link, box in model["arm_link_boxes"].items()}
-    tool_box = (request["execution_tool_envelope"]["box"]
-                if request.get("execution_tool_envelope")
-                else model["gripper_max_envelope_link6"])
-    local["link6"].extend(grid_spheres_local(tool_box, cell))
+    envelope = request.get("execution_tool_envelope")
+    component_labels = {link: [link] * len(spheres) for link, spheres in local.items()}
+    if envelope and envelope.get("component_model") is not None:
+        from ares_r.manipulation.gripper_component_collision import component_spheres_link6
+        rows = component_spheres_link6(envelope["component_model"], model, cell)
+        local["link6"].extend({"center":row["center"], "radius":row["radius"]}
+                              for row in rows)
+        component_labels["link6"].extend(row["component_id"] for row in rows)
+    else:
+        tool_box = (envelope["box"] if envelope
+                    else model["gripper_max_envelope_link6"])
+        rows = grid_spheres_local(tool_box, cell)
+        local["link6"].extend(rows)
+        component_labels["link6"].extend(["gripper_union"] * len(rows))
     attached = request.get("attached_object_collision")
     if attached is not None:
         from ares_r.manipulation.attached_collision import verify_attached_collision
         verify_attached_collision(attached,
             request.get("motion_constraints", {}).get("attached_object_revision"))
         local["link6"].extend(grid_spheres_local(attached["link6_aabb"], cell))
+        component_labels["link6"].extend(
+            ["attached_object"] * len(grid_spheres_local(attached["link6_aabb"], cell)))
     origins = _urdf_joint_origins(request["robot_yaml_urdf"])
     tool = np.asarray(request["T_link6_tcp"], dtype=float)
     body_model = np.asarray(request["T_body_model"], dtype=float)
@@ -89,6 +101,7 @@ def validate_dense_world(points, request, *, subdivisions=4):
         raise ValueError("full-SE3 tool and BODY transforms required")
     centers = []
     radii = []
+    labels = [label for link in local for label in component_labels[link]]
     central_margin = float("inf")
     for row in q:
         frame = np.eye(4)
@@ -112,6 +125,7 @@ def validate_dense_world(points, request, *, subdivisions=4):
     sphere_centers = np.asarray(centers)
     sphere_radii = np.asarray(radii)
     by_object = {}
+    limiting_component_by_object = {}
     for name, box in request["compiled_scene"]["cuboids"].items():
         rotation = _quaternion_rotation(box["pose"][3:])
         center = np.asarray(box["pose"][:3], dtype=float)
@@ -120,15 +134,22 @@ def validate_dense_world(points, request, *, subdivisions=4):
         delta = np.abs(local_centers) - dims / 2
         signed = (np.linalg.norm(np.maximum(delta, 0), axis=-1)
                   + np.minimum(np.max(delta, axis=-1), 0) - sphere_radii[None, :])
-        by_object[name] = float(np.min(signed))
+        flat_index = int(np.argmin(signed))
+        by_object[name] = float(signed.flat[flat_index])
+        sphere_index = flat_index % signed.shape[1]
+        limiting_component_by_object[name] = labels[sphere_index]
     minimum_name = min(by_object, key=by_object.get) if by_object else None
     minimum = by_object[minimum_name] if minimum_name else float("inf")
     return {"validator": "independent_cpu_urdf_sphere_cuboid_v1",
+            "gripper_component_revision": (
+                envelope.get("component_model", {}).get("revision") if envelope else None),
             "input_trajectory_samples":int(input_count),
             "validation_knots":int(len(knots)),
             "maximum_knot_joint_step_rad":float(np.max(np.abs(np.diff(knots,axis=0)))),
             "dense_samples": int(len(q)), "subdivisions": subdivisions,
             "min_clearance_m": minimum, "limiting_object_id": minimum_name,
+            "limiting_robot_component_id": (
+                limiting_component_by_object.get(minimum_name)),
             "central_tcp_margin_m": central_margin,
             "collision_free": math.isfinite(minimum) and minimum > 0 and central_margin > 0,
             "self_collision_independently_checked": False}
