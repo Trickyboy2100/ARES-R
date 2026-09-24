@@ -32,6 +32,12 @@ def load_task_parameters(path="config/tray_to_groove_v2.json") -> dict:
                  value["place"]["lift_body_z_m"]):
         if not math.isfinite(float(item)):
             raise ValueError("task distances must be finite")
+    if set(value["base_contracts"]) != {"PICK_BASE_POSE_V1", "PLACE_BASE_POSE_V1"}:
+        raise ValueError("versioned pickup/place base contracts are required")
+    if value["visibility_clear"].get("semantic") != "RIGHT_FRONT_VISIBILITY_CLEAR":
+        raise ValueError("semantic visibility-clear target is required")
+    if value["retreat"].get("semantic") != "VERTICAL_CLEARANCE_RETREAT":
+        raise ValueError("versioned retreat contract is required")
     return value
 
 

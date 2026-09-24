@@ -28,6 +28,10 @@ except ImportError:  # pragma: no cover - readline is present on the target Linu
 
 HELP = """Commands:
   scene status|scan|invalidate [REASON]      canonical LocalSceneService
+  scheme list
+  scheme inspect RIGHT_ARM_TRAY_TO_GROOVE_STAGE_DEMO_V2
+  task plan tray_to_groove | task preview | task status | task stop
+                                              P3.8 planning-only; task run locked
   motion status|preview [PLAN_ID]|execute PLAN_ID|stop
                                               generic SceneAwareMotionService
   motion plan SIDE --xyz X Y Z [--orientation LEVEL_YAW_FREE|LEVEL_YAW_TARGET] [--yaw DEG]
@@ -179,7 +183,7 @@ Native curobo: 3x timing, <=3 degrees/s; demo <=20 deg, reposition <=150 deg, si
 
 def _allowed_in_jaka_readonly(args) -> bool:
     return (
-        args[0] in ("status", "help", "quit", "exit", "note")
+        args[0] in ("status", "help", "quit", "exit", "note", "scheme", "task")
         or args[:2] in (["jaka", "status"], ["jaka", "baseline"], ["jaka", "preflight"],
                         ["jaka", "joints"], ["jaka", "plan"], ["jaka", "step"],
                         ["jaka", "home"], ["jaka", "dual"])
@@ -230,7 +234,7 @@ def _pose_speed(route,value=None):
 def _allowed_in_hardware(args) -> bool:
     """Expose commissioned device commands, not unfinished orchestration."""
     return (
-        args[0] in ("status", "help", "quit", "exit", "note")
+        args[0] in ("status", "help", "quit", "exit", "note", "scheme", "task")
         or args[0] == "amr"
         or args[:2] in (["epic", "status"], ["epic", "detect"], ["epic", "parse"],
                         ["epic", "pointcloud"], ["epic", "obstacles"])
@@ -361,6 +365,27 @@ def run_terminal(controller: TaskController) -> None:
                 raise RuntimeError("command blocked: combined task/base execution is not commissioned")
             if args[0] in ("quit", "exit"): break
             if args[0] == "help": print(help_text)
+            elif args == ["scheme", "list"]:
+                from .manipulation.scheme_backend import SchemeBackend
+                print(json.dumps(SchemeBackend().list(), indent=2, ensure_ascii=False))
+            elif args[:2] == ["scheme", "inspect"] and len(args) == 3:
+                from .manipulation.scheme_backend import SchemeBackend
+                print(json.dumps(SchemeBackend().inspect(args[2]), indent=2, ensure_ascii=False))
+            elif args[:2] == ["task", "status"] and len(args) == 2:
+                from .manipulation.scheme_backend import SchemeBackend
+                print(json.dumps(SchemeBackend().status(), indent=2, ensure_ascii=False))
+            elif args[:2] == ["task", "preview"] and len(args) == 2:
+                from .manipulation.scheme_backend import SchemeBackend
+                print(json.dumps(SchemeBackend().preview(), indent=2, ensure_ascii=False))
+            elif args[:2] == ["task", "stop"] and len(args) == 2:
+                from .manipulation.scheme_backend import SchemeBackend
+                print(json.dumps(SchemeBackend().stop(), indent=2, ensure_ascii=False))
+            elif args[:2] == ["task", "run"]:
+                raise RuntimeError("task run is locked until reviewed P3.8C authorization")
+            elif args[:2] == ["task", "plan"]:
+                if args != ["task", "plan", "tray_to_groove"]:
+                    raise ValueError("usage: task plan tray_to_groove")
+                raise RuntimeError("run scripts/plan_tray_to_groove_scheme.py with immutable observation paths")
             elif args[:2] == ["scene", "status"] and len(args) == 2:
                 from .scene_aware_dispatch import SceneAwareDispatcher
                 print(json.dumps(SceneAwareDispatcher(controller.config).scene_status(),

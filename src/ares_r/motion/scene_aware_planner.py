@@ -43,7 +43,8 @@ def _orientation_lock(request: MotionRequest, report, audit, collision_model):
         rotation = np.asarray(request.constraints.explicit_rotation, dtype=float)
         policy = "FIXED_ROTATION_V1"
     else:
-        joints = audit["diagnostics"]["joint_position_rad"]
+        joints = (request.start_joints_rad or
+                  audit["diagnostics"]["joint_position_rad"])
         urdf = Path(collision_model["asset_root"]) / collision_model["urdf"]
         link6 = arm_link_transforms(urdf, joints)["link6"]
         tool = pose_mm_rad_to_matrix(audit["diagnostics"]["tool_data"]["pose_mm_rad"])
@@ -59,7 +60,8 @@ def _runtime_goal_spec(request, report, audit, collision_model):
     if request.goal is None:
         return ([float(v) for v in request.goal_joints_rad],), None
     goal = request.goal
-    start = np.asarray(audit["diagnostics"]["joint_position_rad"], dtype=float)
+    start = np.asarray(request.start_joints_rad or
+                       audit["diagnostics"]["joint_position_rad"], dtype=float)
     tool = pose_mm_rad_to_matrix(audit["diagnostics"]["tool_data"]["pose_mm_rad"])
     urdf = Path(collision_model["asset_root"]) / collision_model["urdf"]
     link6 = arm_link_transforms(urdf, start)["link6"]
@@ -137,7 +139,8 @@ class PersistentCuroboPlanner:
             "compiled_scene": compiled,
             "scene_snapshot_id": compiled["scene_snapshot_id"],
             "scene_digest": compiled["digest"],
-            "start_rad": audit["diagnostics"]["joint_position_rad"],
+            "start_rad": (list(motion.start_joints_rad) if motion.start_joints_rad is not None
+                          else audit["diagnostics"]["joint_position_rad"]),
             "goal_rad": (list(goal_candidates[0]) if goal_candidates is not None
                          else audit["diagnostics"]["joint_position_rad"]),
             "goal_candidates_rad": ([list(row) for row in goal_candidates]
@@ -185,6 +188,7 @@ class PersistentCuroboPlanner:
                 "orientation_tolerance_deg": motion.goal.orientation_tolerance_deg,
                 "source": motion.goal.source,
             }),
+            "physical_state": motion.physical_state,
         }
         request_path = output / "planner_request.json"
         result_path = output / "planning.json"

@@ -8,6 +8,7 @@ class TaskParameterTests(unittest.TestCase):
         self.assertEqual(value["demo_scope"]["inactive_arm_policy"],"HOLD_CURRENT")
         self.assertEqual([gripper_percent_to_raw(p,value) for p in (50,40,20)],
                          [500,400,200])
+        self.assertEqual(value["base_contracts"]["PLACE_BASE_POSE_V1"]["y_m"],-.40)
 
 
 if __name__ == "__main__": unittest.main()

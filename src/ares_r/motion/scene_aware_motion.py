@@ -85,6 +85,8 @@ class MotionRequest:
     speed_profile: str = "slow"
     scene_policy: ScenePolicy = ScenePolicy.AUTO_FRESH
     request_label: str = "free_space_motion"
+    start_joints_rad: Optional[Sequence[float]] = None
+    physical_state: str = "OBSERVED"
 
     def validate(self) -> None:
         if self.arm not in ("left", "right"):
@@ -95,6 +97,14 @@ class MotionRequest:
                 len(self.goal_joints_rad) != 6 or
                 not all(math.isfinite(float(v)) for v in self.goal_joints_rad)):
             raise ValueError("six finite goal joints required")
+        if self.start_joints_rad is not None and (
+                len(self.start_joints_rad) != 6 or
+                not all(math.isfinite(float(v)) for v in self.start_joints_rad)):
+            raise ValueError("simulated start requires six finite joints")
+        if self.physical_state not in ("OBSERVED", "SIMULATED_FOR_SCHEME_REHEARSAL"):
+            raise ValueError("invalid physical_state provenance")
+        if self.start_joints_rad is not None and self.physical_state != "SIMULATED_FOR_SCHEME_REHEARSAL":
+            raise ValueError("start override is allowed only for an explicit simulated rehearsal")
         if self.goal is not None:
             self.goal.validate()
         if self.constraints.orientation is OrientationMode.EXPLICIT:
