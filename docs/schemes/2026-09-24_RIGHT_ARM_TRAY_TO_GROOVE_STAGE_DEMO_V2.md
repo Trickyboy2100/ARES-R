@@ -316,3 +316,35 @@ The bypass expires automatically after the bounded contact/escape phase.
 After grasp +100 mm lift, create a coarse attached-object AABB from the bound target primitive, reacquire/freshen the local scene, and resume normal SceneAwareMotion + cuRobo.
 
 The detailed component-level gripper collision model is preserved for future SELECTIVE_CONTACT_COMPONENTS_V2 hardening and must not change the Scheme API.
+## 9. Force-assisted acceleration overlay (2026-09-26)
+
+The first real pick + 100 mm lift has succeeded. Preserve the physical sequence; optimize sensing/orchestration rather than redesigning the successful grasp.
+
+Planned V1.1 overlay:
+
+~~~text
+free-space pregrasp
+  → full SceneAwareMotion + pointcloud collision
+
+contact approach
+  → CONTACT_BYPASS_V1
+  → FORCE_GUARDED_CONTACT_V1 monitor/abort
+
+grasp verification
+  → gripper delayed readback
+  → force/load verification primary
+  → 15 cm pointcloud scene-delta fallback only if force ambiguous
+
+transfer
+  → coarse attached object + full SceneAwareMotion
+  → force slip/snare monitor
+
+placement
+  → preplace with full SceneAwareMotion
+  → vertical CONTACT_BYPASS_V1 + force contact monitor
+  → release + force/load return verification
+~~~
+
+Do not enable constant-force compliance in V1.1. Force is initially an observation/guard channel.
+
+The exact installed force-sensor model remains UNVERIFIED. Current strongest candidate is JAKA JK-SE-VI-200; production config must wait for JAKA App/controller/label evidence.
