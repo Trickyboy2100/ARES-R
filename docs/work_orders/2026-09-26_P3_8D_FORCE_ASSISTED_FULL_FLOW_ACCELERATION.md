@@ -86,6 +86,39 @@ Mark the previous 145 mm tape measurement as SENSOR_TOOL_FLANGE_TO_GRASP_CENTER,
 
 Do not change the controller TCP automatically.
 
+## 3.1 One-time physical tool-stack geometry audit
+
+Before trusting long free-space transfer geometry, compare the production collision/kinematic chain against the actual installed stack:
+
+~~~text
+robot link6/flange
+→ JAKA force sensor
+→ any adapter plate
+→ EG2-4C2 gripper
+→ physical grasp center
+~~~
+
+The old 145 mm measurement likely started at the sensor tool-side flange. If the production gripper collision model currently mounts the gripper directly at link6 and omits the sensor/adapter axial stack, correct that fixed mount transform once.
+
+This is NOT the deferred fine finger-contact model. It is a coarse rigid mounting transform and affects every free-space plan.
+
+Audit:
+
+- current URDF/collision gripper mount origin;
+- controller TCP origin;
+- force sensor axial thickness/model;
+- adapter thickness;
+- actual robot-flange→grasp-center distance.
+
+Output:
+
+~~~text
+FORCE_SENSOR_TOOL_STACK_VERIFIED = YES/NO
+GRIPPER_MOUNT_TRANSFORM_INCLUDES_SENSOR = YES/NO
+~~~
+
+Do not change controller TCP without direct evidence.
+
 ## 4. FORCE_MONITOR_V1
 
 Implement a read-only force monitor service.
@@ -358,6 +391,8 @@ Report:
 FIRST_PICK_SUCCESS_CHECKPOINT_PRESERVED = YES/NO
 FORCE_SENSOR_READOUT_READY = YES/NO
 FORCE_SENSOR_MODEL_VERIFIED = YES/NO
+FORCE_SENSOR_TOOL_STACK_VERIFIED = YES/NO
+GRIPPER_MOUNT_TRANSFORM_INCLUDES_SENSOR = YES/NO
 FORCE_FRAME_VERIFIED = YES/NO
 FORCE_MONITOR_V1_READY = YES/NO
 FORCE_GUARDED_CONTACT_READY = YES/NO
