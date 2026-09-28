@@ -1,154 +1,130 @@
-# CURRENT QUEUE — 2026-09-26
+# CURRENT QUEUE — 2026-09-28
 
-## Current milestone
+## Current customer-facing priority
 
-The first real right-arm pick succeeded in one attempt and reached +100 mm lift HOLD.
+Functional correctness is no longer the main problem.
 
-Field result:
-
-~~~text
-CURRENT→50 mm pregrasp SUCCESS
-contact approach SUCCESS
-gripper close stable ~44–45 / 1000
-15 cm local pointcloud grasp verification PASS
-BODY +Z 100 mm lift SUCCESS
-no fault/abort
-left arm + AMR stationary
-~~~
-
-Primary problem now is speed/orchestration, not grasp correctness.
-
-## Active engineering direction
-
-Read:
+The first real pick succeeded. The next customer-visible problem is:
 
 ~~~text
-docs/research/2026-09-26_JAKA_FORCE_SENSOR_AND_FLOW_ACCELERATION.md
-docs/work_orders/2026-09-26_P3_8D_FORCE_ASSISTED_FULL_FLOW_ACCELERATION.md
+cycle time
+continuity
+few visible pauses
+automatic task progression
 ~~~
 
-Goal:
+Do NOT start another broad manipulation redesign.
 
-~~~text
-preserve successful pick
-→ add JAKA force readout/monitoring
-→ force-guard CONTACT_BYPASS_V1
-→ force-first grasp verification
-→ reduce unnecessary pointcloud scans
-→ automate Scheme execution
-→ extend HOLD through transfer + AMR + placement
-→ optimize total cycle time
-~~~
+Do NOT immediately implement the force/speed/pipeline ideas one by one without first measuring the full critical path.
 
-## Force sensor hypothesis
+## Active now
 
-Current exact installed model is UNVERIFIED.
-
-Strong candidate from official JAKA product matching:
-
-~~~text
-JK-SE-VI-200
-~~~
-
-Reason:
-
-- JAKA Mini2 payload = 2 kg;
-- JAKA recommends VI-200 for robot payload class <=5 kg;
-- sensor appearance/round flange is consistent with JAKA VI-series.
-
-Do not commit model identity until read from JAKA App/controller config or physical label.
-
-## 145 mm vs 184 mm TCP hypothesis
-
-The previous manual 145 mm measurement may have started from the force-sensor tool-side flange rather than the robot wrist flange.
-
-Official VI-200/400/H mounting drawing includes an axial sensor dimension around 31.5 mm; sensor + adapter stack is plausibly of the same order as the observed ~39 mm discrepancy.
-
-Record as hypothesis until physically verified.
-
-## Force integration policy
-
-First force integration is monitor-only:
-
-~~~text
-FORCE_MONITOR_V1
-~~~
-
-Do NOT enable constant-force compliance yet.
-
-High-value uses:
-
-1 contact guard during CONTACT_BYPASS_V1;
-2 faster grasp verification via weight/load signal;
-3 slip/drop monitoring during lift/transfer;
-4 physical placement-contact monitoring;
-5 release verification.
-
-Important coordinate rule:
-
-~~~text
-tool +Z ≈ horizontal pick approach direction
-BODY/world Z = gravity direction
-~~~
-
-Therefore tool-axis force is good for insertion/contact detection; grasped-object weight must be computed from the full force vector transformed into BODY/world vertical, not by blindly using raw Fz.
-
-## Flow acceleration priorities
-
-~~~text
-1 native Scheme runner replaces conversational stage-by-stage launch
-2 persistent Pixel Pro / cuRobo / telemetry / force services
-3 full scene scans only at scene-lifecycle boundaries
-4 force+gripper readback primary grasp verification
-5 pointcloud grasp verification becomes fallback when force ambiguous
-6 stage-specific motion speeds
-7 asynchronous evidence/report generation
-~~~
-
-## Next implementation
+### P3.8E — Full-cycle throughput / continuity audit
 
 Execute:
 
 ~~~text
-docs/work_orders/2026-09-26_P3_8D_FORCE_ASSISTED_FULL_FLOW_ACCELERATION.md
+docs/work_orders/2026-09-28_P3_8E_FULL_CYCLE_THROUGHPUT_AUDIT.md
 ~~~
 
-First preserve/push the successful pick checkpoint if not yet canonical.
+This round is AUDIT ONLY.
 
-Then:
+Required focus:
 
 ~~~text
-force sensor readout audit
-→ exact model identification if possible
-→ force-frame calibration
-→ empty-gripper baseline
-→ FORCE_GUARDED_CONTACT_V1
-→ FORCE_GRASP_VERIFY_V1
-→ faster repeat pick
-→ attached transfer
-→ AMR move
-→ right_place_rightmost
-→ force-monitored place/release
-→ full task timing optimization
+real timing waterfall
+critical-path DAG
+parallelizable stages
+persistent services
+5700 || 5000 concurrency
+scene lifecycle / redundant scans
+persistent cuRobo + fast/fallback planner profile
+motion continuity / ServoJ segmentation / blending options
+stage-specific speed limits
+force-feedback acceleration opportunity
+AMR settle latency
+gripper latency
+synchronous evidence/logging overhead
+WebUI/ART critical-path interference
+event-driven pipelined Scheme runner
+quantified top-10 optimization backlog
 ~~~
 
-## Existing contact collision policy
+Hardware motion is forbidden in P3.8E.
 
-Keep:
+## Current integration state to verify
+
+When this queue entry was written, integration HEAD was observed as:
 
 ~~~text
-FREE_SPACE = full fresh-scene cuRobo collision avoidance
-CONTACT = CONTACT_BYPASS_V1
+e470fd46e8d77ba4e24394401d5dadcd4e50ab1b
+feat(terminal): prepare selected demo from ART
 ~~~
 
-Force monitoring augments CONTACT_BYPASS_V1; it does not replace free-space pointcloud avoidance.
+Codex must verify current remote/local HEAD before using it.
 
-Detailed gripper component collision remains post-demo hardening TODO and must not block the customer-flow acceleration.
+## Existing implementation direction is paused, not cancelled
 
-## Git
+These remain valid but are NOT to be implemented during P3.8E:
 
+~~~text
+FORCE_MONITOR_V1
+FORCE_GUARDED_CONTACT_V1
+FORCE_GRASP_VERIFY_V1
+native Scheme runner
+stage-specific speed profiles
+persistent pipeline improvements
+full HOLD→place completion
+~~~
+
+Use P3.8E to decide the order and expected cycle-time impact.
+
+## Required outputs
+
+Create:
+
+~~~text
+docs/reports/2026-09-28_P3_8E_FULL_CYCLE_THROUGHPUT_AUDIT_REPORT.md
+docs/roadmaps/2026-09-28_TRAY_TO_GROOVE_CYCLE_TIME_OPTIMIZATION_ROADMAP.md
+~~~
+
+The report must distinguish:
+
+~~~text
+MEASURED
+REPLAY_BENCHMARKED
+ESTIMATED
+UNKNOWN
+~~~
+
+for all timing claims.
+
+## Audit success condition
+
+P3.8E is complete only when it provides:
+
+~~~text
+one measured current pick waterfall
+one full-task critical-path model
+one pipelined DAG
+one low-risk Phase-1 acceleration plan
+one Phase-2 continuity/pipelining plan
+one optional Phase-3 streaming-scene plan
+top-10 optimizations ranked by seconds saved / visible continuity / risk
+quantitative cycle-time targets
+~~~
+
+## After P3.8E
+
+Do not automatically resume the old P3.8D order.
+
+Return to ChatGPT with the audit report.
+
+ChatGPT/user will select the implementation phase, expected to start with the highest ROI low-risk changes.
+
+## Git policy
+
+Audit may create report/roadmap/instrumentation-only local changes if needed.
 No force-push.
-Preserve the successful first-pick evidence.
-Keep unrelated coworker changes separate.
-Use small reviewed commits.
-Leave .32/GitHub aligned after major checkpoints.
+Do not execute hardware motion.
+Stop with a local commit and report it.
