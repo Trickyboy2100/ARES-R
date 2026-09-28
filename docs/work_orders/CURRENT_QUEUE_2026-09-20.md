@@ -1,130 +1,190 @@
 # CURRENT QUEUE — 2026-09-28
 
-## Current customer-facing priority
+## Strategic convergence
 
-Functional correctness is no longer the main problem.
-
-The first real pick succeeded. The next customer-visible problem is:
+The next two workstreams are now intentionally merged into one implementation program:
 
 ~~~text
-cycle time
-continuity
-few visible pauses
-automatic task progression
+A. cycle-time / realtime continuity
+B. Skill packaging + Task/Scheme runtime
 ~~~
 
-Do NOT start another broad manipulation redesign.
+Do not optimize the old script-by-script flow and then rewrite it again into Skills.
 
-Do NOT immediately implement the force/speed/pipeline ideas one by one without first measuring the full critical path.
+Build one native Skill/Task runtime that removes orchestration latency while making new tasks composable.
+
+## Read architecture
+
+~~~text
+docs/architecture/2026-09-28_REALTIME_SKILL_TASK_RUNTIME.md
+~~~
 
 ## Active now
 
-### P3.8E — Full-cycle throughput / continuity audit
+### P3.9 — Realtime Skill Runtime vertical slice
 
 Execute:
 
 ~~~text
-docs/work_orders/2026-09-28_P3_8E_FULL_CYCLE_THROUGHPUT_AUDIT.md
+docs/work_orders/2026-09-28_P3_9_REALTIME_SKILL_RUNTIME_VERTICAL_SLICE.md
 ~~~
 
-This round is AUDIT ONLY.
-
-Required focus:
+Current integration GitHub HEAD supplied by P3.8E completion:
 
 ~~~text
-real timing waterfall
-critical-path DAG
-parallelizable stages
-persistent services
-5700 || 5000 concurrency
-scene lifecycle / redundant scans
-persistent cuRobo + fast/fallback planner profile
-motion continuity / ServoJ segmentation / blending options
-stage-specific speed limits
-force-feedback acceleration opportunity
-AMR settle latency
-gripper latency
-synchronous evidence/logging overhead
-WebUI/ART critical-path interference
-event-driven pipelined Scheme runner
-quantified top-10 optimization backlog
+1b548882065dbec5a524c141cbf7141af7f1d9cc
 ~~~
 
-Hardware motion is forbidden in P3.8E.
+Codex must verify current HEAD before coding because integration may have advanced.
 
-## Current integration state to verify
+## P3.9 implementation priorities
 
-When this queue entry was written, integration HEAD was observed as:
+### Track 1 — realtime/throughput foundation
 
 ~~~text
-e470fd46e8d77ba4e24394401d5dadcd4e50ab1b
-feat(terminal): prepare selected demo from ART
+native event-driven runner
+persistent Pixel Pro + cuRobo services
+ObservationTransactionV2: 5700 || 5000
+FAST planner + FALLBACK
+plan-ahead / PREPARING next stage
+async evidence writer
+no conversational handoff inside task
+one pickup scene + one placement scene normal path
 ~~~
 
-Codex must verify current remote/local HEAD before using it.
-
-## Existing implementation direction is paused, not cancelled
-
-These remain valid but are NOT to be implemented during P3.8E:
+Phase-1 target from P3.8E:
 
 ~~~text
-FORCE_MONITOR_V1
-FORCE_GUARDED_CONTACT_V1
-FORCE_GRASP_VERIFY_V1
-native Scheme runner
-stage-specific speed profiles
-persistent pipeline improvements
-full HOLD→place completion
+modeled total cycle <= 420 s
+without changing physical motion speeds
 ~~~
 
-Use P3.8E to decide the order and expected cycle-time impact.
+### Track 2 — Skill / Task framework
 
-## Required outputs
-
-Create:
+Implement the minimum executable spine, not the whole catalog:
 
 ~~~text
-docs/reports/2026-09-28_P3_8E_FULL_CYCLE_THROUGHPUT_AUDIT_REPORT.md
-docs/roadmaps/2026-09-28_TRAY_TO_GROOVE_CYCLE_TIME_OPTIMIZATION_ROADMAP.md
+SkillRegistry
+SkillInvocation / SkillPlan / SkillResult
+CapabilityProvider
+resource locks
+cancellation
+event stream
+declarative Scheme loader
+native SchemeRunner
 ~~~
 
-The report must distinguish:
+First real Skills wrap existing canonical services:
 
 ~~~text
-MEASURED
-REPLAY_BENCHMARKED
-ESTIMATED
-UNKNOWN
+observe.capture_scene
+observe.detect_resource
+navigate.registered_relative
+manipulation.move_free
+manipulation.approach
+manipulation.grasp
+manipulation.lift
+manipulation.move_above_place
+manipulation.release
+manipulation.retreat
+execution.authorize
+execution.execute_trajectory
 ~~~
 
-for all timing claims.
-
-## Audit success condition
-
-P3.8E is complete only when it provides:
+Then composite:
 
 ~~~text
-one measured current pick waterfall
-one full-task critical-path model
-one pipelined DAG
-one low-risk Phase-1 acceleration plan
-one Phase-2 continuity/pipelining plan
-one optional Phase-3 streaming-scene plan
-top-10 optimizations ranked by seconds saved / visible continuity / risk
-quantitative cycle-time targets
+manipulation.pick
+manipulation.place
+manipulation.transfer_object
 ~~~
 
-## After P3.8E
+## Reference task
 
-Do not automatically resume the old P3.8D order.
+Tray→Groove is the first vertical-slice acceptance task:
 
-Return to ChatGPT with the audit report.
+~~~text
+PICK_BASE
+→ PICK_OBSERVATION
+→ MOVE_PREGRASP
+→ CONTACT_APPROACH
+→ GRASP
+→ VERIFY_GRASP
+→ INITIAL_LIFT / ATTACH
+→ VISIBILITY_CLEAR
+→ PLACE_BASE
+→ PLACE_OBSERVATION
+→ MOVE_PREPLACE
+→ PLACE_DESCEND
+→ RELEASE
+→ RETREAT
+→ VERIFY_RESULT
+~~~
 
-ChatGPT/user will select the implementation phase, expected to start with the highest ROI low-risk changes.
+Use the already successful contact/attachment semantics.
 
-## Git policy
+Do not redesign the grasp.
 
-Audit may create report/roadmap/instrumentation-only local changes if needed.
+## Important implementation rule
+
+Generalize contracts, not algorithms.
+
+Skills must delegate to the current authoritative subsystems:
+
+~~~text
+free-space → SceneAwareMotionService
+contact → current contact policy
+scene → LocalScene / ObservationTransaction
+planning → persistent cuRobo
+execution → existing SafetyKernel/native sender
+AMR → current base bridge/observer
+gripper → current adapter
+~~~
+
+No second planner, no second scene system, no raw hardware calls in Scheme code.
+
+## P3.9 stop point
+
+P3.9 is implementation + replay/fault-injection only.
+
+Do NOT:
+
+- change physical speed profiles;
+- start force-control implementation;
+- execute the full hardware cycle without new approval;
+- make continuous ServoJ/blending a dependency;
+- build every Skill in SKILL_CATALOG.
+
+Exit only when:
+
+~~~text
+NATIVE_PIPELINED_SCHEME_RUNNER_READY = YES
+DECLARATIVE_SCHEME_READY = YES
+TRAY_TO_GROOVE_REPLAY_PASS = YES
+FAULT_INJECTION_PASS = YES
+PHASE1_MODELED_TOTAL_CYCLE_S <= 420 or evidence-backed explanation
+FULL_DEMO_RUNTIME_PACKAGE_READY = YES
+READY_FOR_UNCHANGED_SPEED_FULL_SUPERVISED_CYCLE = YES
+~~~
+
+## After P3.9
+
+Next expected sequence:
+
+~~~text
+P3.9B: one full supervised Tray→Groove cycle at unchanged commissioned speeds
+→ measure real full-cycle waterfall
+
+P3.10: force monitor + stage-specific speed commissioning
+→ contact/lift/transfer acceleration
+→ pointcloud verification fallback-only
+
+P3.11 optional: continuous Servo stream / deeper pipelining / streaming scene
+~~~
+
+## Git
+
 No force-push.
-Do not execute hardware motion.
-Stop with a local commit and report it.
+Small commits.
+Keep unrelated dirty files isolated.
+Report exact local/remote SHA at exit.
