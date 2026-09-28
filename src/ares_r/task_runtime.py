@@ -158,7 +158,8 @@ class SchemeRunner:
             self.events.emit("FAULT",task_run_id=run_id,failure_code=str(exc));return {"run_id":run_id,"status":self.status["state"],"failure_code":str(exc),"outputs":outputs}
         finally:
             for future in futures.values():future.cancel()
-            pool.shutdown(wait=True,cancel_futures=True)
+            # Python 3.8 on the site controller has no ``cancel_futures`` argument.
+            pool.shutdown(wait=True)
             if self.evidence_writer:self.evidence_writer.flush()
 
 
