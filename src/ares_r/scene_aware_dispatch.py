@@ -11,6 +11,7 @@ from .motion.local_scene_service import ScenePolicy
 from .motion.scene_aware_motion import (MotionConstraints, MotionGoal, MotionRequest,
                                         OrientationMode, build_services)
 from .demos import DemoRegistry
+from .task_studio import TaskStudio
 
 
 def _motion_request(payload):
@@ -52,6 +53,7 @@ def _motion_request(payload):
 class SceneAwareDispatcher:
     def __init__(self, config):
         self.config = config
+        self._studio = TaskStudio(Path.cwd())
 
     def services(self):
         return build_services(self.config)
@@ -96,6 +98,23 @@ class SceneAwareDispatcher:
 
     def demo_stop(self): return DemoRegistry().stop()
 
+    def studio(self): return self._studio
+
+    def skill_list(self): return self.studio().skill_list()
+    def skill_show(self, skill_id): return self.studio().skill_show(skill_id)
+    def scheme_list(self): return self.studio().scheme_list()
+    def scheme_show(self, scheme_id): return self.studio().scheme_show(scheme_id)
+    def scheme_clone(self, source, new_id): return self.studio().scheme_clone(source, new_id)
+    def scheme_validate(self, scheme): return self.studio().scheme_validate(scheme)
+    def scheme_preview(self, scheme): return self.studio().scheme_preview(scheme)
+    def scheme_save(self, scheme): return self.studio().scheme_save_draft(scheme)
+    def task_list(self): return self.studio().task_list()
+    def task_show(self, task_id): return self.studio().task_show(task_id)
+    def task_prepare(self, task_id): return self.studio().prepare(task_id)
+    def task_replay(self, task_id): return self.studio().start_replay(task_id)
+    def task_status(self): return self.studio().status()
+    def task_stop(self): return self.studio().stop()
+
     def dispatch(self, text):
         args = shlex.split(text)
         if args == ["scene", "status"]: return self.scene_status()
@@ -132,4 +151,22 @@ class SceneAwareDispatcher:
         if args[:2] == ["demo", "prepare"] and len(args) in (2, 3):
             return self.demo_prepare(args[2] if len(args) == 3 else None)
         if args == ["demo", "stop"]: return self.demo_stop()
+        if args == ["skill", "list"]: return self.skill_list()
+        if args[:2] == ["skill", "show"] and len(args) == 3: return self.skill_show(args[2])
+        if args == ["scheme", "list"]: return self.scheme_list()
+        if args[:2] == ["scheme", "show"] and len(args) == 3: return self.scheme_show(args[2])
+        if args[:2] == ["scheme", "clone"] and len(args) == 4: return self.scheme_clone(args[2],args[3])
+        if args[:2] == ["scheme", "validate"] and len(args) == 3: return self.scheme_validate(args[2])
+        if args[:2] == ["scheme", "preview"] and len(args) == 3: return self.scheme_preview(args[2])
+        if args[:2] == ["scheme", "save-draft"] and len(args) == 3:
+            return self.scheme_save(self.scheme_show(args[2]))
+        if args == ["task", "list"]: return self.task_list()
+        if args[:2] == ["task", "show"] and len(args) == 3: return self.task_show(args[2])
+        if args[:2] == ["task", "prepare"] and len(args) == 3: return self.task_prepare(args[2])
+        if args[:2] == ["task", "preview"] and len(args) == 3:
+            return self.scheme_preview(self.task_show(args[2])["scheme_id"])
+        if args[:2] == ["task", "replay"] and len(args) == 3: return self.task_replay(args[2])
+        if args[:2] == ["task", "status"]: return self.task_status()
+        if args[:2] == ["task", "stop"]: return self.task_stop()
+        if args[:2] == ["task", "run"]: raise RuntimeError("physical task run locked in P3.9")
         raise ValueError("unsupported scene-aware command")

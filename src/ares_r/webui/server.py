@@ -120,6 +120,16 @@ class Handler(BaseHTTPRequestHandler):
         elif path=="/api/scene/data":self._json(scene_payload(self.dispatcher))
         elif path=="/api/demos":self._json(self.dispatcher.demo_list())
         elif path=="/api/demo/status":self._json(self.dispatcher.demo_status())
+        elif path=="/api/studio/skills":self._json(self.dispatcher.skill_list())
+        elif path=="/api/studio/schemes":self._json(self.dispatcher.scheme_list())
+        elif path=="/api/studio/tasks":self._json(self.dispatcher.task_list())
+        elif path=="/api/studio/task/status":self._json(self.dispatcher.task_status())
+        elif path.startswith("/api/studio/skill/"):
+            try:self._json(self.dispatcher.skill_show(path.rsplit("/",1)[-1]))
+            except Exception as exc:self._json({"error":str(exc)},404)
+        elif path.startswith("/api/studio/scheme/"):
+            try:self._json(self.dispatcher.scheme_show(path.rsplit("/",1)[-1]))
+            except Exception as exc:self._json({"error":str(exc)},404)
         elif path.startswith("/api/demo/"):
             try:self._json(self.dispatcher.demo_inspect(path.rsplit("/",1)[-1]))
             except Exception as exc:self._json({"error":str(exc)},404)
@@ -142,6 +152,14 @@ class Handler(BaseHTTPRequestHandler):
             elif path=="/api/demo/select":value=self.dispatcher.demo_select(body["demo_id"])
             elif path=="/api/demo/prepare":value=self.dispatcher.demo_prepare(body.get("demo_id"))
             elif path=="/api/demo/stop":value=self.dispatcher.demo_stop()
+            elif path=="/api/studio/scheme/clone":value=self.dispatcher.scheme_clone(body["source"],body["new_id"])
+            elif path=="/api/studio/scheme/validate":value=self.dispatcher.scheme_validate(body["scheme"])
+            elif path=="/api/studio/scheme/preview":value=self.dispatcher.scheme_preview(body["scheme"])
+            elif path=="/api/studio/scheme/save":value=self.dispatcher.scheme_save(body["scheme"])
+            elif path=="/api/studio/task/prepare":value=self.dispatcher.task_prepare(body["task_id"])
+            elif path=="/api/studio/task/replay":value=self.dispatcher.task_replay(body["task_id"])
+            elif path=="/api/studio/task/stop":value=self.dispatcher.task_stop()
+            elif path=="/api/studio/task/run":raise RuntimeError("physical task run locked in P3.9")
             elif path=="/api/demo/execute":
                 raise RuntimeError("supervised demo execution requires ART/TTY; select here, then use demo run in ART")
             elif path=="/api/art/command":value=self.dispatcher.dispatch(body["command"])

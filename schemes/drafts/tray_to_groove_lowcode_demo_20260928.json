@@ -1,0 +1,379 @@
+{
+  "derived_from": "tray_to_groove_v1",
+  "description": "Data-driven unchanged-speed Tray to Groove reference Scheme",
+  "draft_revision": "DRAFT_dcb5a8d5ebb7401fa8345c709491205e",
+  "lifecycle": "VALIDATED",
+  "nodes": [
+    {
+      "depends_on": [],
+      "id": "pickup_base",
+      "on_failure": "STOP",
+      "parameters": {
+        "speed_profile": "CURRENT_COMMISSIONED",
+        "station": "PICK_BASE_POSE_V1"
+      },
+      "prepare_after": [],
+      "resources": [
+        "BASE"
+      ],
+      "skill": "navigate.registered_relative",
+      "timeout_s": 120
+    },
+    {
+      "depends_on": [
+        "pickup_base"
+      ],
+      "id": "pick_scene",
+      "on_failure": "RETRY_OBSERVATION",
+      "parameters": {
+        "profile": "right_pick",
+        "station": "PICK_BASE_POSE_V1"
+      },
+      "prepare_after": [
+        "pickup_base"
+      ],
+      "resources": [
+        "CAMERA_5000",
+        "SCENE_EPOCH"
+      ],
+      "skill": "observe.capture_scene",
+      "timeout_s": 30
+    },
+    {
+      "depends_on": [
+        "pickup_base"
+      ],
+      "id": "pick_detect",
+      "on_failure": "RETRY_OBSERVATION",
+      "parameters": {
+        "profile": "right_pick",
+        "resource_id": "tray_material"
+      },
+      "prepare_after": [
+        "pickup_base"
+      ],
+      "resources": [
+        "CAMERA_5700",
+        "SCENE_EPOCH"
+      ],
+      "skill": "observe.detect_resource",
+      "timeout_s": 30
+    },
+    {
+      "depends_on": [
+        "pick_scene",
+        "pick_detect"
+      ],
+      "id": "move_pregrasp",
+      "on_failure": "STOP_REPLAN",
+      "parameters": {
+        "planner_policy": "FAST_FALLBACK",
+        "target": "$pick_detect.artifact_id"
+      },
+      "prepare_after": [
+        "pick_scene",
+        "pick_detect"
+      ],
+      "resources": [
+        "GPU_PLANNER",
+        "ARM_RIGHT"
+      ],
+      "skill": "manipulation.move_free",
+      "timeout_s": 180
+    },
+    {
+      "depends_on": [
+        "move_pregrasp"
+      ],
+      "id": "authorize_pregrasp",
+      "on_failure": "STOP",
+      "parameters": {
+        "policy": "UNCHANGED_SPEED_SUPERVISED"
+      },
+      "prepare_after": [
+        "move_pregrasp"
+      ],
+      "resources": [],
+      "skill": "execution.authorize",
+      "timeout_s": 30
+    },
+    {
+      "depends_on": [
+        "authorize_pregrasp"
+      ],
+      "id": "execute_pregrasp",
+      "on_failure": "STOP",
+      "parameters": {
+        "trajectory_binding": "$move_pregrasp.trajectory_hash"
+      },
+      "prepare_after": [
+        "move_pregrasp"
+      ],
+      "resources": [
+        "ARM_RIGHT"
+      ],
+      "skill": "execution.execute_trajectory",
+      "timeout_s": 180
+    },
+    {
+      "depends_on": [
+        "execute_pregrasp"
+      ],
+      "id": "contact_approach",
+      "on_failure": "STOP",
+      "parameters": {
+        "policy": "CONTACT_BYPASS_V1",
+        "standoff_m": 0.045
+      },
+      "prepare_after": [
+        "pick_detect"
+      ],
+      "resources": [
+        "GPU_PLANNER",
+        "ARM_RIGHT"
+      ],
+      "skill": "manipulation.approach",
+      "timeout_s": 120
+    },
+    {
+      "depends_on": [
+        "contact_approach"
+      ],
+      "id": "grasp",
+      "on_failure": "STOP_VERIFY",
+      "parameters": {
+        "opening_percent": 40,
+        "verification": "READBACK_PLUS_SCENE_FALLBACK"
+      },
+      "prepare_after": [
+        "execute_pregrasp"
+      ],
+      "resources": [
+        "GRIPPER_RIGHT",
+        "ARM_RIGHT"
+      ],
+      "skill": "manipulation.grasp",
+      "timeout_s": 60
+    },
+    {
+      "depends_on": [
+        "grasp"
+      ],
+      "id": "initial_lift",
+      "on_failure": "STOP_REPLAN",
+      "parameters": {
+        "distance_m": 0.1
+      },
+      "prepare_after": [
+        "execute_pregrasp"
+      ],
+      "resources": [
+        "GPU_PLANNER",
+        "ARM_RIGHT"
+      ],
+      "skill": "manipulation.lift",
+      "timeout_s": 180
+    },
+    {
+      "depends_on": [
+        "initial_lift"
+      ],
+      "id": "visibility_clear",
+      "on_failure": "STOP_REPLAN",
+      "parameters": {
+        "planner_policy": "FAST_FALLBACK",
+        "target": "VISIBILITY_CLEAR"
+      },
+      "prepare_after": [
+        "grasp"
+      ],
+      "resources": [
+        "GPU_PLANNER",
+        "ARM_RIGHT"
+      ],
+      "skill": "manipulation.move_free",
+      "timeout_s": 180
+    },
+    {
+      "depends_on": [
+        "visibility_clear"
+      ],
+      "id": "verify_attached_before_transfer",
+      "on_failure": "STOP_VERIFY",
+      "parameters": {
+        "method": "FROZEN_REPLAY",
+        "predicate": "OBJECT_ATTACHED_RIGHT"
+      },
+      "prepare_after": [
+        "initial_lift"
+      ],
+      "resources": [
+        "SCENE_EPOCH"
+      ],
+      "skill": "observe.verify_predicate",
+      "timeout_s": 20
+    },
+    {
+      "depends_on": [
+        "verify_attached_before_transfer"
+      ],
+      "id": "place_base",
+      "on_failure": "STOP",
+      "parameters": {
+        "speed_profile": "CURRENT_COMMISSIONED",
+        "station": "PLACE_BASE_POSE_V1"
+      },
+      "prepare_after": [
+        "initial_lift"
+      ],
+      "resources": [
+        "BASE"
+      ],
+      "skill": "navigate.registered_relative",
+      "timeout_s": 120
+    },
+    {
+      "depends_on": [
+        "place_base"
+      ],
+      "id": "place_scene",
+      "on_failure": "RETRY_OBSERVATION",
+      "parameters": {
+        "profile": "right_place_rightmost",
+        "station": "PLACE_BASE_POSE_V1"
+      },
+      "prepare_after": [
+        "place_base"
+      ],
+      "resources": [
+        "CAMERA_5000",
+        "SCENE_EPOCH"
+      ],
+      "skill": "observe.capture_scene",
+      "timeout_s": 30
+    },
+    {
+      "depends_on": [
+        "place_base"
+      ],
+      "id": "place_detect",
+      "on_failure": "RETRY_OBSERVATION",
+      "parameters": {
+        "profile": "right_place_rightmost",
+        "resource_id": "groove_rightmost"
+      },
+      "prepare_after": [
+        "place_base"
+      ],
+      "resources": [
+        "CAMERA_5700",
+        "SCENE_EPOCH"
+      ],
+      "skill": "observe.detect_resource",
+      "timeout_s": 30
+    },
+    {
+      "depends_on": [
+        "place_scene",
+        "place_detect"
+      ],
+      "id": "move_preplace",
+      "on_failure": "STOP_REPLAN",
+      "parameters": {
+        "height_m": 0.05,
+        "target": "$place_detect.artifact_id"
+      },
+      "prepare_after": [
+        "place_scene",
+        "place_detect"
+      ],
+      "resources": [
+        "GPU_PLANNER",
+        "ARM_RIGHT"
+      ],
+      "skill": "manipulation.move_above_place",
+      "timeout_s": 180
+    },
+    {
+      "depends_on": [
+        "move_preplace"
+      ],
+      "id": "place_descend",
+      "on_failure": "STOP_AT_PREPLACE",
+      "parameters": {
+        "policy": "CONTACT_BYPASS_V1_PLACE",
+        "standoff_m": 0.005
+      },
+      "prepare_after": [
+        "place_detect"
+      ],
+      "resources": [
+        "GPU_PLANNER",
+        "ARM_RIGHT"
+      ],
+      "skill": "manipulation.approach",
+      "timeout_s": 120
+    },
+    {
+      "depends_on": [
+        "place_descend"
+      ],
+      "id": "release",
+      "on_failure": "STOP_VERIFY",
+      "parameters": {
+        "opening_percent": 20
+      },
+      "prepare_after": [
+        "move_preplace"
+      ],
+      "resources": [
+        "GRIPPER_RIGHT",
+        "ARM_RIGHT"
+      ],
+      "skill": "manipulation.release",
+      "timeout_s": 60
+    },
+    {
+      "depends_on": [
+        "release"
+      ],
+      "id": "retreat",
+      "on_failure": "STOP",
+      "parameters": {
+        "distance_m": 0.06
+      },
+      "prepare_after": [
+        "place_descend"
+      ],
+      "resources": [
+        "GPU_PLANNER",
+        "ARM_RIGHT"
+      ],
+      "skill": "manipulation.retreat",
+      "timeout_s": 120
+    },
+    {
+      "depends_on": [
+        "retreat"
+      ],
+      "id": "verify_result",
+      "on_failure": "HOLD_FOR_REVIEW",
+      "parameters": {
+        "method": "5700_OR_SCENE",
+        "predicate": "OBJECT_LOCATED_IN_RIGHTMOST_GROOVE"
+      },
+      "prepare_after": [
+        "release"
+      ],
+      "resources": [
+        "SCENE_EPOCH"
+      ],
+      "skill": "observe.verify_predicate",
+      "timeout_s": 30
+    }
+  ],
+  "saved_at_unix": 1790587185.7175941,
+  "schema_version": 1,
+  "scheme_id": "tray_to_groove_lowcode_demo_20260928",
+  "version": "0.1.0-draft"
+}

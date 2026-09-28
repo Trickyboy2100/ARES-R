@@ -23,5 +23,12 @@ class WebUiTests(unittest.TestCase):
         self.assertEqual(value["EXECUTION"],"IDLE")
         self.assertEqual(value["base_pose_revision"],4)
 
+    def test_task_studio_has_real_builder_controls(self):
+        html=(Path(__file__).parents[1]/"src/ares_r/webui/index.html").read_text()
+        for label in ("Skill Palette","Scheme Builder","Parameter Inspector","Validate",
+                      "Preview DAG","Save Draft","Compile / Prepare","Replay","Run Monitor"):
+            self.assertIn(label,html)
+        self.assertIn("prepare_after",html);self.assertIn("depends_on",html)
+
 
 if __name__=="__main__":unittest.main()

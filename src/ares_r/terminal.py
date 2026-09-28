@@ -27,6 +27,10 @@ except ImportError:  # pragma: no cover - readline is present on the target Linu
 
 
 HELP = """Commands:
+  skill list | skill show SKILL_ID         P3.9 Skill Palette
+  scheme list|show|clone|validate|preview|save-draft
+  task list|show|prepare|preview|replay|status|stop
+                                              additive P3.9 runtime; task run locked
   scene status|scan|invalidate [REASON]      canonical LocalSceneService
   scheme list
   scheme inspect RIGHT_ARM_TRAY_TO_GROOVE_STAGE_DEMO_V2
@@ -188,7 +192,7 @@ Native curobo: demo <=20 deg, generic reposition <=150 deg; the versioned first-
 
 def _allowed_in_jaka_readonly(args) -> bool:
     return (
-        args[0] in ("status", "help", "quit", "exit", "note", "scheme", "task", "demo")
+        args[0] in ("status", "help", "quit", "exit", "note", "skill", "scheme", "task", "demo")
         or args[:2] in (["jaka", "status"], ["jaka", "baseline"], ["jaka", "preflight"],
                         ["jaka", "joints"], ["jaka", "plan"], ["jaka", "step"],
                         ["jaka", "home"], ["jaka", "dual"])
@@ -239,7 +243,7 @@ def _pose_speed(route,value=None):
 def _allowed_in_hardware(args) -> bool:
     """Expose commissioned device commands, not unfinished orchestration."""
     return (
-        args[0] in ("status", "help", "quit", "exit", "note", "scheme", "task", "demo")
+        args[0] in ("status", "help", "quit", "exit", "note", "skill", "scheme", "task", "demo")
         or args[0] == "amr"
         or args[:2] in (["epic", "status"], ["epic", "detect"], ["epic", "parse"],
                         ["epic", "pointcloud"], ["epic", "obstacles"])
@@ -370,6 +374,14 @@ def run_terminal(controller: TaskController) -> None:
                 raise RuntimeError("command blocked: combined task/base execution is not commissioned")
             if args[0] in ("quit", "exit"): break
             if args[0] == "help": print(help_text)
+            elif (args[0] == "skill" or
+                  args[0] == "scheme" and len(args)>1 and args[1] in
+                    ("list","show","clone","validate","preview","save-draft") or
+                  args[0] == "task" and len(args)>1 and args[1] in
+                    ("list","show","prepare","preview","replay","status","stop","run")):
+                from .scene_aware_dispatch import SceneAwareDispatcher
+                print(json.dumps(SceneAwareDispatcher(controller.config).dispatch(" ".join(args)),
+                                 indent=2, ensure_ascii=False))
             elif args == ["demo", "list"]:
                 from .demos import DemoRegistry
                 print(json.dumps(DemoRegistry().list(), indent=2, ensure_ascii=False))

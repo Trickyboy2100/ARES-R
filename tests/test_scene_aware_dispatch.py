@@ -1,5 +1,7 @@
 import unittest
 from unittest.mock import patch
+import tempfile
+from pathlib import Path
 
 from ares_r.scene_aware_dispatch import SceneAwareDispatcher
 
@@ -42,6 +44,15 @@ class DispatcherTests(unittest.TestCase):
         with patch("ares_r.scene_aware_dispatch.build_services",return_value=(scene,motion)):
             dispatcher.dispatch("motion plan right --xyz .7 -.5 1 --orientation LEVEL_YAW_TARGET --yaw 90")
             self.assertAlmostEqual(motion.request.goal.yaw_target_rad,3.141592653589793/2)
+
+    def test_low_code_commands_share_dispatcher_backend(self):
+        dispatcher=SceneAwareDispatcher({})
+        skills=dispatcher.dispatch("skill list")
+        self.assertIn("manipulation.move_free",{x["skill_id"] for x in skills})
+        self.assertTrue(dispatcher.dispatch("scheme validate tray_to_groove_v1")["valid"])
+        self.assertEqual(dispatcher.dispatch("task show task.tray_to_groove")["scheme_id"],"tray_to_groove_v1")
+        with self.assertRaisesRegex(RuntimeError,"locked"):
+            dispatcher.dispatch("task run task.tray_to_groove")
 
 
 if __name__=="__main__":unittest.main()
