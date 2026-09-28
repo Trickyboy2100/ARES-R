@@ -29,7 +29,7 @@ FIRST_DEMO_SPEED_RAD_S = SUPERVISED_MAX_JOINT_SPEED_RAD_S
 FIRST_DEMO_ACCEL_RAD_S2 = SUPERVISED_MAX_JOINT_ACCEL_RAD_S2
 # Built from the explicit supervised_path source with the site SDK.  The old
 # demo/pregrasp binary is intentionally not accepted for an A/B package.
-AUDITED_SITE_SENDER_SHA256 = "e5e3d82c4d4dd1ca8846cab7e59cfd3fb366035b7bd3135698a35dc51cd4ff9c"
+AUDITED_SITE_SENDER_SHA256 = "198f6e203ae58ea7a943a23b0ba72a559ddc28062850da3b99cb7a76ce7156b9"
 
 
 def verify_installed_sender(path):
@@ -62,7 +62,8 @@ def package_native_preview(points, source_dt_s, site_limits, *, tool_id,
                            max_duration_s=NATIVE_MAX_DURATION_S,
                            speed_ceiling_rad_s=FIRST_DEMO_SPEED_RAD_S,
                            accel_ceiling_rad_s2=FIRST_DEMO_ACCEL_RAD_S2,
-                           tracking_stop_threshold_deg=SUPERVISED_HARD_TRACKING_GATE_DEG):
+                           tracking_stop_threshold_deg=SUPERVISED_HARD_TRACKING_GATE_DEG,
+                           max_excursion_rad=NATIVE_MAX_EXCURSION_RAD):
     """Return native file text and audit, or raise without writing a file."""
     source = [[float(v) for v in row] for row in points]
     if (len(source) < 2 or any(len(row) != 6 or not all(math.isfinite(v) for v in row)
@@ -98,8 +99,11 @@ def package_native_preview(points, source_dt_s, site_limits, *, tool_id,
         raise ValueError("time scaling changed joint-path geometry")
     excursion = max(abs(value - source[0][joint])
                     for row in sampled for joint, value in enumerate(row))
-    if excursion > NATIVE_MAX_EXCURSION_RAD:
-        raise ValueError("native 150-degree per-joint excursion cap")
+    if not 0 < float(max_excursion_rad) <= math.radians(220):
+        raise ValueError("native excursion envelope exceeds supervised sender maximum")
+    if excursion > float(max_excursion_rad):
+        raise ValueError("native %.0f-degree per-joint excursion cap" %
+                         math.degrees(float(max_excursion_rad)))
     for row in sampled:
         if any(row[i] < lower[i] + soft or row[i] > upper[i] - soft for i in range(6)):
             raise ValueError("site soft joint limit")
@@ -137,6 +141,7 @@ def package_native_preview(points, source_dt_s, site_limits, *, tool_id,
         "native_sender_hard_tracking_gate_deg": tracking_stop_threshold_deg,
         "predicted_margin_to_sender_hard_gate_deg": tracking_stop_threshold_deg-predicted_tracking,
         "max_excursion_rad": excursion,
+        "max_excursion_contract_rad": float(max_excursion_rad),
         "max_joint_geometry_error_rad": geometry_error,
         "native_file_sha256": hashlib.sha256(content.encode()).hexdigest(),
         "source_point_count": len(source),

@@ -10,6 +10,7 @@ from .motion.ab_client import ABDemoClient
 from .motion.local_scene_service import ScenePolicy
 from .motion.scene_aware_motion import (MotionConstraints, MotionGoal, MotionRequest,
                                         OrientationMode, build_services)
+from .demos import DemoRegistry
 
 
 def _motion_request(payload):
@@ -83,6 +84,18 @@ class SceneAwareDispatcher:
     def ab_plan_next(self, destination):
         _, motion = self.services();return ABDemoClient(motion).plan(destination)
 
+    def demo_list(self): return DemoRegistry().list()
+
+    def demo_status(self): return DemoRegistry().status()
+
+    def demo_inspect(self, demo_id=None): return DemoRegistry().selected(demo_id)
+
+    def demo_select(self, demo_id): return DemoRegistry().select(demo_id)
+
+    def demo_prepare(self, demo_id=None): return DemoRegistry().prepare(demo_id)
+
+    def demo_stop(self): return DemoRegistry().stop()
+
     def dispatch(self, text):
         args = shlex.split(text)
         if args == ["scene", "status"]: return self.scene_status()
@@ -110,4 +123,13 @@ class SceneAwareDispatcher:
             return self.motion_plan(payload)
         if len(args) == 4 and args[:3] == ["demo", "ab", "plan-next"]:
             return self.ab_plan_next(args[3].upper())
+        if args == ["demo", "list"]: return self.demo_list()
+        if args == ["demo", "status"]: return self.demo_status()
+        if args[:2] == ["demo", "show"] and len(args) in (2, 3):
+            return self.demo_inspect(args[2] if len(args) == 3 else None)
+        if args[:2] == ["demo", "select"] and len(args) == 3:
+            return self.demo_select(args[2])
+        if args[:2] == ["demo", "prepare"] and len(args) in (2, 3):
+            return self.demo_prepare(args[2] if len(args) == 3 else None)
+        if args == ["demo", "stop"]: return self.demo_stop()
         raise ValueError("unsupported scene-aware command")

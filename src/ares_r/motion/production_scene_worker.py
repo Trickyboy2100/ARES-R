@@ -342,7 +342,8 @@ def main():
         "geometry_revision":request["geometry_revision"],"inactive_arm_revision":request["inactive_arm_revision"],
         "active_collision_revision":active_revision,"active_collision_sphere_count":sum(map(len,spheres.values())),
         "planner_gripper_component_revision":(
-            envelope.get("component_model",{}).get("revision") if envelope else None),
+            (envelope.get("component_model") or {}).get("revision")
+            if envelope else None),
         "execution_tool_envelope_revision":envelope["revision"] if envelope else None,
         "attached_object_collision_revision":attached["revision"] if attached else None,
         "active_collision_sphere_cell_m":sphere_cell_m,

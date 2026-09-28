@@ -118,6 +118,11 @@ class Handler(BaseHTTPRequestHandler):
         elif path=="/api/scene/status":self._json(self.dispatcher.scene_status())
         elif path=="/api/motion/status":self._json(self.dispatcher.motion_status())
         elif path=="/api/scene/data":self._json(scene_payload(self.dispatcher))
+        elif path=="/api/demos":self._json(self.dispatcher.demo_list())
+        elif path=="/api/demo/status":self._json(self.dispatcher.demo_status())
+        elif path.startswith("/api/demo/"):
+            try:self._json(self.dispatcher.demo_inspect(path.rsplit("/",1)[-1]))
+            except Exception as exc:self._json({"error":str(exc)},404)
         elif path=="/api/events":self._websocket(lambda:system_status(self.dispatcher))
         elif path=="/api/scene/stream":self._websocket(lambda:scene_payload(self.dispatcher))
         elif path.startswith("/api/motion/"):
@@ -134,6 +139,11 @@ class Handler(BaseHTTPRequestHandler):
             elif path=="/api/motion/plan":value=self.dispatcher.motion_plan(body)
             elif path=="/api/motion/stop":value=self.dispatcher.motion_stop()
             elif path=="/api/task/ab/run-next":value=self.dispatcher.ab_plan_next(body["destination"])
+            elif path=="/api/demo/select":value=self.dispatcher.demo_select(body["demo_id"])
+            elif path=="/api/demo/prepare":value=self.dispatcher.demo_prepare(body.get("demo_id"))
+            elif path=="/api/demo/stop":value=self.dispatcher.demo_stop()
+            elif path=="/api/demo/execute":
+                raise RuntimeError("supervised demo execution requires ART/TTY; select here, then use demo run in ART")
             elif path=="/api/art/command":value=self.dispatcher.dispatch(body["command"])
             elif path.endswith("/execute"):
                 raise RuntimeError("supervised execution requires ART/TTY confirmation")

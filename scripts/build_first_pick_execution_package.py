@@ -11,6 +11,7 @@ from ares_r.manipulation.attached_collision import attach_scene_object,build_att
 from ares_r.manipulation.contact_bypass import ContactBypassPolicy,validate_bypass_segment
 from ares_r.manipulation.first_pick_package import verify_first_pick_package
 from ares_r.motion.runtime_goal_ik import RuntimeGoalIK
+from ares_r.motion.grasp import approach_direction,rotation_matrix
 from ares_r.perception.robot_collision import arm_link_transforms
 from ares_r.world import PoseSE3,SceneObject,SceneObjectRole
 
@@ -39,17 +40,28 @@ def trajectory_hash(points):return sha([[round(float(v),12) for v in row] for ro
 
 def main():
     p=argparse.ArgumentParser();p.add_argument("--plan",type=Path,required=True)
-    p.add_argument("--epoch",type=Path,required=True);p.add_argument("--contact",type=Path,required=True)
+    p.add_argument("--epoch",type=Path,required=True);p.add_argument("--contact",type=Path)
     p.add_argument("--output",type=Path,required=True);a=p.parse_args();a.output.mkdir(parents=True,exist_ok=False)
     request=load(a.plan/"planner_request.json");planning=load(a.plan/"planning.json")
     observation=load(a.epoch/"manipulation_observation.json");report=load(a.epoch/"live_scene/scene/scene_report.json")
-    decomp=load(a.epoch/"live_scene/scene/support_decomposition.json");contact=load(a.contact/"contact_inflation_sweep.json")
+    decomp=load(a.epoch/"live_scene/scene/support_decomposition.json")
     solver=RuntimeGoalIK(request["robot_yaml_urdf"],request["T_body_model"],request["T_link6_tcp"])
-    q_contact=[list(map(float,row)) for row in contact["contact_points_rad"]]
+    if a.contact:
+        contact=load(a.contact/"contact_inflation_sweep.json")
+        q_contact=[list(map(float,row)) for row in contact["contact_points_rad"]]
+        direction=np.asarray(contact["approach_direction_body"],dtype=float)
+    else:
+        pose=observation["target"]["pose_m_rad"]
+        rotation=np.asarray(rotation_matrix(*pose[3:],observation["target"]["orientation_convention"]))
+        direction=np.asarray(approach_direction(rotation,observation["target"]["approach_axis"]),dtype=float)
+        grasp_xyz=np.asarray(pose[:3],dtype=float);pregrasp=grasp_xyz-.05*direction
+        seed=np.asarray(planning["trajectory_points_rad"][-1],dtype=float);q_contact=[]
+        for xyz in np.linspace(pregrasp,grasp_xyz,26):
+            solved=solver.solve(xyz,rotation,seed);seed=np.asarray(solved.joints_rad)
+            q_contact.append(list(solved.joints_rad))
     grasp_T=solver.fk(q_contact[-1]);world={k:body_box(k,v,np.asarray(request["T_body_model"]))
         for k,v in request["compiled_scene"]["cuboids"].items()}
     policy=ContactBypassPolicy.for_manipulation_skill("PICK_CONTACT_ESCAPE",observation["observation_id"])
-    direction=np.asarray(contact["approach_direction_body"],dtype=float)
     approach_samples=[{"tcp_position_body_m":solver.fk(q)[:3,3].tolist(),"joints_rad":q,
                        "arm_links":arm_geometry(q,request)} for q in q_contact]
     approach_validation=validate_bypass_segment(approach_samples,world,policy,

@@ -142,7 +142,8 @@ def validate_dense_world(points, request, *, subdivisions=4):
     minimum = by_object[minimum_name] if minimum_name else float("inf")
     return {"validator": "independent_cpu_urdf_sphere_cuboid_v1",
             "gripper_component_revision": (
-                envelope.get("component_model", {}).get("revision") if envelope else None),
+                (envelope.get("component_model") or {}).get("revision")
+                if envelope else None),
             "input_trajectory_samples":int(input_count),
             "validation_knots":int(len(knots)),
             "maximum_knot_joint_step_rad":float(np.max(np.abs(np.diff(knots,axis=0)))),

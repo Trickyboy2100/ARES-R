@@ -32,6 +32,11 @@ HELP = """Commands:
   scheme inspect RIGHT_ARM_TRAY_TO_GROOVE_STAGE_DEMO_V2
   task plan tray_to_groove | task preview | task status | task stop
                                               P3.8 planning-only; task run locked
+  demo list|status                         list/select shared Demo library
+  demo show [DEMO_ID] / demo select DEMO_ID
+  demo prepare [DEMO_ID]                   create fresh-run instructions
+  demo run [DEMO_ID]                       supervised TTY runner; asks exact phrase
+  demo stop                                stop selected/active Demo
   motion status|preview [PLAN_ID]|execute PLAN_ID|stop
                                               generic SceneAwareMotionService
   motion plan SIDE --xyz X Y Z [--orientation LEVEL_YAW_FREE|LEVEL_YAW_TARGET] [--yaw DEG]
@@ -177,13 +182,13 @@ JAKA_MOTION_HELP = """Hardware-enabled commands:
   help / quit
 
 UNIT is deg or rad. Manual jaka moves: <=0.05 rad/s and <=3 degrees per joint.
-Native curobo: 3x timing, <=3 degrees/s; demo <=20 deg, reposition <=150 deg, site acceleration cap retained.
+Native curobo: demo <=20 deg, generic reposition <=150 deg; the versioned first-pick supervised sender permits <=220 deg while retaining site limits and acceleration gates.
 """
 
 
 def _allowed_in_jaka_readonly(args) -> bool:
     return (
-        args[0] in ("status", "help", "quit", "exit", "note", "scheme", "task")
+        args[0] in ("status", "help", "quit", "exit", "note", "scheme", "task", "demo")
         or args[:2] in (["jaka", "status"], ["jaka", "baseline"], ["jaka", "preflight"],
                         ["jaka", "joints"], ["jaka", "plan"], ["jaka", "step"],
                         ["jaka", "home"], ["jaka", "dual"])
@@ -234,7 +239,7 @@ def _pose_speed(route,value=None):
 def _allowed_in_hardware(args) -> bool:
     """Expose commissioned device commands, not unfinished orchestration."""
     return (
-        args[0] in ("status", "help", "quit", "exit", "note", "scheme", "task")
+        args[0] in ("status", "help", "quit", "exit", "note", "scheme", "task", "demo")
         or args[0] == "amr"
         or args[:2] in (["epic", "status"], ["epic", "detect"], ["epic", "parse"],
                         ["epic", "pointcloud"], ["epic", "obstacles"])
@@ -365,6 +370,38 @@ def run_terminal(controller: TaskController) -> None:
                 raise RuntimeError("command blocked: combined task/base execution is not commissioned")
             if args[0] in ("quit", "exit"): break
             if args[0] == "help": print(help_text)
+            elif args == ["demo", "list"]:
+                from .demos import DemoRegistry
+                print(json.dumps(DemoRegistry().list(), indent=2, ensure_ascii=False))
+            elif args == ["demo", "status"]:
+                from .demos import DemoRegistry
+                print(json.dumps(DemoRegistry().status(), indent=2, ensure_ascii=False))
+            elif args[:2] == ["demo", "show"] and len(args) in (2, 3):
+                from .demos import DemoRegistry
+                print(json.dumps(DemoRegistry().selected(args[2] if len(args)==3 else None),
+                                 indent=2, ensure_ascii=False))
+            elif args[:2] == ["demo", "select"] and len(args) == 3:
+                from .demos import DemoRegistry
+                print(json.dumps(DemoRegistry().select(args[2]), indent=2, ensure_ascii=False))
+            elif args[:2] == ["demo", "prepare"] and len(args) in (2, 3):
+                from .demos import DemoRegistry
+                registry=DemoRegistry();value=registry.prepare(args[2] if len(args)==3 else None)
+                print(json.dumps(value, indent=2, ensure_ascii=False))
+                print("Run preparation with: %s" % value["prepare_command"])
+            elif args[:2] == ["demo", "run"] and len(args) in (2, 3):
+                if controller.mode != "hardware-enabled":
+                    raise RuntimeError("supervised demo execution requires hardware-enabled mode")
+                from .demos import DemoRegistry
+                definition=DemoRegistry().selected(args[2] if len(args)==3 else None)
+                phrase=definition["execution"]["authorization_phrase"]
+                if input("Type %s: " % phrase).strip()!=phrase:
+                    print("Cancelled; no motion.");continue
+                import subprocess
+                subprocess.run([sys.executable,definition["execution"]["entrypoint"],
+                    "--execute","--authorization",phrase,"--onsite-observer-confirmed"],check=True)
+            elif args == ["demo", "stop"]:
+                from .demos import DemoRegistry
+                print(json.dumps(DemoRegistry().stop(), indent=2, ensure_ascii=False))
             elif args == ["scheme", "list"]:
                 from .manipulation.scheme_backend import SchemeBackend
                 print(json.dumps(SchemeBackend().list(), indent=2, ensure_ascii=False))
