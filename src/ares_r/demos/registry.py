@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
+import signal
 from typing import Mapping
 
 
@@ -97,6 +99,17 @@ class DemoRegistry:
 
     def stop(self):
         value = self.status()
-        value.update({"state": "STOP_REQUESTED", "active_run_id": None})
+        active = self.state_path.with_name("demo_active_sender.json")
+        stop_result = "NO_ACTIVE_SENDER"
+        if active.exists():
+            record = json.loads(active.read_text(encoding="utf-8"))
+            pid = int(record.get("pid", 0)); token = str(record.get("expected_process_token", ""))
+            commandline = Path("/proc/%d/cmdline" % pid)
+            if pid > 1 and token and commandline.exists() and token.encode() in commandline.read_bytes():
+                os.kill(pid, signal.SIGTERM); stop_result = "SIGTERM_SENT_TO_AUDITED_SENDER"
+            else:
+                stop_result = "STALE_OR_UNVERIFIED_SENDER_RECORD_NOT_SIGNALED"
+        value.update({"state": "STOP_REQUESTED", "active_run_id": None,
+                      "stop_result": stop_result})
         _atomic_json(self.state_path, value)
         return value

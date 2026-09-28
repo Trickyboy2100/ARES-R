@@ -79,6 +79,10 @@ def _sender(path, log):
         child = subprocess.Popen([SENDER, "supervised_path", str(path), "CONFIRMED_RIGHT_CLEAR"],
                                  cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                                  text=True, bufsize=1)
+        active = ROOT / "logs/demo_active_sender.json"
+        active.write_text(json.dumps({"schema_version":1,"demo_id":DEMO_ID,
+            "pid":child.pid,"expected_process_token":Path(SENDER).name,
+            "trajectory":str(path)})+"\n")
         try:
             for line in child.stdout:
                 stream.write(line); stream.flush()
@@ -89,6 +93,8 @@ def _sender(path, log):
             child.send_signal(signal.SIGTERM)
             child.wait(timeout=10)
             raise
+        finally:
+            if active.exists(): active.unlink()
     if code: raise RuntimeError("native segment failed; see %s" % log)
 
 

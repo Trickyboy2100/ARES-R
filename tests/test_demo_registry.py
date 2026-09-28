@@ -30,6 +30,7 @@ class DemoRegistryTests(unittest.TestCase):
         self.assertEqual(prepared["state"], "READY_TO_PREPARE_FRESH_RUN")
         self.assertEqual(prepared["authorization_phrase"], "RUN SAMPLE")
         self.assertEqual(self.registry.list()[0]["selected"], True)
+        self.assertEqual(self.registry.stop()["stop_result"], "NO_ACTIVE_SENDER")
 
     def test_unknown_demo_fails_closed(self):
         with self.assertRaises(ValueError): self.registry.select("missing")
