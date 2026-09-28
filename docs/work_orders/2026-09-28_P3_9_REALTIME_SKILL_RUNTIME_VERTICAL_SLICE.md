@@ -1,3 +1,7 @@
+> P3.9 compatibility/rollback gate:
+> Read `docs/decisions/2026-09-28_P39_ROLLBACK_AND_LOW_CODE_POLICY.md` first.
+> The commissioned `right_arm_epic_pick_lift_v1` path is a golden fallback and must not be migrated or changed by this work.
+> The new runtime is additive and separately selectable.
 # P3.9 — Realtime Skill Runtime vertical slice + full Tray→Groove preparation
 
 Date: 2026-09-28
@@ -467,3 +471,55 @@ Small commits by subsystem.
 No force-push.
 Keep unrelated current dirty files isolated.
 Leave a clear local/remote SHA report.
+## 20. Mandatory backward-compatibility gate
+
+P3.9 is not accepted unless:
+
+~~~text
+LEGACY_DEMO_UNCHANGED = YES
+ROLLBACK_PATH_READY = YES
+LEGACY_FIRST_PICK_FROZEN_REPLAY_PASS = YES
+TASK_RUNTIME_DISABLE_FALLBACK_PASS = YES
+~~~
+
+Do not modify the commissioned demo definition/entrypoint as part of migration.
+
+Keep new runtime state/config additive and isolated from legacy demo state.
+
+## 21. Mandatory ART/WebUI low-code deliverable
+
+P3.9 must expose the new Skill/Task runtime through both ART and WebUI.
+
+ART minimum:
+
+~~~text
+skill list/show
+scheme list/show/clone/validate/save-draft
+task list/show/prepare/preview/status/stop
+~~~
+
+WebUI must add a Task Studio with:
+
+- Skill Palette generated from SkillRegistry;
+- Scheme Builder for add/remove/reorder nodes;
+- edit execute dependencies and prepare-ahead dependencies;
+- output/input bindings;
+- parameter forms generated from schemas;
+- recovery/timeout/resource-lock inspection;
+- Validate / Preview DAG / Save Draft / Compile-Prepare / Replay;
+- run monitor with current Skill, next PREPARING/PREPARED stage and cycle timer.
+
+A form/list graph editor is sufficient; drag-and-drop is optional.
+
+Drafts are versioned declarative data and never mutate commissioned Schemes in place.
+
+Low-code acceptance:
+
+~~~text
+ART_LOW_CODE_READY = YES
+WEBUI_TASK_STUDIO_READY = YES
+SCHEME_DRAFT_VERSIONING_READY = YES
+ORIGINAL_SCHEME_UNCHANGED = YES
+~~~
+
+Physical `task run` remains locked in P3.9; P3.9 demonstrates creation/edit/validation/prepare/replay and runtime monitoring without changing the commissioned demo.
