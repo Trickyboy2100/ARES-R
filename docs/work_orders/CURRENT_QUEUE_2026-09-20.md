@@ -188,3 +188,23 @@ No force-push.
 Small commits.
 Keep unrelated dirty files isolated.
 Report exact local/remote SHA at exit.
+## P3.9 compatibility and low-code gate
+
+Read `docs/decisions/2026-09-28_P39_ROLLBACK_AND_LOW_CODE_POLICY.md` before coding.
+
+The commissioned first-pick demo at baseline `1b548882065dbec5a524c141cbf7141af7f1d9cc` must remain available and unchanged.
+
+The new Skill/Task runtime is additive and separately selectable.
+
+P3.9 acceptance also requires:
+
+- `LEGACY_DEMO_UNCHANGED = YES`
+- `ROLLBACK_PATH_READY = YES`
+- `ART_LOW_CODE_READY = YES`
+- `WEBUI_TASK_STUDIO_READY = YES`
+- `SCHEME_DRAFT_VERSIONING_READY = YES`
+- `ORIGINAL_SCHEME_UNCHANGED = YES`
+
+WebUI must provide a Task Studio for Skill selection, Scheme editing, typed parameter binding, dependency and prepare-ahead editing, validation, versioned draft saving, replay/prepare and runtime monitoring.
+
+ART must expose the equivalent structured operations.
