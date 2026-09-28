@@ -37,9 +37,10 @@ class CanonicalCapabilityProvider(CapabilityProvider):
                                             "fast_failure":str(first)}
         return self._call(definition.capability,"prepare",payload)
     def execute(self, definition, plan, invocation, context):
-        return self._call(definition.capability,"execute",{
+        result=self._call(definition.capability,"execute",{
             "parameters":dict(invocation.parameters),"plan":plan.provider_plan,
             "binding":dict(context.binding)})
+        return result if isinstance(result,SkillResult) else SkillResult(SkillStatus.SUCCEEDED,outputs=result or {})
 
 
 class ReplayCapabilityProvider(CapabilityProvider):

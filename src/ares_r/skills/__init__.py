@@ -4,6 +4,8 @@ from .contracts import (SkillDefinition, SkillInvocation, SkillPlan, SkillResult
                         SkillStatus)
 from .registry import SkillRegistry, default_registry
 from .runtime import SkillRuntime
+from .real_provider import RealCapabilityProvider, RealServiceBundle
 
 __all__ = ["SkillDefinition", "SkillInvocation", "SkillPlan", "SkillResult",
-           "SkillStatus", "SkillRegistry", "SkillRuntime", "default_registry"]
+           "SkillStatus", "SkillRegistry", "SkillRuntime", "default_registry",
+           "RealCapabilityProvider", "RealServiceBundle"]

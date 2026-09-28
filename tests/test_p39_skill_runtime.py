@@ -10,6 +10,7 @@ from ares_r.skills.contracts import SkillInvocation, SkillResult, SkillStatus
 from ares_r.skills.events import EventStream
 from ares_r.skills.evidence import AsyncEvidenceWriter
 from ares_r.skills.providers import CanonicalCapabilityProvider, ReplayCapabilityProvider
+from ares_r.skills.real_provider import RealCapabilityProvider, RealServiceBundle
 from ares_r.skills.runtime import CancellationToken, SkillContext
 from ares_r.task_runtime import SchemeRunner, SchemeStore, SchemeValidator
 from ares_r.task_studio import TaskStudio
@@ -95,6 +96,22 @@ class P39RuntimeTests(unittest.TestCase):
         draft=store.clone("source","copy");draft["description"]="edited";store.save_draft(draft)
         self.assertEqual(store.load("source"),original)
         with self.assertRaisesRegex(ValueError,"cannot be mutated"):store.save_draft({**original,"lifecycle":"DRAFT"})
+
+    def test_real_provider_delegates_and_coalesces_observation(self):
+        class Service:
+            def __init__(self):self.calls=[]
+            def capture(self,profile):self.calls.append(profile);return {"profile":profile,"request_id":"D"}
+            def __getattr__(self,name):return lambda payload:self.calls.append(name) or {"method":name}
+        obs=Service();service=Service();bundle=RealServiceBundle(obs,service,service,service,service,service,service,service)
+        provider=RealCapabilityProvider(bundle)
+        scene=self.registry.get("observe.capture_scene");detect=self.registry.get("observe.detect_resource")
+        ctx=SkillContext("run","obs",self.events,CancellationToken(),{})
+        for definition in (scene,detect):
+            inv=SkillInvocation(definition.skill_id,{"profile":"right_pick"},"task","trace")
+            prepared=provider.prepare(definition,inv,ctx)
+            class Plan:provider_plan=prepared
+            provider.execute(definition,Plan(),inv,ctx)
+        self.assertEqual(obs.calls,["right_pick"])
 
 
 if __name__=="__main__":unittest.main()
