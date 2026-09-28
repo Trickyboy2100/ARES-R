@@ -34,7 +34,7 @@ HELP = """Commands:
                                               P3.8 planning-only; task run locked
   demo list|status                         list/select shared Demo library
   demo show [DEMO_ID] / demo select DEMO_ID
-  demo prepare [DEMO_ID]                   create fresh-run instructions
+  demo prepare [DEMO_ID]                   fresh scan/plan/package; no motion
   demo run [DEMO_ID]                       supervised TTY runner; asks exact phrase
   demo stop                                stop selected/active Demo
   motion status|preview [PLAN_ID]|execute PLAN_ID|stop
@@ -387,7 +387,10 @@ def run_terminal(controller: TaskController) -> None:
                 from .demos import DemoRegistry
                 registry=DemoRegistry();value=registry.prepare(args[2] if len(args)==3 else None)
                 print(json.dumps(value, indent=2, ensure_ascii=False))
-                print("Run preparation with: %s" % value["prepare_command"])
+                definition=registry.selected()
+                import subprocess
+                subprocess.run([sys.executable,definition["execution"]["entrypoint"],
+                                "--prepare"],check=True)
             elif args[:2] == ["demo", "run"] and len(args) in (2, 3):
                 if controller.mode != "hardware-enabled":
                     raise RuntimeError("supervised demo execution requires hardware-enabled mode")
