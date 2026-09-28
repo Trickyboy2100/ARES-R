@@ -24,7 +24,11 @@ def main():
         "parameters":{"predicate":"OBJECT_ATTACHED_RIGHT","method":"FROZEN_REPLAY"},
         "depends_on":["visibility_clear"],"prepare_after":["initial_lift"],"timeout_s":20,
         "on_failure":"STOP_VERIFY","resources":["SCENE_EPOCH"]}
-    draft["nodes"].insert(draft["nodes"].index(next(n for n in draft["nodes"] if n["id"]=="place_base")),verify)
+    existing=next((n for n in draft["nodes"] if n["id"]==verify["id"]),None)
+    if existing is None:
+        draft["nodes"].insert(draft["nodes"].index(next(n for n in draft["nodes"] if n["id"]=="place_base")),verify)
+    else:
+        existing.update(verify)
     next(n for n in draft["nodes"] if n["id"]=="place_base")["depends_on"]=[verify["id"]]
     saved=studio.scheme_save_draft(draft);validation=studio.scheme_validate(draft_id)
     task_path=ROOT/"tasks/task.tray_to_groove_lowcode_demo.json"
