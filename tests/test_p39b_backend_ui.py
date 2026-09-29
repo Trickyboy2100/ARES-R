@@ -1,8 +1,11 @@
 import json
 import tempfile
+import threading
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
+from ares_r.canonical_backend import CanonicalBackend
 from ares_r.runtime_identity import runtime_identity
 from ares_r.webui.projection import assert_body_handedness, rear_screen_x
 
@@ -32,6 +35,31 @@ class BackendUiPolicyTest(unittest.TestCase):
         self.assertNotIn("--enable-hardware",backend)
         self.assertIn("After=network-online.target ares-r-backend.service",web)
         self.assertIn("ARES_R_BACKEND_URL=http://127.0.0.1:8766",web)
+
+    def test_supervised_endpoint_requires_exact_authorization(self):
+        backend=CanonicalBackend.__new__(CanonicalBackend)
+        backend.root=str(Path(__file__).resolve().parents[1])
+        backend._physical_guard=threading.Lock();backend._physical_process=None
+        backend._physical_state={"state":"IDLE"}
+        with self.assertRaises(PermissionError):
+            backend.run_p39b({"task_id":"task.right_arm_autoalign_pick_center_preplace",
+                               "authorization":"wrong","onsite_observer_confirmed":True})
+
+    def test_supervised_endpoint_starts_only_commissioned_runner(self):
+        backend=CanonicalBackend.__new__(CanonicalBackend)
+        backend.root=str(Path(__file__).resolve().parents[1])
+        backend._physical_guard=threading.Lock();backend._physical_process=None
+        backend._physical_state={"state":"IDLE"}
+        process=type("Process",(),{"pid":123,"poll":lambda self:None})()
+        with tempfile.TemporaryDirectory() as tmp, \
+             patch("ares_r.canonical_backend.time.strftime",return_value="STAMP"), \
+             patch("ares_r.canonical_backend.subprocess.Popen",return_value=process) as popen:
+            backend.root=tmp;Path(tmp,"scripts").mkdir()
+            value=backend.run_p39b({"task_id":"task.right_arm_autoalign_pick_center_preplace",
+                "authorization":"P39B AUTOALIGN TO HOLD ABOVE PLACE",
+                "onsite_observer_confirmed":True})
+        self.assertEqual(value["state"],"RUNNING")
+        self.assertIn("run_p39b_supervised.py",str(popen.call_args.args[0]))
 
 
 if __name__=="__main__":unittest.main()

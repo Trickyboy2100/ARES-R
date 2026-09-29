@@ -6,6 +6,10 @@ import argparse
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 import os
+from pathlib import Path
+import subprocess
+import sys
+import threading
 import time
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
@@ -19,10 +23,44 @@ class CanonicalBackend:
     def __init__(self,config,root="."):
         self.started=time.monotonic();self.root=root
         self.dispatcher=SceneAwareDispatcher(config)
+        self._physical_guard=threading.Lock();self._physical_process=None
+        self._physical_state={"state":"IDLE"}
     def system_info(self):
         task=self.dispatcher.task_status()
-        return runtime_identity(self.root,started_monotonic=self.started,
-                                active_scheme=task.get("scheme_id"))
+        value=runtime_identity(self.root,started_monotonic=self.started,
+                               active_scheme=task.get("scheme_id"))
+        value["supervised_task"]=self.physical_status();return value
+    def physical_status(self):
+        with self._physical_guard:
+            if self._physical_process is not None:
+                code=self._physical_process.poll()
+                if code is not None:
+                    self._physical_state.update(state="SUCCEEDED" if code==0 else "FAULT",
+                                                returncode=code,completed_at_unix=time.time())
+                    self._physical_process=None
+            return dict(self._physical_state)
+    def run_p39b(self,body):
+        expected="P39B AUTOALIGN TO HOLD ABOVE PLACE"
+        if body.get("task_id")!="task.right_arm_autoalign_pick_center_preplace":
+            raise ValueError("P3.9B endpoint accepts only the commissioned task")
+        if body.get("authorization")!=expected or body.get("onsite_observer_confirmed") is not True:
+            raise PermissionError("exact authorization and on-site observer confirmation required")
+        with self._physical_guard:
+            if self._physical_process is not None and self._physical_process.poll() is None:
+                raise RuntimeError("a supervised task is already running")
+            stamp=time.strftime("%Y%m%dT%H%M%S")
+            root=Path(self.root).resolve()
+            run_dir=root/"worklog/evidence/2026-09-29-p3-9b/runs"/("live_"+stamp)
+            log_path=root/"logs"/("p39b_"+stamp+".log");log_path.parent.mkdir(parents=True,exist_ok=True)
+            stream=log_path.open("x")
+            command=[sys.executable,str(root/"scripts/run_p39b_supervised.py"),"--execute",
+                     "--authorization",expected,"--onsite-observer-confirmed","--output",str(run_dir)]
+            self._physical_process=subprocess.Popen(command,cwd=root,stdout=stream,
+                stderr=subprocess.STDOUT,text=True,env=dict(os.environ,PYTHONPATH=str(root/"src")))
+            self._physical_state={"state":"RUNNING","pid":self._physical_process.pid,
+                "task_id":body["task_id"],"run_dir":str(run_dir),"log":str(log_path),
+                "started_at_unix":time.time()}
+            return dict(self._physical_state)
     def call(self,method,args=(),kwargs=None):
         allowed={
             "system_info","scene_status","scene_scan","scene_invalidate",
@@ -53,7 +91,7 @@ class _Handler(BaseHTTPRequestHandler):
             body=self._body()
             if self.path=="/v1/call":value=self.backend.call(body["method"],body.get("args",[]),body.get("kwargs"))
             elif self.path=="/v1/task/prepare":value=self.backend.call("task_prepare",[body["task_id"]])
-            elif self.path=="/v1/task/run":raise RuntimeError("physical task execution awaits P3.9B supervised authorization gate")
+            elif self.path=="/v1/task/run":value=self.backend.run_p39b(body)
             else:return self._json({"error":"not found"},404)
             self._json(value)
         except Exception as exc:self._json({"error":"%s: %s"%(type(exc).__name__,exc)},409)
