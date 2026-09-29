@@ -20,6 +20,7 @@ import numpy as np
 from ares_r.cli import load_config
 from ares_r.scene_aware_dispatch import SceneAwareDispatcher
 from ares_r.canonical_backend import CanonicalBackendClient
+from ares_r.runtime_identity import runtime_identity
 
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -67,7 +68,8 @@ def scene_payload(dispatcher):
 
 def system_status(dispatcher):
     scene=dispatcher.scene_status();motion=dispatcher.motion_status()
-    identity=dispatcher.system_info()
+    identity=(dispatcher.system_info() if hasattr(dispatcher,"system_info") else
+              runtime_identity(ROOT))
     return {"BASE": "MOVING" if scene.get("reason")=="BASE_MOVING" else "SETTLED",
             "SCENE": scene.get("state", "INVALID"),
             "PLANNER": motion.get("state", "IDLE"),
