@@ -8,6 +8,7 @@ import hashlib
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
+import os
 from pathlib import Path
 import struct
 import sys
@@ -18,6 +19,7 @@ import numpy as np
 
 from ares_r.cli import load_config
 from ares_r.scene_aware_dispatch import SceneAwareDispatcher
+from ares_r.canonical_backend import CanonicalBackendClient
 
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -65,6 +67,7 @@ def scene_payload(dispatcher):
 
 def system_status(dispatcher):
     scene=dispatcher.scene_status();motion=dispatcher.motion_status()
+    identity=dispatcher.system_info()
     return {"BASE": "MOVING" if scene.get("reason")=="BASE_MOVING" else "SETTLED",
             "SCENE": scene.get("state", "INVALID"),
             "PLANNER": motion.get("state", "IDLE"),
@@ -74,7 +77,8 @@ def system_status(dispatcher):
             "scene_snapshot_id": scene.get("scene_snapshot_id"),
             "pointcloud_age_s": scene.get("age_s"),
             "scan_timing_s": scene.get("timings_s"),
-            "planner_timing_s": motion.get("planner_timing_s")}
+            "planner_timing_s": motion.get("planner_timing_s"),"system_info":identity,
+            "central_exclusion_enabled":identity["central_exclusion"]["enabled"]}
 
 
 def _ws_frame(payload):
@@ -176,7 +180,9 @@ class Handler(BaseHTTPRequestHandler):
 def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument("--host",default="127.0.0.1");parser.add_argument("--port",type=int,default=8765)
     parser.add_argument("--config",default="config/system.json");args=parser.parse_args()
-    Handler.dispatcher=SceneAwareDispatcher(load_config(args.config))
+    backend_url=os.environ.get("ARES_R_BACKEND_URL")
+    Handler.dispatcher=(CanonicalBackendClient(backend_url) if backend_url else
+                        SceneAwareDispatcher(load_config(args.config)))
     server=ThreadingHTTPServer((args.host,args.port),Handler)
     print("ARES-R scene-aware UI: http://%s:%d"%(args.host,args.port),flush=True)
     try:server.serve_forever()

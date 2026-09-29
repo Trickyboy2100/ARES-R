@@ -18,6 +18,7 @@ from .joint_commands import (current_joint_report, joint_target_report,
 from .worklog import WorkLog
 from .world_geometry import load_world_geometry, render_world, world_snapshot
 from .named_poses import load_named_poses, pose_report
+from .scene_aware_dispatch import shared_dispatcher
 from . import __version__
 
 try:
@@ -27,6 +28,7 @@ except ImportError:  # pragma: no cover - readline is present on the target Linu
 
 
 HELP = """Commands:
+  version | system info                    shared backend/runtime identity
   skill list | skill show SKILL_ID         P3.9 Skill Palette
   scheme list|show|clone|validate|preview|save-draft
   task list|show|prepare|preview|replay|status|stop
@@ -374,13 +376,14 @@ def run_terminal(controller: TaskController) -> None:
                 raise RuntimeError("command blocked: combined task/base execution is not commissioned")
             if args[0] in ("quit", "exit"): break
             if args[0] == "help": print(help_text)
-            elif (args[0] == "skill" or
+            elif (args in (["version"],["system","info"]) or
+                  args[0] == "skill" or
                   args[0] == "scheme" and len(args)>1 and args[1] in
                     ("list","show","clone","validate","preview","save-draft") or
                   args[0] == "task" and len(args)>1 and args[1] in
                     ("list","show","prepare","preview","replay","status","stop","run")):
-                from .scene_aware_dispatch import SceneAwareDispatcher
-                print(json.dumps(SceneAwareDispatcher(controller.config).dispatch(" ".join(args)),
+                from .scene_aware_dispatch import shared_dispatcher
+                print(json.dumps(shared_dispatcher(controller.config).dispatch(" ".join(args)),
                                  indent=2, ensure_ascii=False))
             elif args == ["demo", "list"]:
                 from .demos import DemoRegistry
@@ -439,32 +442,32 @@ def run_terminal(controller: TaskController) -> None:
                     raise ValueError("usage: task plan tray_to_groove")
                 raise RuntimeError("run scripts/plan_tray_to_groove_scheme.py with immutable observation paths")
             elif args[:2] == ["scene", "status"] and len(args) == 2:
-                from .scene_aware_dispatch import SceneAwareDispatcher
-                print(json.dumps(SceneAwareDispatcher(controller.config).scene_status(),
+                from .scene_aware_dispatch import shared_dispatcher
+                print(json.dumps(shared_dispatcher(controller.config).scene_status(),
                                  indent=2, ensure_ascii=False))
             elif args[:2] == ["scene", "scan"] and len(args) in (2, 3):
                 if controller.mode != "hardware-enabled":
                     raise RuntimeError("scene scan requires hardware-enabled mode")
-                from .scene_aware_dispatch import SceneAwareDispatcher
+                from .scene_aware_dispatch import shared_dispatcher
                 side = args[2] if len(args) == 3 else "right"
-                print(json.dumps(SceneAwareDispatcher(controller.config).scene_scan(True, side),
+                print(json.dumps(shared_dispatcher(controller.config).scene_scan(True, side),
                                  indent=2, ensure_ascii=False))
             elif args[:2] == ["scene", "invalidate"]:
-                from .scene_aware_dispatch import SceneAwareDispatcher
+                from .scene_aware_dispatch import shared_dispatcher
                 reason = " ".join(args[2:]) or "ART_INVALIDATION"
-                print(json.dumps(SceneAwareDispatcher(controller.config).scene_invalidate(reason),
+                print(json.dumps(shared_dispatcher(controller.config).scene_invalidate(reason),
                                  indent=2, ensure_ascii=False))
             elif args[:2] == ["motion", "status"] and len(args) == 2:
-                from .scene_aware_dispatch import SceneAwareDispatcher
-                print(json.dumps(SceneAwareDispatcher(controller.config).motion_status(),
+                from .scene_aware_dispatch import shared_dispatcher
+                print(json.dumps(shared_dispatcher(controller.config).motion_status(),
                                  indent=2, ensure_ascii=False))
             elif args[:2] == ["motion", "preview"] and len(args) in (2, 3):
-                from .scene_aware_dispatch import SceneAwareDispatcher
-                print(json.dumps(SceneAwareDispatcher(controller.config).motion_preview(
+                from .scene_aware_dispatch import shared_dispatcher
+                print(json.dumps(shared_dispatcher(controller.config).motion_preview(
                     args[2] if len(args) == 3 else None), indent=2, ensure_ascii=False))
             elif args[:2] == ["motion", "stop"] and len(args) == 2:
-                from .scene_aware_dispatch import SceneAwareDispatcher
-                print(json.dumps(SceneAwareDispatcher(controller.config).motion_stop(),
+                from .scene_aware_dispatch import shared_dispatcher
+                print(json.dumps(shared_dispatcher(controller.config).motion_stop(),
                                  indent=2, ensure_ascii=False))
             elif args[:2] == ["motion", "execute"] and len(args) == 3:
                 if controller.mode != "hardware-enabled":
@@ -481,9 +484,9 @@ def run_terminal(controller: TaskController) -> None:
             elif args[:2] == ["motion", "plan"]:
                 if controller.mode != "hardware-enabled":
                     raise RuntimeError("scene-aware planning requires hardware-enabled mode")
-                from .scene_aware_dispatch import SceneAwareDispatcher
+                from .scene_aware_dispatch import shared_dispatcher
                 if "--xyz" in args:
-                    print(json.dumps(SceneAwareDispatcher(controller.config).dispatch(line),
+                    print(json.dumps(shared_dispatcher(controller.config).dispatch(line),
                                      indent=2, ensure_ascii=False))
                     continue
                 if len(args) not in (9, 10):
@@ -492,7 +495,7 @@ def run_terminal(controller: TaskController) -> None:
                            "orientation": args[9] if len(args) == 10 else "FREE",
                            "scene_policy": "AUTO_FRESH", "speed_profile": "slow",
                            "request_label": "ART_FREE_SPACE"}
-                print(json.dumps(SceneAwareDispatcher(controller.config).motion_plan(payload),
+                print(json.dumps(shared_dispatcher(controller.config).motion_plan(payload),
                                  indent=2, ensure_ascii=False))
             elif args[:2] == ["planner", "service"]:
                 if len(args)!=3 or args[2] not in ("start","status","stop","benchmark"):

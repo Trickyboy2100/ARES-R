@@ -1,0 +1,16 @@
+[Unit]
+Description=ARES-R canonical backend (no boot-time motion)
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/ARES-R
+Environment=PYTHONPATH=%h/ARES-R/src
+Environment=ARES_R_BOOT_NO_MOTION=YES
+ExecStart=%h/anaconda3/envs/dope/bin/python scripts/run_canonical_backend.py --host 127.0.0.1 --port 8766
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=default.target

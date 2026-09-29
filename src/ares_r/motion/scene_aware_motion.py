@@ -327,6 +327,9 @@ def build_services(config: Mapping[str, object], *, scene_state_path=None,
     merged["scene_aware_motion"] = {
         "scene_ttl_s": profile["scene_ttl_s"],
         "evidence_directory": "worklog/evidence/scene-aware-motion",
+        "central_exclusion": profile.get("central_exclusion", {
+            "enabled": True, "half_width_m": .070,
+            "revision": "CENTRAL_EXCLUSION_LEGACY_DEFAULT"}),
     }
     scene = LocalSceneService(merged, state_path=scene_state_path)
     values = profile["planner"]

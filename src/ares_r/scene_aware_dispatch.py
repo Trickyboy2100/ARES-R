@@ -12,6 +12,7 @@ from .motion.scene_aware_motion import (MotionConstraints, MotionGoal, MotionReq
                                         OrientationMode, build_services)
 from .demos import DemoRegistry
 from .task_studio import TaskStudio
+from .runtime_identity import runtime_identity
 
 
 def _motion_request(payload, default_central_exclusion=True):
@@ -74,8 +75,8 @@ class SceneAwareDispatcher:
 
     def motion_plan(self, payload):
         _, motion = self.services()
-        policy = ((self.config.get("scene_aware_motion") or {}).get("central_exclusion") or
-                  self.config.get("central_exclusion") or {})
+        profile_path=Path(__file__).resolve().parents[2]/"config/scene_aware_motion.json"
+        policy=(json.loads(profile_path.read_text()).get("central_exclusion") or {})
         return motion.plan(_motion_request(payload, bool(policy.get("enabled", True))))
 
     def motion_preview(self, plan_id=None):
@@ -118,8 +119,13 @@ class SceneAwareDispatcher:
     def task_status(self): return self.studio().status()
     def task_stop(self): return self.studio().stop()
 
+    def system_info(self):
+        task=self.task_status()
+        return runtime_identity(Path.cwd(),active_scheme=task.get("scheme_id"))
+
     def dispatch(self, text):
         args = shlex.split(text)
+        if args in (["version"],["system","info"]): return self.system_info()
         if args == ["scene", "status"]: return self.scene_status()
         if args == ["scene", "scan"]: return self.scene_scan(True)
         if args[:2] == ["scene", "invalidate"]:
@@ -173,3 +179,13 @@ class SceneAwareDispatcher:
         if args[:2] == ["task", "stop"]: return self.task_stop()
         if args[:2] == ["task", "run"]: raise RuntimeError("physical task run locked in P3.9")
         raise ValueError("unsupported scene-aware command")
+
+
+def shared_dispatcher(config):
+    """Return the canonical backend client when deployed, local owner in tests."""
+    import os
+    url=os.environ.get("ARES_R_BACKEND_URL")
+    if url:
+        from .canonical_backend import CanonicalBackendClient
+        return CanonicalBackendClient(url)
+    return SceneAwareDispatcher(config)
