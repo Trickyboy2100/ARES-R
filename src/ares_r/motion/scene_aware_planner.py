@@ -186,6 +186,9 @@ class PersistentCuroboPlanner:
                 "orientation": (motion.goal.orientation.value if motion.goal is not None
                                 else motion.constraints.orientation.value),
                 "central_exclusion": motion.constraints.central_exclusion,
+                "central_exclusion_half_width_m": float(
+                    ((self.config.get("scene_aware_motion") or {}).get(
+                        "central_exclusion") or {}).get("half_width_m", 0.070)),
                 "keepout_ids": list(motion.constraints.keepout_ids),
                 "attached_object_revision": motion.constraints.attached_object_revision,
                 "gripper_max_opening_percent":

@@ -288,8 +288,14 @@ def main():
         if runtime_goal is not None:
             goal_position_error_m=float(np.linalg.norm(
                 tcp[-1]-np.asarray(runtime_goal["position_m"],dtype=float)))
-        central_margin=float((-tcp[:,1]-.07).min() if request["active_arm"]=="right"
-                             else (tcp[:,1]-.07).min())
+        central_enabled=bool(request.get("motion_constraints", {}).get(
+            "central_exclusion", True))
+        central_half_width=float(request.get("motion_constraints", {}).get(
+            "central_exclusion_half_width_m", .07))
+        central_margin=(float((-tcp[:,1]-central_half_width).min()
+                              if request["active_arm"]=="right"
+                              else (tcp[:,1]-central_half_width).min())
+                        if central_enabled else float("inf"))
         dt=float(params["interpolation_dt"])
         v=np.diff(q,axis=0)/dt;a=np.diff(v,axis=0)/dt;j=np.diff(a,axis=0)/dt
         max_step=float(np.max(np.abs(np.diff(q,axis=0))))
@@ -311,7 +317,8 @@ def main():
         path_details=clearance_details(dense)
         planner_clearance_trace=clearance_trace(dense)
         path_gap=min(path_details.values()) if path_details else float("inf")
-        if (central_margin<=0 or path_gap<=0 or not np.isfinite(q).all() or max_step>.15 or
+        if ((central_enabled and central_margin<=0) or path_gap<=0 or
+                not np.isfinite(q).all() or max_step>.15 or
                 (runtime_goal is not None and goal_position_error_m>
                  float(runtime_goal["position_tolerance_m"]))):
             success=False;points=[];tcp_body=[];path_gap=None;path_details={}
@@ -360,6 +367,8 @@ def main():
         "planner_clearance_trace_m":planner_clearance_trace,
         "path_limiting_object_id":min(path_details,key=path_details.get) if path_details else None,
         "central_tcp_margin_m":central_margin,
+        "central_exclusion_enabled":bool(request.get("motion_constraints", {}).get(
+            "central_exclusion", True)),
         "dense_post_validation_samples":len(dense) if success else None,
         "orientation_validation":orientation_validation,
         "smoothness":smoothness,

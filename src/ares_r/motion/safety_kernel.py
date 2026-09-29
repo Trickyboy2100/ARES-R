@@ -114,7 +114,8 @@ class DualArmSafetyKernel:
                 and live.get("native_trajectory_hash") == candidate.get("native_trajectory_hash")
                 and candidate.get("motion_policy") == "CUROBO_ONLY_FOR_EVERY_POINT_TO_POINT_LEG"
                 and candidate.get("explicit_waypoints") == []),
-            "CENTRAL_EXCLUSION": candidate.get("central_tcp_margin_m", -math.inf) > 0,
+            "CENTRAL_EXCLUSION": (not candidate.get("central_exclusion_enabled", True)
+                                  or candidate.get("central_tcp_margin_m", -math.inf) > 0),
             "VELOCITY": native_audit.get("max_joint_speed_rad_s", math.inf)
                         <= velocity_limit + 1e-12,
             "ACCELERATION": native_audit.get("max_joint_accel_rad_s2", math.inf)
@@ -171,7 +172,8 @@ class DualArmSafetyKernel:
     def authorize(self, *, arm, points, sample_period_s, geometry_samples,
                   speed_profile, live_start, tool_revision, planned_tool_revision,
                   scene_snapshot_id, collision_checked, base_stationary,
-                  inactive_arm_state_known, controller_fault=False, attached_object=False):
+                  inactive_arm_state_known, controller_fault=False, attached_object=False,
+                  central_exclusion_enabled=True):
         if not self.execution_enabled:
             raise SafetyViolation("motion execution is disabled at the integration control point")
         if arm not in ("left", "right"):
@@ -199,7 +201,8 @@ class DualArmSafetyKernel:
         if not scene_snapshot_id or not collision_checked:
             raise SafetyViolation("task manipulation requires a collision-checked SceneSnapshot")
         self._check_dynamics(points, sample_period_s, profile)
-        self._check_geometry(arm, geometry_samples, len(points), attached_object)
+        self._check_geometry(arm, geometry_samples, len(points), attached_object,
+                             central_exclusion_enabled)
         return SafetyPermit(arm, trajectory_digest(arm, points, sample_period_s),
                             scene_snapshot_id, speed_profile, time.time())
 
@@ -216,7 +219,8 @@ class DualArmSafetyKernel:
             previous_velocity = velocity
 
     @staticmethod
-    def _check_geometry(arm, samples, point_count, attached_object):
+    def _check_geometry(arm, samples, point_count, attached_object,
+                        central_exclusion_enabled=True):
         if len(samples) != point_count:
             raise SafetyViolation("full-path collision geometry is required for every sample")
         moving_required = {"links", "tool"} | ({"attached_object"} if attached_object else set())
@@ -224,10 +228,11 @@ class DualArmSafetyKernel:
         for sample in samples:
             if not moving_required.issubset(sample) or inactive not in sample:
                 raise SafetyViolation("link/tool/inactive-arm collision geometry is incomplete")
-            for component in moving_required:
-                DualArmSafetyKernel._check_side(arm, sample[component])
-            DualArmSafetyKernel._check_side("right" if arm == "left" else "left",
-                                            sample[inactive])
+            if central_exclusion_enabled:
+                for component in moving_required:
+                    DualArmSafetyKernel._check_side(arm, sample[component])
+                DualArmSafetyKernel._check_side("right" if arm == "left" else "left",
+                                                sample[inactive])
 
     @staticmethod
     def _check_side(side, spheres):

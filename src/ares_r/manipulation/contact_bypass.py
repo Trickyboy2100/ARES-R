@@ -37,14 +37,14 @@ class ContactBypassPolicy:
     maximum_segment_m: float = .101
 
     @classmethod
-    def for_manipulation_skill(cls, stage, observation_id):
+    def for_manipulation_skill(cls, stage, observation_id, *, central_exclusion=True):
         if stage not in _STAGES or not observation_id:
             raise ValueError("reviewed manipulation stage and observation are required")
         core={"policy_id":"CONTACT_BYPASS_V1","stage":stage,
               "observation_id":str(observation_id),"active_arm":"right",
               "active_tool_world_collision":False,"arm_link_world_collision":True,
               "inactive_arm_collision":True,"self_collision":True,
-              "central_exclusion":True,"bounded_cartesian_only":True,
+              "central_exclusion":bool(central_exclusion),"bounded_cartesian_only":True,
               "automatic_expiry":True,"maximum_segment_m":.101}
         return cls(revision=_digest(core),**core)
 
@@ -73,8 +73,10 @@ def validate_bypass_segment(samples: Sequence[Mapping[str, object]],
         lateral=math.sqrt(sum((delta[i]-progress*direction[i])**2 for i in range(3)))
         if progress+1e-8<prior or progress>policy.maximum_segment_m+.003 or lateral>.002:
             raise RuntimeError("bypass must be a bounded monotonic Cartesian segment")
-        prior=progress;min_central=min(min_central,-tcp[1]-.070)
-        if min_central<=0:raise RuntimeError("bypass touches BODY central exclusion")
+        prior=progress
+        if policy.central_exclusion:
+            min_central=min(min_central,-tcp[1]-.070)
+            if min_central<=0:raise RuntimeError("bypass touches BODY central exclusion")
         links=list(sample["arm_links"])
         if len(links)<6:raise RuntimeError("Link1..Link6 geometry is required")
         for link in links:

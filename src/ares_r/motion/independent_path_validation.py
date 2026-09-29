@@ -102,6 +102,10 @@ def validate_dense_world(points, request, *, subdivisions=4):
     centers = []
     radii = []
     labels = [label for link in local for label in component_labels[link]]
+    central_enabled = bool(request.get("motion_constraints", {}).get(
+        "central_exclusion", True))
+    central_half_width = float(request.get("motion_constraints", {}).get(
+        "central_exclusion_half_width_m", 0.070))
     central_margin = float("inf")
     for row in q:
         frame = np.eye(4)
@@ -111,8 +115,10 @@ def validate_dense_world(points, request, *, subdivisions=4):
             link_frames["link%d" % index] = frame.copy()
         tcp_body = body_model @ frame @ tool
         y = float(tcp_body[1, 3])
-        margin = (-y - 0.070 if request["active_arm"] == "right" else y - 0.070)
-        central_margin = min(central_margin, margin)
+        if central_enabled:
+            margin = (-y - central_half_width if request["active_arm"] == "right"
+                      else y - central_half_width)
+            central_margin = min(central_margin, margin)
         row_centers = []
         row_radii = []
         for link, spheres in local.items():
@@ -152,5 +158,7 @@ def validate_dense_world(points, request, *, subdivisions=4):
             "limiting_robot_component_id": (
                 limiting_component_by_object.get(minimum_name)),
             "central_tcp_margin_m": central_margin,
-            "collision_free": math.isfinite(minimum) and minimum > 0 and central_margin > 0,
+            "central_exclusion_enabled": central_enabled,
+            "collision_free": (math.isfinite(minimum) and minimum > 0 and
+                               (not central_enabled or central_margin > 0)),
             "self_collision_independently_checked": False}

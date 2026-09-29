@@ -14,14 +14,14 @@ from .demos import DemoRegistry
 from .task_studio import TaskStudio
 
 
-def _motion_request(payload):
+def _motion_request(payload, default_central_exclusion=True):
     arbitrary = "position_m" in payload or "goal" in payload
     orientation = OrientationMode(payload.get(
         "orientation", "LEVEL_YAW_FREE" if arbitrary else "FREE"))
     constraints = MotionConstraints(
         orientation=orientation,
         explicit_rotation=payload.get("explicit_rotation"),
-        central_exclusion=payload.get("central_exclusion", True),
+        central_exclusion=payload.get("central_exclusion", default_central_exclusion),
         keepout_ids=tuple(payload.get("keepout_ids", ())),
         attached_object_revision=payload.get("attached_object_revision"))
     goal_payload = payload.get("goal")
@@ -73,7 +73,10 @@ class SceneAwareDispatcher:
         _, motion = self.services();return motion.status()
 
     def motion_plan(self, payload):
-        _, motion = self.services();return motion.plan(_motion_request(payload))
+        _, motion = self.services()
+        policy = ((self.config.get("scene_aware_motion") or {}).get("central_exclusion") or
+                  self.config.get("central_exclusion") or {})
+        return motion.plan(_motion_request(payload, bool(policy.get("enabled", True))))
 
     def motion_preview(self, plan_id=None):
         _, motion = self.services();return motion.preview(plan_id)
