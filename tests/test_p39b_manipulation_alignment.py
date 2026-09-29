@@ -3,6 +3,7 @@ import unittest
 from pathlib import Path
 
 from ares_r.motion.base_motion_observer import BaseObservation
+from ares_r.motion.base_motion_observer import BaseMotionTimeout
 from ares_r.motion.manipulation_alignment import (
     AlignmentBounds, AlignmentRequest, ManipulationAlignmentService)
 
@@ -60,6 +61,16 @@ class ManipulationAlignmentTest(unittest.TestCase):
             totals=[row["cumulative_xy_m"] for row in result["corrections"]]
             self.assertTrue(all(abs(x)<=.15 and abs(y)<=.4 for x,y in totals))
             self.assertTrue(all(yaw==0 for _x,_y,yaw in base.commands))
+
+    def test_truthful_settle_timeout_fails_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            service,base=self.service(Path(tmp))
+            service.observer.wait=lambda *args,**kwargs: (_ for _ in ()).throw(
+                BaseMotionTimeout("not settled"))
+            with self.assertRaises(BaseMotionTimeout):
+                service.align(AlignmentRequest("right_pick","PICK_PREGRASP"))
+            self.assertEqual(len(base.commands),1)
+            self.assertFalse((Path(tmp)/"priors.json").exists())
 
 
 if __name__=="__main__":unittest.main()
