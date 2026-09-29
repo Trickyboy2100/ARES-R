@@ -16,8 +16,11 @@ def load_task_parameters(path="config/tray_to_groove_v2.json") -> dict:
                  "dual_arm_concurrent": False}:
         raise ValueError("first customer demo scope must remain right/HOLD_CURRENT/non-concurrent")
     distances = [float(item) for item in value["contact"]["pregrasp_distance_candidates_m"]]
-    if distances != [.03, .04, .05]:
-        raise ValueError("pregrasp candidates must be the commissioned 30/40/50 mm set")
+    if distances[:3] != [.03, .04, .05] or any(not .03 <= item <= .06 for item in distances):
+        raise ValueError("pregrasp candidates must retain 30/40/50 mm and stay in 30..60 mm")
+    selected=float(value["contact"].get("selected_pregrasp_distance_m",.05))
+    if selected not in distances:
+        raise ValueError("selected pregrasp distance must be a versioned candidate")
     verification = value["grasp_verification"]
     radius = float(verification["local_tcp_radius_m"])
     low, high = map(float, verification["allowed_radius_range_m"])

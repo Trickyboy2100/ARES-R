@@ -19,6 +19,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from ares_r.motion.grasp import approach_direction, rotation_matrix
 from ares_r.motion.runtime_goal_ik import RuntimeGoalIK
 from ares_r.motion.execution_tool_envelope import build_execution_tool_envelope
+from ares_r.manipulation.task_parameters import load_task_parameters
 
 
 def load(path):
@@ -45,7 +46,9 @@ def main():
     rotation = np.asarray(rotation_matrix(*target["pose_m_rad"][3:],
                                           target["orientation_convention"]), dtype=float)
     direction = np.asarray(approach_direction(rotation, target["approach_axis"]), dtype=float)
-    pregrasp_xyz = xyz - 0.05 * direction
+    task=load_task_parameters(ROOT/"config/tray_to_groove_v2.json")
+    pregrasp_distance=float(task["contact"].get("selected_pregrasp_distance_m",.05))
+    pregrasp_xyz = xyz - pregrasp_distance * direction
     start = observation["robot_state_after"]["right"]["diagnostics"]["joint_position_rad"]
     solver = RuntimeGoalIK(request["robot_yaml_urdf"], request["T_body_model"],
                            request["T_link6_tcp"])
@@ -78,7 +81,8 @@ def main():
         "observation_id": observation["observation_id"],
         "scene_snapshot_id": observation["scene_snapshot_id"],
         "target_body_m": xyz.tolist(), "approach_direction_body": direction.tolist(),
-        "pregrasp_body_m": pregrasp_xyz.tolist(), "start_rad": start,
+        "pregrasp_body_m": pregrasp_xyz.tolist(), "pregrasp_distance_m":pregrasp_distance,
+        "task_parameter_revision":task["revision"], "start_rad": start,
         "goal_rad": list(goal.joints_rad), "ik_position_error_m": goal.position_error_m,
         "ik_orientation_error_deg": float(np.degrees(goal.orientation_error_rad)),
     }

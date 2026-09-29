@@ -10,6 +10,8 @@ class TaskParameterTests(unittest.TestCase):
                          [500,400,200])
         self.assertEqual(value["base_contracts"]["PLACE_BASE_POSE_V1"]["y_m"],-.40)
         self.assertIn("SUPPORT_SURFACE",value["target_binding"]["place_preferred_semantics"])
+        self.assertEqual(value["contact"]["pregrasp_distance_candidates_m"][:3],[.03,.04,.05])
+        self.assertEqual(value["contact"]["selected_pregrasp_distance_m"],.055)
 
 
 if __name__ == "__main__": unittest.main()
