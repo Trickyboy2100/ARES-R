@@ -51,6 +51,7 @@ class TaskStudio:
             "canonical-services-p39-v1",{"phase1_modeled_total_cycle_s":395.0})
         path=self.state_root/"packages"/(package["package_digest"].replace(":","_")+".json")
         atomic_json(path,package);state={"state":"PREPARED_REPLAY_ONLY","task_id":task_id,
+            "scheme_id":scheme["scheme_id"],"scheme_version":scheme["version"],
             "package":str(path),"package_digest":package["package_digest"],"execution_enabled":False}
         atomic_json(self.state_path,state);return state
     def replay(self,task_id,failures=None):

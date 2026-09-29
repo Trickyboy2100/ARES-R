@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "scheme_id": "right_arm_autoalign_pick_center_preplace_v1",
+  "version": "1.0.0-p39b",
+  "lifecycle": "REPLAY_VERIFIED",
+  "description": "Auto-align PICK, existing grasp/lift, attached-object cuRobo center transfer, auto-align PLACE, cuRobo above-place and HOLD.",
+  "nodes": [
+    {"id":"align_pick","skill":"navigate.align_for_manipulation","parameters":{"target_profile":"right_pick","arm":"right","goal_kind":"PICK_PREGRASP","x_bound_m":0.15,"y_bound_m":0.40,"max_corrections":3},"depends_on":[],"prepare_after":[],"timeout_s":240,"on_failure":"STOP","resources":["BASE","CAMERA_5700","CAMERA_5000","SCENE_EPOCH","GPU_PLANNER"]},
+    {"id":"pick_scene","skill":"observe.capture_scene","parameters":{"profile":"right_pick","station":"AUTO_ALIGNED_PICK"},"depends_on":["align_pick"],"prepare_after":["align_pick"],"timeout_s":30,"on_failure":"RETRY_OBSERVATION","resources":["CAMERA_5000","SCENE_EPOCH"]},
+    {"id":"pick_detect","skill":"observe.detect_resource","parameters":{"profile":"right_pick","resource_id":"tray_material"},"depends_on":["align_pick"],"prepare_after":["align_pick"],"timeout_s":30,"on_failure":"RETRY_OBSERVATION","resources":["CAMERA_5700","SCENE_EPOCH"]},
+    {"id":"move_pregrasp","skill":"manipulation.move_free","parameters":{"target":"$pick_detect.artifact_id","planner_policy":"FAST_FALLBACK"},"depends_on":["pick_scene","pick_detect"],"prepare_after":["pick_scene","pick_detect"],"timeout_s":180,"on_failure":"STOP_REPLAN","resources":["GPU_PLANNER","ARM_RIGHT"]},
+    {"id":"authorize_pregrasp","skill":"execution.authorize","parameters":{"policy":"UNCHANGED_SPEED_SUPERVISED"},"depends_on":["move_pregrasp"],"prepare_after":["move_pregrasp"],"timeout_s":30,"on_failure":"STOP","resources":[]},
+    {"id":"execute_pregrasp","skill":"execution.execute_trajectory","parameters":{"trajectory_binding":"$move_pregrasp.trajectory_hash"},"depends_on":["authorize_pregrasp"],"prepare_after":["move_pregrasp"],"timeout_s":180,"on_failure":"STOP","resources":["ARM_RIGHT"]},
+    {"id":"contact_approach","skill":"manipulation.approach","parameters":{"standoff_m":0.05,"policy":"CONTACT_BYPASS_V1"},"depends_on":["execute_pregrasp"],"prepare_after":["pick_detect"],"timeout_s":120,"on_failure":"STOP","resources":["GPU_PLANNER","ARM_RIGHT"]},
+    {"id":"grasp","skill":"manipulation.grasp","parameters":{"opening_percent":40,"verification":"READBACK_PLUS_SCENE_FALLBACK"},"depends_on":["contact_approach"],"prepare_after":["execute_pregrasp"],"timeout_s":60,"on_failure":"STOP_VERIFY","resources":["GRIPPER_RIGHT","ARM_RIGHT"]},
+    {"id":"initial_lift","skill":"manipulation.lift","parameters":{"distance_m":0.1},"depends_on":["grasp"],"prepare_after":["execute_pregrasp"],"timeout_s":180,"on_failure":"STOP","resources":["GPU_PLANNER","ARM_RIGHT"]},
+    {"id":"move_center","skill":"manipulation.move_free","parameters":{"target":"center","planner_policy":"FAST_FALLBACK"},"depends_on":["initial_lift"],"prepare_after":["grasp"],"timeout_s":180,"on_failure":"STOP_REPLAN","resources":["GPU_PLANNER","ARM_RIGHT"]},
+    {"id":"align_place","skill":"navigate.align_for_manipulation","parameters":{"target_profile":"right_place_rightmost","arm":"right","goal_kind":"PLACE_PREPLACE","x_bound_m":0.15,"y_bound_m":0.40,"max_corrections":3},"depends_on":["move_center"],"prepare_after":["move_center"],"timeout_s":240,"on_failure":"STOP","resources":["BASE","CAMERA_5700","CAMERA_5000","SCENE_EPOCH","GPU_PLANNER"]},
+    {"id":"place_scene","skill":"observe.capture_scene","parameters":{"profile":"right_place_rightmost","station":"AUTO_ALIGNED_PLACE"},"depends_on":["align_place"],"prepare_after":["align_place"],"timeout_s":30,"on_failure":"RETRY_OBSERVATION","resources":["CAMERA_5000","SCENE_EPOCH"]},
+    {"id":"place_detect","skill":"observe.detect_resource","parameters":{"profile":"right_place_rightmost","resource_id":"groove_rightmost"},"depends_on":["align_place"],"prepare_after":["align_place"],"timeout_s":30,"on_failure":"RETRY_OBSERVATION","resources":["CAMERA_5700","SCENE_EPOCH"]},
+    {"id":"move_above_place","skill":"manipulation.move_above_place","parameters":{"target":"$place_detect.artifact_id","height_m":0.05},"depends_on":["place_scene","place_detect"],"prepare_after":["place_scene","place_detect"],"timeout_s":180,"on_failure":"STOP_REPLAN","resources":["GPU_PLANNER","ARM_RIGHT"]},
+    {"id":"hold_above_place","skill":"observe.verify_predicate","parameters":{"predicate":"HOLD_ABOVE_PLACE","method":"ROBOT_STATE_AND_BOUND_TRAJECTORY"},"depends_on":["move_above_place"],"prepare_after":["move_above_place"],"timeout_s":30,"on_failure":"HOLD_FOR_REVIEW","resources":["SCENE_EPOCH"]}
+  ]
+}

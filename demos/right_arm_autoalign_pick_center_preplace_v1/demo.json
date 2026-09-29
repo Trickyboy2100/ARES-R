@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "demo_id": "right_arm_autoalign_pick_center_preplace_v1",
+  "name": "右臂自动对位抓取、居中并到放置上方",
+  "version": "1.0.0-p39b",
+  "category": "manipulation",
+  "description": "自动寻找取放底盘位置；所有非接触点到点均走 fresh scene + cuRobo；停止于 HOLD_ABOVE_PLACE。",
+  "commissioning_state": "REPLAY_VERIFIED_AWAITING_FIRST_SUPERVISED_RUN",
+  "scope": {"active_arm":"right","inactive_arm":"HOLD_CURRENT","base":"BOUNDED_TRANSLATION_NO_YAW","place_included":false},
+  "freshness_policy": {"observation":"FRESH_AFTER_EVERY_ALIGNMENT","robot_state":"FRESH_BEFORE_EACH_PLAN","scene_snapshot":"FRESH_EVERY_FREE_SPACE_LEG","trajectory":"NEVER_REUSE","native_package":"REFRESH_BEFORE_EXECUTION"},
+  "stages": ["AUTO_ALIGN_PICK_BASE","PICK_OBSERVATION","CUROBO_MOVE_PREGRASP","CONTACT_APPROACH","GRASP_VERIFY","INITIAL_VERTICAL_LIFT","ATTACH_OBJECT","CUROBO_MOVE_CENTER","AUTO_ALIGN_PLACE_BASE","PLACE_OBSERVATION","CUROBO_MOVE_ABOVE_PLACE","HOLD_ABOVE_PLACE"],
+  "hard_gates": ["RIGHT_ARM_CONTROLLER_HEALTHY","LEFT_ARM_HOLD_CURRENT","TRUTHFUL_BASE_SETTLE","FRESH_SCENE_BOUND","ALL_FREE_SPACE_P2P_CUROBO","ARM_LINK_COLLISION_VALID","ATTACHED_OBJECT_COLLISION_VALID","JOINT_LIMITS_VALID","TRACKING_WITHIN_PROFILE","GRASP_VERIFICATION_PASS_BEFORE_LIFT"],
+  "execution": {
+    "entrypoint":"scripts/run_p39b_autoalign_demo.py",
+    "prepare_command":"python3 scripts/run_p39b_autoalign_demo.py --prepare",
+    "run_command":"python3 scripts/run_p39b_autoalign_demo.py --execute --authorization 'P39B AUTOALIGN TO HOLD ABOVE PLACE' --onsite-observer-confirmed",
+    "stop_command":"task stop",
+    "authorization_phrase":"P39B AUTOALIGN TO HOLD ABOVE PLACE",
+    "requires_art_tty":true,
+    "webui_execution_allowed":false
+  },
+  "parameters": {"task_id":"task.right_arm_autoalign_pick_center_preplace","central_exclusion_enabled":false,"pick_x_bound_m":0.15,"pick_y_bound_m":0.40,"place_x_bound_m":0.15,"place_y_bound_m":0.40,"yaw_deg":0.0,"center_pose":"center","stop_state":"HOLD_ABOVE_PLACE"},
+  "commissioning_evidence":"worklog/evidence/2026-09-29-p3-9b/"
+}
