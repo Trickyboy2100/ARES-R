@@ -37,5 +37,30 @@ class P39BSchemeTest(unittest.TestCase):
                             ready["arms"]["right"].get("ik_joint_rad"))
         self.assertIn("coworker dirty patch",center["source"])
 
+    def test_pick_and_place_registered_station_relationship(self):
+        stations=json.loads((ROOT/"config/manipulation_stations.json").read_text())
+        self.assertEqual(stations["frame_convention"]["y_positive"],"left")
+        self.assertEqual(stations["stations"]["PLACE_STATION"]["site_status"],
+                         "CURRENT_PHYSICAL_BASE_POSITION_2026-09-29")
+        self.assertEqual(stations["transitions"]["PLACE_TO_PICK"]
+                         ["body_relative_translation_m"],[0.0,0.4,0.0])
+        self.assertEqual(stations["transitions"]["PICK_TO_PLACE"]
+                         ["body_relative_translation_m"],[0.0,-0.4,0.0])
+        self.assertEqual(stations["transitions"]["PLACE_TO_PICK"]["yaw_deg"],0.0)
+        self.assertTrue(stations["scene_policy"]["invalidate_before_base_motion"])
+        self.assertTrue(stations["scene_policy"]
+                        ["require_fresh_observation_epoch_after_arrival"])
+
+    def test_scheme_uses_registered_pick_then_place_station(self):
+        by_id={node["id"]:node for node in self.scheme["nodes"]}
+        pick=by_id["align_pick"]["parameters"]
+        place=by_id["align_place"]["parameters"]
+        self.assertEqual((pick["expected_start_station"],pick["target_station"]),
+                         ("PLACE_STATION","PICK_STATION"))
+        self.assertEqual((place["expected_start_station"],place["target_station"]),
+                         ("PICK_STATION","PLACE_STATION"))
+        self.assertEqual(pick["station_registry"],"config/manipulation_stations.json")
+        self.assertEqual(place["station_registry"],"config/manipulation_stations.json")
+
 
 if __name__=="__main__":unittest.main()

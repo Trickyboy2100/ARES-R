@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "revision": "MANIPULATION_STATIONS_2026-09-29_V1",
+  "frame_convention": {
+    "frame": "BODY",
+    "x_positive": "forward",
+    "y_positive": "left",
+    "yaw_positive": "counterclockwise_about_positive_z"
+  },
+  "stations": {
+    "PLACE_STATION": {
+      "role": "PLACE",
+      "site_status": "CURRENT_PHYSICAL_BASE_POSITION_2026-09-29",
+      "relative_to": null,
+      "translation_m": [0.0, 0.0, 0.0],
+      "yaw_deg": 0.0
+    },
+    "PICK_STATION": {
+      "role": "PICK",
+      "site_status": "OPERATOR_REGISTERED_RELATIVE_TO_PLACE",
+      "relative_to": "PLACE_STATION",
+      "translation_m": [0.0, 0.4, 0.0],
+      "yaw_deg": 0.0
+    }
+  },
+  "transitions": {
+    "PLACE_TO_PICK": {
+      "from": "PLACE_STATION",
+      "to": "PICK_STATION",
+      "body_relative_translation_m": [0.0, 0.4, 0.0],
+      "yaw_deg": 0.0
+    },
+    "PICK_TO_PLACE": {
+      "from": "PICK_STATION",
+      "to": "PLACE_STATION",
+      "body_relative_translation_m": [0.0, -0.4, 0.0],
+      "yaw_deg": 0.0
+    }
+  },
+  "scene_policy": {
+    "invalidate_before_base_motion": true,
+    "require_true_settle_observation": true,
+    "require_fresh_observation_epoch_after_arrival": true,
+    "reuse_pre_motion_scene": false
+  },
+  "provenance": {
+    "source": "operator site statement",
+    "recorded_date": "2026-09-29",
+    "note": "The current physical base position is PLACE_STATION. PICK_STATION is 0.40 m to the robot's left (BODY +Y), with no commanded yaw change."
+  }
+}

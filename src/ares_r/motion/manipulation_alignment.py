@@ -38,6 +38,9 @@ class AlignmentRequest:
     arm: str = "right"
     bounds: AlignmentBounds = field(default_factory=AlignmentBounds)
     learned_prior_xy_m: Optional[Sequence[float]] = None
+    expected_start_station: Optional[str] = None
+    target_station: Optional[str] = None
+    station_registry_revision: Optional[str] = None
     preferred_target_body_m: Sequence[float] = (0.70, -0.25, 1.0)
 
     def validate(self):
@@ -48,6 +51,8 @@ class AlignmentRequest:
             raise ValueError("unknown manipulation goal kind")
         if not self.target_profile:
             raise ValueError("target profile is required")
+        if bool(self.expected_start_station) != bool(self.target_station):
+            raise ValueError("registered alignment requires both start and target station")
 
 
 def _atomic_json(path, value):
@@ -163,6 +168,9 @@ class ManipulationAlignmentService:
                 result={"result":"ALIGNED","revision":self.revision,
                         "episode_id":episode_id,"target_profile":request.target_profile,
                         "goal_kind":request.goal_kind,"bounds":asdict(request.bounds),
+                        "expected_start_station":request.expected_start_station,
+                        "target_station":request.target_station,
+                        "station_registry_revision":request.station_registry_revision,
                         "total_offset_xy_m":list(cumulative),"corrections":corrections,
                         "target_body_final_m":fresh_xyz,"fresh_epoch":epoch,
                         "curobo_feasibility":feasibility,"elapsed_s":self.clock()-started}

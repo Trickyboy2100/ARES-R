@@ -5,6 +5,8 @@ scene reconstruction, cuRobo, ServoJ, gripper, AMR or contact algorithms.
 """
 
 from dataclasses import dataclass
+import json
+from pathlib import Path
 import threading
 
 from .providers import CanonicalCapabilityProvider
@@ -58,9 +60,29 @@ class RealCapabilityProvider(CanonicalCapabilityProvider):
     def _align(self,phase,payload):
         from ares_r.motion.manipulation_alignment import AlignmentBounds, AlignmentRequest
         values=payload["parameters"]
+        learned_prior=None
+        registry=None
+        registry_path=values.get("station_registry")
+        expected_station=values.get("expected_start_station")
+        target_station=values.get("target_station")
+        if registry_path and expected_station and target_station:
+            registry=json.loads(Path(registry_path).read_text())
+            transition=next((item for item in registry.get("transitions",{}).values()
+                if item.get("from")==expected_station and item.get("to")==target_station),None)
+            if transition is None:
+                raise RuntimeError("registered station transition not found: %s -> %s" %
+                                   (expected_station,target_station))
+            delta=transition["body_relative_translation_m"]
+            if float(transition.get("yaw_deg",0.0)) != 0.0:
+                raise RuntimeError("manipulation station transition requires zero yaw")
+            learned_prior=(float(delta[0]),float(delta[1]))
         request=AlignmentRequest(
             target_profile=values["target_profile"],arm=values.get("arm","right"),
             goal_kind=values["goal_kind"],
+            learned_prior_xy_m=learned_prior,
+            expected_start_station=expected_station,
+            target_station=target_station,
+            station_registry_revision=(registry.get("revision") if registry else None),
             bounds=AlignmentBounds(float(values.get("x_bound_m",.15)),
                                    float(values.get("y_bound_m",.40)),0.0,
                                    int(values.get("max_corrections",3))))

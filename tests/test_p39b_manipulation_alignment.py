@@ -52,6 +52,23 @@ class ManipulationAlignmentTest(unittest.TestCase):
         with self.assertRaises(ValueError):AlignmentBounds(.15,.41,0).validate()
         with self.assertRaises(ValueError):AlignmentBounds(.15,.4,1).validate()
 
+    def test_registered_station_pair_is_bound_into_alignment_evidence(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            service,_base=self.service(Path(tmp))
+            result=service.align(AlignmentRequest(
+                "right_pick","PICK_PREGRASP",learned_prior_xy_m=(0.0,.4),
+                expected_start_station="PLACE_STATION",target_station="PICK_STATION",
+                station_registry_revision="MANIPULATION_STATIONS_2026-09-29_V1"))
+            self.assertEqual(result["expected_start_station"],"PLACE_STATION")
+            self.assertEqual(result["target_station"],"PICK_STATION")
+            self.assertEqual(result["station_registry_revision"],
+                             "MANIPULATION_STATIONS_2026-09-29_V1")
+
+    def test_registered_station_pair_must_be_complete(self):
+        with self.assertRaisesRegex(ValueError,"both start and target"):
+            AlignmentRequest("right_pick","PICK_PREGRASP",
+                             expected_start_station="PLACE_STATION").validate()
+
     def test_never_random_walks_beyond_episode_bounds(self):
         with tempfile.TemporaryDirectory() as tmp:
             service,base=self.service(Path(tmp),feasible=False)
