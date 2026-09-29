@@ -17,6 +17,7 @@ from pathlib import Path
 import subprocess
 import sys
 import time
+import shutil
 
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/"src"))
@@ -105,6 +106,53 @@ def native_send(path,log):
     first_pick._sender(Path(path),Path(log))
 
 
+def prepare_first_pick_with_fallback():
+    """Prepare the golden package, adding the P3.9 FAST->FALLBACK planner policy.
+
+    The golden entrypoint remains byte-for-byte unchanged.  This additive runner
+    only retries the same frozen scene with 8/8 seeds after the 4/2 request
+    returns no path; endpoints and all dense validators remain unchanged.
+    """
+    golden=import_script("golden_first_pick_prepare",Path("scripts/run_first_pick_demo.py"))
+    stamp=datetime.now().strftime("%Y%m%dT%H%M%S")
+    run_dir=ROOT/"worklog/evidence/demo-runs/right_arm_epic_pick_lift_v1"/stamp
+    epoch=run_dir/"fresh_observation";plan=run_dir/"pregrasp_plan"
+    package=run_dir/"first_pick_package";native=run_dir/"native"
+    run_dir.mkdir(parents=True);golden._write_state(state="PREPARING",
+        selected_demo_id=golden.DEMO_ID,active_run_id=stamp,run_dir=str(run_dir))
+    run([PY311,"scripts/capture_manipulation_observation.py","--output",epoch,
+         "--profile","right_pick"],timeout=600)
+    run([CUROBO,"scripts/prepare_authorized_first_pick.py","--epoch",epoch,
+         "--template-plan",golden.TEMPLATE,"--output",plan],timeout=300)
+    request=plan/"planner_request.json";planning=plan/"planning.json"
+    environment=dict(os.environ,PYTHONPATH=str(ROOT/"src"))
+    fast=subprocess.run([str(CUROBO),"-m","ares_r.motion.production_scene_worker",
+        str(request),str(planning)],cwd=ROOT,env=environment,text=True,capture_output=True,timeout=900)
+    (plan/"planner_fast.log").write_text((fast.stdout or "")+(fast.stderr or ""))
+    if fast.returncode:
+        if planning.exists():shutil.move(str(planning),str(plan/"planning_fast_failed.json"))
+        value=load(request);params=value["planning_parameters"]
+        params.update(num_ik_seeds=8,num_trajopt_seeds=8,max_attempts=max(10,int(params.get("max_attempts",1))),
+                      enable_graph_attempt=1)
+        value["planner_profile_revision"]="FALLBACK_8_8_GRAPH_AFTER_FAST_NO_PATH"
+        write(plan/"planner_request_fallback.json",value)
+        shutil.copy2(plan/"planner_request_fallback.json",request)
+        run([CUROBO,"-m","ares_r.motion.production_scene_worker",request,planning],timeout=900)
+    result=load(planning)
+    if result.get("observed_result")!="SUCCESS":
+        raise RuntimeError("FAST and FALLBACK cuRobo profiles did not produce a valid pick path")
+    run([CUROBO,"scripts/build_first_pick_execution_package.py","--plan",plan,
+         "--epoch",epoch,"--output",package],timeout=300)
+    run([sys.executable,"scripts/package_first_pick_native.py","--package",
+         package/"first_pick_execution_package.json","--output",native],timeout=300)
+    for name in ("pregrasp","contact","lift"):
+        output=run([SENDER,"validate-supervised-path",native/(name+".native.txt")],timeout=60)
+        if "VALID_SUPERVISED_PATH" not in output:raise RuntimeError("native sender rejected "+name)
+    golden._write_state(state="PREPARED_AWAITING_AUTHORIZATION",active_run_id=None,
+        prepared_run_dir=str(run_dir),prepared_run_id=stamp)
+    return run_dir
+
+
 def prepare():
     stamp=datetime.now().strftime("%Y%m%dT%H%M%S")
     out=EVIDENCE/("preflight_"+stamp);out.mkdir(parents=True)
@@ -144,7 +192,7 @@ def execute(run_dir):
         # cuRobo remains the final reachability authority after the move.
         _,_,pick_move=align("right_pick","PICK_PREGRASP",(.70,-.16),run_dir,manifest,base)
         golden=import_script("golden_first_pick",Path("scripts/run_first_pick_demo.py"))
-        pick_run=golden.prepare();golden.execute(pick_run)
+        pick_run=prepare_first_pick_with_fallback();golden.execute(pick_run)
         manifest.event("PICK_AND_INITIAL_LIFT","PASS",run_dir=str(pick_run))
 
         center_epoch=run_dir/"center_epoch";capture("right_place_rightmost",center_epoch)
