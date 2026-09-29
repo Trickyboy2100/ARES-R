@@ -63,6 +63,30 @@ class RotationTest(unittest.TestCase):
         self.assertAlmostEqual(approach_direction(rotation, "+z")[1], 1.0)
         self.assertAlmostEqual(approach_direction(rotation, "-z")[1], -1.0)
 
+    def test_body_frame_axis_is_a_constant_independent_of_the_pose(self):
+        """`BODY_-Z` is the commissioned placement approach: straight down in BODY."""
+        identity = rotation_matrix(0.0, 0.0, 0.0)
+        rolled = rotation_matrix(math.radians(90.0), math.radians(30.0), math.radians(-20.0))
+        for rotation in (identity, rolled):
+            self.assertEqual(approach_direction(rotation, "BODY_-Z"), [0.0, 0.0, -1.0])
+        self.assertEqual(approach_direction(identity, "BODY_+X"), [1.0, 0.0, 0.0])
+        self.assertEqual(approach_direction(identity, "BODY_-Y"), [0.0, -1.0, 0.0])
+
+    def test_body_frame_axis_is_case_and_sign_explicit(self):
+        identity = rotation_matrix(0.0, 0.0, 0.0)
+        self.assertEqual(approach_direction(identity, "BODY_+z"), [0.0, 0.0, 1.0])
+        self.assertEqual(approach_direction(identity, "BODY_-z"), [0.0, 0.0, -1.0])
+        with self.assertRaisesRegex(ValueError, "BODY-frame"):
+            approach_direction(identity, "BODY_x")
+        with self.assertRaisesRegex(ValueError, "BODY-frame"):
+            approach_direction(identity, "BODY_")
+
+    def test_body_frame_axis_is_not_read_as_a_tool_axis(self):
+        """Guard the 45-degree trap: a rolled pose must not move a BODY axis."""
+        rolled = rotation_matrix(math.radians(90.0), 0.0, 0.0)
+        self.assertNotEqual(approach_direction(rolled, "+z"),
+                            approach_direction(rolled, "BODY_-Z"))
+
     def test_positive_axis_flips_the_direction_of_a_right_angle_roll(self):
         rotation = rotation_matrix(math.radians(90.0), 0.0, 0.0)
         self.assertAlmostEqual(approach_direction(rotation, "+z")[1], -1.0)

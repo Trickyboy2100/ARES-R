@@ -50,14 +50,22 @@
       "site_visual_confirmation": "confirmed after manual reposition; side pose visually acceptable",
       "arms": {"left": {"joint_rad": [0,-1.0471975511965976,0,0,0,0], "expected_body_tcp_m_rad": [-0.037,1.006,1.217,1.456,-0.033,-2.815]}, "right": {"joint_rad": [0,-1.0471975511965976,0,0,0,0], "expected_body_tcp_m_rad": [-0.069,-1.076,1.213,-1.166,1.481,-2.902]}}
     },
-    "center": {
-      "description": "Recovered teammate posture: right arm holds the carried tray level at BODY Y=-0.080 m in front of the chest. It is not ready and not a placement pose.",
+    "folded": {
+      "description": "Right arm folds the held tray in front of the body so it leaves the body-camera view (BODY z=1.20 m, radius 0.295 m, azimuth -35.5 deg). Tray held level: tool Y along BODY +Z, tool Z toward BODY +Y -- the only orientation that is both level and left-facing for this grip (compare `ready`, whose right arm has tool Y = BODY -Z and would tip the tray). This is the only pose here that is commissioned while holding a payload. Left arm is recorded at its measured parked joints and was not part of this commissioning.",
       "commissioning": "commissioned",
-      "commissioning_scope": "RIGHT ARM ONLY. Executed live once on 2026-09-28 through production_scene_worker/cspace cuRobo planning and supervised ServoJ; 138 samples, 10.96 s, target_reached, zero endpoint joint residual. P3.9B reuses the exact recovered values and requires a fresh attached-object cuRobo plan.",
+      "commissioning_scope": "right arm only: IK/FK 6.0e-6 m / 0.0034 deg; trip 39.49 deg of the 150 deg native cap; BODY y=-0.172 m satisfies the y<=-0.070 m central-slab exclusion; arm-link vs body-chassis and non-adjacent self-collision clear; executed live twice at 0.10 rad/s on 2026-09-28. NOT verified: cuRobo point-cloud-level collision for the carried tray, left-arm path. Left joint_rad is the measured parked reading (3 dp), not a designed target.",
+      "commissioned_routes": {"right": "jaka_right_supervised_path_v6_pick supervised_path"},
+      "commissioned_at": "2026-09-28",
+      "arms": {"left": {"joint_rad": [0.070,-0.106,0.920,0.446,0.144,5.706]}, "right": {"body_tcp_target_m_rad": [0.24046081948236367,-0.17163989128810897,1.2,1.5707963267948966,0.0,3.141592653589793], "ik_joint_rad": [-3.455498892536459,1.331083004008305,-2.100110381841644,-2.9634403896316264,1.6001915371217963,-4.899765010805292], "expected_body_tcp_m_rad": [0.23959,-0.16989,1.19997,1.570729,-0.000009,2.356160]}}
+    },
+    "center": {
+      "description": "Right arm holds the carried tray 80 mm to the right of the BODY centreline and dead level, at the height the operator dragged. BODY y=-0.080 m is the closest the arm may approach the centre: the y<=-0.070 m central-slab exclusion leaves 10 mm of margin. This is NOT the BODY centre and NOT the placement point -- it is a precise tuck, produced by regularising the 2026-09-28 hand-drag, which arrived 2.86 deg off level at y=-0.055 m. Orientation is the level-preserving one for this grip: tool Z = BODY +Y (straight left), tool Y = BODY +Z (tray horizontal), tool X = -BODY X. Left arm is its measured parked reading and was not part of this design.",
+      "commissioning": "commissioned",
+      "commissioning_scope": "RIGHT ARM ONLY. Executed live once on 2026-09-28 via ares_r.motion.production_scene_worker (cspace plan, 121 knots, path clearance 0.0651 m with the carried tray declared as an attached collision object) -> package_native_preview -> jaka_right_supervised_path_v6_pick supervised_path at 0.10 rad/s and 0.20 rad/s^2: 138 samples, 10.96 s, target_reached, servo_disabled code=0, no abort. Endpoint read back with 0.0000 deg joint residual on all six joints. The controller reports TCP (339.0395, -166.6447, -172.4692) mm = BODY (0.357573, -0.078098, 1.027531) m, i.e. 2.06 mm from the nominal BODY target -- that is the pre-existing URDF-versus-controller model offset (the read-only audit reports 1.88 mm on the same pair), not a following error. Central-exclusion margin +8.1 mm at the endpoint and +10.0 mm at worst along the planned path; tray tilt 3.587 -> 0.000 deg and never worse than the start; zero arm-versus-body and self collisions across the packaged path; the gripper stayed closed on the held object (raw 39). NOT verified: left-arm path, and the obstacle_demo/obstacle_demo_worker planner route plus the direct MoveJ route, neither of which was ever exercised for this pose. Left joint_rad is a measured parked reading (6 dp), not a designed target.",
       "commissioned_routes": {"right": "jaka_right_supervised_path_v6_pick supervised_path (planned by ares_r.motion.production_scene_worker cspace)"},
       "commissioned_at": "2026-09-28",
-      "evidence": "worklog/evidence/2026-09-28-place/center_exec_20260928T172814/; tmp/place_9.28/out/center_exec/",
-      "source": "coworker dirty patch in config/named_poses.json; tmp/place_9.28/out/vis_target3/visibility_clear_target.json",
+      "evidence": "worklog/evidence/2026-09-28-place/center_exec_20260928T172814/, tmp/place_9.28/out/center_exec/",
+      "source": "tmp/place_9.28/out/vis_target3/visibility_clear_target.json (regularised 2026-09-28; recovered from coworker dirty patch before P3.9B; note that file names its controller pose field with the metres value under a _mm_ name)",
       "orientation_semantics": "tool Y = BODY +Z; tool Z = BODY +Y; carried tray horizontal",
       "arms": {
         "left": {"joint_rad": [0.069936,-0.106317,0.919713,0.445531,0.144037,5.706063]},

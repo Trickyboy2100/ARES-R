@@ -29,6 +29,17 @@ SUPPORTED_RPY_ORDER = "ZYX"
 SUPPORTED_APPROACH_AXES = ("+z", "-z")
 SUPPORTED_INSERTION_MODES = ("horizontal", "vertical")
 
+#: A site profile may state its approach as a frame-qualified BODY axis instead,
+#: e.g. ``BODY_-Z`` for a placement that descends straight down.  That is a
+#: different quantity from a tool axis -- it does not rotate with the reported
+#: pose -- so it is spelled differently and must never be silently folded into
+#: the ``+z``/``-z`` reading.  The commissioned ``right_place_rightmost`` profile
+#: uses exactly this form.
+BODY_FRAME_PREFIX = "BODY_"
+BODY_FRAME_AXES = {"+X": (1.0, 0.0, 0.0), "-X": (-1.0, 0.0, 0.0),
+                   "+Y": (0.0, 1.0, 0.0), "-Y": (0.0, -1.0, 0.0),
+                   "+Z": (0.0, 0.0, 1.0), "-Z": (0.0, 0.0, -1.0)}
+
 #: Reached by ``approach_direction``; the unit-norm check tolerates float noise only.
 UNIT_TOLERANCE = 1e-6
 
@@ -47,11 +58,28 @@ def rotation_matrix(rx: float, ry: float, rz: float,
             [-sy, cy * sx, cy * cx]]
 
 
+def body_axis_direction(axis: str) -> List[float]:
+    """Unit vector for a frame-qualified BODY axis name such as ``BODY_-Z``."""
+    if not isinstance(axis, str) or not axis.startswith(BODY_FRAME_PREFIX):
+        raise ValueError("a BODY-frame axis must look like BODY_+Z, got %r" % (axis,))
+    name = axis[len(BODY_FRAME_PREFIX):].upper()
+    if name not in BODY_FRAME_AXES:
+        raise ValueError("BODY-frame approach axis must be one of %s, got %r"
+                         % (", ".join(sorted(BODY_FRAME_AXES)), axis))
+    return list(BODY_FRAME_AXES[name])
+
+
 def approach_direction(rotation: Sequence[Sequence[float]], axis: str = "+z") -> List[float]:
-    """Insertion direction in the reported frame, taken from the tool Z axis."""
+    """Insertion direction in the reported frame.
+
+    ``+z``/``-z`` select the tool Z axis of ``rotation``.  A ``BODY_`` prefixed
+    axis is a frame-qualified constant and deliberately ignores ``rotation``.
+    """
+    if isinstance(axis, str) and axis.startswith(BODY_FRAME_PREFIX):
+        return body_axis_direction(axis)
     if axis not in SUPPORTED_APPROACH_AXES:
-        raise ValueError("approach axis must be one of %s, got %r"
-                         % (", ".join(SUPPORTED_APPROACH_AXES), axis))
+        raise ValueError("approach axis must be one of %s or a BODY_-prefixed frame axis, "
+                         "got %r" % (", ".join(SUPPORTED_APPROACH_AXES), axis))
     direction = [float(rotation[row][2]) for row in range(3)]
     if axis == "-z":
         direction = [-value for value in direction]
