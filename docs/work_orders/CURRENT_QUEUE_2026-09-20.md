@@ -256,3 +256,27 @@ Key correction:
 Implement `manipulation.plan_transfer_chain` as an offline/runtime Skill so TaskRuntime chooses the branch automatically. Do not rely on Codex selecting ad-hoc recovery waypoints.
 
 P3.9B local fixes remain valuable and must be preserved; P3.9C is a steering refinement, not a reset.
+## Active continuation — P3.9C2
+
+Continue from the local transfer-chain checkpoint; do not reset/revert it.
+
+Read:
+- `docs/work_orders/2026-09-29_P3_9C2_CONTINUE_FROM_TRANSFER_CHAIN_CHECKPOINT.md`
+
+Expected local checkpoint supplied by the field session:
+`7120c3f3aad17330d0af6ada1e39c60bc58fe7fb`
+
+Current fixed station contract:
+
+```text
+PLACE_STATION = current base pose
+PICK_STATION  = PLACE + BODY +Y 0.40 m
+return PLACE  = PICK + BODY -Y 0.40 m
+yaw = 0
+```
+
+The current demo no longer needs to search for these two station locations. Base motion still invalidates scene and requires truthful settle + fresh observation.
+
+Primary implementation target remains `manipulation.plan_transfer_chain`: NORMAL/FLIPPED_180 full-chain selection with Cartesian center, rear-preplace X-0.15 m, hard horizontal validation and cuRobo for every non-contact arm segment.
+
+Do not resume supervised physical execution until the P3.9C2 planning-only gate is complete. After the gate, obtain one new authorization because the site state changed after the previous paused run.
