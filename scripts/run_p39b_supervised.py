@@ -132,7 +132,7 @@ def package_staging(planning_path,request_path,output):
     return native
 
 
-def prepare_first_pick_with_fallback():
+def prepare_first_pick_with_fallback(prefer_staging=False):
     """Prepare the golden package, adding the P3.9 FAST->FALLBACK planner policy.
 
     The golden entrypoint remains byte-for-byte unchanged.  This additive runner
@@ -153,6 +153,22 @@ def prepare_first_pick_with_fallback():
          "--component-gripper"],timeout=300)
     request=plan/"planner_request.json";planning=plan/"planning.json"
     environment=dict(os.environ,PYTHONPATH=str(ROOT/"src"))
+    if prefer_staging:
+        staging=run_dir/"pick_staging";staging.mkdir()
+        value=load(request);value["goal_rad"]=PICK_STAGING_JOINTS
+        value["goal_candidates_rad"]=[PICK_STAGING_JOINTS]
+        value["warmup_policy"]="NONE";value["benchmark_runs"]=1
+        value["planning_parameters"].update(num_ik_seeds=4,num_trajopt_seeds=2,
+            max_attempts=4,enable_graph_attempt=1,random_seed=7)
+        staging_request=staging/"planner_request.json";write(staging_request,value)
+        staging_planning=staging/"planning.json"
+        run([CUROBO,"-m","ares_r.motion.production_scene_worker",
+             staging_request,staging_planning],timeout=900)
+        staging_native=package_staging(staging_planning,staging_request,
+                                       staging/"native")
+        return {"ready":False,"run_dir":run_dir,
+                "staging_native":staging_native,
+                "staging_planning":staging_planning}
     fast=subprocess.run([str(CUROBO),"-m","ares_r.motion.production_scene_worker",
         str(request),str(planning)],cwd=ROOT,env=environment,text=True,capture_output=True,timeout=900)
     (plan/"planner_fast.log").write_text((fast.stdout or "")+(fast.stderr or ""))
@@ -230,7 +246,7 @@ def prepare():
     write(out/"p39b_preflight_package.json",package);return out
 
 
-def execute(run_dir):
+def execute(run_dir,prefer_pick_staging=False):
     run_dir=Path(run_dir);run_dir.mkdir(parents=True,exist_ok=False)
     manifest=Manifest(run_dir/"session_manifest.json");base=Base()
     try:
@@ -239,7 +255,7 @@ def execute(run_dir):
         # cuRobo remains the final reachability authority after the move.
         _,_,pick_move=align("right_pick","PICK_PREGRASP",(.70,-.16),run_dir,manifest,base)
         golden=import_script("golden_first_pick",Path("scripts/run_first_pick_demo.py"))
-        prepared=prepare_first_pick_with_fallback()
+        prepared=prepare_first_pick_with_fallback(prefer_staging=prefer_pick_staging)
         if not prepared["ready"]:
             native_send(prepared["staging_native"],run_dir/"pick_staging_sender.jsonl")
             manifest.event("CUROBO_PICK_STAGING","PASS",
@@ -291,12 +307,14 @@ def main():
     parser=argparse.ArgumentParser();group=parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--prepare",action="store_true");group.add_argument("--execute",action="store_true")
     parser.add_argument("--authorization");parser.add_argument("--onsite-observer-confirmed",action="store_true")
+    parser.add_argument("--prefer-pick-staging",action="store_true",
+                        help="fresh-plan the proven cuRobo staging leg before pick")
     parser.add_argument("--output",type=Path);args=parser.parse_args()
     if args.prepare:print(prepare());return
     if args.authorization!=AUTH or not args.onsite_observer_confirmed:
         raise PermissionError("exact P3.9B authorization and on-site observation required")
     output=args.output or EVIDENCE/("live_"+datetime.now().strftime("%Y%m%dT%H%M%S"))
-    execute(output)
+    execute(output,prefer_pick_staging=args.prefer_pick_staging)
 
 
 if __name__=="__main__":main()
