@@ -156,7 +156,7 @@ def execute(run_dir):
         place_epoch,_,place_move=align("right_place_rightmost","PLACE_PREPLACE",
                                       (.70,-.25),run_dir,manifest,base)
         place_pkg=run_dir/"place_pkg"
-        common=[sys.executable,"scripts/build_place_execution_package.py","--place-epoch",place_epoch,
+        common=[CUROBO,"scripts/build_place_execution_package.py","--place-epoch",place_epoch,
           "--pick-package",pick_run/"first_pick_package/first_pick_execution_package.json",
           "--template-plan",pick_run/"fresh_pregrasp_plan","--hold-snapshot",
           run_dir/"center_sender.jsonl","--scene-is-post-pick","--retreat-distance-m","0.06"]
