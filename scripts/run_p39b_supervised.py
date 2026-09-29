@@ -111,7 +111,7 @@ def prepare():
     pick=capture("right_pick",out/"pick_epoch")
     place=capture("right_place_rightmost",out/"place_epoch")
     pick_xyz=pick["target"]["pose_m_rad"][:3];place_xyz=place["target"]["pose_m_rad"][:3]
-    pick_offset=[max(-.15,min(.15,pick_xyz[0]-.70)),max(-.40,min(.40,pick_xyz[1]+.25))]
+    pick_offset=[max(-.15,min(.15,pick_xyz[0]-.70)),max(-.40,min(.40,pick_xyz[1]+.16))]
     # Place is observed at the episode origin; after PICK alignment, the second
     # episode is allowed to undo that displacement and make its own bounded X correction.
     place_from_pick=[max(-.15,min(.15,place_xyz[0]-.70))-pick_offset[0],
@@ -139,7 +139,10 @@ def execute(run_dir):
     run_dir=Path(run_dir);run_dir.mkdir(parents=True,exist_ok=False)
     manifest=Manifest(run_dir/"session_manifest.json");base=Base()
     try:
-        _,_,pick_move=align("right_pick","PICK_PREGRASP",(.70,-.25),run_dir,manifest,base)
+        # The right-arm commissioned pick evidence is centered near BODY Y=-.18.
+        # Using -.16 leaves observation noise inside the +.40 m alignment bound;
+        # cuRobo remains the final reachability authority after the move.
+        _,_,pick_move=align("right_pick","PICK_PREGRASP",(.70,-.16),run_dir,manifest,base)
         golden=import_script("golden_first_pick",Path("scripts/run_first_pick_demo.py"))
         pick_run=golden.prepare();golden.execute(pick_run)
         manifest.event("PICK_AND_INITIAL_LIFT","PASS",run_dir=str(pick_run))
