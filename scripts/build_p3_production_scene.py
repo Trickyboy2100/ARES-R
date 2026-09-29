@@ -69,6 +69,28 @@ def point_aabb_distance(point,box):
         np.asarray(box["dims_m"])/2,0)))
 
 
+def select_target_primitive(target_body, planning_boxes, preferred_semantics,
+                            maximum_distance_m):
+    """Bind a detection to nearby observed geometry without semantic tunnelling.
+
+    Purpose-specific semantics are a tie-breaker *inside* the spatial gate.  The
+    old ordering preferred a semantically named primitive anywhere in the ROI
+    over a nearby support primitive.  That is especially wrong for placement
+    targets, whose commanded point legitimately lies on/in a support pocket.
+    """
+    preferred=set(preferred_semantics)
+    candidates=[]
+    for box in planning_boxes:
+        distance=point_aabb_distance(target_body,box)
+        if distance <= float(maximum_distance_m):
+            candidates.append((0 if box.get("semantic") in preferred else 1,
+                               distance,box))
+    if not candidates:
+        raise RuntimeError("detected target has no matching observed pointcloud primitive")
+    semantic_rank,distance,bound=min(candidates,key=lambda row:(row[0],row[1]))
+    return bound,distance,semantic_rank
+
+
 def targets(active,audit,world,model,existing=None,goal_delta_rad=None):
     start=np.asarray(audit["diagnostics"]["joint_position_rad"],dtype=float)
     if existing:
@@ -179,20 +201,15 @@ def main():
         semantic_key=("place_preferred_semantics" if detection_kind=="place"
                       else "pick_preferred_semantics")
         preferred=set(task["target_binding"][semantic_key])
-        candidates=[(point_aabb_distance(target_body,box),
-                     0 if box.get("semantic") in preferred else 1,box)
-                    for box in planning_boxes]
-        if not candidates:
-            raise RuntimeError("detection cannot bind into an empty observed scene")
-        distance,_,bound=min(candidates,key=lambda row:(row[1],row[0]))
-        if distance>float(task["target_binding"]["maximum_aabb_distance_m"]):
-            raise RuntimeError("detected target has no matching observed pointcloud primitive")
+        bound,distance,_=select_target_primitive(
+            target_body,planning_boxes,preferred,
+            task["target_binding"]["maximum_aabb_distance_m"])
         target_primitive_id=bound.get("primitive_id",bound.get("object_id"))
         target_binding={"detection_id":detection_artifact["request_id"],
             "target_body_m":target_body,"primitive_id":target_primitive_id,
             "primitive_semantic":bound.get("semantic","UNKNOWN"),
             "aabb_distance_m":distance,"detection_kind":detection_kind,
-            "policy":"NEAREST_PURPOSE_SPECIFIC_OBSERVED_PRIMITIVE_V2"}
+            "policy":"SPATIAL_GATE_THEN_PURPOSE_SPECIFIC_NEAREST_V3"}
     runtime="p3-%s-%d"%(a.mode.lower(),time.time_ns());noww,nowm=time.time_ns(),time.monotonic_ns()
     wm=WorldModel(runtime_id=runtime,snapshot_ttl_s=3600,environment_ttl_s=3600)
     wm.update_robot_state(RobotState(noww,nowm,runtime,left_joints_rad=tuple(geometry.joints_rad["left"]),
