@@ -45,6 +45,7 @@ def main():
     request=load(a.plan/"planner_request.json");planning=load(a.plan/"planning.json")
     observation=load(a.epoch/"manipulation_observation.json");report=load(a.epoch/"live_scene/scene/scene_report.json")
     decomp=load(a.epoch/"live_scene/scene/support_decomposition.json")
+    params=load(ROOT/"config/tray_to_groove_v2.json")
     solver=RuntimeGoalIK(request["robot_yaml_urdf"],request["T_body_model"],request["T_link6_tcp"])
     if a.contact:
         contact=load(a.contact/"contact_inflation_sweep.json")
@@ -54,7 +55,9 @@ def main():
         pose=observation["target"]["pose_m_rad"]
         rotation=np.asarray(rotation_matrix(*pose[3:],observation["target"]["orientation_convention"]))
         direction=np.asarray(approach_direction(rotation,observation["target"]["approach_axis"]),dtype=float)
-        grasp_xyz=np.asarray(pose[:3],dtype=float);pregrasp=grasp_xyz-.05*direction
+        grasp_xyz=np.asarray(pose[:3],dtype=float)
+        pregrasp_distance=float(params["contact"].get("selected_pregrasp_distance_m",.05))
+        pregrasp=grasp_xyz-pregrasp_distance*direction
         seed=np.asarray(planning["trajectory_points_rad"][-1],dtype=float);q_contact=[]
         for xyz in np.linspace(pregrasp,grasp_xyz,26):
             solved=solver.solve(xyz,rotation,seed);seed=np.asarray(solved.joints_rad)
@@ -83,7 +86,6 @@ def main():
         0.,report["observation_id"])
     attached=attach_scene_object(target,grasp_T.tolist(),side="right",source_revision=policy.revision)
     attached_collision=build_attached_collision(attached,request["T_link6_tcp"],inflation_m=.004)
-    params=load(ROOT/"config/tray_to_groove_v2.json")
     stages=[
       {"index":1,"action":"FRESH_ATOMIC_RIGHT_PICK_OBSERVATION","state":"BOUND"},
       {"index":2,"action":"CUROBO_MOVE_TO_50MM_PREGRASP","trajectory_hash":trajectory_hash(planning["trajectory_points_rad"])},

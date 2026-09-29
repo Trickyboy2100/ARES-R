@@ -132,6 +132,83 @@ def package_staging(planning_path,request_path,output):
     return native
 
 
+def resume_pick_from_pregrasp(pick_run,outer_run,manifest):
+    """Resume only after a sender proved the cuRobo pregrasp endpoint reached."""
+    pick_run=Path(pick_run);outer_run=Path(outer_run)
+    package=pick_run/"first_pick_package_resume";native=pick_run/"native_resume"
+    run([CUROBO,"scripts/build_first_pick_execution_package.py","--plan",
+         pick_run/"pregrasp_plan","--epoch",pick_run/"fresh_observation",
+         "--output",package],timeout=300)
+    run([sys.executable,"scripts/package_first_pick_native.py","--package",
+         package/"first_pick_execution_package.json","--output",native],timeout=300)
+    for name in ("contact","lift"):
+        checked=run([SENDER,"validate-supervised-path",native/(name+".native.txt")],timeout=60)
+        if "VALID_SUPERVISED_PATH" not in checked:
+            raise RuntimeError("native sender rejected resumed "+name)
+    recovery=pick_run/"execution_resume";recovery.mkdir(exist_ok=False)
+    native_send(native/"contact.native.txt",recovery/"contact.jsonl")
+    close=run([sys.executable,"scripts/gripper_direct_once.py","move","--raw","0"])
+    (recovery/"gripper_close.json").write_text(close)
+    post=pick_run/"post_grasp_scene_resume"
+    code=("import json;from pathlib import Path;from ares_r.motion.live_scene import build_live_planning_scene;"
+          "c=json.load(open('config/system.json'));"
+          "print(json.dumps(build_live_planning_scene(c,Path(%r),active_arm='right')))"%str(post))
+    run([PY311,"-c",code],timeout=600)
+    readbacks=recovery/"gripper_readbacks.jsonl"
+    with readbacks.open("x") as stream:
+        previous=0.0
+        for delay in (.25,.75,1.5):
+            time.sleep(delay-previous);previous=delay
+            stream.write(run([sys.executable,"scripts/gripper_direct_once.py","read"]))
+    run([CUROBO,"scripts/verify_authorized_first_pick.py","--epoch",
+         pick_run/"fresh_observation","--post-scene",post,"--readbacks",readbacks,
+         "--output",recovery/"grasp_verification.json"],timeout=300)
+    lift_native=pick_run/"native_lift_resume"
+    run([sys.executable,"scripts/package_first_pick_native.py","--package",
+         package/"first_pick_execution_package.json","--output",lift_native],timeout=300)
+    native_send(lift_native/"lift.native.txt",recovery/"lift.jsonl")
+    manifest.event("PICK_AND_INITIAL_LIFT","PASS_RESUMED_FROM_PREGRASP",
+                   run_dir=str(pick_run),package=str(package))
+    return package/"first_pick_execution_package.json"
+
+
+def center_and_preplace(run_dir,pick_run,pick_package,pick_move,manifest,base):
+    run_dir=Path(run_dir);pick_run=Path(pick_run);pick_package=Path(pick_package)
+    center_epoch=run_dir/"center_epoch";capture("right_place_rightmost",center_epoch)
+    center_plan=run_dir/"center_plan"
+    run([CUROBO,"scripts/plan_named_pose_curobo.py","--epoch",center_epoch,
+         "--template-plan",pick_run/"pregrasp_plan","--attached-package",
+         pick_package,"--pose","center","--output",center_plan],timeout=900)
+    native_send(center_plan/"center.native.txt",run_dir/"center_sender.jsonl")
+    manifest.event("CENTER_TRANSFER","PASS",plan=str(center_plan))
+
+    place_epoch,_,place_move=align("right_place_rightmost","PLACE_PREPLACE",
+                                  (.70,-.25),run_dir,manifest,base)
+    place_pkg=run_dir/"place_pkg"
+    common=[CUROBO,"scripts/build_place_execution_package.py","--place-epoch",place_epoch,
+      "--pick-package",pick_package,"--template-plan",pick_run/"pregrasp_plan",
+      "--hold-snapshot",run_dir/"center_sender.jsonl","--scene-is-post-pick",
+      "--retreat-distance-m","0.06"]
+    run(common+["--output",place_pkg],timeout=900)
+    planning_dir=run_dir/"preplace_curobo";planning_dir.mkdir()
+    request=planning_dir/"planner_request.json"
+    request.write_text((place_pkg/"preplace_request.json").read_text())
+    planning=planning_dir/"planning.json"
+    run([CUROBO,"-m","ares_r.motion.production_scene_worker",request,planning],timeout=900)
+    bound=run_dir/"place_pkg_bound"
+    run(common+["--preplace-planning",planning,"--output",bound],timeout=900)
+    native=run_dir/"place_native"
+    run([sys.executable,"scripts/package_place_native.py","--package",
+         bound/"place_execution_package.json","--preplace-planning",planning,"--output",native])
+    native_send(native/"preplace.native.txt",run_dir/"preplace_sender.jsonl")
+    manifest.event("HOLD_ABOVE_PLACE","PASS",pick_base_total_xy_m=pick_move,
+                   place_base_total_xy_m=place_move,place_epoch=str(place_epoch),
+                   preplace_plan=str(planning))
+    write(run_dir/"result.json",{"result":"HOLD_ABOVE_PLACE",
+         "pick_base_total_xy_m":pick_move,"place_base_total_xy_m":place_move,
+         "released":False})
+
+
 def prepare_first_pick_with_fallback(prefer_staging=False):
     """Prepare the golden package, adding the P3.9 FAST->FALLBACK planner policy.
 
@@ -267,46 +344,19 @@ def execute(run_dir,prefer_pick_staging=False):
         pick_run=prepared["run_dir"];golden.execute(pick_run)
         manifest.event("PICK_AND_INITIAL_LIFT","PASS",run_dir=str(pick_run))
 
-        center_epoch=run_dir/"center_epoch";capture("right_place_rightmost",center_epoch)
-        center_plan=run_dir/"center_plan"
-        run([CUROBO,"scripts/plan_named_pose_curobo.py","--epoch",center_epoch,
-             "--template-plan",pick_run/"fresh_pregrasp_plan","--attached-package",
-             pick_run/"first_pick_package/first_pick_execution_package.json",
-             "--pose","center","--output",center_plan],timeout=900)
-        native_send(center_plan/"center.native.txt",run_dir/"center_sender.jsonl")
-        manifest.event("CENTER_TRANSFER","PASS",plan=str(center_plan))
-
-        place_epoch,_,place_move=align("right_place_rightmost","PLACE_PREPLACE",
-                                      (.70,-.25),run_dir,manifest,base)
-        place_pkg=run_dir/"place_pkg"
-        common=[CUROBO,"scripts/build_place_execution_package.py","--place-epoch",place_epoch,
-          "--pick-package",pick_run/"first_pick_package/first_pick_execution_package.json",
-          "--template-plan",pick_run/"fresh_pregrasp_plan","--hold-snapshot",
-          run_dir/"center_sender.jsonl","--scene-is-post-pick","--retreat-distance-m","0.06"]
-        run(common+["--output",place_pkg],timeout=900)
-        planning_dir=run_dir/"preplace_curobo";planning_dir.mkdir()
-        request=planning_dir/"planner_request.json"
-        request.write_text((place_pkg/"preplace_request.json").read_text())
-        planning=planning_dir/"planning.json"
-        run([CUROBO,"-m","ares_r.motion.production_scene_worker",request,planning],timeout=900)
-        bound=run_dir/"place_pkg_bound"
-        run(common+["--preplace-planning",planning,"--output",bound],timeout=900)
-        native=run_dir/"place_native"
-        run([sys.executable,"scripts/package_place_native.py","--package",
-             bound/"place_execution_package.json","--preplace-planning",planning,"--output",native])
-        native_send(native/"preplace.native.txt",run_dir/"preplace_sender.jsonl")
-        manifest.event("HOLD_ABOVE_PLACE","PASS",pick_base_total_xy_m=pick_move,
-                       place_base_total_xy_m=place_move,place_epoch=str(place_epoch),
-                       preplace_plan=str(planning))
-        write(run_dir/"result.json",{"result":"HOLD_ABOVE_PLACE","pick_base_total_xy_m":pick_move,
-             "place_base_total_xy_m":place_move,"released":False})
+        center_and_preplace(run_dir,pick_run,
+            pick_run/"first_pick_package/first_pick_execution_package.json",
+            pick_move,manifest,base)
     finally:base.close()
 
 
 def main():
     parser=argparse.ArgumentParser();group=parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--prepare",action="store_true");group.add_argument("--execute",action="store_true")
+    group.add_argument("--resume-after-pregrasp",action="store_true")
     parser.add_argument("--authorization");parser.add_argument("--onsite-observer-confirmed",action="store_true")
+    parser.add_argument("--pick-run",type=Path,
+                        help="prepared run currently holding at its verified pregrasp")
     parser.add_argument("--prefer-pick-staging",action="store_true",
                         help="fresh-plan the proven cuRobo staging leg before pick")
     parser.add_argument("--output",type=Path);args=parser.parse_args()
@@ -314,6 +364,16 @@ def main():
     if args.authorization!=AUTH or not args.onsite_observer_confirmed:
         raise PermissionError("exact P3.9B authorization and on-site observation required")
     output=args.output or EVIDENCE/("live_"+datetime.now().strftime("%Y%m%dT%H%M%S"))
+    if args.resume_after_pregrasp:
+        if not args.pick_run:
+            raise ValueError("--pick-run is required for pregrasp resume")
+        output.mkdir(parents=True,exist_ok=True);manifest=Manifest(output/"resume_manifest.json")
+        base=Base()
+        try:
+            package=resume_pick_from_pregrasp(args.pick_run,output,manifest)
+            center_and_preplace(output,args.pick_run,package,[0.0,0.0],manifest,base)
+        finally:base.close()
+        return
     execute(output,prefer_pick_staging=args.prefer_pick_staging)
 
 
