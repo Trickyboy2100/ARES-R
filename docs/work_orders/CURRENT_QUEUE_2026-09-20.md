@@ -235,3 +235,24 @@ Main objectives:
 Golden legacy first-pick demo remains unchanged and available as rollback.
 
 Physical execution is allowed only after the work-order preflight flags pass and the single field authorization in the work order is received.
+## Active steering — P3.9C Symmetry-aware full-chain planning
+
+P3.9B local execution proved the remaining blocker is not a simple obstacle-avoidance failure. Collision-free local candidates exist, but the historically chosen grasp/orientation branch drives center/preplace motion through a poor wrist/singularity branch and hard horizontal-orientation validation rejects the resulting trajectories.
+
+Read:
+
+- `docs/decisions/2026-09-29_P39C_SYMMETRY_AWARE_FULL_CHAIN_PLANNING.md`
+- `docs/work_orders/2026-09-29_P3_9C_SYMMETRY_FULL_CHAIN_PLANNER.md`
+
+Key correction:
+
+- `center` is a BODY TCP Cartesian target, not a fixed historical joint posture;
+- the two-finger gripper has two equivalent 180-degree grasp symmetry branches;
+- select NORMAL/FLIPPED_180 by evaluating the downstream chain, not the pick stage alone;
+- preserve the selected branch through pregrasp→grasp→lift→center→rear-preplace→preplace;
+- each non-contact segment remains SceneAwareMotion + cuRobo;
+- after base motion, exact trajectories are replanned in the fresh scene while keeping the chosen symmetry branch.
+
+Implement `manipulation.plan_transfer_chain` as an offline/runtime Skill so TaskRuntime chooses the branch automatically. Do not rely on Codex selecting ad-hoc recovery waypoints.
+
+P3.9B local fixes remain valuable and must be preserved; P3.9C is a steering refinement, not a reset.
