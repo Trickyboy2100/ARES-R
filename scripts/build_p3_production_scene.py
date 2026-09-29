@@ -91,6 +91,16 @@ def select_target_primitive(target_body, planning_boxes, preferred_semantics,
     return bound,distance,semantic_rank
 
 
+def planning_inflation(role, observed_inflation_m):
+    """Do not apply environment padding to the designated contact target.
+
+    The point-derived AABB itself remains a hard collision object during the
+    free-space leg.  Only its extra environment padding is removed; the bounded
+    contact Skill remains the sole route that may touch/cross the target.
+    """
+    return 0.0 if role == SceneObjectRole.TARGET else float(observed_inflation_m)
+
+
 def targets(active,audit,world,model,existing=None,goal_delta_rad=None):
     start=np.asarray(audit["diagnostics"]["joint_position_rad"],dtype=float)
     if existing:
@@ -232,7 +242,8 @@ def main():
               box.get("primitive_id",box.get("object_id"))==target_primitive_id
               else SceneObjectRole.OBSTACLE)
         provenance.append(add(objects,obs,identifier,role,
-                              box["center_m"],box["dims_m"],inflation,source))
+                              box["center_m"],box["dims_m"],
+                              planning_inflation(role,inflation),source))
     inactive=inactive_arm_obstacles(geometry,a.active)
     for box in inactive["boxes"]:
         if box["kind"]=="central_exclusion":

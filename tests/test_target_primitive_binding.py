@@ -35,5 +35,9 @@ class TargetPrimitiveBindingTests(unittest.TestCase):
                 [0,0,0],[self.box("far","SUPPORT_SURFACE",[1,0,0])],
                 {"SUPPORT_SURFACE"},.08)
 
+    def test_target_keeps_true_geometry_without_environment_padding(self):
+        self.assertEqual(_MODULE.planning_inflation(_MODULE.SceneObjectRole.TARGET,.007),0.0)
+        self.assertEqual(_MODULE.planning_inflation(_MODULE.SceneObjectRole.OBSTACLE,.007),.007)
+
 
 if __name__=="__main__":unittest.main()
