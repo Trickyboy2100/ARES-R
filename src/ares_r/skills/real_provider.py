@@ -20,6 +20,7 @@ class RealServiceBundle:
     authorization: object
     executor: object
     verification: object
+    alignment: object = None
 
 
 class RealCapabilityProvider(CanonicalCapabilityProvider):
@@ -31,8 +32,9 @@ class RealCapabilityProvider(CanonicalCapabilityProvider):
             "resource.detect":self._observation_call,
             "predicate.verify":self._verify,
             "base.navigate":self._base,
+            "base.align_for_manipulation":self._align,
             "motion.free":self._motion,
-            "motion.lift":self._motion,
+            "motion.lift":self._contact,
             "motion.contact":self._contact,
             "gripper.grasp":self._gripper,
             "gripper.release":self._gripper,
@@ -49,8 +51,28 @@ class RealCapabilityProvider(CanonicalCapabilityProvider):
     def _base(self,phase,payload):
         if phase=="prepare":return self.bundle.base.prepare_registered(payload)
         return self.bundle.base.execute_registered(payload)
+    def _align(self,phase,payload):
+        from ares_r.motion.manipulation_alignment import AlignmentBounds, AlignmentRequest
+        values=payload["parameters"]
+        request=AlignmentRequest(
+            target_profile=values["target_profile"],arm=values.get("arm","right"),
+            goal_kind=values["goal_kind"],
+            bounds=AlignmentBounds(float(values.get("x_bound_m",.15)),
+                                   float(values.get("y_bound_m",.40)),0.0,
+                                   int(values.get("max_corrections",3))))
+        if phase=="prepare":
+            request.validate();return {"provider":"navigate.align_for_manipulation",
+                                       "request":values,"physical_motion":False}
+        if self.bundle.alignment is None:raise RuntimeError("alignment service unavailable")
+        return self.bundle.alignment.align(request)
     def _motion(self,phase,payload):
-        if phase=="prepare":return self.bundle.motion.plan(payload)
+        if phase=="prepare":
+            plan=self.bundle.motion.plan(payload)
+            if not isinstance(plan,dict) or plan.get("motion_contract") not in (
+                    "SCENE_AWARE_FREE_SPACE_V1",None):
+                raise RuntimeError("free-space Skill requires SceneAwareMotion/cuRobo plan")
+            result=dict(plan);result["free_space_provider"]="SceneAwareMotionService/curobo"
+            return result
         return self.bundle.motion.execute_bound(payload)
     def _contact(self,phase,payload):
         if phase=="prepare":return self.bundle.contact.plan(payload)
