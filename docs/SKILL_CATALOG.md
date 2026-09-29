@@ -45,6 +45,7 @@ L0 is never exported to LLM/function calling. Existing ARES-R adapters remain th
 | `navigate.align_station` | station, tolerance | base, station zone | near station, fiducial/geometry visible → aligned base_station | OBSERVATION, EXECUTION | RC |
 | `manipulation.approach` | resource/affordance, arm, standoff | arm, zone, scene | fresh scene, reachable → TCP at preinteraction state | PLAN, EXECUTION, SAFETY | SV |
 | `manipulation.retreat` | arm, direction/distance policy | arm, zone | controlled object/tool state known → safe clearance verified | PLAN, EXECUTION | SV |
+| `manipulation.plan_transfer_chain` ★ | observation, NORMAL/FLIPPED_180, center BODY TCP, place target, beam limits | fresh scene, robot model, persistent cuRobo | immutable full-chain branch/IK selection; explicit AMR scene-rebind boundary | OBSERVATION, PLAN, SAFETY | RD |
 | `manipulation.grasp` ★ | object, arm?, grasp policy | object, arm, gripper, zone | object localized/free/compatible → grasp verified and object attached | RESOURCE, PLAN, EXECUTION, VERIFICATION | RC |
 | `manipulation.release` ★ | object, destination | object, gripper, destination | object attached and destination valid → release verified, detached | RESOURCE, EXECUTION, VERIFICATION | RC |
 | `robot.stow` | arm=left/right/both | arm(s), zones | no incompatible payload → stowed predicate | PLAN, EXECUTION, SAFETY | RC |

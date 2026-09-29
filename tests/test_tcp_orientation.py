@@ -3,7 +3,8 @@ import unittest
 
 import numpy as np
 
-from ares_r.motion.tcp_orientation import HORIZONTAL_FORWARD_R_BODY, validate_path
+from ares_r.motion.tcp_orientation import (HORIZONTAL_FORWARD_R_BODY,
+    level_rotation,nearest_level_roll_branch,validate_path)
 
 
 class TcpOrientationTests(unittest.TestCase):
@@ -38,6 +39,13 @@ class TcpOrientationTests(unittest.TestCase):
             value[:3, :3] = old
             return value
         self.assertFalse(validate_path(fk, np.zeros((2, 6)))["passed"])
+
+    def test_level_roll_symmetry_preserves_approach_axis(self):
+        normal=level_rotation(.7,0);flipped=level_rotation(.7,1)
+        np.testing.assert_allclose(normal[:,2],flipped[:,2])
+        np.testing.assert_allclose(normal[:,:2],-flipped[:,:2])
+        self.assertEqual(nearest_level_roll_branch(normal),0)
+        self.assertEqual(nearest_level_roll_branch(flipped),1)
 
 
 if __name__ == "__main__":

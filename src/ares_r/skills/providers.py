@@ -60,7 +60,13 @@ class ReplayCapabilityProvider(CapabilityProvider):
         self.calls.append(("execute",definition.skill_id))
         code=self.failures.get((definition.skill_id,"execute"))
         if code:return SkillResult(SkillStatus.FAILED,failure_code=code)
-        return SkillResult(SkillStatus.SUCCEEDED,outputs={"node":context.stage_id,
+        outputs={"node":context.stage_id,
             "skill_id":definition.skill_id,"artifact_id":"REPLAY_"+context.stage_id,
             "scene_snapshot_id":context.binding.get("scene_snapshot_id"),
-            "trajectory_hash":"sha256:replay-"+context.stage_id})
+            "trajectory_hash":"sha256:replay-"+context.stage_id}
+        if definition.skill_id=="manipulation.plan_transfer_chain":
+            outputs.update({"selected_grasp_symmetry_id":"FLIPPED_180",
+                "selected_chain":{"pregrasp":"REPLAY_PREGRASP_IK"},
+                "selected_center_ik":"REPLAY_CENTER_IK",
+                "transfer_chain_selection":"sha256:replay-transfer-chain"})
+        return SkillResult(SkillStatus.SUCCEEDED,outputs=outputs)

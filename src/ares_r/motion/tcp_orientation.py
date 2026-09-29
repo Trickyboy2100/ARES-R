@@ -16,10 +16,29 @@ HORIZONTAL_FORWARD_R_BODY = np.array(
 MAX_ORIENTATION_ERROR_DEG = 3.0
 
 
-def level_rotation(yaw_rad):
-    """Return the established level gripper branch at a BODY +Z yaw."""
+def level_rotation(yaw_rad, roll_branch=0):
+    """Return a level gripper rotation at a BODY +Z yaw.
+
+    ``roll_branch=1`` preserves the physically equivalent 180-degree roll
+    branch about the approach axis.  Selecting the branch nearest the live
+    pose avoids an unnecessary wrist flip while carrying an object.
+    """
     c, s = math.cos(float(yaw_rad)), math.sin(float(yaw_rad))
-    return np.array([[c, -s, 0.0], [s, c, 0.0], [0.0, 0.0, 1.0]]) @ HORIZONTAL_FORWARD_R_BODY
+    value = np.array([[c, -s, 0.0], [s, c, 0.0], [0.0, 0.0, 1.0]]) @ HORIZONTAL_FORWARD_R_BODY
+    if int(roll_branch) == 1:
+        value = value @ np.diag([-1.0, -1.0, 1.0])
+    elif int(roll_branch) != 0:
+        raise ValueError("roll_branch must be 0 or 1")
+    return value
+
+
+def nearest_level_roll_branch(rotation):
+    """Select the level roll branch closest to an already-level live TCP."""
+    rotation = np.asarray(rotation, dtype=float)
+    yaw = tcp_yaw_rad(rotation)
+    errors = [np.linalg.norm(rotation - level_rotation(yaw, branch))
+              for branch in (0, 1)]
+    return int(np.argmin(errors))
 
 
 def tcp_yaw_rad(rotation):

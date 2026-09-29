@@ -21,6 +21,8 @@ class RealServiceBundle:
     executor: object
     verification: object
     alignment: object = None
+    grasp_symmetry: object = None
+    transfer_chain: object = None
 
 
 class RealCapabilityProvider(CanonicalCapabilityProvider):
@@ -34,6 +36,8 @@ class RealCapabilityProvider(CanonicalCapabilityProvider):
             "base.navigate":self._base,
             "base.align_for_manipulation":self._align,
             "motion.free":self._motion,
+            "manipulation.select_grasp_symmetry":self._grasp_symmetry,
+            "manipulation.plan_transfer_chain":self._transfer_chain,
             "motion.lift":self._contact,
             "motion.contact":self._contact,
             "gripper.grasp":self._gripper,
@@ -74,6 +78,16 @@ class RealCapabilityProvider(CanonicalCapabilityProvider):
             result=dict(plan);result["free_space_provider"]="SceneAwareMotionService/curobo"
             return result
         return self.bundle.motion.execute_bound(payload)
+    def _grasp_symmetry(self,phase,payload):
+        if self.bundle.grasp_symmetry is None:
+            raise RuntimeError("whole-chain grasp symmetry service unavailable")
+        if phase=="prepare":return self.bundle.grasp_symmetry.prepare(payload)
+        return self.bundle.grasp_symmetry.bind(payload)
+    def _transfer_chain(self,phase,payload):
+        if self.bundle.transfer_chain is None:
+            raise RuntimeError("atomic transfer-chain planner unavailable")
+        if phase=="prepare":return self.bundle.transfer_chain.prepare(payload)
+        return self.bundle.transfer_chain.bind(payload)
     def _contact(self,phase,payload):
         if phase=="prepare":return self.bundle.contact.plan(payload)
         return self.bundle.contact.execute_bound(payload)
