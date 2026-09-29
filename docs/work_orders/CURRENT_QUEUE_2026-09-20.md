@@ -208,3 +208,30 @@ P3.9 acceptance also requires:
 WebUI must provide a Task Studio for Skill selection, Scheme editing, typed parameter binding, dependency and prepare-ahead editing, validation, versioned draft saving, replay/prepare and runtime monitoring.
 
 ART must expose the equivalent structured operations.
+## Active next — P3.9B Auto-align pick/place + center transfer + preplace commissioning
+
+Read:
+
+- `docs/decisions/2026-09-29_P39B_MOTION_BASEALIGN_UI_POLICY.md`
+- `docs/work_orders/2026-09-29_P3_9B_AUTOALIGN_CENTER_PREPLACE_DEMO.md`
+
+Current integration baseline to verify: `6075295f77418a9a171a8ceef0d436e2c13ca461`.
+
+Main objectives:
+
+- automatic AMR alignment for PICK and PLACE;
+- total alignment bounds: lateral ±0.40 m, longitudinal ±0.15 m, yaw 0;
+- every non-contact arm point-to-point move uses SceneAwareMotion + cuRobo;
+- recover/verify teammate `center` chest/stow posture from effective `.32` workspace;
+- after initial lift, attached-object cuRobo transfer to center before base lateral motion;
+- make central exclusion configurable; historical band is ±7 cm / 14 cm total and current demo setting is OFF;
+- auto-start canonical backend and WebUI on `.32` without any boot-time robot motion;
+- ART and WebUI share one backend state/version;
+- show ARES-R/Git/TaskRuntime/WebUI/Scheme versions;
+- audit/fix WebUI 3D left-right projection using BODY +Y=left;
+- create new additive demo `right_arm_autoalign_pick_center_preplace_v1`;
+- supervised physical stop point is `HOLD_ABOVE_PLACE`; no descent or release.
+
+Golden legacy first-pick demo remains unchanged and available as rollback.
+
+Physical execution is allowed only after the work-order preflight flags pass and the single field authorization in the work order is received.
