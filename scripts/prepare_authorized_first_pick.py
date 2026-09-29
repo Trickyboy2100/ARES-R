@@ -31,6 +31,8 @@ def main():
     parser.add_argument("--epoch", type=Path, required=True)
     parser.add_argument("--template-plan", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--component-gripper", action="store_true",
+                        help="use the pinned 40%% opening component model; legacy default is unchanged")
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=False)
 
@@ -72,7 +74,9 @@ def main():
     })
     request["execution_tool_envelope"] = build_execution_tool_envelope(
         request["collision_model"], request["controller_tool_pose_mm_rad"],
-        inflation_m=0.008, max_opening_percent=40)
+        inflation_m=0.008, max_opening_percent=40,
+        use_component_geometry=args.component_gripper,
+        component_inflation_m=0.0)
     # Fresh scene owns these values; do not retain stale template provenance.
     request["compiled_scene"]["scene_snapshot_id"] = observation["scene_snapshot_id"]
     request["compiled_scene"]["planning_context_digest"] = observation["scene_digest"]
@@ -83,6 +87,8 @@ def main():
         "target_body_m": xyz.tolist(), "approach_direction_body": direction.tolist(),
         "pregrasp_body_m": pregrasp_xyz.tolist(), "pregrasp_distance_m":pregrasp_distance,
         "task_parameter_revision":task["revision"], "start_rad": start,
+        "gripper_collision_representation": request["execution_tool_envelope"][
+            "active_collision_representation"],
         "goal_rad": list(goal.joints_rad), "ik_position_error_m": goal.position_error_m,
         "ik_orientation_error_deg": float(np.degrees(goal.orientation_error_rad)),
     }

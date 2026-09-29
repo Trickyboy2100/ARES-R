@@ -23,12 +23,17 @@ ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/"src"))
 from ares_r.cli import load_config
 from ares_r.factory import build_controller
+from ares_r.motion.native_execution_package import (package_native_preview,
+                                                     verify_installed_sender)
 
 AUTH="P39B AUTOALIGN TO HOLD ABOVE PLACE"
 SENDER=Path("/home/yikun/ares-r-curobo-assets/jaka_right_supervised_path_v6_pick")
 PY311=Path("/home/yikun/ARES-R/vendor/venv311/bin/python3.11")
 CUROBO=Path("/home/yikun/ares-r-curobo-venv/bin/python")
 EVIDENCE=ROOT/"worklog/evidence/2026-09-29-p3-9b/runs"
+PICK_STAGING_JOINTS=[-1.7660972738296603,-0.3547711571907102,
+    1.7285320287402106,-3.6430875323432845,1.5380361476691125,
+    -2.845079714166028]
 
 
 def load(path):return json.loads(Path(path).read_text())
@@ -106,6 +111,27 @@ def native_send(path,log):
     first_pick._sender(Path(path),Path(log))
 
 
+def package_staging(planning_path,request_path,output):
+    """Time-scale an already validated cuRobo path without changing geometry."""
+    from math import radians
+    planning=load(planning_path);request=load(request_path);output=Path(output)
+    output.mkdir(parents=True,exist_ok=False)
+    verify_installed_sender(SENDER)
+    text,audit=package_native_preview(
+        planning["trajectory_points_rad"],planning["smoothness"]["sample_period_s"],
+        load(ROOT/"config/jaka_mini2_motion.site.json"),tool_id=1,
+        controller_tool_pose_mm_rad=request["controller_tool_pose_mm_rad"],
+        captured_at_unix=int(time.time()),speed_ceiling_rad_s=.10,
+        accel_ceiling_rad_s2=.20,tracking_stop_threshold_deg=1.5,
+        max_excursion_rad=radians(220))
+    native=output/"pick_staging.native.txt";native.write_text(text)
+    write(output/"native_audit.json",audit)
+    checked=run([SENDER,"validate-supervised-path",native],timeout=60)
+    if "VALID_SUPERVISED_PATH" not in checked:
+        raise RuntimeError("native sender rejected cuRobo staging path")
+    return native
+
+
 def prepare_first_pick_with_fallback():
     """Prepare the golden package, adding the P3.9 FAST->FALLBACK planner policy.
 
@@ -123,7 +149,8 @@ def prepare_first_pick_with_fallback():
     run([PY311,"scripts/capture_manipulation_observation.py","--output",epoch,
          "--profile","right_pick"],timeout=600)
     run([CUROBO,"scripts/prepare_authorized_first_pick.py","--epoch",epoch,
-         "--template-plan",golden.TEMPLATE,"--output",plan],timeout=300)
+         "--template-plan",golden.TEMPLATE,"--output",plan,
+         "--component-gripper"],timeout=300)
     request=plan/"planner_request.json";planning=plan/"planning.json"
     environment=dict(os.environ,PYTHONPATH=str(ROOT/"src"))
     fast=subprocess.run([str(CUROBO),"-m","ares_r.motion.production_scene_worker",
@@ -137,10 +164,30 @@ def prepare_first_pick_with_fallback():
         value["planner_profile_revision"]="FALLBACK_8_8_GRAPH_AFTER_FAST_NO_PATH"
         write(plan/"planner_request_fallback.json",value)
         shutil.copy2(plan/"planner_request_fallback.json",request)
-        run([CUROBO,"-m","ares_r.motion.production_scene_worker",request,planning],timeout=900)
+        fallback=subprocess.run([str(CUROBO),"-m","ares_r.motion.production_scene_worker",
+            str(request),str(planning)],cwd=ROOT,env=environment,text=True,
+            capture_output=True,timeout=900)
+        (plan/"planner_fallback.log").write_text(
+            (fallback.stdout or "")+(fallback.stderr or ""))
     result=load(planning)
     if result.get("observed_result")!="SUCCESS":
-        raise RuntimeError("FAST and FALLBACK cuRobo profiles did not produce a valid pick path")
+        staging=run_dir/"pick_staging";staging.mkdir()
+        value=load(request);value["goal_rad"]=PICK_STAGING_JOINTS
+        value["goal_candidates_rad"]=[PICK_STAGING_JOINTS]
+        value["warmup_policy"]="NONE";value["benchmark_runs"]=1
+        value["planning_parameters"].update(num_ik_seeds=4,num_trajopt_seeds=2,
+            max_attempts=4,enable_graph_attempt=1,random_seed=7)
+        staging_request=staging/"planner_request.json";write(staging_request,value)
+        staging_planning=staging/"planning.json"
+        run([CUROBO,"-m","ares_r.motion.production_scene_worker",
+             staging_request,staging_planning],timeout=900)
+        if load(staging_planning).get("observed_result")!="SUCCESS":
+            raise RuntimeError("direct pick and cuRobo staging recovery both failed")
+        staging_native=package_staging(staging_planning,staging_request,
+                                       staging/"native")
+        return {"ready":False,"run_dir":run_dir,
+                "staging_native":staging_native,
+                "staging_planning":staging_planning}
     run([CUROBO,"scripts/build_first_pick_execution_package.py","--plan",plan,
          "--epoch",epoch,"--output",package],timeout=300)
     run([sys.executable,"scripts/package_first_pick_native.py","--package",
@@ -150,7 +197,7 @@ def prepare_first_pick_with_fallback():
         if "VALID_SUPERVISED_PATH" not in output:raise RuntimeError("native sender rejected "+name)
     golden._write_state(state="PREPARED_AWAITING_AUTHORIZATION",active_run_id=None,
         prepared_run_dir=str(run_dir),prepared_run_id=stamp)
-    return run_dir
+    return {"ready":True,"run_dir":run_dir}
 
 
 def prepare():
@@ -192,7 +239,16 @@ def execute(run_dir):
         # cuRobo remains the final reachability authority after the move.
         _,_,pick_move=align("right_pick","PICK_PREGRASP",(.70,-.16),run_dir,manifest,base)
         golden=import_script("golden_first_pick",Path("scripts/run_first_pick_demo.py"))
-        pick_run=prepare_first_pick_with_fallback();golden.execute(pick_run)
+        prepared=prepare_first_pick_with_fallback()
+        if not prepared["ready"]:
+            native_send(prepared["staging_native"],run_dir/"pick_staging_sender.jsonl")
+            manifest.event("CUROBO_PICK_STAGING","PASS",
+                planning=str(prepared["staging_planning"]),
+                source_failed_direct_run=str(prepared["run_dir"]))
+            prepared=prepare_first_pick_with_fallback()
+            if not prepared["ready"]:
+                raise RuntimeError("fresh staging-to-pregrasp cuRobo plan still failed")
+        pick_run=prepared["run_dir"];golden.execute(pick_run)
         manifest.event("PICK_AND_INITIAL_LIFT","PASS",run_dir=str(pick_run))
 
         center_epoch=run_dir/"center_epoch";capture("right_place_rightmost",center_epoch)
