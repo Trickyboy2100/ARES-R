@@ -23,7 +23,7 @@ class CanonicalBackend:
     def __init__(self,config,root="."):
         self.started=time.monotonic();self.root=root
         self.dispatcher=SceneAwareDispatcher(config)
-        self._physical_guard=threading.Lock();self._physical_process=None
+        self._physical_guard=threading.Lock();self._physical_process=None;self._physical_stream=None
         self._physical_state={"state":"IDLE"}
     def system_info(self):
         task=self.dispatcher.task_status()
@@ -38,6 +38,8 @@ class CanonicalBackend:
                     self._physical_state.update(state="SUCCEEDED" if code==0 else "FAULT",
                                                 returncode=code,completed_at_unix=time.time())
                     self._physical_process=None
+                    if self._physical_stream is not None:self._physical_stream.close()
+                    self._physical_stream=None
             return dict(self._physical_state)
     def run_p39b(self,body):
         expected="P39B AUTOALIGN TO HOLD ABOVE PLACE"
@@ -57,6 +59,7 @@ class CanonicalBackend:
                      "--authorization",expected,"--onsite-observer-confirmed","--output",str(run_dir)]
             self._physical_process=subprocess.Popen(command,cwd=root,stdout=stream,
                 stderr=subprocess.STDOUT,text=True,env=dict(os.environ,PYTHONPATH=str(root/"src")))
+            self._physical_stream=stream
             self._physical_state={"state":"RUNNING","pid":self._physical_process.pid,
                 "task_id":body["task_id"],"run_dir":str(run_dir),"log":str(log_path),
                 "started_at_unix":time.time()}

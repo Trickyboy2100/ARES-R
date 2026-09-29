@@ -40,6 +40,7 @@ class BackendUiPolicyTest(unittest.TestCase):
         backend=CanonicalBackend.__new__(CanonicalBackend)
         backend.root=str(Path(__file__).resolve().parents[1])
         backend._physical_guard=threading.Lock();backend._physical_process=None
+        backend._physical_stream=None
         backend._physical_state={"state":"IDLE"}
         with self.assertRaises(PermissionError):
             backend.run_p39b({"task_id":"task.right_arm_autoalign_pick_center_preplace",
@@ -49,6 +50,7 @@ class BackendUiPolicyTest(unittest.TestCase):
         backend=CanonicalBackend.__new__(CanonicalBackend)
         backend.root=str(Path(__file__).resolve().parents[1])
         backend._physical_guard=threading.Lock();backend._physical_process=None
+        backend._physical_stream=None
         backend._physical_state={"state":"IDLE"}
         process=type("Process",(),{"pid":123,"poll":lambda self:None})()
         with tempfile.TemporaryDirectory() as tmp, \
@@ -60,6 +62,7 @@ class BackendUiPolicyTest(unittest.TestCase):
                 "onsite_observer_confirmed":True})
         self.assertEqual(value["state"],"RUNNING")
         self.assertIn("run_p39b_supervised.py",str(popen.call_args.args[0]))
+        backend._physical_stream.close()
 
 
 if __name__=="__main__":unittest.main()
