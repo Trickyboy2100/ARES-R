@@ -88,8 +88,11 @@ def package_native_preview(points, source_dt_s, site_limits, *, tool_id,
              for i in range(6)]
     if not 0 < max_duration_s <= NATIVE_MAX_DURATION_S:
         raise ValueError("cannot exceed 240 s native reposition duration")
-    geometry_proof=None;retiming_fallback=None
+    geometry_proof=None;retiming_fallback=None;source_geometry_proof=None
     if retiming_policy=='VERIFIED_SHORT_V1':
+        if geometry_validator is None:raise ValueError('geometry validator required')
+        source_geometry_proof=geometry_validator(source)
+        if not source_geometry_proof.get('passed'):raise RuntimeError('SOURCE_SHORT_GEOMETRY_REJECTED')
         from .bounded_retiming import cubic_verified,local_polyline
         try:
             sampled,geometry_proof=cubic_verified(source,NATIVE_DT_S,speed,accel,max_duration_s,geometry_validator)
@@ -151,6 +154,7 @@ def package_native_preview(points, source_dt_s, site_limits, *, tool_id,
     audit = {
         'retiming_policy':effective_retimer,'retiming_fallback':retiming_fallback,
         'geometry_changed':geometry_error>1e-8,'geometry_validation':geometry_proof,
+        'source_geometry_validation':source_geometry_proof,
         'source_duration_s':(len(source)-1)*float(source_dt_s),
         'time_stretch':duration/((len(source)-1)*float(source_dt_s)),
         'joint_path_length_rad':np.sum(np.abs(np.diff(source,axis=0)),axis=0).tolist(),
