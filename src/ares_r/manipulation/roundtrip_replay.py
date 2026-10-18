@@ -19,7 +19,8 @@ class RoundtripReplayTransport(ReplayCapabilityProvider):
     def stop(self):self.stopped=True
     def _record(self,call,**args):
         self.check_cancelled()
-        if self.stage==self.fault_stage:raise RuntimeError('INJECTED_REPLAY_FAULT:'+self.stage)
+        if self.fault_stage is not None and self.stage==self.fault_stage:
+            raise RuntimeError('INJECTED_REPLAY_FAULT:'+self.stage)
         self.calls.append((call,args))
         return {'mock':True,'evidence_kind':'STATE_MACHINE_ONLY','call':call,'arguments':args}
     def prepare_pick(self):
