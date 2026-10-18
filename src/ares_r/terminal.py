@@ -5,6 +5,7 @@ import json
 import math
 import shlex
 import sys
+import time
 from datetime import datetime
 from pathlib import Path
 from .controller import TaskController
@@ -103,8 +104,10 @@ HELP = """Commands:
   gripper read left|right    read current opening position
   gripper set SIDE VALUE     move to position 0-1000 (asks for YES)
   gripper half left|right    read and move to half (asks for YES)
-  gripper open left|right    move to 1000 (asks for YES)
-  gripper close left|right   move to 0 (asks for YES)
+  gripper open left|right [--delay SECONDS]   move to 1000 (asks for YES)
+  gripper close left|right [--delay SECONDS]  move to 0 (asks for YES)
+                             --delay waits SECONDS after YES, before moving
+                             (type the flag without the brackets, e.g. --delay 5)
   arm left|right             select active arm
   detect pick                run pick detection
   pick                       approach, grip and lift
@@ -169,7 +172,9 @@ JAKA_MOTION_HELP = """Hardware-enabled commands:
   amr status|battery|map|position-types  read the physical AMR
   amr move-position ID NAME [RETRIES] / amr move-relative X Y YAW_DEG [...]
   amr run-task TASK_ID / amr stop
-  gripper status|read SIDE / gripper set SIDE VALUE / gripper open|close SIDE
+  gripper status|read SIDE / gripper set SIDE VALUE / gripper open|close SIDE [--delay SECONDS]
+                              --delay waits SECONDS after YES, before moving
+                              (type the flag without the brackets, e.g. --delay 5)
   status / world view / jaka status SIDE / jaka joints SIDE
   world status                  show snapshot/environment planning gates
   pose list / pose show NAME [left|right]  inspect BODY-frame named poses
@@ -194,6 +199,8 @@ Native curobo: demo <=20 deg, generic reposition <=150 deg; the versioned first-
 
 def _allowed_in_jaka_readonly(args) -> bool:
     return (
+        args[0] in ('ops', 'berth', 'trajectory')
+        or
         args[0] in ("status", "help", "quit", "exit", "note", "skill", "scheme", "task", "demo")
         or args[:2] in (["jaka", "status"], ["jaka", "baseline"], ["jaka", "preflight"],
                         ["jaka", "joints"], ["jaka", "plan"], ["jaka", "step"],
@@ -227,6 +234,35 @@ def _demo_path(controller,value):
     return path
 
 
+def _pop_delay(args):
+    """Pull an optional '--delay SECONDS' flag from a command; waits before motion.
+
+    Accepts '--delay 5', '--delay=5' and bracket-wrapped copies of the help
+    text such as '[--delay 5]' so a pasted usage line still works.
+    """
+    args = [token.strip("[]") for token in args]
+    delay = 0.0
+    raw = None
+    for index, token in enumerate(args):
+        if token == "--delay":
+            if index + 1 >= len(args): raise ValueError("--delay needs a value in seconds")
+            raw = args.pop(index + 1)
+            del args[index]
+            break
+        if token.startswith("--delay="):
+            raw = token.split("=", 1)[1]
+            del args[index]
+            break
+    if raw is None:
+        return args, delay
+    try:
+        delay = float(raw)
+    except ValueError:
+        raise ValueError("--delay value must be a number of seconds")
+    if delay < 0: raise ValueError("--delay must not be negative")
+    return args, delay
+
+
 def _pose_speed(route,value=None):
     """Parse explicit, unit-bearing named-pose speed arguments."""
     if route=="curobo":
@@ -245,6 +281,8 @@ def _pose_speed(route,value=None):
 def _allowed_in_hardware(args) -> bool:
     """Expose commissioned device commands, not unfinished orchestration."""
     return (
+        args[0] in ('ops', 'berth', 'trajectory')
+        or
         args[0] in ("status", "help", "quit", "exit", "note", "skill", "scheme", "task", "demo")
         or args[0] == "amr"
         or args[:2] in (["epic", "status"], ["epic", "detect"], ["epic", "parse"],
@@ -376,14 +414,14 @@ def run_terminal(controller: TaskController) -> None:
                 raise RuntimeError("command blocked: combined task/base execution is not commissioned")
             if args[0] in ("quit", "exit"): break
             if args[0] == "help": print(help_text)
-            elif (args in (["version"],["system","info"]) or
+            elif (args[0] in ('ops', 'berth', 'trajectory') or args in (["version"],["system","info"]) or
                   args[0] == "skill" or
                   args[0] == "scheme" and len(args)>1 and args[1] in
                     ("list","show","clone","validate","preview","save-draft") or
                   args[0] == "task" and len(args)>1 and args[1] in
                     ("list","show","prepare","preview","replay","status","stop","run")):
                 from .scene_aware_dispatch import shared_dispatcher
-                print(json.dumps(shared_dispatcher(controller.config).dispatch(" ".join(args)),
+                print(json.dumps(shared_dispatcher(controller.config).dispatch(shlex.join(args)),
                                  indent=2, ensure_ascii=False))
             elif args == ["demo", "list"]:
                 from .demos import DemoRegistry
@@ -486,7 +524,7 @@ def run_terminal(controller: TaskController) -> None:
                     raise RuntimeError("scene-aware planning requires hardware-enabled mode")
                 from .scene_aware_dispatch import shared_dispatcher
                 if "--xyz" in args:
-                    print(json.dumps(shared_dispatcher(controller.config).dispatch(line),
+                    print(json.dumps(shared_dispatcher(controller.config).dispatch(" ".join(args)),
                                      indent=2, ensure_ascii=False))
                     continue
                 if len(args) not in (9, 10):
@@ -1167,20 +1205,25 @@ def run_terminal(controller: TaskController) -> None:
                 if controller.mode in ("mock", "offline"): print("SIMULATION ONLY: this does not read the physical gripper.")
                 print("%s gripper position: %d" % (args[2], controller.gripper_position(args[2])))
             elif args[:2] in (["gripper", "set"], ["gripper", "half"], ["gripper", "open"], ["gripper", "close"]):
+                args, delay = _pop_delay(args)
                 if len(args) < 3: raise ValueError("gripper side is required")
                 side = args[2]
                 if controller.mode in ("mock", "offline"): print("SIMULATION ONLY: this will not move the physical gripper.")
                 current = controller.gripper_position(side)
                 if args[1] == "set":
-                    if len(args) != 4: raise ValueError("usage: gripper set SIDE VALUE")
+                    if len(args) != 4: raise ValueError("usage: gripper set SIDE VALUE [--delay SECONDS]")
                     target = int(args[3])
                 elif args[1] == "half": target = current // 2
                 elif args[1] == "open": target = 1000
                 else: target = 0
-                print("%s gripper: current=%d target=%d" % (side, current, target))
+                if delay: print("%s gripper: current=%d target=%d delay=%.1fs" % (side, current, target, delay))
+                else: print("%s gripper: current=%d target=%d" % (side, current, target))
                 if controller.mode not in ("mock", "offline") and input("Type YES to move this gripper: ").strip() != "YES":
                     print("Cancelled; no command sent.")
                 else:
+                    if delay:
+                        print("Waiting %.1fs before moving the gripper..." % delay)
+                        time.sleep(delay)
                     controller.set_gripper_position(side, target)
                     actual = controller.wait_gripper_position(side, target)
                     print("Movement complete: target=%d actual=%d" % (target, actual))

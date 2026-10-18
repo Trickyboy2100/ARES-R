@@ -74,6 +74,7 @@ class JakaSdkArm(Arm):
         self.ip = str(config["ip"])
         self.model = str(config.get("model", "unverified"))
         jkrc = load_jkrc(str(sdk_config["sdk_python_path"]), str(sdk_config["sdk_library_path"]))
+        self._readonly_rc_factory = jkrc.RC
         self.robot = jkrc.RC(self.ip)
         _value(self.robot.login(), "%s login" % name)
         self.connected = True
@@ -84,6 +85,18 @@ class JakaSdkArm(Arm):
         last = None
         for attempt in range(attempts):
             try:
+                # The site's left status decoder can leave a read-only RC
+                # session unusable. Reconnect once; never synthesize status or
+                # reset a control-enabled session.
+                if (attempt == 2 and method_name == 'get_robot_status' and
+                        self.name == 'left' and not self.motion_enabled and
+                        isinstance(last, SystemError)):
+                    _value(self.robot.logout(), 'left read-only logout')
+                    self.connected = False
+                    self.robot = self._readonly_rc_factory(self.ip)
+                    _value(self.robot.login(), 'left read-only reconnect')
+                    self.connected = True
+                    time.sleep(.2)
                 return _value(getattr(self.robot, method_name)(), label)
             except Exception as exc:
                 last = exc

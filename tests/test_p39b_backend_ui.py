@@ -3,7 +3,7 @@ import tempfile
 import threading
 import unittest
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 
 from ares_r.canonical_backend import CanonicalBackend
 from ares_r.runtime_identity import runtime_identity
@@ -38,6 +38,7 @@ class BackendUiPolicyTest(unittest.TestCase):
 
     def test_supervised_endpoint_requires_exact_authorization(self):
         backend=CanonicalBackend.__new__(CanonicalBackend)
+        backend.roundtrip=Mock()
         backend.root=str(Path(__file__).resolve().parents[1])
         backend._physical_guard=threading.Lock();backend._physical_process=None
         backend._physical_stream=None
@@ -48,6 +49,7 @@ class BackendUiPolicyTest(unittest.TestCase):
 
     def test_supervised_endpoint_starts_only_commissioned_runner(self):
         backend=CanonicalBackend.__new__(CanonicalBackend)
+        backend.roundtrip=Mock()
         backend.root=str(Path(__file__).resolve().parents[1])
         backend._physical_guard=threading.Lock();backend._physical_process=None
         backend._physical_stream=None

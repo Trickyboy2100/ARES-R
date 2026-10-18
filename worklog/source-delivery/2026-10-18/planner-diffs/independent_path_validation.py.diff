@@ -1,0 +1,25 @@
+--- offsets/src/ares_r/motion/independent_path_validation.py
++++ operations/src/ares_r/motion/independent_path_validation.py
+@@ -139,7 +139,13 @@
+     # coarse cluster AABB.
+     ignored_objects = {str(value) for value in request.get(
+         "motion_constraints", {}).get("ignore_cuboid_ids", [])}
+-    for name, box in request["compiled_scene"]["cuboids"].items():
++    native_backend=(request.get('solver_policy') or {}).get('distance_backend')=='NATIVE_CPU_V1'
++    objects={name:box for name,box in request['compiled_scene']['cuboids'].items() if name not in ignored_objects}
++    if native_backend:
++        from .cpu_distance import distances
++        by_object,indices,_=distances(sphere_centers,sphere_radii,objects)
++        limiting_component_by_object={name:labels[index % len(labels)] for name,index in indices.items()}
++    for name, box in ({} if native_backend else objects).items():
+         if name in ignored_objects:
+             continue
+         rotation = _quaternion_rotation(box["pose"][3:])
+@@ -156,6 +162,7 @@
+     minimum_name = min(by_object, key=by_object.get) if by_object else None
+     minimum = by_object[minimum_name] if minimum_name else float("inf")
+     return {"validator": "independent_cpu_urdf_sphere_cuboid_v1",
++            "distance_backend":"NATIVE_CPU_V1" if native_backend else "NUMPY_REFERENCE",
+             "gripper_component_revision": (
+                 (envelope.get("component_model") or {}).get("revision")
+                 if envelope else None),

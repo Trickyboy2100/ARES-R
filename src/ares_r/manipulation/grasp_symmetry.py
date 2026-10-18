@@ -22,6 +22,6 @@ def two_finger_grasp_rotations(rotation):
             not np.isclose(np.linalg.det(rotation), 1.0, atol=1e-5)):
         raise ValueError("proper 3x3 grasp rotation required")
     return (
-        ("EPIC_AS_REPORTED", rotation.copy()),
-        ("TWO_FINGER_ROLL_180", rotation @ ROLL_ABOUT_APPROACH_180),
+        ("NORMAL", rotation.copy()),
+        ("FLIPPED_180", rotation @ ROLL_ABOUT_APPROACH_180),
     )

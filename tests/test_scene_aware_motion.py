@@ -166,6 +166,25 @@ class SceneAwareMotionTests(unittest.TestCase):
             with self.assertRaises(RuntimeError):
                 motion.preview(handle["plan_id"])
 
+    def test_native_packaging_failure_preserves_planning_only_preview(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            scene = LocalSceneService(
+                {"scene_aware_motion": {"evidence_directory": directory}},
+                state_path=root / "scene.json", scene_builder=fake_scene_builder)
+            planner = lambda request, scene_state, output: plan_result()
+            def rejected_package(*_args):
+                raise ValueError("site soft joint limit")
+            motion = SceneAwareMotionService(
+                {}, scene, planner, rejected_package,
+                state_path=root / "motion.json")
+            handle = motion.plan(MotionRequest("right", [0.1] * 6))
+            self.assertFalse(handle["execution_package_ready"])
+            self.assertIn("site soft joint limit", handle["execution_package_error"])
+            self.assertEqual(motion.status()["state"], "READY")
+            self.assertEqual(motion.status()["execution_state"], "PREVIEW_ONLY")
+            self.assertEqual(motion.preview(handle["plan_id"])["plan_id"], handle["plan_id"])
+
 
 if __name__ == "__main__":
     unittest.main()

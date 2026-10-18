@@ -31,6 +31,11 @@ from ares_r.motion.scene_aware_planner import load_profile
 AUTHORIZATION = "RIGHT SCENE_AWARE SUPERVISED"
 
 
+def operations_abort_requested():
+    value = os.environ.get('ARES_R_ABORT_FILE')
+    return bool(value and Path(value).exists())
+
+
 def load(path):
     return json.loads(Path(path).read_text(encoding="utf-8"))
 
@@ -52,6 +57,8 @@ def monitor(package, native, output):
     try:
         tty.setcbreak(sys.stdin.fileno())
         selector.register(sys.stdin, selectors.EVENT_READ, "key")
+        if operations_abort_requested():
+            raise RuntimeError('operations abort requested before native motion')
         child = subprocess.Popen(
             [str(SENDER), "supervised_path", str(package / "native_preview.txt"),
              "CONFIRMED_RIGHT_CLEAR"], env=native_environment(),
@@ -61,6 +68,9 @@ def monitor(package, native, output):
         print("SCENE-AWARE RIGHT motion started. Space=abort/hold; B=software emergency abort; physical E-stop remains primary.", flush=True)
         with log_path.open("x") as log:
             while child.poll() is None or child.stdout.fileno() in selector.get_map():
+                if operations_abort_requested() and not aborted and child.poll() is None:
+                    child.send_signal(signal.SIGTERM);aborted=True
+                    abort_at=time.monotonic();reason='OPERATIONS_SOFTWARE_ABORT'
                 if time.monotonic() > deadline and not aborted:
                     child.send_signal(signal.SIGTERM);aborted=True
                     abort_at=time.monotonic();reason="WATCHDOG_TIMEOUT"
@@ -105,6 +115,9 @@ def monitor(package, native, output):
             try: events.append(json.loads(line))
             except json.JSONDecodeError: pass
     samples=[event for event in events if event.get("event")=="sample"]
+    failures=[event for event in events if event.get('event')=='failed']
+    if reason is None and failures:
+        reason=failures[-1].get('reason') or 'NATIVE_SENDER_FAILED'
     tracking=[float(event["tracking_error_deg"]) for event in samples]
     reached=any(event.get("event")=="target_reached" for event in events)
     disabled=any(event.get("event")=="servo_disabled" and event.get("code")==0
@@ -112,6 +125,7 @@ def monitor(package, native, output):
     result={"success":code==0 and reached and disabled and not aborted,
             "returncode":code,"target_reached":reached,
             "servo_disabled_confirmed":disabled,"aborted":aborted,"reason":reason,
+            "sample_count":len(samples),
             "elapsed_s":time.monotonic()-started,"log":str(log_path),
             "tracking_error_deg":{"max":max(tracking) if tracking else None,
                 "p95":sorted(tracking)[min(len(tracking)-1,int(.95*len(tracking)))] if tracking else None,

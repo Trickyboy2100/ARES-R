@@ -31,6 +31,18 @@ def load_profile(path=None):
     return _load(path or ROOT / "config/scene_aware_motion.json")
 
 
+def apply_latency_profile(parameters,motion):
+    """ART/UI opt in; existing directly constructed task requests stay QUALITY."""
+    if motion.planning_mode!='FAST':return None,None
+    config=_load(ROOT/'config/planner_latency_profiles.json');fast=config['fast']
+    parameters.update({key:fast[key] for key in ('num_trajopt_seeds','num_ik_seeds','use_cuda_graph')})
+    mode=(motion.goal.orientation if motion.goal is not None else motion.constraints.orientation).value
+    policy={'mode':'FAST_SINGLE_PASS_V1','initial_iters':fast['initial_iters_by_orientation'].get(mode,fast['initial_iters']),
+            'max_goal_candidates':fast['max_goal_candidates'],'distance_backend':fast['distance_backend']}
+    return policy,dict(revision=config['revision'],result_deadline_s=fast['result_deadline_s'],
+                       automatic_quality_fallback=False)
+
+
 def _orientation_lock(request: MotionRequest, report, audit, collision_model):
     mode = (request.goal.orientation if request.goal is not None
             else request.constraints.orientation)
@@ -79,7 +91,7 @@ def _runtime_goal_spec(request, report, audit, collision_model):
                       level_rotation(current_yaw + np.deg2rad(value))) for value in offsets]
     elif mode is OrientationMode.LEVEL_YAW_TARGET:
         rotations = [(float(goal.yaw_target_rad), level_rotation(goal.yaw_target_rad))]
-    elif mode is OrientationMode.EXPLICIT:
+    elif mode in (OrientationMode.EXPLICIT, OrientationMode.TERMINAL_EXPLICIT):
         rotations = [(None, np.asarray(goal.explicit_rotation, dtype=float))]
     elif mode is OrientationMode.BODY_FORWARD_HORIZONTAL:
         rotations = [(0.0, HORIZONTAL_FORWARD_R_BODY)]
@@ -102,6 +114,16 @@ class PersistentCuroboPlanner:
         scene_dir = scene_root / "scene"
         report = _load(scene_dir / "scene_report.json")
         compiled = _load(scene_dir / "compiled_scene.json")
+        from ares_r.operations import planning_world
+        # Source classification is added to new scenes. Historical scenes use
+        # their explicit report provenance, never an object-name substring.
+        source_by_id = {item['id']: item.get('source', '') for item in report.get('objects', [])}
+        for item in compiled.get('provenance', []):
+            source = source_by_id.get(item['object_id'], '')
+            if source in ('clean Pixel Pro residual', 'P1 table validation') or (
+                    source.startswith('P3.1 ') and source.endswith(' from observed points')):
+                item['category'] = 'OBSERVED_ENVIRONMENT'
+        compiled = planning_world(compiled, motion.constraints.environment_avoidance)
         audit = _load(scene_root / (motion.arm + "_fk_audit.json"))
         collision_model = _load(self.config["robot_collision"]["model"])
         parameters = planning_profile(self.config)
@@ -113,6 +135,7 @@ class PersistentCuroboPlanner:
             optimizer_collision_activation_distance=float(
                 planner_profile["optimizer_collision_activation_distance_m"]),
         )
+        solver_policy,latency_contract=apply_latency_profile(parameters,motion)
         if motion.constraints.active_sphere_cell_m is not None:
             parameters["active_sphere_cell_m"] = float(
                 motion.constraints.active_sphere_cell_m)
@@ -173,6 +196,8 @@ class PersistentCuroboPlanner:
             "planning_parameters": parameters,
             "benchmark_runs": 1,
             "warmup_policy": "ONCE_PER_RUNTIME",
+            "solver_policy":solver_policy,
+            "latency_contract":latency_contract,
             "orientation_lock": orientation_lock,
             "planner_clearance_policy": {
                 "revision": planner_profile["profile_revision"],
@@ -186,6 +211,7 @@ class PersistentCuroboPlanner:
                 "orientation": (motion.goal.orientation.value if motion.goal is not None
                                 else motion.constraints.orientation.value),
                 "central_exclusion": motion.constraints.central_exclusion,
+                "environment_avoidance": motion.constraints.environment_avoidance,
                 "central_exclusion_half_width_m": float(
                     (self.profile.get("central_exclusion") or {}).get(
                         "half_width_m", 0.070)),
@@ -210,14 +236,26 @@ class PersistentCuroboPlanner:
                 "source": motion.goal.source,
             }),
             "physical_state": motion.physical_state,
+            "operations_policy_revision": self.config.get('operations_policy_revision'),
         }
+        if solver_policy:planner_request['warmup_policy']='NONE'
         request_path = output / "planner_request.json"
         result_path = output / "planning.json"
         log_path = output / "planner.log"
         request_path.write_text(json.dumps(planner_request, indent=2) + "\n")
-        persistent_plan(self.config["curobo"]["python"], ROOT, request_path,
-                        result_path, log_path, float(self.config["curobo"]["timeout_s"]))
+        import socket
+        timeout_s=(float(latency_contract['result_deadline_s']) if latency_contract
+                   else float(self.config["curobo"]["timeout_s"]))
+        try:
+            persistent_plan(self.config["curobo"]["python"], ROOT, request_path,
+                            result_path, log_path, timeout_s,autostart=not bool(latency_contract))
+        except socket.timeout as exc:
+            raise RuntimeError('FAST_PLANNER_DEADLINE: no candidate; planner may be warming. '
+                'No automatic QUALITY fallback; fresh planning is required.') from exc
         result = _load(result_path)
+        result['planning_world_digest'] = compiled['digest']
+        result['source_scene_digest'] = scene['scene_digest']
+        result['environment_avoidance_policy'] = compiled['operations_policy']
         result["planner_clearance_policy"] = planner_request["planner_clearance_policy"]
         result["motion_constraints"] = planner_request["motion_constraints"]
         result_path.write_text(json.dumps(result, indent=2) + "\n")

@@ -41,15 +41,27 @@ class TransferChainTest(unittest.TestCase):
     def test_selects_full_chain_and_marks_rebind(self):
         curobo=FakeCurobo();planner=TransferChainPlanner(FakeIK(),curobo)
         artifact=planner.plan(request())
-        self.assertEqual(artifact["selected_grasp_symmetry_id"],"TWO_FINGER_ROLL_180")
+        self.assertEqual(set(artifact['timing_s']['branch_ik_graph_s']),{'NORMAL','FLIPPED_180'})
+        self.assertGreaterEqual(artifact['timing_s']['total_s'],0)
+        self.assertEqual(artifact["selected_grasp_symmetry_id"],"FLIPPED_180")
+        self.assertEqual(artifact["STATION_CONTRACT_BOUND"],"YES")
+        self.assertEqual(artifact["SYMMETRIC_GRASP_BRANCHES_EVALUATED"],"YES")
+        self.assertEqual(artifact["CENTER_IS_CARTESIAN_NOT_FIXED_JOINT"],"YES")
         self.assertEqual(artifact["WHOLE_CHAIN_BRANCH_SELECTED"],"YES")
         self.assertEqual(artifact["HARD_LEVEL_ORIENTATION_VALIDATOR_PASS"],"YES")
         self.assertEqual(artifact["TASK_RUNTIME_AUTONOMOUS_BRANCH_SELECTION_READY"],"YES")
+        self.assertEqual(set(artifact["selected_stage_ik"]),set(
+            ("pregrasp","grasp","lift","center","rear_preplace","preplace")))
+        self.assertEqual(artifact["semantic_goal_templates"]["rear_preplace"]
+                         ["body_offset_m"],[-.15,0.,0.])
+        self.assertEqual(artifact["place_rebind_template"]["status"],
+                         "REQUIRES_FRESH_PLACE_SCENE")
         segments=artifact["selected_chain"]["curobo_segment_results"]
         self.assertEqual([row["status"] for row in segments if "status" in row],
                          ["PENDING_FRESH_PLACE_SCENE_REBIND"]*2)
         # Two retained chains per symmetry, two pre-rebind segments per chain.
-        self.assertEqual(len(curobo.calls),8)
+        # DP-ranked validation stops at the first complete valid chain.
+        self.assertEqual(len(curobo.calls),2)
 
     def test_hard_orientation_failure_cannot_select(self):
         artifact=TransferChainPlanner(FakeIK(),FakeCurobo(False)).plan(request())
@@ -61,6 +73,16 @@ class TransferChainTest(unittest.TestCase):
             planner=TransferChainPlanner(FakeIK(),FakeCurobo())
             planner.plan(request(),path)
             with self.assertRaises(FileExistsError):planner.plan(request(),path)
+
+    def test_station_contract_and_both_symmetries_are_not_optional(self):
+        value=request()
+        invalid=TransferChainRequest(**{**value.__dict__,
+            "place_to_pick_body_translation_m":(0.,-.4,0.)})
+        with self.assertRaisesRegex(ValueError,"station contract"):
+            invalid.validate()
+        invalid=TransferChainRequest(**{**value.__dict__,"symmetry_ids":("NORMAL",)})
+        with self.assertRaisesRegex(ValueError,"both NORMAL"):
+            invalid.validate()
 
 
 if __name__=="__main__":unittest.main()

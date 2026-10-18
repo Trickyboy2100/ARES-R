@@ -41,11 +41,11 @@ def main():
             fk=list(_value(arms[side].robot.kine_forward(q),side+" FK"))
             body=base_tcp_to_world(world["arms"][side],fk)
             err=1000*max(abs(a-b) for a,b in zip(body[:3],target[:3]))
-            valid=err<1 and all(lo+.15<v<hi-.15 for v,lo,hi in zip(q,lim["lower_rad"],lim["upper_rad"]))
+            valid=err<1 and all(lo+lim["soft_limit_margin_rad"]<v<hi-lim["soft_limit_margin_rad"] for v,lo,hi in zip(q,lim["lower_rad"],lim["upper_rad"]))
             if valid:
               key=tuple(round(v,5) for v in q)
               unique[key]={"joint_rad":q,"body_tcp_m_rad":body,"position_error_mm":err,
-                "minimum_soft_limit_margin_rad":min(min(v-(lo+.15),(hi-.15)-v) for v,lo,hi in zip(q,lim["lower_rad"],lim["upper_rad"])),
+                "minimum_soft_limit_margin_rad":min(min(v-(lo+lim["soft_limit_margin_rad"]),(hi-lim["soft_limit_margin_rad"])-v) for v,lo,hi in zip(q,lim["lower_rad"],lim["upper_rad"])),
                 "distance_from_current_rad":math.sqrt(sum((a-b)**2 for a,b in zip(q,current[side])))}
           choices=sorted(unique.values(),key=lambda x:(x["distance_from_current_rad"],-x["minimum_soft_limit_margin_rad"]))
           for choice in choices[:4]:

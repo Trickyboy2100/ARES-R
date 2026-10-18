@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from enum import Enum
 import hashlib
 import json
@@ -35,7 +35,7 @@ class StartClearanceState(str, Enum):
 class MotionConstraints:
     orientation: OrientationMode = OrientationMode.FREE
     explicit_rotation: Optional[Sequence[Sequence[float]]] = None
-    central_exclusion: bool = True
+    central_exclusion: Optional[bool] = None
     keepout_ids: tuple = ()
     attached_object_revision: Optional[str] = None
     attached_object_geometry: Optional[Mapping[str, object]] = None
@@ -44,6 +44,7 @@ class MotionConstraints:
     gripper_component_geometry: bool = False
     gripper_component_inflation_m: float = 0.0
     contact_bypass_policy_id: Optional[str] = None
+    environment_avoidance: str = 'AUTO'
 
 
 @dataclass(frozen=True)
@@ -75,7 +76,7 @@ class MotionGoal:
                 raise ValueError("LEVEL_YAW_TARGET requires finite yaw_target_rad")
         elif self.yaw_target_rad is not None:
             raise ValueError("yaw_target_rad is only valid for LEVEL_YAW_TARGET")
-        if self.orientation is OrientationMode.EXPLICIT:
+        if self.orientation in (OrientationMode.EXPLICIT, OrientationMode.TERMINAL_EXPLICIT):
             rotation = self.explicit_rotation
             if rotation is None or len(rotation) != 3 or any(len(row) != 3 for row in rotation):
                 raise ValueError("EXPLICIT MotionGoal requires a 3x3 rotation")
@@ -93,8 +94,15 @@ class MotionRequest:
     request_label: str = "free_space_motion"
     start_joints_rad: Optional[Sequence[float]] = None
     physical_state: str = "OBSERVED"
+    planning_mode: str = "QUALITY"
 
     def validate(self) -> None:
+        if self.planning_mode not in ('FAST','QUALITY'):
+            raise ValueError('planning_mode must be FAST or QUALITY')
+        if self.constraints.environment_avoidance not in ('AUTO', 'ON', 'OFF'):
+            raise ValueError('environment avoidance must be AUTO, ON or OFF')
+        if self.constraints.central_exclusion is not None and type(self.constraints.central_exclusion) is not bool:
+            raise ValueError('central exclusion must be boolean')
         if self.arm not in ("left", "right"):
             raise ValueError("arm must be left or right")
         if self.goal_joints_rad is None and self.goal is None:
@@ -147,7 +155,9 @@ class ClearancePolicy:
     escape_dip_tolerance_m: float = 0.002
 
     def validate(self) -> None:
-        if not (0 <= self.hard_collision_floor_m < self.preferred_clearance_m <= 0.10):
+        # Zero preferred margin removes the optimization preference, not the
+        # strictly-positive hard collision check in evaluate_hard_validity.
+        if not (0 <= self.hard_collision_floor_m <= self.preferred_clearance_m <= 0.10):
             raise ValueError("invalid planner clearance policy")
         if not 0 <= self.escape_dip_tolerance_m <= 0.01:
             raise ValueError("invalid near-start escape tolerance")
@@ -239,6 +249,15 @@ class SceneAwareMotionService:
 
     def plan(self, request: MotionRequest) -> dict:
         request.validate()
+        from ares_r.operations import OperationsRegistry
+        operations = OperationsRegistry().read()
+        constraints = request.constraints
+        request = replace(request, constraints=replace(constraints,
+            central_exclusion=(operations['policy']['central_exclusion']
+                if constraints.central_exclusion is None else constraints.central_exclusion),
+            environment_avoidance=(operations['policy']['environment_avoidance']
+                if constraints.environment_avoidance == 'AUTO' else constraints.environment_avoidance)))
+        self.config = dict(self.config, operations_policy_revision=operations['revision'])
         scene = self.local_scene.ensure_fresh(
             "MOTION_REQUEST:%s" % request.request_label, request.scene_policy,
             active_arm=request.arm)
@@ -251,6 +270,17 @@ class SceneAwareMotionService:
                      "scene_snapshot_id": scene["scene_snapshot_id"]})
         try:
             plan = dict(self.planner(request, scene, output))
+            plan['operations_policy_revision'] = operations['revision']
+            limits = operations.get('software_limits', {})
+            rows = plan.get('trajectory_points_rad') or []
+            for row in rows:
+                if limits.get('joint_lower_rad') is not None and any(
+                        q < lo or q > hi for q,lo,hi in zip(row,
+                        limits['joint_lower_rad'], limits['joint_upper_rad'])):
+                    raise RuntimeError('trajectory violates configured software joint limits')
+                if limits.get('max_joint_delta_rad') is not None and any(
+                        abs(q-start) > limits['max_joint_delta_rad'] for q,start in zip(row,rows[0])):
+                    raise RuntimeError('trajectory exceeds configured software joint displacement')
             validity = evaluate_hard_validity(plan, self.clearance_policy)
             if not validity["hard_valid"]:
                 raise RuntimeError("hard trajectory validation failed: %s" % validity)
@@ -260,8 +290,18 @@ class SceneAwareMotionService:
             raise
         trajectory = plan.get("trajectory_points_rad") or []
         digest_value = hashlib.sha256(json.dumps(trajectory, separators=(",", ":")).encode()).hexdigest()
-        package = (self.packager(request, scene, output, plan, validity)
-                   if self.packager is not None else None)
+        package = None
+        package_error = None
+        if self.packager is not None:
+            try:
+                package = self.packager(request, scene, output, plan, validity)
+            except Exception as exc:
+                # A collision-valid planning result remains useful for preview and
+                # diagnosis even when native execution packaging rejects it (for
+                # example, a site soft-limit or timing envelope).  Never arm such
+                # a result for execution, but do not strand the backend in
+                # PLANNING or discard the cuRobo trajectory.
+                package_error = "%s:%s" % (type(exc).__name__, exc)
         request_payload = asdict(request)
         request_payload["scene_policy"] = request.scene_policy.value
         request_payload["constraints"]["orientation"] = request.constraints.orientation.value
@@ -283,11 +323,22 @@ class SceneAwareMotionService:
             "hard_validity": validity,
             "plan_artifact": str(output),
             "package_dir": package["package_dir"] if package else None,
+            "execution_package_ready": package is not None,
+            "execution_package_error": package_error,
             "created_at_unix": self.clock(),
+            "operations_policy_revision": self.config.get('operations_policy_revision'),
+            "planning_world_digest": plan.get('planning_world_digest'),
+            "environment_avoidance_policy": plan.get('environment_avoidance_policy'),
+            "planning_mode":request.planning_mode,
+            "planner_timing_s":plan.get('timing_s'),
+            "latency_contract":plan.get('latency_contract'),
         }
         output.mkdir(parents=True, exist_ok=True)
         _atomic_json(output / "plan_handle.json", handle)
-        self._write({"state": "READY", "execution_state": "ARMED", "plan_id": plan_id,
+        self._write({"state": "READY",
+                     "execution_state": ("ARMED" if package else "PREVIEW_ONLY"),
+                     "execution_package_error": package_error,
+                     "plan_id": plan_id,
                      "plan_handle": str(output / "plan_handle.json"),
                      "scene_epoch": scene["scene_epoch"],
                      "scene_snapshot_id": scene["scene_snapshot_id"],
@@ -299,6 +350,11 @@ class SceneAwareMotionService:
         if current.get("state") != "READY" or not current.get("plan_handle"):
             raise RuntimeError("no ready scene-aware plan")
         handle = json.loads(Path(current["plan_handle"]).read_text())
+        if handle.get('operations_policy_revision') is not None:
+            from ares_r.operations import OperationsRegistry
+            if OperationsRegistry().read()['revision'] != handle['operations_policy_revision']:
+                self.invalidate_plans('OPERATIONS_REVISION_CHANGED')
+                raise RuntimeError('operations configuration changed; replan required')
         if plan_id is not None and handle["plan_id"] != plan_id:
             raise RuntimeError("plan handle mismatch")
         scene = self.local_scene.snapshot()

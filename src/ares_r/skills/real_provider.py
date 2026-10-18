@@ -32,6 +32,9 @@ class RealCapabilityProvider(CanonicalCapabilityProvider):
     def __init__(self,bundle):
         self.bundle=bundle;self._observation={};self._guard=threading.Lock()
         super().__init__({
+            'dryer.select':self._berth_select,
+            'dryer.reserve':lambda phase,payload:self._berth_update('reserve',phase,payload),
+            'dryer.complete':lambda phase,payload:self._berth_update('complete',phase,payload),
             "scene.capture":self._observation_call,
             "resource.detect":self._observation_call,
             "predicate.verify":self._verify,
@@ -47,6 +50,18 @@ class RealCapabilityProvider(CanonicalCapabilityProvider):
             "execution.authorize":self._authorize,
             "motion.execute":self._execute,
         })
+
+    def _berth_select(self,phase,payload):
+        from ares_r.operations import OperationsRegistry
+        return OperationsRegistry().select(payload['parameters']['operation'])
+
+    def _berth_update(self,action,phase,payload):
+        from ares_r.operations import OperationsRegistry
+        registry=OperationsRegistry()
+        if phase=='prepare':
+            return {'registry_revision':registry.read()['revision'], 'action':action}
+        return registry.update(action,dict(payload['parameters'],
+            expected_revision=payload['plan']['registry_revision']))['result']
     def _observation_call(self,phase,payload):
         profile=payload["parameters"].get("profile","right_pick")
         if phase=="prepare":return {"profile":profile,"coalesced_observation_v2":True}

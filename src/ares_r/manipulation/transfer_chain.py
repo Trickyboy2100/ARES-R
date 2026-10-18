@@ -12,6 +12,7 @@ from dataclasses import dataclass
 import hashlib
 import json
 import math
+import time
 from pathlib import Path
 from typing import Mapping, Sequence
 
@@ -65,6 +66,16 @@ class TransferChainRequest:
     historical_center_joints_seed: tuple=()
     beam_width: int=4
     full_chain_candidates_per_symmetry: int=2
+    symmetry_ids: tuple=("NORMAL","FLIPPED_180")
+    station_contract_revision: str="MANIPULATION_STATIONS_2026-09-29_V1"
+    pick_station: str="PICK_STATION"
+    place_station: str="PLACE_STATION"
+    place_to_pick_body_translation_m: tuple=(0.,.40,0.)
+    pick_to_place_body_translation_m: tuple=(0.,-.40,0.)
+    station_yaw_deg: float=0.0
+    planner_profile_revision: str="PERSISTENT_FAST_FALLBACK_V1"
+    collision_model_revision: str="WHOLE_ROBOT_COLLISION_MODEL"
+    tool_revision: str="PINNED_EG2_4C2"
 
     def validate(self):
         if len(self.current_joints_rad)!=6:raise ValueError("six current joints required")
@@ -73,6 +84,16 @@ class TransferChainRequest:
             raise ValueError("retain only 1..3 full-chain candidates per symmetry")
         if not self.observation_id or not self.scene_snapshot_id:
             raise ValueError("fresh observation and SceneSnapshot bindings required")
+        if tuple(self.symmetry_ids)!=("NORMAL","FLIPPED_180"):
+            raise ValueError("both NORMAL and FLIPPED_180 branches are mandatory")
+        if (self.pick_station,self.place_station)!=("PICK_STATION","PLACE_STATION"):
+            raise ValueError("P3.9C station names are fixed")
+        if (not np.allclose(self.place_to_pick_body_translation_m,(0.,.40,0.)) or
+                not np.allclose(self.pick_to_place_body_translation_m,(0.,-.40,0.)) or
+                float(self.station_yaw_deg)!=0.0):
+            raise ValueError("P3.9C station contract must be +/-BODY Y 0.40m, yaw=0")
+        if not np.allclose(self.rear_offset_body_m,(-.15,0.,0.)):
+            raise ValueError("rear-preplace must be BODY X-0.15m")
 
 
 def _edge_cost(left: IKNode, right: IKNode):
@@ -159,11 +180,27 @@ class TransferChainPlanner:
                 "full_chain_candidates":chains}
 
     def plan(self,request: TransferChainRequest,artifact_path=None):
+        started=time.monotonic(); timing={"branch_ik_graph_s":{},"curobo_validation_s":{}}
         request.validate();rotation=np.asarray(request.grasp_rotation_body,dtype=float)
-        branches=[self._branch(request,name,value)
-                  for name,value in two_finger_grasp_rotations(rotation)]
+        rotations=dict(two_finger_grasp_rotations(rotation))
+        branches=[]
+        for name in request.symmetry_ids:
+            at=time.monotonic()
+            branches.append(self._branch(request,name,rotations[name]))
+            timing['branch_ik_graph_s'][name]=time.monotonic()-at
         validated=[]
-        for branch in branches:
+        # The expensive persistent-cuRobo stage follows global DP rank rather
+        # than a fixed NORMAL-first order.  Both symmetry branches have already
+        # completed bounded multi-IK/graph evaluation above.
+        validation_order=sorted(branches,key=lambda branch:(
+            branch["full_chain_candidates"][0]["branch_score"]
+            if branch["full_chain_candidates"] else math.inf))
+        for branch in validation_order:
+            # current->pregrasp is identical for every IK-chain candidate of a
+            # symmetry branch.  Preserve the first independently validated
+            # success instead of asking the stochastic optimizer to rediscover
+            # the same path for every downstream center candidate.
+            shared_pregrasp_result=None
             for chain_index,chain in enumerate(branch["full_chain_candidates"]):
                 by_stage={node["stage"]:node for node in chain["nodes"]}
                 segment_results=[];hard_level=True;curobo_required=True
@@ -173,42 +210,105 @@ class TransferChainPlanner:
                             "status":"PENDING_FRESH_PLACE_SCENE_REBIND",
                             "scene_boundary":boundary})
                         continue
+                    if not curobo_required or not hard_level:
+                        segment_results.append({"segment":start_name+"_to_"+goal_name,
+                            "status":"SKIPPED_AFTER_UPSTREAM_REQUIRED_SEGMENT_FAILURE",
+                            "scene_boundary":boundary,"curobo_pass":False,
+                            "hard_level_orientation_pass":False})
+                        continue
                     start=(by_stage["current"] if start_name=="current" else by_stage[start_name])
-                    result=dict(self.segment_validator.validate(
-                        start_name+"_to_"+goal_name,start,by_stage[goal_name],
-                        request.scene_snapshot_id,boundary,branch["grasp_symmetry_id"]))
+                    validation_name=("candidate_%d_"%chain_index+
+                                     start_name+"_to_"+goal_name)
+                    if start_name=="current" and goal_name=="pregrasp" and shared_pregrasp_result:
+                        result=dict(shared_pregrasp_result)
+                        result["reused_equivalent_segment_validation"]=True
+                        result["reused_for_candidate_index"]=chain_index
+                    else:
+                        at=time.monotonic()
+                        result=dict(self.segment_validator.validate(
+                            validation_name,start,by_stage[goal_name],
+                            request.scene_snapshot_id,boundary,branch["grasp_symmetry_id"]))
+                        timing['curobo_validation_s'][branch['grasp_symmetry_id']+':'+validation_name]=time.monotonic()-at
+                        if (start_name=="current" and goal_name=="pregrasp" and
+                                result.get("curobo_pass") and
+                                result.get("hard_level_orientation_pass")):
+                            shared_pregrasp_result=dict(result)
                     result.update(segment=start_name+"_to_"+goal_name,
                                   scene_boundary=boundary)
                     segment_results.append(result)
                     curobo_required &= bool(result.get("curobo_pass"))
                     hard_level &= bool(result.get("hard_level_orientation_pass"))
+                stage_ik={node["stage"]:node for node in chain["nodes"]
+                          if node["stage"]!="current"}
                 item=dict(chain);item.update({"grasp_symmetry_id":branch["grasp_symmetry_id"],
                     "roll_branch":branch["roll_branch"],"chain_index":chain_index,
+                    "selected_stage_ik":stage_ik,
                     "curobo_segment_results":segment_results,
                     "required_pre_rebind_curobo_pass":curobo_required,
                     "hard_level_orientation_validator_pass":hard_level})
                 if curobo_required and hard_level:validated.append(item)
+                if validated:
+                    break
+            if validated:
+                break
         validated.sort(key=lambda row:row["branch_score"])
         selected=validated[0] if validated else None
+        selected_stage_ik=(selected or {}).get("selected_stage_ik",{})
+        center_node=selected_stage_ik.get("center")
+        semantic_templates={
+            "center":{"frame":"BODY","position_m":list(map(float,request.center_position_body_m)),
+                "orientation":"LEVEL_YAW_FREE","selected_yaw_rad":(
+                    center_node.get("yaw_rad") if center_node else None),
+                "historical_joints_role":"IK_SEED_ONLY"},
+            "rear_preplace":{"frame":"BODY","position_m":list(map(float,
+                np.asarray(request.preplace_position_body_m)+np.asarray(request.rear_offset_body_m))),
+                "derived_from":"PREPLACE_PLUS_BODY_OFFSET","body_offset_m":list(request.rear_offset_body_m),
+                "orientation":"LEVEL_SELECTED_SYMMETRY"},
+            "preplace":{"frame":"BODY","position_m":list(map(float,request.preplace_position_body_m)),
+                "orientation":"LEVEL_SELECTED_SYMMETRY"}}
         artifact={"schema_version":1,"artifact_type":"TRANSFER_CHAIN_SELECTION",
             "immutable":True,"planning_only":True,"execution_allowed":False,
             "observation_id":request.observation_id,
             "scene_snapshot_id":request.scene_snapshot_id,
+            "station_contract":{"revision":request.station_contract_revision,
+                "place_station":request.place_station,"pick_station":request.pick_station,
+                "place_to_pick_body_translation_m":list(request.place_to_pick_body_translation_m),
+                "pick_to_place_body_translation_m":list(request.pick_to_place_body_translation_m),
+                "yaw_deg":request.station_yaw_deg,
+                "base_motion_policy":"INVALIDATE_SCENE_WAIT_SETTLED_FRESH_OBSERVATION"},
+            "planner_profile_revision":request.planner_profile_revision,
+            "collision_model_revision":request.collision_model_revision,
+            "tool_revision":request.tool_revision,
             "symmetry_scores":[{"grasp_symmetry_id":row["grasp_symmetry_id"],
                 "roll_branch":row["roll_branch"],"full_chain_candidates":row["full_chain_candidates"]}
                 for row in branches],
             "selected_grasp_symmetry_id":selected["grasp_symmetry_id"] if selected else None,
-            "selected_center_ik":(next(node for node in selected["nodes"]
-                if node["stage"]=="center") if selected else None),
+            "selected_center_ik":center_node,
+            "selected_stage_ik":selected_stage_ik,
+            "semantic_goal_templates":semantic_templates,
             "selected_chain":selected,
             "scene_rebind_boundaries":[{"after":"center","event":"AMR_MOVE",
                 "action":"INVALIDATE_SCENE_AND_TRAJECTORIES"},
                 {"before":"center_to_rear_preplace","required":"FRESH_PLACE_SCENE"}],
+            "place_rebind_template":{"status":"REQUIRES_FRESH_PLACE_SCENE",
+                "preserve_grasp_symmetry_id":(
+                    selected["grasp_symmetry_id"] if selected else None),
+                "segments":["center_to_rear_preplace","rear_preplace_to_preplace"],
+                "semantic_goals":semantic_templates},
+            "STATION_CONTRACT_BOUND":"YES",
+            "SYMMETRIC_GRASP_BRANCHES_EVALUATED":"YES" if len(branches)==2 else "NO",
+            "CENTER_IS_CARTESIAN_NOT_FIXED_JOINT":"YES",
             "WHOLE_CHAIN_BRANCH_SELECTED":"YES" if selected else "NO",
             "SELECTED_BRANCH_PREGRASP_CUROBO_PASS":"YES" if selected else "NO",
             "SELECTED_BRANCH_LIFT_TO_CENTER_CUROBO_PASS":"YES" if selected else "NO",
+            "PLACE_SCENE_REBIND_POLICY_READY":"YES",
+            "SELECTED_BRANCH_CENTER_TO_REAR_PREPLACE_READY":"YES" if selected else "NO",
+            "SELECTED_BRANCH_REAR_PREPLACE_TO_PREPLACE_READY":"YES" if selected else "NO",
             "HARD_LEVEL_ORIENTATION_VALIDATOR_PASS":"YES" if selected else "NO",
             "TASK_RUNTIME_AUTONOMOUS_BRANCH_SELECTION_READY":"YES" if selected else "NO"}
+        timing['total_s']=time.monotonic()-started
+        artifact['timing_s']=timing
+        artifact['selection_policy']='DP_RANKED_FIRST_HARD_VALID_NOT_EXHAUSTIVE_CUROBO_OPTIMUM'
         artifact["artifact_digest"]=_digest(artifact)
         if artifact_path:
             path=Path(artifact_path)
@@ -302,16 +402,22 @@ class PersistentCuroboSegmentValidator:
             except Exception as exc:
                 attempts.append({"profile":profile,"pass":False,
                                  "error":"%s: %s"%(type(exc).__name__,exc)})
+                if "ENDPOINT_COLLISION_DETERMINISTIC" in str(exc):
+                    break
                 continue
             hard=bool((value.get("orientation_validation") or {}).get("passed"))
-            passed=value.get("observed_result")=="SUCCESS" and hard
+            dense=value.get("independent_dense_validation") or {}
+            dense_pass=bool(dense.get("passed",value.get("observed_result")=="SUCCESS"))
+            passed=value.get("observed_result")=="SUCCESS" and hard and dense_pass
             trajectory_hash=value.get("trajectory_hash")
             if trajectory_hash is None and value.get("trajectory_points_rad"):
                 trajectory_hash=_digest(value["trajectory_points_rad"])
             attempts.append({"profile":profile,"pass":passed,
                 "trajectory_hash":trajectory_hash,
                 "minimum_clearance_m":(value.get("clearance_m") or {}).get("planned_path"),
-                "hard_level_orientation_pass":hard})
+                "hard_level_orientation_pass":hard,
+                "dense_collision_validation_pass":dense_pass,
+                "dense_validation_samples":value.get("dense_post_validation_samples")})
             if passed:result=value;break
         chosen=next((row for row in attempts if row["pass"]),None)
         return {"curobo_pass":chosen is not None,
@@ -338,10 +444,14 @@ class TransferChainSkillService:
 
     def bind(self,payload):
         request=payload["plan"]["request"]
-        path=self.artifact_root/(request.observation_id+"_transfer_chain_selection.json")
+        path=self.artifact_root/request.observation_id/"transfer_chain_selection.json"
         artifact=self.planner.plan(request,path)
         if artifact["WHOLE_CHAIN_BRANCH_SELECTED"]!="YES":
             raise RuntimeError("no full-chain branch passed cuRobo and hard-level gates")
         return {"artifact_id":artifact["artifact_digest"],"artifact_path":str(path),
                 "selected_grasp_symmetry_id":artifact["selected_grasp_symmetry_id"],
-                "center_tcp_position_solution":artifact["selected_center_ik"]}
+                "selected_stage_ik":artifact["selected_stage_ik"],
+                "selected_center_ik":artifact["selected_center_ik"],
+                "center_tcp_position_solution":artifact["selected_center_ik"],
+                "place_rebind_template":artifact["place_rebind_template"],
+                "transfer_chain_selection":artifact["artifact_digest"]}

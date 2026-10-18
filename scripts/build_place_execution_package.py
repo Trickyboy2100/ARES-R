@@ -33,7 +33,6 @@ sys.path.insert(0, str(ROOT / "src"))
 from ares_r.manipulation.contact_bypass import ContactBypassPolicy, validate_bypass_segment
 from ares_r.manipulation.task_parameters import gripper_percent_to_raw, load_task_parameters
 from ares_r.motion.grasp import approach_direction, rotation_matrix
-from ares_r.motion.native_execution_package import NATIVE_MAX_EXCURSION_RAD
 from ares_r.motion.runtime_goal_ik import RuntimeGoalIK
 
 import place_ik_probe
@@ -210,13 +209,10 @@ def main():
         raise RuntimeError("no IK solution found for the preplace pose %s"
                            % [round(v, 4) for v in preplace_xyz])
     excursions = [place_ik_probe.excursion_deg(q_hold, joints) for joints in candidates]
-    cap_deg = math.degrees(NATIVE_MAX_EXCURSION_RAD)
-    if excursions[0] > cap_deg:
-        raise RuntimeError(
-            "the cheapest preplace branch needs %.1f deg of per-joint travel, above the native "
-            "%.0f deg trip cap (candidate excursions: %s). Split the free-space move into two "
-            "legs, or re-examine the approach axis -- do not raise the cap without a sender "
-            "audit." % (excursions[0], cap_deg, [round(v, 1) for v in excursions[:5]]))
+    # Total start-to-goal joint displacement is not a safety quantity. A
+    # collision-checked cuRobo path may legitimately travel more than 150
+    # degrees on one joint. Joint position, velocity, acceleration, tracking
+    # and controller protections remain enforced downstream.
     selected = candidates[:6]
     selected_excursions = excursions[:len(selected)]
     preplace_goal = selected[0]

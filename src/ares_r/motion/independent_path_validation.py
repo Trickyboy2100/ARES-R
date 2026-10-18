@@ -132,7 +132,16 @@ def validate_dense_world(points, request, *, subdivisions=4):
     sphere_radii = np.asarray(radii)
     by_object = {}
     limiting_component_by_object = {}
+    # The same declaration the planner honoured.  An object the caller names as
+    # the manipulation target is not a free-space obstacle, so an
+    # "independent" check that still measured the tool against it would veto
+    # every pick whose pregrasp is legitimately defined inside the target's own
+    # coarse cluster AABB.
+    ignored_objects = {str(value) for value in request.get(
+        "motion_constraints", {}).get("ignore_cuboid_ids", [])}
     for name, box in request["compiled_scene"]["cuboids"].items():
+        if name in ignored_objects:
+            continue
         rotation = _quaternion_rotation(box["pose"][3:])
         center = np.asarray(box["pose"][:3], dtype=float)
         dims = np.asarray(box["dims"], dtype=float)
@@ -154,6 +163,7 @@ def validate_dense_world(points, request, *, subdivisions=4):
             "validation_knots":int(len(knots)),
             "maximum_knot_joint_step_rad":float(np.max(np.abs(np.diff(knots,axis=0)))),
             "dense_samples": int(len(q)), "subdivisions": subdivisions,
+            "ignored_object_ids": sorted(ignored_objects),
             "min_clearance_m": minimum, "limiting_object_id": minimum_name,
             "limiting_robot_component_id": (
                 limiting_component_by_object.get(minimum_name)),

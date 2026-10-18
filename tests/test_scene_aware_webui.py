@@ -15,6 +15,13 @@ class Dispatcher:
 
 
 class WebUiTests(unittest.TestCase):
+    def test_common_right_center_button_and_route_exist(self):
+        index = (Path(__file__).parents[1] / "src" / "ares_r" / "webui" / "index.html").read_text()
+        server = (Path(__file__).parents[1] / "src" / "ares_r" / "webui" / "server.py").read_text()
+        self.assertIn("Plan Right → Center (cuRobo)", index)
+        self.assertIn("/api/motion/plan-center", index)
+        self.assertIn('path=="/api/motion/plan-center"', server)
+
     def test_status_ribbon_exposes_control_hierarchy(self):
         value=system_status(Dispatcher())
         self.assertEqual(value["BASE"],"SETTLED")

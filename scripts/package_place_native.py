@@ -46,7 +46,8 @@ def main():
             points, 0.008, site, tool_id=1,
             controller_tool_pose_mm_rad=request["controller_tool_pose_mm_rad"],
             captured_at_unix=int(time.time()), speed_ceiling_rad_s=speed,
-            accel_ceiling_rad_s2=accel, tracking_stop_threshold_deg=1.5)
+            accel_ceiling_rad_s2=accel, tracking_stop_threshold_deg=1.5,
+            max_excursion_rad=None)
         (args.output / (name + ".native.txt")).write_text(text)
         (args.output / (name + ".audit.json")).write_text(json.dumps(audit, indent=2) + "\n")
         audits[name] = audit

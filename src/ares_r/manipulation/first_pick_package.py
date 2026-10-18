@@ -26,10 +26,14 @@ def verify_first_pick_package(value):
     policy=core.get("contact_bypass_policy",{})
     required={"policy_id":"CONTACT_BYPASS_V1","active_arm":"right",
         "active_tool_world_collision":False,"arm_link_world_collision":True,
-        "inactive_arm_collision":True,"self_collision":True,"central_exclusion":True,
+        "inactive_arm_collision":True,"self_collision":True,
         "bounded_cartesian_only":True,"automatic_expiry":True}
     if any(policy.get(k)!=v for k,v in required.items()):
         raise ValueError("contact bypass scope widened or altered")
+    # Central exclusion follows the versioned site switch (P3.9B keeps it OFF).
+    # The value must still be an explicit boolean, never missing or coerced.
+    if type(policy.get("central_exclusion")) is not bool:
+        raise ValueError("contact bypass central exclusion must be boolean")
     if not core.get("lift_validation",{}).get("expired_at_end"):
         raise ValueError("contact bypass must expire after initial lift")
     return True

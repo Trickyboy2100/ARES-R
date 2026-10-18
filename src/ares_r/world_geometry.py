@@ -112,6 +112,8 @@ def _display_model_to_controller(base: Dict[str, object], point: Sequence[float]
 
 
 def world_snapshot(config: Dict[str, object], diagnostics: Dict[str, Dict[str, object]]) -> Dict[str, object]:
+    from .operations import OperationsRegistry
+    central_enabled = OperationsRegistry().read()['policy']['central_exclusion']
     arms = {}
     for side in ("left", "right"):
         if side not in diagnostics:
@@ -135,7 +137,7 @@ def world_snapshot(config: Dict[str, object], diagnostics: Dict[str, Dict[str, o
             "configured_tool_tcp_mm_rad": diagnostics[side]["tool_data"]["pose_mm_rad"],
             "joint_points_world_m": joint_points,
         }
-    return {"frame": config["frame"], "arms": arms}
+    return {"frame": config["frame"], "arms": arms, 'central_exclusion_enabled':central_enabled}
 
 
 def _projection(snapshot: Dict[str, object], axes: Tuple[int, int], title: str,
@@ -185,7 +187,7 @@ def _projection(snapshot: Dict[str, object], axes: Tuple[int, int], title: str,
                 error += dx
                 y0 += sy
 
-    if axes[0] == 1:  # TOP and REAR: show the full-height Y exclusion slab.
+    if axes[0] == 1 and snapshot.get('central_exclusion_enabled', True):
         def column_for_y(value):
             marker = [0.0, 0.0, 0.0]
             marker[axes[0]] = value
@@ -234,6 +236,8 @@ def _projection(snapshot: Dict[str, object], axes: Tuple[int, int], title: str,
 def render_world(snapshot: Dict[str, object], detailed: bool = False) -> str:
     lines = ["WORLD body: +X forward, +Y left, +Z up; bases L/R, joints 1..6, TCP l/r",
              "HARD TCP EXCLUSION: BODY -0.070 <= Y <= +0.070 m (14 cm; boundary contact forbidden)"]
+    if not snapshot.get('central_exclusion_enabled', True):
+        lines[1] = 'HARD TCP EXCLUSION: OFF (configured in shared operations registry)'
     for side in ("left", "right"):
         if side not in snapshot["arms"]:
             lines.append("%s DISABLED: no connection; posture unknown, not an obstacle model" % side)
@@ -243,12 +247,16 @@ def render_world(snapshot: Dict[str, object], detailed: bool = False) -> str:
         exclusion = arm["central_tcp_exclusion"]
         state = "CLEAR %+6.1fmm" % (1000.0 * exclusion["clearance_m"]) if exclusion["safe"] else (
             "IN FORBIDDEN ZONE %+6.1fmm" % (1000.0 * exclusion["clearance_m"]))
+        if not snapshot.get('central_exclusion_enabled', True): state = 'OFF'
         lines.append("%-5s base=(%+.3f,%+.3f,%+.3f)m compass-yaw=%+.1fdeg  TCP=(%+.3f,%+.3f,%+.3f)m tool=%s  center=%s" % (
             side, base[0], base[1], base[2], arm["mount_yaw_compass_deg"],
             tcp[0], tcp[1], tcp[2], arm["active_tool_id"], state))
     if detailed:
         lines.append("DISPLAY MODEL: '-' is the side-mount MiniCobo MDH joint chain; ':' connects J6 to live SDK TCP.")
-        lines.append("TOP/REAR CENTER SLAB: ! boundaries at Y=+/-0.070m, | symmetry plane Y=0, . forbidden interior.")
+        if snapshot.get('central_exclusion_enabled', True):
+            lines.append("TOP/REAR CENTER SLAB: ! boundaries at Y=+/-0.070m, | symmetry plane Y=0, . forbidden interior.")
+        else:
+            lines.append('TOP/REAR CENTER SLAB: OFF; no restriction overlay.')
         lines.append("DISPLAY FK VALIDATED: 34 controller samples; left max 0.308mm, right max 0.943mm. Not a collision model.")
         for side in ("left", "right"):
             if side not in snapshot["arms"]:

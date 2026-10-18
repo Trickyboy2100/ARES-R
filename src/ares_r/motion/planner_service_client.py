@@ -11,22 +11,25 @@ SOCKET=Path("/tmp/ares_r_curobo_planner.sock")
 
 
 def _call(payload, timeout_s):
-    client=socket.socket(socket.AF_UNIX,socket.SOCK_STREAM);client.settimeout(timeout_s)
-    client.connect(str(SOCKET));client.sendall((json.dumps(payload)+"\n").encode())
-    chunks=[]
-    while True:
-        block=client.recv(65536)
-        if not block:break
-        chunks.append(block)
-    client.close();return json.loads(b"".join(chunks).decode())
+    with socket.socket(socket.AF_UNIX,socket.SOCK_STREAM) as client:
+        client.settimeout(timeout_s)
+        client.connect(str(SOCKET));client.sendall((json.dumps(payload)+"\n").encode())
+        chunks=[]
+        while True:
+            block=client.recv(65536)
+            if not block:break
+            chunks.append(block)
+        return json.loads(b"".join(chunks).decode())
 
 
-def plan(python, repository, request, output, log, timeout_s=180.0):
+def plan(python, repository, request, output, log, timeout_s=180.0,autostart=True):
     payload={"command":"plan","request":str(Path(request).resolve()),
              "output":str(Path(output).resolve()),"log":str(Path(log).resolve())}
     try:
         response=_call(payload,timeout_s)
     except (FileNotFoundError,ConnectionRefusedError):
+        if not autostart:
+            raise RuntimeError('FAST_PLANNER_NOT_READY: persistent planner must be prewarmed; no candidate')
         if SOCKET.exists():SOCKET.unlink()
         subprocess.Popen([str(python),"-m","ares_r.motion.persistent_planner_service",
                           "--socket",str(SOCKET)],cwd=str(repository),

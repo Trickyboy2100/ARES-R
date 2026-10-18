@@ -42,7 +42,9 @@ def serve(path: Path) -> None:
                 except BaseException as exc:
                     response={"ok":False,"error":f"{type(exc).__name__}: {exc}",
                               "traceback":traceback.format_exc()}
-                connection.sendall((json.dumps(response)+"\n").encode())
+                try:connection.sendall((json.dumps(response)+"\n").encode())
+                except (BrokenPipeError,ConnectionResetError):
+                    pass  # Timed-out client cannot execute this late planning artifact.
     finally:
         server.close()
         if path.exists(): path.unlink()

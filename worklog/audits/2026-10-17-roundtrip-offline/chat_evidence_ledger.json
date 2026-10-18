@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "audit_date": "2026-10-17",
+  "timezone": "Asia/Shanghai",
+  "provenance": "Numbers transcribed from tool outputs visible in this chat. Original .32 runtime files were NOT fetched in this offline turn. This ledger is not an original-log archive.",
+  "robot_network_access_this_audit": false,
+  "runs": [
+    {
+      "id": "web_1792140369955017446",
+      "source_root": "/home/yikun/ARES-R/worklog/evidence/demo-runs/right_arm_grasp_place_roundtrip_v1/web_1792140369955017446",
+      "started_unix": 1792140369.995566,
+      "fault_unix": 1792140542.0081196,
+      "elapsed_s": 172.0125536,
+      "physical_stage_reached": false,
+      "attempts": [
+        {"mode": "FAST", "caller_outcome": "TIMEOUT", "late_worker_outcome": "SUCCESS", "planner_init_s": 10.731431725, "solve_s": 35.089867214, "postprocess_and_validation_s": 32.661374824, "independent_dense_validation_s": 10.86849464, "worker_request_wall_s": 80.24928501},
+        {"mode": "QUALITY", "outcome": "CUDA_OOM", "solve_s": 25.949500984, "worker_request_wall_s": 38.461122323},
+        {"mode": "QUALITY", "outcome": "CUDA_OOM", "solve_s": 25.782858435, "worker_request_wall_s": 27.517083314}
+      ],
+      "oom": {"gpu_capacity_gib": 11.66, "requested_gib": 1.03, "free_mib": 991.88, "worker_total_gib": 9.93},
+      "metadata_warning": "FAST request had 4/2 + CUDA graph true; result planner_clearance_policy metadata said 8/8 + false. Metadata alone does not prove actual seed execution."
+    },
+    {
+      "id": "web_1792141460049419632",
+      "started_unix": 1792141460.0494196,
+      "fault_unix": 1792141717.3234103,
+      "elapsed_s": 257.2739907,
+      "physical_stage_reached": false,
+      "quality": {"outcome": "SUCCESS", "planner_init_s": 10.524333579, "solve_s": 112.078264417, "reported_solve_s": 103.686224609, "postprocess_and_validation_s": 34.950371165, "independent_dense_validation_s": 11.599649274, "request_wall_s": 159.534945857},
+      "fault": "build_first_pick_execution_package: runtime IK residual exceeds target contract",
+      "offline_contact_reproduction": {"samples": 26, "length_m": 0.055, "first_failure_sample_zero_based": 17, "advance_mm": 37.4, "position_error_mm": 1.57441639023, "orientation_error_deg": 0.620774847813, "endpoint_position_error_mm": 7.50827057624, "endpoint_orientation_error_deg": 2.65561477862},
+      "bounded_multistart_diagnostic": {"initializations_per_rotation": 10, "selected_best_position_error_mm": 7.508170164, "selected_best_orientation_error_deg": 2.655626753, "opposite_best_position_error_mm": 9.442416329, "opposite_best_orientation_error_deg": 3.412918354, "conclusion": "No acceptable solution found by this bounded numerical test, NOT a proof of physical unreachability."}
+    },
+    {
+      "id": "web_1792142393480633163",
+      "started_unix": 1792142393.4806332,
+      "fault_unix": 1792142802.190554,
+      "elapsed_s": 408.7099208,
+      "events": [
+        {"stage": "MOVE_PREGRASP", "state": "START", "unix": 1792142632.2901454},
+        {"stage": "MOVE_PREGRASP", "state": "PASS", "unix": 1792142671.8123636, "planned_native_duration_s": 36.08},
+        {"stage": "GRIPPER40", "state": "START", "unix": 1792142671.8126369},
+        {"stage": "GRIPPER40", "state": "PASS", "unix": 1792142673.0667787},
+        {"stage": "CONTACT_APPROACH", "state": "START", "unix": 1792142673.0670137},
+        {"stage": "VERIFY_GRASP", "state": "START", "unix": 1792142791.9652026},
+        {"stage": "VERIFY_GRASP", "state": "FAULT", "unix": 1792142802.190554}
+      ],
+      "contact_native": {"samples": 1439, "dt_s": 0.08, "planned_duration_s": 115.04, "observed_midpath_tracking_error_deg": 0.0383851764},
+      "verification": {"result": "FAIL", "classification": "CHANGED_UNEXPECTED", "removed_fraction": 0.6666666667, "added_fraction": 0.5204081633, "maximum_unexpected_added_fraction": 0.50, "position_raw": [37,37,37], "stable": true, "not_fully_closed": true, "timestamp_warning": "Verification script assigns one current timestamp to all three readback rows."}
+    }
+  ],
+  "base_update": {
+    "command_body_m": [0, 0.10, 0], "observer": "SETTLED", "elapsed_s": 9.07918334,
+    "completion_marker": {"id": 72534, "queueId": 11305},
+    "new_route_lateral_m": 0.85, "old_route_lateral_m": 0.75, "place_changed": false,
+    "slam_warning": "Observer reported settled but SLAM displacement was about 0.04m rather than commanded 0.10m. SLAM drift versus real positioning error was not resolved; this is not precision station commissioning.",
+    "new_grasp_target_body_m": [0.8065660734, -0.2120255246, 0.99046385],
+    "new_grasp_contact_and_initial_lift_ik": {"NORMAL": "PASS", "FLIPPED_180": "PASS"}
+  },
+  "recovery": {
+    "initial_lift_started_unix": 1792143270.5589933,
+    "initial_lift_fault_unix": 1792143346.2450354,
+    "fault": "final feedback mismatch",
+    "native_abort_code": 0, "native_servo_disabled_code": 0,
+    "earlier_start_rejection_max_joint_error_deg": 0.03551,
+    "native_start_tolerance_deg": 0.02,
+    "native_final_tolerance_deg": 0.05,
+    "subsequent_settled_max_joint_error_deg": 0.0000045833,
+    "settled_tcp_body_m": [0.8068388312418893, -0.21077687042015505, 1.090344365513682],
+    "approx_actual_lift_m": 0.100,
+    "engineering_failures": ["left get_robot_status SystemError before motion", "reuse of lift.execute.validate.log raised FileExistsError before new motion", "one-shot recovery scripts added rather than canonical runtime recovery"],
+    "remaining_lift_target_body_m": [0.8068388312418893, -0.21077687042015505, 1.2203443655136819],
+    "remaining_lift_attempt_started_unix": 1792143756.0938714,
+    "remaining_lift_fault_unix": 1792143813.4317882,
+    "remaining_lift_executed": false,
+    "planning_error": "Start or End state in collision",
+    "start_min_gap_m": -0.06225894923305186,
+    "goal_min_gap_m": 0.04597904878132282,
+    "start_limiting_objects": [
+      ["observed_support_02_component_00_protruding", -0.06225894923305186],
+      ["observed_support_04_component_00_protruding", -0.012441409396000826],
+      ["observed_remaining_structure_structure_000", -0.007178773218238135]
+    ],
+    "attached_revision": "sha256:afd05c3c0987b7a24c9f3d4d7d42b23197d0c1ab83c5c2da2b9854b36e9ff98c",
+    "attached_link6_aabb_dims_m": [0.13498298050319996, 0.22032614709232556, 0.23090558332392908],
+    "ownership_diagnosis": "Operator identified held payload. Duplicate held-object environment representation is plausible; per-point ownership was not proven and a 200mm held-object self-filter was NOT implemented in the interrupted turn."
+  },
+  "last_known_outcome": "Approximately 100mm initial lift completed and held; remaining 130mm, loaded base transfer, placement, release and return NOT completed in this run.",
+  "not_current_robot_state": true
+}

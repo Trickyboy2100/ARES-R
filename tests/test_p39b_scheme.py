@@ -17,7 +17,8 @@ class P39BSchemeTest(unittest.TestCase):
         result=SchemeValidator(default_registry()).validate(self.scheme)
         self.assertTrue(result["valid"],result["errors"])
         skills=[node["skill"] for node in self.scheme["nodes"]]
-        self.assertEqual(skills.count("navigate.align_for_manipulation"),2)
+        self.assertEqual(skills.count("navigate.registered_relative"),2)
+        self.assertNotIn("navigate.align_for_manipulation",skills)
         self.assertNotIn("manipulation.release",skills)
         self.assertEqual(self.scheme["nodes"][-1]["parameters"]["predicate"],"HOLD_ABOVE_PLACE")
 
@@ -35,7 +36,10 @@ class P39BSchemeTest(unittest.TestCase):
         ready=json.loads((ROOT/"config/named_poses.json").read_text())["poses"]["ready"]
         self.assertNotEqual(center["arms"]["right"].get("ik_joint_rad"),
                             ready["arms"]["right"].get("ik_joint_rad"))
-        self.assertIn("coworker dirty patch",center["source"])
+        # Provenance evolves when site data is regularised. Check the contract
+        # (a separately sourced center), not a historical prose fragment.
+        self.assertTrue(center['source'].strip())
+        self.assertNotEqual(center['source'], ready.get('source'))
 
     def test_pick_and_place_registered_station_relationship(self):
         stations=json.loads((ROOT/"config/manipulation_stations.json").read_text())
@@ -53,14 +57,18 @@ class P39BSchemeTest(unittest.TestCase):
 
     def test_scheme_uses_registered_pick_then_place_station(self):
         by_id={node["id"]:node for node in self.scheme["nodes"]}
-        pick=by_id["align_pick"]["parameters"]
-        place=by_id["align_place"]["parameters"]
-        self.assertEqual((pick["expected_start_station"],pick["target_station"]),
+        pick=by_id["move_pick_station"]["parameters"]
+        place=by_id["return_place_station"]["parameters"]
+        self.assertEqual((pick["from_station"],pick["station"]),
                          ("PLACE_STATION","PICK_STATION"))
-        self.assertEqual((place["expected_start_station"],place["target_station"]),
+        self.assertEqual((place["from_station"],place["station"]),
                          ("PICK_STATION","PLACE_STATION"))
         self.assertEqual(pick["station_registry"],"config/manipulation_stations.json")
         self.assertEqual(place["station_registry"],"config/manipulation_stations.json")
+        for row in (pick,place):
+            self.assertTrue(row["invalidate_scene"])
+            self.assertTrue(row["require_settled"])
+            self.assertTrue(row["require_fresh_observation"])
 
 
 if __name__=="__main__":unittest.main()

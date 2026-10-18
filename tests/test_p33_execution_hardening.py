@@ -115,6 +115,30 @@ class P33HardeningTests(unittest.TestCase):
         rows[-1]["accepted"] = False
         self.assertIsNone(choose_global_profile(summary))
 
+    def test_disabled_central_slab_margin_is_json_safe_and_gate_is_fail_closed(self):
+        from ares_r.motion.execution_candidate import digest
+        from ares_r.motion.scene_aware_execution import (central_exclusion_gate,
+                                                         finite_or_none)
+        # A disabled slab has an unbounded clearance.  digest() serialises with
+        # allow_nan=False, so leaving it as inf silently blocked every native
+        # execution package (scenario: central_exclusion.enabled = false).
+        with self.assertRaises(ValueError):
+            digest({"central_tcp_margin_m": float("inf")})
+        self.assertIsNone(finite_or_none(float("inf")))
+        self.assertIsNone(finite_or_none(float("-inf")))
+        self.assertEqual(finite_or_none(0.05), 0.05)
+        self.assertEqual(digest({"central_tcp_margin_m": finite_or_none(float("inf")),
+                                 "central_exclusion_enabled": False})[:7], "sha256:")
+        # Disabled slab short-circuits; enabled slab stays fail-closed.
+        self.assertTrue(central_exclusion_gate(
+            {"central_exclusion_enabled": False, "central_tcp_margin_m": None}))
+        self.assertFalse(central_exclusion_gate(
+            {"central_exclusion_enabled": True, "central_tcp_margin_m": None}))
+        self.assertFalse(central_exclusion_gate(
+            {"central_exclusion_enabled": True, "central_tcp_margin_m": 0.0}))
+        self.assertTrue(central_exclusion_gate(
+            {"central_exclusion_enabled": True, "central_tcp_margin_m": 0.01}))
+
     @unittest.skipIf(importlib.util.find_spec("numpy") is None, "requires NumPy")
     def test_native_packaging_is_slow_and_preserves_geometry(self):
         content, audit = package_native_preview(

@@ -41,6 +41,8 @@ def trajectory_hash(points):return sha([[round(float(v),12) for v in row] for ro
 def main():
     p=argparse.ArgumentParser();p.add_argument("--plan",type=Path,required=True)
     p.add_argument("--epoch",type=Path,required=True);p.add_argument("--contact",type=Path)
+    p.add_argument("--lift-start-audit",type=Path,
+                   help="read-only post-grasp JAKA audit used as the vertical-lift start")
     p.add_argument("--output",type=Path,required=True);a=p.parse_args();a.output.mkdir(parents=True,exist_ok=False)
     request=load(a.plan/"planner_request.json");planning=load(a.plan/"planning.json")
     observation=load(a.epoch/"manipulation_observation.json");report=load(a.epoch/"live_scene/scene/scene_report.json")
@@ -53,7 +55,9 @@ def main():
         direction=np.asarray(contact["approach_direction_body"],dtype=float)
     else:
         pose=observation["target"]["pose_m_rad"]
-        rotation=np.asarray(rotation_matrix(*pose[3:],observation["target"]["orientation_convention"]))
+        selected=planning.get("selected_goal_candidate_metadata") or {}
+        rotation=np.asarray(selected.get("target_rotation_body") or
+            rotation_matrix(*pose[3:],observation["target"]["orientation_convention"]))
         direction=np.asarray(approach_direction(rotation,observation["target"]["approach_axis"]),dtype=float)
         grasp_xyz=np.asarray(pose[:3],dtype=float)
         pregrasp_distance=float(params["contact"].get("selected_pregrasp_distance_m",.05))
@@ -62,15 +66,26 @@ def main():
         for xyz in np.linspace(pregrasp,grasp_xyz,26):
             solved=solver.solve(xyz,rotation,seed);seed=np.asarray(solved.joints_rad)
             q_contact.append(list(solved.joints_rad))
-    grasp_T=solver.fk(q_contact[-1]);world={k:body_box(k,v,np.asarray(request["T_body_model"]))
+    lift_start=np.asarray(q_contact[-1],dtype=float)
+    if a.lift_start_audit:
+        audited=load(a.lift_start_audit)
+        arm=(audited.get("arms") or {}).get("right",audited.get("right",{}))
+        lift_start=np.asarray(arm.get("joint_position_rad",[]),dtype=float)
+        if lift_start.shape!=(6,) or not np.isfinite(lift_start).all():
+            raise RuntimeError("lift start audit lacks six finite right-arm joints")
+    grasp_T=solver.fk(lift_start);world={k:body_box(k,v,np.asarray(request["T_body_model"]))
         for k,v in request["compiled_scene"]["cuboids"].items()}
-    policy=ContactBypassPolicy.for_manipulation_skill("PICK_CONTACT_ESCAPE",observation["observation_id"])
+    motion_policy=load(ROOT/"config/scene_aware_motion.json")
+    central_enabled=bool(motion_policy["central_exclusion"]["enabled"])
+    policy=ContactBypassPolicy.for_manipulation_skill(
+        "PICK_CONTACT_ESCAPE",observation["observation_id"],
+        central_exclusion=central_enabled)
     approach_samples=[{"tcp_position_body_m":solver.fk(q)[:3,3].tolist(),"joints_rad":q,
                        "arm_links":arm_geometry(q,request)} for q in q_contact]
     approach_validation=validate_bypass_segment(approach_samples,world,policy,
         expected_direction_body=direction,joint_lower=solver.lower,joint_upper=solver.upper,
         expire_at_end=False)
-    q_lift=[];seed=np.asarray(q_contact[-1]);start=grasp_T[:3,3]
+    q_lift=[];seed=lift_start.copy();start=grasp_T[:3,3]
     for z in np.linspace(0,.1,51):
         solved=solver.solve(start+[0,0,z],grasp_T[:3,:3],seed);seed=np.asarray(solved.joints_rad)
         q_lift.append(list(solved.joints_rad))
@@ -103,6 +118,7 @@ def main():
       "scene_digest":observation["scene_digest"],"pointcloud_sha256":observation["pointcloud_sha256"],
       "detection_id":observation["detection_id"],"target_pose_body_m_rad":observation["target"]["pose_m_rad"],
       "target_primitive_id":target.object_id,
+      "selected_grasp_symmetry":planning.get("selected_goal_candidate_metadata"),
       "pregrasp_distance_m":float(params["contact"].get("selected_pregrasp_distance_m",.05)),
       "contact_bypass_policy":policy.as_dict(),"approach_validation":approach_validation,
       "lift_validation":lift_validation,"coarse_attached_object_collision":attached_collision,
@@ -111,6 +127,9 @@ def main():
       "inactive_arm_revision":report["inactive_arm_revision"],"gripper_commands":{
           "pregrasp_percent":40,"close_raw":params["gripper"]["raw_closed"]},
       "grasp_verification":params["grasp_verification"],"stages":stages,
+      "lift_start_provenance":({"kind":"POST_GRASP_READ_ONLY_JAKA_AUDIT",
+          "path":str(a.lift_start_audit),"joints_rad":lift_start.tolist()}
+          if a.lift_start_audit else {"kind":"PLANNED_CONTACT_ENDPOINT"}),
       "trajectories":{"pregrasp":planning["trajectory_points_rad"],"contact":q_contact,"lift":q_lift},
       "FIRST_PICK_EXECUTION_PACKAGE_READY":True,"place_included":False}
     package["package_sha256"]=sha(package)

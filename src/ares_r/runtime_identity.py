@@ -11,7 +11,7 @@ from . import __version__
 
 
 TASK_RUNTIME_VERSION = "1.1.0-p39b"
-WEBUI_BUILD_VERSION = "2026.09.29-p39b"
+WEBUI_BUILD_VERSION = "2026.10.16-operations-v5-full-cycle-start"
 
 
 def git_sha(root="."):
@@ -28,11 +28,16 @@ def runtime_identity(root=".", *, started_monotonic=None, active_scheme=None):
     central={"enabled":True,"half_width_m":.07,"revision":"LEGACY_DEFAULT"}
     path=root/"config/scene_aware_motion.json"
     if path.exists():central.update(json.loads(path.read_text()).get("central_exclusion",{}))
+    from .operations import OperationsRegistry
+    operations = OperationsRegistry(root).read()
+    central['enabled'] = operations['policy']['central_exclusion']
+    central['revision'] = 'operations-%d' % operations['revision']
     return {
         "ares_r_version":__version__,"git_sha":sha,"git_sha_short":sha[:8],
         "task_runtime_version":TASK_RUNTIME_VERSION,
         "webui_build_version":WEBUI_BUILD_VERSION,
         "active_scheme":active_scheme,"central_exclusion":central,
+        "operations_policy": operations['policy'], "operations_revision": operations['revision'],
         "backend_health":"READY",
         "backend_uptime_s":(None if started_monotonic is None else
                             max(0.0,time.monotonic()-started_monotonic)),

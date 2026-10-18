@@ -66,7 +66,13 @@ class ReplayCapabilityProvider(CapabilityProvider):
             "trajectory_hash":"sha256:replay-"+context.stage_id}
         if definition.skill_id=="manipulation.plan_transfer_chain":
             outputs.update({"selected_grasp_symmetry_id":"FLIPPED_180",
-                "selected_chain":{"pregrasp":"REPLAY_PREGRASP_IK"},
+                "selected_stage_ik":{"pregrasp":"REPLAY_PREGRASP_IK",
+                    "grasp":"REPLAY_GRASP_IK","lift":"REPLAY_LIFT_IK",
+                    "center":"REPLAY_CENTER_IK",
+                    "rear_preplace":"REPLAY_REAR_PREPLACE_IK",
+                    "preplace":"REPLAY_PREPLACE_IK"},
+                "place_rebind_template":{"status":"REQUIRES_FRESH_PLACE_SCENE",
+                    "selected_grasp_symmetry_id":"FLIPPED_180"},
                 "selected_center_ik":"REPLAY_CENTER_IK",
                 "transfer_chain_selection":"sha256:replay-transfer-chain"})
         return SkillResult(SkillStatus.SUCCEEDED,outputs=outputs)

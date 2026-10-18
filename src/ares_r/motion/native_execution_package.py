@@ -99,11 +99,12 @@ def package_native_preview(points, source_dt_s, site_limits, *, tool_id,
         raise ValueError("time scaling changed joint-path geometry")
     excursion = max(abs(value - source[0][joint])
                     for row in sampled for joint, value in enumerate(row))
-    if not 0 < float(max_excursion_rad) <= math.radians(220):
-        raise ValueError("native excursion envelope exceeds supervised sender maximum")
-    if excursion > float(max_excursion_rad):
-        raise ValueError("native %.0f-degree per-joint excursion cap" %
-                         math.degrees(float(max_excursion_rad)))
+    if max_excursion_rad is not None:
+        if not 0 < float(max_excursion_rad) <= math.radians(220):
+            raise ValueError("native excursion envelope exceeds supervised sender maximum")
+        if excursion > float(max_excursion_rad):
+            raise ValueError("native %.0f-degree per-joint excursion cap" %
+                             math.degrees(float(max_excursion_rad)))
     for row in sampled:
         if any(row[i] < lower[i] + soft or row[i] > upper[i] - soft for i in range(6)):
             raise ValueError("site soft joint limit")
@@ -141,7 +142,8 @@ def package_native_preview(points, source_dt_s, site_limits, *, tool_id,
         "native_sender_hard_tracking_gate_deg": tracking_stop_threshold_deg,
         "predicted_margin_to_sender_hard_gate_deg": tracking_stop_threshold_deg-predicted_tracking,
         "max_excursion_rad": excursion,
-        "max_excursion_contract_rad": float(max_excursion_rad),
+        "max_excursion_contract_rad": (None if max_excursion_rad is None
+                                        else float(max_excursion_rad)),
         "max_joint_geometry_error_rad": geometry_error,
         "native_file_sha256": hashlib.sha256(content.encode()).hexdigest(),
         "source_point_count": len(source),

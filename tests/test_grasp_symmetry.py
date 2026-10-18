@@ -8,7 +8,7 @@ class GraspSymmetryTest(unittest.TestCase):
     def test_preserves_approach_and_flips_finger_axes(self):
         rows = two_finger_grasp_rotations(np.eye(3))
         self.assertEqual([row[0] for row in rows],
-                         ["EPIC_AS_REPORTED", "TWO_FINGER_ROLL_180"])
+                         ["NORMAL", "FLIPPED_180"])
         np.testing.assert_allclose(rows[0][1][:, 2], rows[1][1][:, 2])
         np.testing.assert_allclose(rows[0][1][:, :2], -rows[1][1][:, :2])
 
