@@ -34,6 +34,8 @@ def write(path,value):
 
 class Live:
     def __init__(self,p,out,event):
+        from ares_r.offline import reject_physical_io
+        reject_physical_io()
         self.p=p;self.out=out;self.event=event;self.attached=None
         self.pool=ThreadPoolExecutor(max_workers=2)
         self.package=None;self.child=None;self.preland=None
@@ -97,7 +99,7 @@ class Live:
         folder=self.out/('pick_attempt_%d_%s'%(index,mode));folder.mkdir();epoch=folder/'epoch';target=folder/'pregrasp_plan'
         py=self.p['curobo_python'];scene_py=self.p['pick_scene_python']
         self.command([scene_py,'scripts/capture_manipulation_observation.py','--output',epoch,'--profile',self.p['pick_profile']],folder/'capture.log')
-        self.command([py,'scripts/prepare_authorized_first_pick.py','--epoch',epoch,'--template-plan',self.p['template_plan'],'--output',target],folder/'prepare.log')
+        self.command([py,'scripts/prepare_authorized_first_pick.py','--epoch',epoch,'--template-plan',self.p['template_plan'],'--output',target,'--early-contact-lift-precheck'],folder/'prepare.log')
         prep=load(target/'preparation.json')
         if not math.isclose(prep['pregrasp_distance_m'],self.p['pregrasp_distance_m']):
             raise RuntimeError('legacy task pregrasp parameter differs from reviewed demo')

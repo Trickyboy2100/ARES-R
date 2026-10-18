@@ -36,6 +36,7 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--component-gripper", action="store_true",
                         help="use the pinned 40%% opening component model; legacy default is unchanged")
+    parser.add_argument("--early-contact-lift-precheck", action="store_true")
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=False)
 
@@ -116,17 +117,35 @@ def main():
     # last independently validated pregrasp solution; this is only a numerical
     # seed and all target/provenance fields still come from the fresh epoch.
     goals=[];metadata=[]
-    for symmetry_id,candidate_rotation in two_finger_grasp_rotations(rotation):
-        try:
-            goal=solver.solve(pregrasp_xyz,candidate_rotation,request["goal_rad"])
-        except ValueError:
-            continue
-        goals.append(list(goal.joints_rad))
-        metadata.append({"grasp_symmetry_id":symmetry_id,
-            "target_rotation_body":candidate_rotation.tolist(),
-            "approach_direction_body":direction.tolist(),
-            "ik_position_error_m":goal.position_error_m,
-            "ik_orientation_error_deg":float(np.degrees(goal.orientation_error_rad))})
+    if args.early_contact_lift_precheck:
+        from ares_r.manipulation.contact_lift_precheck import precheck_contact_lift
+        site=load(ROOT/"config/jaka_mini2_motion.site.json")
+        margin=float(site["soft_limit_margin_rad"])
+        solver.lower=np.maximum(solver.lower,np.asarray(site["lower_rad"])+margin)
+        solver.upper=np.minimum(solver.upper,np.asarray(site["upper_rad"])-margin)
+        precheck=precheck_contact_lift(solver,xyz,rotation,direction,
+            [request["goal_rad"],start],contact_m=pregrasp_distance)
+        (args.output/"contact_lift_precheck.json").write_text(json.dumps(precheck,indent=2)+"\n")
+        if not precheck['passed']:
+            raise RuntimeError(precheck['failure_code']+": see contact_lift_precheck.json; no QUALITY retry")
+        for candidate in precheck['accepted']:
+            goals.append(candidate['goal_rad'])
+            metadata.append({k:v for k,v in candidate.items() if k!='goal_rad'})
+        request['early_contact_lift_precheck']={
+            'passed':True,'contact_m':pregrasp_distance,'lift_m':.1,
+            'observation_id':observation['observation_id']}
+    else:
+        for symmetry_id,candidate_rotation in two_finger_grasp_rotations(rotation):
+            try:
+                goal=solver.solve(pregrasp_xyz,candidate_rotation,request["goal_rad"])
+            except ValueError:
+                continue
+            goals.append(list(goal.joints_rad))
+            metadata.append({"grasp_symmetry_id":symmetry_id,
+                "target_rotation_body":candidate_rotation.tolist(),
+                "approach_direction_body":direction.tolist(),
+                "ik_position_error_m":goal.position_error_m,
+                "ik_orientation_error_deg":float(np.degrees(goal.orientation_error_rad))})
     if not goals:
         raise RuntimeError("neither two-finger grasp symmetry is reachable")
 
