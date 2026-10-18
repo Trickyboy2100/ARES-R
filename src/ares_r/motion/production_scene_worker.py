@@ -147,7 +147,8 @@ def main(progress=None):
     cuboid_capacity=max(512,((len(cuboids)+32+255)//256)*256)
     static_signature=hashlib.sha256(json.dumps({"robot":robot,"spheres":spheres,
         "parameters":params,"orientation_lock":signature_orientation,
-        "cuboid_capacity":cuboid_capacity,"solver_policy":solver_policy},sort_keys=True,
+        "cuboid_capacity":cuboid_capacity,"solver_policy":solver_policy,
+        "urdf_sha256":hashlib.sha256(Path(robot["kinematics"]["urdf_path"]).read_bytes()).hexdigest()},sort_keys=True,
         separators=(",",":")).encode()).hexdigest()
     world_at=time.perf_counter()
     cached=_RUNTIME_CACHE.get(static_signature)

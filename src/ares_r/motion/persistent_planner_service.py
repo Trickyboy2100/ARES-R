@@ -28,10 +28,14 @@ def runtime_key(request):
     ignored=set((request.get('motion_constraints') or {}).get('ignore_cuboid_ids') or [])
     count=len(set(request['compiled_scene']['cuboids'])-ignored)
     robot=Path(request['robot_yaml'])
+    import yaml
+    config=yaml.safe_load(robot.read_text())
+    urdf=Path(config['kinematics']['urdf_path'])
     values={key:request.get(key) for key in (
         'collision_model','planning_parameters','solver_policy','execution_tool_envelope',
         'attached_object_collision','T_body_model','T_link6_tcp','expected_commit')}
     values.update(robot_sha256=hashlib.sha256(robot.read_bytes()).hexdigest(),
+                  urdf_sha256=hashlib.sha256(urdf.read_bytes()).hexdigest(),
                   orientation=orientation_runtime_key(request.get('orientation_lock')),
                   cuboid_capacity=max(512,((count+32+255)//256)*256))
     return hashlib.sha256(json.dumps(values,sort_keys=True).encode()).hexdigest()

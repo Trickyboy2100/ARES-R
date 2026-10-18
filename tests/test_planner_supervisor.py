@@ -26,7 +26,8 @@ def fake_worker(pipe):
 class SupervisorTests(unittest.TestCase):
     def setUp(self):
         self.temp=tempfile.TemporaryDirectory();self.root=Path(self.temp.name)
-        self.robot=self.root/'robot';self.robot.write_text('fake test geometry')
+        self.urdf=self.root/'robot.urdf';self.urdf.write_text('test-only URDF bytes')
+        self.robot=self.root/'robot';self.robot.write_text(json.dumps({'kinematics':{'urdf_path':str(self.urdf)}}))
         self.request={'robot_yaml':str(self.robot),'compiled_scene':{'cuboids':{}},
                       'planning_parameters':{'num_ik_seeds':4}}
         self.service=PlannerSupervisor(fake_worker)
@@ -80,6 +81,11 @@ class SupervisorTests(unittest.TestCase):
         self.assertTrue(ack['cancel_acknowledged'])
         self.assertFalse(Path(job['output']).exists())
         self.assertIsNone(self.service.process)
+
+    def test_model_file_bytes_invalidate_runtime_even_at_same_path(self):
+        key=runtime_key(self.request)
+        self.urdf.write_text('changed test model bytes')
+        self.assertNotEqual(key,runtime_key(self.request))
 
     def test_capacity_bucket_is_part_of_key(self):
         key=runtime_key(self.request)
