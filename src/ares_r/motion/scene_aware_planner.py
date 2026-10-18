@@ -106,8 +106,16 @@ class PersistentCuroboPlanner:
     def __init__(self, config: Mapping[str, object], profile=None):
         self.config = config
         self.profile = profile or load_profile()
+        import threading
+        self._cancel=threading.Event()
 
-    def __call__(self, motion: MotionRequest, scene: Mapping[str, object], output: Path):
+    def reset_cancellation(self):
+        import threading
+        self._cancel.set();self._cancel=threading.Event();return self._cancel
+    def cancel(self):self._cancel.set()
+
+    def __call__(self, motion: MotionRequest, scene: Mapping[str, object], output: Path, cancelled=None):
+        cancel_check=cancelled or self._cancel.is_set
         output = Path(output)
         output.mkdir(parents=True, exist_ok=False)
         scene_root = Path(scene["scene_dir"])
@@ -248,7 +256,7 @@ class PersistentCuroboPlanner:
                    else float(self.config["curobo"]["timeout_s"]))
         try:
             persistent_plan(self.config["curobo"]["python"], ROOT, request_path,
-                            result_path, log_path, timeout_s,autostart=not bool(latency_contract))
+                            result_path, log_path, timeout_s,autostart=not bool(latency_contract),cancelled=cancel_check)
         except socket.timeout as exc:
             raise RuntimeError('FAST_PLANNER_DEADLINE: no candidate; planner may be warming. '
                 'No automatic QUALITY fallback; fresh planning is required.') from exc
