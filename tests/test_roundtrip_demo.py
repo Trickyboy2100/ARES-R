@@ -63,6 +63,16 @@ class RoundtripDemoTests(unittest.TestCase):
                 self.assertEqual(len(modes),succeed_at)
             self.assertEqual(modes,['FAST','QUALITY','QUALITY'][:len(modes)])
 
+    def test_terminal_model_and_resource_errors_do_not_consume_quality(self):
+        for error in ('RESOURCE_EXHAUSTED','INVALID_START_COLLISION','INVALID_GOAL_COLLISION',
+                      'CONTACT_IK','CANCEL_NOT_ACKNOWLEDGED'):
+            calls=[]
+            def failed(mode,index):
+                calls.append(mode);raise PlanningAttemptFailure(error)
+            with self.assertRaises(PlanningAttemptFailure):
+                plan_with_retries(self.p,failed,lambda *a:None,lambda:None)
+            self.assertEqual(calls,['FAST'])
+
     def test_physical_fault_and_cancel_are_not_retried(self):
         modes=[]
         def broken(mode,index):

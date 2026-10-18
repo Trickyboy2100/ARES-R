@@ -69,10 +69,35 @@ class SupervisorTests(unittest.TestCase):
         self.assertTrue(self.service.plan(self.job('b'))['ok'])
         self.assertNotEqual(self.service.process.pid,old)
         self.assertEqual(self.service.status()['runtime_count'],1)
+    def test_cancel_racing_completed_response_revokes_artifact(self):
+        job=self.job();self.assertTrue(self.service.plan(job)['ok'])
+        ack=self.service.cancel(job['job_id'])
+        self.assertTrue(ack['cancel_acknowledged'])
+        self.assertFalse(Path(job['output']).exists())
+        self.assertIsNone(self.service.process)
+
     def test_capacity_bucket_is_part_of_key(self):
         key=runtime_key(self.request)
         self.request['compiled_scene']['cuboids']={str(i):{} for i in range(600)}
         self.assertNotEqual(key,runtime_key(self.request))
+    def test_real_unix_socket_timeout_cancels_without_late_output(self):
+        from ares_r.motion.persistent_planner_service import Server,Handler
+        from ares_r.motion import planner_service_client as client
+        socket_path=self.root/'planner.sock'
+        with Server(str(socket_path),Handler) as server:
+            server.supervisor=self.service
+            thread=threading.Thread(target=server.serve_forever,kwargs={'poll_interval':.01})
+            thread.start()
+            try:
+                job=self.job(sleep=10)
+                with patch.object(client,'SOCKET',socket_path):
+                    with self.assertRaisesRegex(client.PlannerJobError,'worker reaped'):
+                        client._plan_call(dict(job,command='plan'),.1)
+                    state=client._call({'command':'status'},1)
+                    self.assertEqual(state['runtime_count'],0)
+                self.assertFalse(Path(job['output']).exists())
+            finally:server.shutdown();thread.join(2)
+
     def test_client_timeout_requires_cancellation_ack(self):
         from ares_r.motion.planner_service_client import _plan_call,PlannerJobError
         with patch('ares_r.motion.planner_service_client._call',side_effect=[TimeoutError(),{'cancel_acknowledged':True}]):

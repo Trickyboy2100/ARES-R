@@ -39,6 +39,9 @@ def runtime_key(request):
 
 def cuda_worker(pipe):
     os.setsid()
+    import ctypes
+    ctypes.CDLL(None).prctl(1,signal.SIGKILL)  # PR_SET_PDEATHSIG: no orphan on supervisor exit.
+    if os.getppid()==1:return
     # CPU libraries also stay bounded on this single-GPU workstation.
     os.environ['CUDA_VISIBLE_DEVICES']='0'
     from . import production_scene_worker
@@ -54,7 +57,7 @@ def cuda_worker(pipe):
                 sys.argv=['production_scene_worker',job['request'],job['staging']]
                 with open(job['log'],'w') as stream, contextlib.redirect_stdout(stream), contextlib.redirect_stderr(stream):
                     try:
-                        production_scene_worker.main()
+                        production_scene_worker.main(progress=lambda event:pipe.send({"progress":event}))
                     except SystemExit as exc:
                         if exc.code != 2 or not Path(job["staging"]).is_file():raise
             finally:sys.argv=old
@@ -75,7 +78,8 @@ class PlannerSupervisor:
         self.lock=threading.Lock();self.active=None;self.last_job=None
 
     def reap(self):
-        process=self.process
+        process=self.process;pipe=self.pipe
+        self.process=None;self.pipe=None;self.key=None
         if process is not None:
             if process.is_alive():
                 # Own child only. No GPU process discovery/kill-all operations.
@@ -89,15 +93,16 @@ class PlannerSupervisor:
             process.join(2)
             if process.is_alive():raise RuntimeError('CANCEL_NOT_ACKNOWLEDGED: worker still alive')
             process.close()
-        if self.pipe is not None:self.pipe.close()
-        self.process=None;self.pipe=None;self.key=None
+        if pipe is not None:pipe.close()
 
     def status(self):
         return {'ok':True,'state':'BUSY' if self.active else 'READY',
                 'active_job_id':self.active['job_id'] if self.active else None,
+                'active_phase':self.active.get('phase') if self.active else None,
                 'worker_pid':self.process.pid if self.process else None,
                 'runtime_count':int(self.process is not None),'max_runtime_count':1,
-                'cuda_allocator_fraction':.75,'last_job':self.last_job,'pid':os.getpid()}
+                'cuda_allocator_fraction':.75,'prewarmed':self.process is not None,
+                'last_job':self.last_job,'pid':os.getpid()}
 
     def cancel(self,job_id):
         active=self.active
@@ -107,13 +112,16 @@ class PlannerSupervisor:
                 return {'ok':False,'error':'CANCEL_NOT_ACKNOWLEDGED'}
         # A timeout can race with publication/response delivery. Revoke that
         # completed result too, and reap its context before acknowledging.
-        with self.lock:
+        if not self.lock.acquire(timeout=5):
+            return {'ok':False,'error':'CANCEL_NOT_ACKNOWLEDGED'}
+        try:
             last=self.last_job
             if last and last['job_id']==job_id:
                 self.reap()
                 if last.get('output'):Path(last['output']).unlink(missing_ok=True)
                 last.update(state='CANCELLED',worker_reaped=True)
                 return {'ok':True,'job_id':job_id,'cancel_acknowledged':True,'worker_reaped':True}
+        finally:self.lock.release()
         return {'ok':False,'job_id':job_id,'cancel_acknowledged':False,'state':'NOT_ACTIVE'}
 
     def plan(self,job,connection=None):
@@ -141,6 +149,9 @@ class PlannerSupervisor:
                     if not connection.recv(1,socket.MSG_PEEK):raise RuntimeError('CLIENT_DISCONNECTED')
                 if self.pipe.poll(.01):
                     response=self.pipe.recv()
+                    if 'progress' in response:
+                        active['phase']=response['progress']['phase']
+                        continue
                     if not response['ok']:raise RuntimeError(response['error'])
                     break
                 if not self.process.is_alive():raise RuntimeError('WORKER_EXITED_WITHOUT_RESULT')

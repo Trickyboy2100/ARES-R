@@ -6,7 +6,13 @@ args=(--die-with-parent --new-session --unshare-net --unshare-ipc
       --ro-bind / / --dev /dev --proc /proc --tmpfs /tmp
       --bind "$root" "$root" --chdir "$root"
       --setenv ARES_R_OFFLINE_REPLAY 1 --setenv CUDA_VISIBLE_DEVICES 0
-      --setenv PYTHONPATH "$root/src")
+      --setenv PYTHONPATH "$root/src"
+      --setenv XDG_CACHE_HOME "$root/worklog/runtime/cache"
+      --setenv ARES_R_CUROBO_CACHE "$root/worklog/runtime/cache/curobo"
+      --setenv WARP_CACHE_PATH "$root/worklog/runtime/cache/warp"
+      --setenv NUMBA_CACHE_DIR "$root/worklog/runtime/cache/numba"
+      --setenv MPLCONFIGDIR "$root/worklog/runtime/cache/matplotlib"
+      --setenv CUDA_CACHE_PATH "$root/worklog/runtime/cache/cuda")
 if [[ "${1:-}" == --gpu ]]; then
     shift
     for device in /dev/nvidia0 /dev/nvidiactl /dev/nvidia-uvm /dev/nvidia-uvm-tools; do

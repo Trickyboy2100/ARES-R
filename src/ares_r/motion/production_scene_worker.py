@@ -5,7 +5,7 @@ and BLOCK all consume the complete compiled world; BLOCK differs only because
 its SceneSnapshot contains an explicitly labelled goal enclosure.
 """
 
-import hashlib,json,math
+import hashlib,json,math,os
 from pathlib import Path
 import sys,time,xml.etree.ElementTree as ET
 
@@ -50,7 +50,7 @@ def bounded_validation_knots(points,max_joint_step_rad=.002):
     return np.asarray(selected)
 
 
-def main():
+def main(progress=None):
     request_at=time.perf_counter()
     request=json.loads(Path(sys.argv[1]).read_text());output=Path(sys.argv[2])
     if request.get("planning_only") is not True or request.get("execution_allowed") is not False:
@@ -65,6 +65,9 @@ def main():
     imported=time.perf_counter()
     import numpy as np
     import torch,yaml,curobo
+    if os.environ.get("ARES_R_CUROBO_CACHE"):
+        import curobo.runtime
+        curobo.runtime.cache_dir=os.environ["ARES_R_CUROBO_CACHE"]
     from curobo.motion_planner import MotionPlanner,MotionPlannerCfg
     from curobo._src.cost.tool_pose_criteria import ToolPoseCriteria
     from curobo.types import JointState
@@ -281,6 +284,16 @@ def main():
     ik_at=time.perf_counter()
     goal_candidates,resolved_goal_metadata=runtime_goal_candidates(start)
     goal_ik_s=time.perf_counter()-ik_at
+    # Terminal model errors never consume graph capture/optimization or QUALITY.
+    endpoint_precheck_at=time.perf_counter()
+    start_precheck=clearance_details([start])
+    if min(start_precheck.values(),default=float('inf'))<=0:
+        raise RuntimeError('INVALID_START_COLLISION: '+json.dumps(start_precheck))
+    permitted=goal_candidates[:solver_policy['max_goal_candidates']] if solver_policy else goal_candidates
+    goal_prechecks=[clearance_details([candidate]) for candidate in permitted]
+    if all(min(row.values(),default=float('inf'))<=0 for row in goal_prechecks):
+        raise RuntimeError('INVALID_GOAL_COLLISION: '+json.dumps(goal_prechecks))
+    endpoint_precheck_s=time.perf_counter()-endpoint_precheck_at
     hard_manifold=request.get("hard_level_manifold")
     manifold_seeds=[]
     if hard_manifold is not None:
@@ -333,6 +346,7 @@ def main():
         at=time.perf_counter()
         try:
             seed=(manifold_seeds[candidate_index] if manifold_seeds else None)
+            if progress:progress({"phase":"SOLVE_START","worker_pid":os.getpid()})
             value=solve_segment(start,goal_value,seed)
             torch.cuda.synchronize();return [value],time.perf_counter()-at,None
         except torch.cuda.OutOfMemoryError:
@@ -427,7 +441,7 @@ def main():
                 (runtime_goal is not None and goal_position_error_m>
                  float(runtime_goal["position_tolerance_m"]))):
             success=False;points=[];tcp_body=[];path_gap=None;path_details={}
-        elif envelope is not None:
+        else:
             validation_at=time.perf_counter()
             independent=validate_dense_world(points,request,subdivisions=2)
             independent_validation_s=time.perf_counter()-validation_at
@@ -475,7 +489,15 @@ def main():
             "num_ik_seeds":params["num_ik_seeds"],
             "num_trajopt_seeds":params["num_trajopt_seeds"],
             "use_cuda_graph_requested":params["use_cuda_graph"],
-            "cuda_graph_state":"REQUESTED_NOT_INSTRUMENTED",
+            "cuda_graph_state":{
+                "enabled":bool(planner.trajopt_solver.core.config.use_cuda_graph),
+                "captured_optimizer_graphs":sum(
+                    int(getattr(executor,"_graph",None) is not None)
+                    for optimizer in planner.trajopt_solver.core.optimizers
+                    for executor in getattr(getattr(optimizer,"_core",optimizer),"_executors",{}).values()),
+            },
+            "effective_trajopt_seeds":planner.trajopt_solver.config.num_seeds,
+            "effective_ik_seeds":planner.ik_solver.config.num_seeds,
             "initial_iters":solver_policy["initial_iters"] if solver_policy else None,
             "finetune_attempts":0 if solver_policy else None,
             "solve_calls":len(samples),"warmup_solve_calls":int(warmup_s>0),
@@ -505,7 +527,8 @@ def main():
         "timing_s":{"cuda_import":import_s,"curobo_world_and_planner_init":world_init_s,
                     "persistent_runtime_reused":runtime_reused,
                     "one_time_warmup_s":warmup_s,
-                    "goal_ik":goal_ik_s,"endpoint_diagnostics":endpoint_diagnostic_s,
+                    "goal_ik":goal_ik_s,"endpoint_precheck":endpoint_precheck_s,
+                    "endpoint_diagnostics":endpoint_diagnostic_s,
                     "planner_dense_collision":planner_dense_s,
                     "orientation_validation":orientation_validation_s,
                     "world_update_samples":updates,"planning_samples":samples,
