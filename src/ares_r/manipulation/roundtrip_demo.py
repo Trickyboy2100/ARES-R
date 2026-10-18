@@ -140,7 +140,7 @@ class CycleRunner:
             return {'result':'RETURNED_GRASP','state':'COMPLETED','stages':len(self.stages),
                     **({'run_id':job.value['run_id']} if job else {})}
         except BaseException as exc:
-            if job and job.value['state'] not in ('FAULT','STOPPED'):job.fault(exc)
+            if job:job.fault(exc)
             raise
         finally:
             if job:job.release()

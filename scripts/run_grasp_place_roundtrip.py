@@ -230,7 +230,8 @@ class Live:
     def _mark_dispatch(self,kind):
         path=self._record_path()
         if path.exists():raise RuntimeError('COMMAND_ALREADY_DISPATCHED: reconcile required')
-        write(path,{'state':'UNCERTAIN','kind':kind,'command_id':self.command_id})
+        from ares_r.manipulation.roundtrip_job import atomic
+        atomic(path,{'state':'UNCERTAIN','kind':kind,'command_id':self.command_id})
     def checkpoint_snapshot(self):
         import numpy as np
         context={}
@@ -242,7 +243,8 @@ class Live:
         if self.preland is not None:context['preland']=np.asarray(self.preland).tolist()
         return {'context':context,'telemetry':self.telemetry()}
     def record_completed(self,stage,result,snapshot):
-        write(self._record_path(),{'state':'COMPLETED','result':result,'snapshot':snapshot})
+        from ares_r.manipulation.roundtrip_job import atomic
+        atomic(self._record_path(),{'state':'COMPLETED','result':result,'snapshot':snapshot})
     def restore_checkpoint(self,snapshot):
         context=dict(snapshot['context']);path=context.pop('package_path',None)
         if path:

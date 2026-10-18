@@ -75,8 +75,9 @@ def cuda_worker(pipe):
 
 
 class PlannerSupervisor:
-    def __init__(self, worker_target=cuda_worker, cancelled=None):
+    def __init__(self, worker_target=cuda_worker, cancelled=None, progress=None):
         self.cancelled=cancelled or (lambda:False)
+        self.progress=progress or (lambda event:None)
         self.context=multiprocessing.get_context('spawn')
         self.worker_target=worker_target
         self.process=None;self.pipe=None;self.key=None
@@ -161,6 +162,7 @@ class PlannerSupervisor:
                     response=self.pipe.recv()
                     if 'progress' in response:
                         active['phase']=response['progress']['phase']
+                        self.progress(response['progress'])
                         continue
                     if not response['ok']:raise RuntimeError(response['error'])
                     break

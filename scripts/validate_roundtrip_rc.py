@@ -54,7 +54,7 @@ def main():
         while time.monotonic()<deadline:
             if (run/'job.json').exists():
                 job=json.loads((run/'job.json').read_text())
-                if job['stage']=='PICK_PREPARE' and list(run.glob('plan_PREGRASP*/request.json')):
+                if job['stage']=='PICK_PREPARE' and any(json.loads(path.read_text()).get('phase')=='SOLVE_START' for path in run.glob('plan_PREGRASP*/progress.json')):
                     (run/'stop.request').write_text('CAMPAIGN_STOP\n');break
             if proc.poll() is not None:raise RuntimeError('runner exited before stop')
             time.sleep(.05)

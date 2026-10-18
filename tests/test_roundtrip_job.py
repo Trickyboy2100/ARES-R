@@ -77,3 +77,15 @@ class JobTests(unittest.TestCase):
         def unavailable(side):calls.append(side);raise SystemError('SDK verbose status failure')
         with self.assertRaises(SystemError):minimal_arm_state(unavailable,'left',sleep=lambda t:None)
         self.assertEqual(len(calls),3)
+    def test_backend_exit_zero_without_arrival_is_fault(self):
+        from unittest.mock import Mock,patch
+        from ares_r.canonical_backend import CanonicalBackend
+        backend=object.__new__(CanonicalBackend)
+        import threading
+        backend._physical_guard=threading.Lock();backend._physical_process=Mock()
+        backend._physical_process.poll.return_value=0;backend._physical_stream=None
+        backend._physical_pty=None;backend._physical_abort_path=None
+        backend._physical_state={'state':'RUNNING','output':str(self.root/'missing-proof')}
+        with patch('ares_r.motion.execution_feedback.execution_feedback',return_value={'execution_result':None}):
+            state=backend.physical_status()
+        self.assertEqual(state['state'],'FAULT');self.assertEqual(state['failure_reason'],'ARRIVAL_PROOF_MISSING')

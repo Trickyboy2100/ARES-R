@@ -18,6 +18,9 @@ def atomic(path,value):
     with temporary.open('w') as stream:
         json.dump(value,stream,indent=2,allow_nan=False);stream.write('\n');stream.flush();os.fsync(stream.fileno())
     temporary.replace(path)
+    directory=os.open(str(path.parent),os.O_RDONLY|os.O_DIRECTORY)
+    try:os.fsync(directory)
+    finally:os.close(directory)
 
 
 CHECKPOINTS={'VERIFY_GRASP':'HOLD_CANDIDATE','LIFT_INITIAL100':'LIFT100_ARRIVED','ATTACH':'GRASP_CONFIRMED',

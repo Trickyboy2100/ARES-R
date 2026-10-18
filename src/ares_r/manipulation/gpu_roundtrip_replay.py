@@ -44,6 +44,24 @@ def clean(value):
     return value
 
 
+def allocator_oom_worker(pipe):
+    """Isolated CUDA failure probe; tiny allocator cap avoids filling the board."""
+    if os.environ.get('ARES_R_OFFLINE_REPLAY')!='1':raise RuntimeError('offline only')
+    import ctypes,signal
+    os.setsid();ctypes.CDLL(None).prctl(1,signal.SIGKILL)
+    if os.getppid()==1:return
+    pipe.recv()
+    import torch
+    torch.cuda.set_device(0);torch.cuda.set_per_process_memory_fraction(.01,0)
+    total=torch.cuda.get_device_properties(0).total_memory
+    try:
+        tensor=torch.empty(int(total*.02),dtype=torch.uint8,device='cuda:0')
+        pipe.send({'ok':False,'error':'OOM_PROBE_DID_NOT_EXHAUST_EXPECTED_BUDGET'})
+    except torch.OutOfMemoryError as exc:
+        pipe.send({'ok':False,'error':'RESOURCE_EXHAUSTED: REAL_CUDA_ALLOCATOR_OOM: '+str(exc),
+            'fault_provider':'REAL_CUDA_REDUCED_ALLOCATOR_BUDGET','fraction':.01,'requested_bytes':int(total*.02)})
+
+
 class GpuRoundtripReplay(ReplayCapabilityProvider):
     revision='REAL_CUROBO_SYNTHETIC_DEVICE_REPLAY_V1'
     def __init__(self,parameters,directory,job,*,fixture=None,fault=None):
@@ -209,10 +227,12 @@ class GpuRoundtripReplay(ReplayCapabilityProvider):
     def _solve(self,request,label):
         self.check_cancelled();folder=self.out/('plan_'+label+'_'+uuid.uuid4().hex[:8]);folder.mkdir()
         atomic(folder/'request.json',request)
+        self.supervisor.progress=lambda event:atomic(folder/'progress.json',event)
         cold=self.supervisor.key!=runtime_key(request) or self.supervisor.process is None
         budget=self.fixture['cold_context_budget_s'] if cold else self.fixture['warm_result_deadline_s']
         if label=='HOLD230' and self._inject('fast_timeout'):budget=.03
-        if label=='HOLD230' and self._inject('oom'):raise RuntimeError('RESOURCE_EXHAUSTED: integrated OOM fault; no QUALITY retry')
+        if label=='HOLD230' and self._inject('oom'):
+            self.supervisor.reap();self.supervisor.worker_target=allocator_oom_worker
         if label=='HOLD230' and self._inject('ood'):raise RuntimeError('OOD_SCENE_BOUNDS: no planning/execution')
         job={'job_id':uuid.uuid4().hex,'request':str(folder/'request.json'),'output':str(folder/'planning.json'),
              'log':str(folder/'planner.log'),'deadline_monotonic':time.monotonic()+budget}
