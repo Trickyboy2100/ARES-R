@@ -98,8 +98,22 @@ class Live:
         from ares_r.motion.native_execution_package import package_native_preview,verify_installed_sender
         folder=self.out/('pick_attempt_%d_%s'%(index,mode));folder.mkdir();epoch=folder/'epoch';target=folder/'pregrasp_plan'
         py=self.p['curobo_python'];scene_py=self.p['pick_scene_python']
-        self.command([scene_py,'scripts/capture_manipulation_observation.py','--output',epoch,'--profile',self.p['pick_profile']],folder/'capture.log')
-        self.command([py,'scripts/prepare_authorized_first_pick.py','--epoch',epoch,'--template-plan',self.p['template_plan'],'--output',target,'--early-contact-lift-precheck'],folder/'prepare.log')
+        inputs=getattr(self,'_pick_inputs',None)
+        reusable=False
+        if inputs and time.time()-inputs['at_unix']<300:
+            live=self.telemetry();old=load(Path(inputs['epoch'])/'manipulation_observation.json')
+            q=old['robot_state_after']['right']['diagnostics']['joint_position_rad']
+            reusable=(self.get('/api/scene/status')['base_pose_revision']==inputs['base_revision'] and
+                max(abs(a-b) for a,b in zip(q,live['arms']['right']['joints_rad']))<=math.radians(.02))
+        if reusable:
+            import shutil
+            epoch=Path(inputs['epoch']);shutil.copytree(inputs['target'],target)
+            for name in ('planning.json','planner.log'):(target/name).unlink(missing_ok=True)
+        else:
+            self.command([scene_py,'scripts/capture_manipulation_observation.py','--output',epoch,'--profile',self.p['pick_profile']],folder/'capture.log')
+            self.command([py,'scripts/prepare_authorized_first_pick.py','--epoch',epoch,'--template-plan',self.p['template_plan'],'--output',target,'--early-contact-lift-precheck'],folder/'prepare.log')
+            self._pick_inputs={'epoch':str(epoch),'target':str(target),'at_unix':time.time(),
+                'base_revision':self.get('/api/scene/status')['base_pose_revision']}
         prep=load(target/'preparation.json')
         if not math.isclose(prep['pregrasp_distance_m'],self.p['pregrasp_distance_m']):
             raise RuntimeError('legacy task pregrasp parameter differs from reviewed demo')
@@ -177,9 +191,17 @@ class Live:
         if not any(v.get('event')=='target_reached' for v in events):raise RuntimeError('native target_reached missing')
         if not any(v.get('event')=='servo_disabled' and v.get('code')==0 for v in events):raise RuntimeError('native Servo disable not confirmed')
         if any(v.get('event') in ('failed','abort') for v in events):raise RuntimeError('native motion fault')
+        if segment=='lift':
+            actual=self.telemetry()['arms']['right']['position_m']
+            grasp=self._grasp_position()
+            self.initial_lift_displacement=float(actual[2]-grasp[2])
         if segment in ('contact','lift'):
             self._level(points,self.request)
         return {'segment':segment,'duration_s':audit['duration_s'],'log':str(log)}
+    def _grasp_position(self):
+        from ares_r.motion.runtime_goal_ik import RuntimeGoalIK
+        ik=RuntimeGoalIK(self.request['robot_yaml_urdf'],self.request['T_body_model'],self.request['T_link6_tcp'])
+        return ik.fk(self.package['trajectories']['contact'][-1])[:3,3]
     def gripper(self,raw):
         label='gripper_'+str(time.time_ns());path=self.out/(label+'.json')
         self.command([sys.executable,'scripts/gripper_direct_once.py','move','--raw',raw],path,10)
@@ -191,30 +213,38 @@ class Live:
                 raise RuntimeError('gripper opening not confirmed; do not detach or retreat')
         # Command success is not a grasp/release proof; caller owns verification.
         return {'raw':raw,'evidence':str(path)}
-    def verify_grasp(self):
-        post=self.out/'post_grasp_scene'
-        code="import json;from pathlib import Path;from ares_r.motion.live_scene import build_live_planning_scene;c=json.load(open('config/system.json'));build_live_planning_scene(c,Path(%r),active_arm='right')"%str(post)
-        self.command([self.p['pick_scene_python'],'-c',code],self.out/'post_scan.log')
-        reads=self.out/'readbacks.jsonl';rows=[];previous=0
+    def verify_grasp(self,phase='HOLD_CANDIDATE'):
+        post=self.out/('post_'+phase.lower()+'_scene')
+        if phase=='POST_LIFT':
+            built=self.post('/api/scene/scan',{'arm':'right'},timeout=240)
+            post=Path(built['scene_dir'])
+        else:
+            post=self.epoch/'live_scene'  # Closing need not remove the object from vision.
+        reads=self.out/(phase+'.readbacks.jsonl');rows=[];previous=0
         for index,delay in enumerate(self.p['gripper_delayed_readback_s']):
             time.sleep(delay-previous);previous=delay
-            path=self.out/('read_%d.json'%index)
+            path=self.out/(phase+'_read_%d.json'%index)
             self.command([sys.executable,'scripts/gripper_direct_once.py','read'],path,10)
             rows.append(path.read_text())
         reads.write_text(''.join(rows))
         self.command([self.p['curobo_python'],'scripts/verify_authorized_first_pick.py','--epoch',self.epoch,
-            '--post-scene',post,'--readbacks',reads,'--output',self.out/'verification.json'],self.out/'verify.log')
-        return load(self.out/'verification.json')
+            '--post-scene',post,'--readbacks',reads,'--phase',phase,
+            *(['--lift-arrived','--lift-displacement-m',self.initial_lift_displacement] if phase=='POST_LIFT' else []),
+            '--output',self.out/(phase+'.verification.json')],self.out/(phase+'.verify.log'))
+        result=load(self.out/(phase+'.verification.json'))
+        self.grasp_state=result['verification']['state']
+        return result
     def attach(self):
+        confirmation=self.verify_grasp('POST_LIFT')
         self.attached=self.package['coarse_attached_object_collision']
-        return {'revision':self.attached['revision'],'contact_bypass_expired':True}
+        return {'revision':self.attached['revision'],'contact_bypass_expired':True,'verification':confirmation}
     def detach(self):
         self.attached=None;self.invalidate('OBJECT_RELEASED')
         return {'attached':False}
     def free_move(self,position,label):
         payload={'arm':'right','position_m':list(position),'orientation':self.p['postgrasp_orientation'],
             'yaw_target_rad':self.p['yaw_target_rad'],'environment_avoidance':'ON',
-            'scene_policy':'FORCE_RESCAN','planning_mode':'FAST','speed_profile':self.p['motion_speed_profile'],
+            'scene_policy':'AUTO_FRESH','planning_mode':'FAST','speed_profile':self.p['motion_speed_profile'],
             'request_label':label,'source':DEMO}
         if self.attached:
             payload.update(attached_object_geometry=self.attached,attached_object_revision=self.attached['revision'])
@@ -250,7 +280,7 @@ class Live:
             time.sleep(.2)
         raise RuntimeError('motion monitor deadline')
     def lift_remaining(self,distance_m):
-        position=self.telemetry()['arms']['right']['position_m'];position[2]+=distance_m
+        position=list(self._grasp_position());position[2]+=self.p['total_lift_m']
         return self.free_move(position,'HOLD230')
     def base(self,delta):
         from ares_r.adapters.amr_http import AmrHttpBase

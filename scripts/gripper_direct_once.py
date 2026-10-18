@@ -54,7 +54,8 @@ def main():
     readback = exchange(port, frame(device, 0xD9), 8)
     position = (readback[-2] << 8) | readback[-3]
     print(json.dumps({"action": a.action, "command_raw": a.raw,
-                      "position_raw": position,
+                      "position_raw": position,"captured_at_unix":time.time(),
+                      "captured_monotonic_s":time.monotonic(),
                       "response_hex": response.hex() if response else None,
                       "readback_hex": readback.hex()}))
 

@@ -91,3 +91,32 @@ def verify_grasp_v1(scene_delta: Mapping[str, object], readbacks,
             "scene_delta_result":classification,
             "local_scene_delta_revision":scene_delta["revision"],"readbacks":list(readbacks),
             "rule":"scene delta AND delayed stable non-closed gripper; neither signal passes alone"}
+
+
+def verify_grasp_phase(scene_delta,readbacks,parameters,*,phase,initial_lift_arrived=False,
+                       lift_displacement_m=0.,payload_followed_points=0,now=None):
+    """Close establishes a candidate; only controlled lift plus evidence confirms."""
+    if phase not in ('HOLD_CANDIDATE','POST_LIFT'):raise ValueError('unknown grasp phase')
+    cfg=parameters['grasp_verification'];rows=list(readbacks);now=time.time() if now is None else now
+    positions=[row.get('position_raw') for row in rows]
+    stamps=[row.get('captured_at_unix') for row in rows]
+    timestamps=(len(rows)>=2 and all(isinstance(v,(int,float)) and math.isfinite(v) for v in stamps)
+        and all(b>a for a,b in zip(stamps,stamps[1:])) and now-stamps[-1]<=5 and now>=stamps[-1])
+    genuine=(all(type(v) is int and 0<=v<=1000 for v in positions) and timestamps)
+    stable=genuine and max(positions)-min(positions)<=cfg['maximum_readback_spread_raw']
+    hold=genuine and min(positions)>parameters['gripper']['raw_closed']+cfg['minimum_hold_above_closed_raw']
+    gates={'SAMPLE_TIMESTAMPS_VALID':bool(timestamps),'GRIPPER_STABLE':bool(stable),'GRIPPER_HOLD':bool(hold)}
+    before=int(scene_delta['before_voxels']);removed=(before>0 and scene_delta['removed_voxels']>=cfg['minimum_removed_voxels']
+        and scene_delta['removed_fraction']>=cfg['minimum_removed_fraction'])
+    if phase=='HOLD_CANDIDATE':
+        gates['SOURCE_TARGET_OBSERVED']=before>0
+        state='HOLD_CANDIDATE' if all(gates.values()) else 'VERIFICATION_AMBIGUOUS'
+    else:
+        gates['INITIAL_LIFT_ARRIVED']=bool(initial_lift_arrived and .095<=lift_displacement_m<=.105)
+        expected=removed and scene_delta['added_fraction']<=cfg['maximum_unexpected_added_fraction']
+        gates['LIFT_SCENE_EVIDENCE']=bool(expected or payload_followed_points>=cfg['minimum_removed_voxels'])
+        state='GRASP_CONFIRMED' if all(gates.values()) else 'VERIFICATION_AMBIGUOUS'
+    return {'schema_version':2,'phase':phase,'state':state,'result':'PASS' if all(gates.values()) else 'FAIL',
+        'gates':gates,'readbacks':rows,'local_scene_delta_revision':scene_delta['revision'],
+        'scene_delta_result':classify_scene_delta(scene_delta,parameters),
+        'lift_displacement_m':lift_displacement_m,'payload_followed_points':payload_followed_points}
