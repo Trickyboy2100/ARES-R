@@ -130,14 +130,15 @@ class GpuRoundtripReplay(ReplayCapabilityProvider):
         if self.device.get('stopped'):self.device['stopped']=False;atomic(self.device_file,self.device)
         if self.context.get('package'):
             package=load(self.context['package']);verify_first_pick_package(package)
-        if self.device['gripper_raw']<20 and self.context.get('grasp_state')=='GRASP_CONFIRMED':
-            raise RuntimeError('HELD_OBJECT_LOST_ON_RESUME')
+        if self.context.get('attached') and self.context.get('grasp_state')=='GRASP_CONFIRMED':
+            from .live_roundtrip_contract import validate_hold_readback
+            validate_hold_readback(self.p,{'position_raw':self.device['gripper_raw'],'captured_at_unix':time.time()})
         return {'verified':True,'provider':'SYNTHETIC_DEVICE_STATE'}
     def _read_left(self):
         counter=[0]
         def read(side):
             counter[0]+=1
-            if self.fault=='left_read_transient' and counter[0]<=2:raise SystemError('injected left status unavailable')
+            if self.fault in ('left_read_transient','left_transient') and counter[0]<=2:raise SystemError('injected left status unavailable')
             return {'joints_rad':self.device['left_q'],'tool_id':1}
         return minimal_arm_state(read,'left',sleep=lambda _:None)
     def _arrival(self,target):
@@ -283,7 +284,7 @@ class GpuRoundtripReplay(ReplayCapabilityProvider):
         from ares_r.motion.short_motion import validate_short_motion
         direction=package['prechecked_branch']['approach_direction_body'] if segment=='contact' else [0,0,1]
         validator=lambda rows:validate_short_motion(rows,self.context['request'],segment=segment,
-            observation_id=package['observation_id'],direction=direction,central_exclusion=False,check_cancelled=self.check_cancelled)
+            observation_id=package['observation_id'],direction=direction,central_exclusion=False,check_cancelled=self.check_cancelled,contact_target_ids=[package['target_primitive_id']])
         text,audit=package_native_preview(points,.008,load(ROOT/'config/jaka_mini2_motion.site.json'),tool_id=1,
             controller_tool_pose_mm_rad=self.fixture['synthetic_tcp_mm_rad'],captured_at_unix=time.time(),
             speed_ceiling_rad_s=.05 if segment=='contact' else .2,accel_ceiling_rad_s2=.1 if segment=='contact' else .2,

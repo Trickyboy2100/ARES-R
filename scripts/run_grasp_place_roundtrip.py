@@ -40,8 +40,11 @@ class Live:
         self.command_id=None;self.command_records=out/'command_records';self.command_records.mkdir(exist_ok=True)
         self.pool=ThreadPoolExecutor(max_workers=2)
         self.package=None;self.child=None;self.preland=None
+        self.release_confirmed=False;self.preland_arrived=False
         self.stopfile=STATE/'stop.request'
         self.config=load(ROOT/'config/system.json')
+        from ares_r.manipulation.live_roundtrip_contract import perception_profile_contract
+        self.site_profile_contract=perception_profile_contract(p,self.config)
     def check_cancelled(self):
         if self.job:self.job.check_stop()
         if self.stopfile.exists():raise RuntimeError('STOP_REQUESTED; no automatic resume')
@@ -62,7 +65,8 @@ class Live:
         if self.child and self.child.poll() is None:
             self.child.send_signal(signal.SIGTERM)
             try:self.child.wait(timeout=10)
-            except subprocess.TimeoutExpired:pass
+            except subprocess.TimeoutExpired:
+                self.child.kill();self.child.wait(timeout=2)
         try:
             req=urllib.request.Request('http://127.0.0.1:8765/api/operations/stop',data=b'{}',headers={'Content-Type':'application/json'})
             urllib.request.urlopen(req,timeout=10).close()
@@ -138,7 +142,7 @@ class Live:
         request['planning_parameters']['optimizer_collision_activation_distance']=policy['optimizer_collision_activation_distance_m']
         write(target/'planner_request.json',request)
         try:
-            plan(py,ROOT,target/'planner_request.json',target/'planning.json',target/'planner.log',timeout,autostart=False)
+            plan(py,ROOT,target/'planner_request.json',target/'planning.json',target/'planner.log',timeout,autostart=False,cancelled=lambda:self.stopfile.exists() or bool(self.job and self.job.stop_path.exists()))
         except Exception as exc:
             raise PlanningAttemptFailure('%s pregrasp solve: %s'%(mode,exc)) from exc
         if load(target/'planning.json').get('observed_result')!='SUCCESS':raise PlanningAttemptFailure(mode+' pregrasp planning failed')
@@ -172,11 +176,13 @@ class Live:
         direction=branch.get('approach_direction_body',[1,0,0]) if segment=='contact' else [0,0,1]
         return validate_short_motion(points,self.request,segment=segment,
             observation_id=self.package['observation_id'],direction=direction,
-            central_exclusion=load(ROOT/'config/scene_aware_motion.json')['central_exclusion']['enabled'],check_cancelled=self.check_cancelled)
+            central_exclusion=load(ROOT/'config/scene_aware_motion.json')['central_exclusion']['enabled'],check_cancelled=self.check_cancelled,contact_target_ids=[self.package['target_primitive_id']])
     def pick_segment(self,segment):
         from ares_r.motion.native_execution_package import package_native_preview
         from ares_r.motion.live_state import base_stationarity
-        points=self.package['trajectories'][segment];live=self.telemetry()
+        points=self.package['trajectories'][segment]
+        if segment in ('contact','lift'):self._validate_short(points,segment)
+        live=self.telemetry()
         right=live['arms']['right'];site=load(ROOT/'config/jaka_mini2_motion.site.json')
         oldleft=self.pick_observation['robot_state_after']['left']['diagnostics']
         if max(abs(a-b) for a,b in zip(live['arms']['left']['joints_rad'],oldleft['joint_position_rad']))>math.radians(.02):
@@ -235,7 +241,7 @@ class Live:
     def checkpoint_snapshot(self):
         import numpy as np
         context={}
-        for name in ('attached','request','initial_lift_displacement','grasp_state'):
+        for name in ('attached','request','initial_lift_displacement','grasp_state','release_confirmed','preland_arrived','site_profile_contract'):
             if hasattr(self,name):context[name]=getattr(self,name)
         for name in ('epoch','pick_folder'):
             if hasattr(self,name):context[name]=str(getattr(self,name))
@@ -246,7 +252,9 @@ class Live:
         from ares_r.manipulation.roundtrip_job import atomic
         atomic(self._record_path(),{'state':'COMPLETED','result':result,'snapshot':snapshot})
     def restore_checkpoint(self,snapshot):
-        context=dict(snapshot['context']);path=context.pop('package_path',None)
+        context=dict(snapshot['context'])
+        if context.get('site_profile_contract')!=self.site_profile_contract:raise RuntimeError('RESUME_PERCEPTION_PROFILE_CHANGED')
+        path=context.pop('package_path',None)
         if path:
             from ares_r.manipulation.first_pick_package import verify_first_pick_package
             self.package=load(path);verify_first_pick_package(self.package)
@@ -271,25 +279,19 @@ class Live:
         snapshot=getattr(self,'resume_snapshot',None)
         if not snapshot:return
         actual=self.telemetry();expected=snapshot['telemetry']
-        for side in ('left','right'):
-            check_start(actual['arms'][side]['joints_rad'],expected['arms'][side]['joints_rad'])
-            if actual['arms'][side]['tool_id']!=expected['arms'][side]['tool_id']:raise RuntimeError('RESUME_TOOL_CHANGED')
-        # Relative base instructions require unchanged measured map pose, not just an API revision.
-        old=(expected.get('base') or {}).get('info') or {};new=(actual.get('base') or {}).get('info') or {}
-        if not all(k in old and k in new for k in ('mapId','x','y','yawNumber')):raise RuntimeError('RESUME_BASE_POSE_UNAVAILABLE')
-        yaw=abs((float(new['yawNumber'])-float(old['yawNumber'])+180)%360-180)
-        if new['mapId']!=old['mapId'] or math.hypot(float(new['x'])-float(old['x']),float(new['y'])-float(old['y']))>.02 or yaw>.5:
-            raise RuntimeError('RESUME_BASE_STATE_CHANGED: site reconciliation required')
+        from ares_r.manipulation.live_roundtrip_contract import validate_resume_telemetry,validate_hold_readback
+        validate_resume_telemetry(actual,expected)
         if getattr(self,'grasp_state',None)=='GRASP_CONFIRMED' and self.attached:
             path=self.out/('resume_gripper_'+str(time.time_ns())+'.json')
             self.command([sys.executable,'scripts/gripper_direct_once.py','read'],path,10)
-            raw=load(path)['position_raw']
-            if raw<=20 or raw>=self.p['gripper_open_raw']-20:raise RuntimeError('RESUME_HELD_OBJECT_UNCERTAIN')
+            validate_hold_readback(self.p,load(path))
     def _grasp_position(self):
         from ares_r.motion.runtime_goal_ik import RuntimeGoalIK
         ik=RuntimeGoalIK(self.request['robot_yaml_urdf'],self.request['T_body_model'],self.request['T_link6_tcp'])
         return ik.fk(self.package['trajectories']['contact'][-1])[:3,3]
     def gripper(self,raw):
+        release=self.attached is not None and raw==self.p['gripper_release_raw']
+        if release and not self.preland_arrived:raise RuntimeError('RELEASE_REQUIRES_PRELAND_ARRIVED')
         self._mark_dispatch('gripper:'+str(raw))
         label='gripper_'+str(time.time_ns());path=self.out/(label+'.json')
         self.command([sys.executable,'scripts/gripper_direct_once.py','move','--raw',raw],path,10)
@@ -299,8 +301,11 @@ class Live:
             self.command([sys.executable,'scripts/gripper_direct_once.py','read'],read,10)
             if load(read)['position_raw'] < raw-self.p['gripper_open_readback_tolerance_raw']:
                 raise RuntimeError('gripper opening not confirmed; do not detach or retreat')
-        # Command success is not a grasp/release proof; caller owns verification.
-        return {'raw':raw,'evidence':str(path)}
+        if release:
+            self.release_confirmed=True;self.grasp_state='RELEASE_CONFIRMED'
+        elif raw==self.p['gripper_closed_raw']:
+            self.release_confirmed=False;self.grasp_state='CLOSED_UNVERIFIED'
+        return {'raw':raw,'evidence':str(path),'release_confirmed':self.release_confirmed}
     def verify_grasp(self,phase='HOLD_CANDIDATE'):
         phase_token=phase+'_'+str(time.time_ns())
         post=self.out/('post_'+phase_token.lower()+'_scene')
@@ -328,6 +333,7 @@ class Live:
         self.attached=self.package['coarse_attached_object_collision']
         return {'revision':self.attached['revision'],'contact_bypass_expired':True,'verification':confirmation}
     def detach(self):
+        if not self.release_confirmed:raise RuntimeError('RELEASE_NOT_CONFIRMED')
         self.attached=None;self.invalidate('OBJECT_RELEASED')
         return {'attached':False}
     def free_move(self,position,label):
@@ -418,7 +424,9 @@ class Live:
         return {'detection_id':result.request_id,'raw':result.raw_response,'slot_body_m':T[:3,3].tolist(),
                 'preland_body_m':self.preland.tolist(),'slot_registry_revision':state['revision'],
                 'orientation':'horizontal; physical approach axis +Z toward BODY +X, not raw RPY zero'}
-    def move_preland(self):return self.free_move(self.preland,'PRELAND40')
+    def move_preland(self):
+        result=self.free_move(self.preland,'PRELAND40');self.preland_arrived=True
+        return result
 
 
 def main():
