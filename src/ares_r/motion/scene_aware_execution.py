@@ -22,6 +22,30 @@ SENDER = Path("/home/yikun/ares-r-curobo-assets/jaka_right_supervised_path_v5")
 JOINT_MATCH_RAD = math.radians(.02)
 
 
+def finite_or_none(value):
+    """JSON-safe float: non-finite values become ``None``.
+
+    With the central slab disabled the clearance to it is unbounded, and
+    ``execution_candidate.digest`` serialises with ``allow_nan=False``, which
+    rejects infinity.  Inventing a finite margin would be a lie, so an
+    unbounded value is recorded as None.
+    """
+    value = float(value)
+    return value if math.isfinite(value) else None
+
+
+def central_exclusion_gate(manifest):
+    """True when the central slab is disabled, or when it is provably clear.
+
+    Short-circuits while the slab is off; fail-closed when it is on and the
+    margin is missing or non-positive.
+    """
+    if not manifest.get("central_exclusion_enabled", True):
+        return True
+    margin = manifest.get("central_tcp_margin_m")
+    return margin is not None and float(margin) > 0.0
+
+
 def _load(path):
     return json.loads(Path(path).read_text(encoding="utf-8"))
 
@@ -47,8 +71,8 @@ class GenericNativePackager:
                 not motion.request_label.startswith("AB_DEMO_")):
             raise RuntimeError("A/B commissioned speed cannot be used by another motion client")
         if (speed["scope"] == "RIGHT_ARM_SCENE_AWARE_FREE_SPACE" and
-                (motion.arm != "right" or motion.goal is None)):
-            raise RuntimeError("generic free-space speed requires a right-arm runtime MotionGoal")
+                (motion.arm != "right" or (motion.goal is None and motion.goal_joints_rad is None))):
+            raise RuntimeError("generic free-space speed requires a right-arm runtime goal")
         output = Path(output)
         request = _load(output / "planner_request.json")
         scene_root = Path(scene["scene_dir"])
@@ -76,8 +100,13 @@ class GenericNativePackager:
         _write(package / "native_audit.json", native_audit)
         path_hash = trajectory_hash(plan["trajectory_points_rad"],
                                     plan["smoothness"]["sample_period_s"])
+        central_margin = finite_or_none(
+            plan["independent_dense_validation"]["central_tcp_margin_m"])
         payload = {
             "schema_version": 2,
+            "operations_policy_revision": plan.get('operations_policy_revision'),
+            "planning_world_digest": plan.get('planning_world_digest'),
+            "environment_avoidance_policy": plan.get('environment_avoidance_policy'),
             "motion_contract": "SCENE_AWARE_FREE_SPACE_V1",
             "motion_policy": "CUROBO_DIRECT_START_GOAL",
             "explicit_waypoints": [],
@@ -112,7 +141,7 @@ class GenericNativePackager:
             "scene_captured_at_unix": float(capture["captured_at_unix"]),
             "created_at_unix": time.time(),
             "expires_at_unix": time.time() + 300,
-            "central_tcp_margin_m": plan["independent_dense_validation"]["central_tcp_margin_m"],
+            "central_tcp_margin_m": central_margin,
             "central_exclusion_enabled": bool(motion.constraints.central_exclusion),
         }
         candidate = dict(payload, candidate_id=digest(payload))
@@ -164,8 +193,7 @@ def preflight(config, local_scene, candidate, native_audit, profile):
             right["tool_id"] == manifest["controller_tool_id"] and
             right["tool_data"]["pose_mm_rad"] == manifest["controller_tool_pose_mm_rad"]),
         "TRAJECTORY_COLLISION_CHECKED": DualArmSafetyKernel.scene_aware_collision_gate(manifest),
-        "CENTRAL_EXCLUSION": (not manifest.get("central_exclusion_enabled", True)
-                              or manifest["central_tcp_margin_m"] > 0),
+        "CENTRAL_EXCLUSION": central_exclusion_gate(manifest),
         "VELOCITY": native_audit["max_joint_speed_rad_s"] <= speed["max_velocity_rad_s"] + 1e-12,
         "ACCELERATION": native_audit["max_joint_accel_rad_s2"] <= speed["max_acceleration_rad_s2"] + 1e-12,
         "NATIVE_SENDER_LIMITS": (
@@ -177,6 +205,10 @@ def preflight(config, local_scene, candidate, native_audit, profile):
         "SPEED_PROFILE_COMMISSIONED": str(speed["state"]).startswith("COMMISSIONED"),
         "EXECUTION_ENABLED": False,
     }
+    if manifest.get('operations_policy_revision') is not None:
+        from ares_r.operations import OperationsRegistry
+        gates['OPERATIONS_REVISION_MATCH'] = (OperationsRegistry().read()['revision'] ==
+                                               manifest['operations_policy_revision'])
     result = {"gates": gates, "blockers": [key for key, value in gates.items() if not value],
               "ready_except_execution_authority": all(value for key, value in gates.items()
                                                        if key != "EXECUTION_ENABLED"),

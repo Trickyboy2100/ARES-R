@@ -18,6 +18,7 @@ from ares_r.manipulation.attached_collision import verify_attached_collision
 from ares_r.motion.independent_path_validation import validate_dense_world
 from ares_r.motion.tcp_orientation import (HORIZONTAL_FORWARD_R_BODY,validate_level_path,
                                            validate_path)
+from ares_r.motion.constrained_manifold_seed import build_level_manifold_seeds
 
 
 def transform(xyz,rpy):
@@ -119,14 +120,34 @@ def main():
         signature_orientation={key:value for key,value in orientation_lock.items()
             if key not in ("candidate_target_rotations","candidate_yaws_rad",
                            "final_yaw_target_rad")}
+    # Objects the caller declares as the manipulation target rather than as
+    # free-space obstacles.  A goal that is DEFINED relative to an object cannot
+    # also be blocked by that object's own coarse cluster AABB; the grab is the
+    # separate straight contact segment, validated under CONTACT_BYPASS_V1.  An
+    # id the scene does not contain is an error, not a silent no-op.
+    ignore_ids=[str(value) for value in
+        ((request.get("motion_constraints") or {}).get("ignore_cuboid_ids") or [])]
+    cuboids=dict(scene["cuboids"])
+    ignored=[key for key in ignore_ids if cuboids.pop(key,None) is not None]
+    if len(ignored)!=len(ignore_ids):
+        raise RuntimeError("ignore_cuboid_ids names objects the scene does not "
+            "contain: %s"%sorted(set(ignore_ids)-set(ignored)))
+    # cuRobo sizes its cuboid cache ONCE, when the runtime is created, so a
+    # runtime built from a small scene can never hold a larger one.  The reuse
+    # key must therefore carry the required capacity: without it a prewarmed
+    # small-scene runtime is reused for a big live scene and cuRobo raises
+    # "Cannot add cuboid, cache is full (512 cuboids)".  Bucketed to 256 so
+    # similarly sized scenes still share a runtime.
+    cuboid_capacity=max(512,((len(cuboids)+32+255)//256)*256)
     static_signature=hashlib.sha256(json.dumps({"robot":robot,"spheres":spheres,
-        "parameters":params,"orientation_lock":signature_orientation},sort_keys=True,
+        "parameters":params,"orientation_lock":signature_orientation,
+        "cuboid_capacity":cuboid_capacity},sort_keys=True,
         separators=(",",":")).encode()).hexdigest()
-    cuboids=dict(scene["cuboids"]);world_at=time.perf_counter()
+    world_at=time.perf_counter()
     cached=_RUNTIME_CACHE.get(static_signature)
     if cached is None:
         cfg=MotionPlannerCfg.create(robot=robot,scene_model={"cuboid":cuboids},
-            collision_cache={"cuboid":max(512,len(cuboids)+32)},interpolation_dt=params["interpolation_dt"],
+            collision_cache={"cuboid":cuboid_capacity},interpolation_dt=params["interpolation_dt"],
             interpolation_buffer_size=params["interpolation_buffer_size"],num_trajopt_seeds=params["num_trajopt_seeds"],
             num_ik_seeds=params["num_ik_seeds"],use_cuda_graph=params["use_cuda_graph"],
             self_collision_check=True,random_seed=params["random_seed"],
@@ -142,8 +163,12 @@ def main():
                     not np.allclose(target_rotation.T@target_rotation,np.eye(3),atol=1e-5) or
                     not np.isclose(np.linalg.det(target_rotation),1.0,atol=1e-5)):
                 raise ValueError("unknown or invalid BODY TCP orientation contract")
+            weight_scale=float(orientation_lock.get("weight_scale",1.0))
+            if not 1.0 <= weight_scale <= 200.0:
+                raise ValueError("orientation weight_scale must be between 1 and 200")
+            criteria=np.asarray(orientation_lock.get("criteria_rpy",[1.0,1.0,1.0]),dtype=float)
             planner.update_tool_pose_criteria({"link6":ToolPoseCriteria.track_orientation(
-                rpy=orientation_lock.get("criteria_rpy",[1.0,1.0,1.0]),non_terminal_scale=1.0)})
+                rpy=(criteria*weight_scale).tolist(),non_terminal_scale=1.0)})
         cached={"planner":planner,"names":names,"warmup_done":False}
         _RUNTIME_CACHE[static_signature]=cached
         runtime_reused=False
@@ -156,8 +181,12 @@ def main():
     def runtime_goal_candidates(start):
         runtime_goal=request.get("runtime_motion_goal")
         if runtime_goal is None:
-            return [np.asarray(row,dtype=float) for row in
-                    (request.get("goal_candidates_rad") or [request["goal_rad"]])],[]
+            candidates=[np.asarray(row,dtype=float) for row in
+                        (request.get("goal_candidates_rad") or [request["goal_rad"]])]
+            metadata=request.get("goal_candidate_metadata") or []
+            if metadata and len(metadata)!=len(candidates):
+                raise ValueError("goal candidate metadata count mismatch")
+            return candidates,[dict(row) for row in metadata]
         target_position=np.asarray(runtime_goal["position_m"],dtype=float)
         solver=RuntimeGoalIK(request["robot_yaml_urdf"],request["T_body_model"],
                              request["T_link6_tcp"])
@@ -237,13 +266,53 @@ def main():
         at=time.perf_counter();planner.update_world(typed);torch.cuda.synchronize();updates.append(time.perf_counter()-at)
     start=np.asarray(request["start_rad"],dtype=float)
     goal_candidates,resolved_goal_metadata=runtime_goal_candidates(start)
-    def solve_segment(begin,end):
+    hard_manifold=request.get("hard_level_manifold")
+    manifold_seeds=[]
+    if hard_manifold is not None:
+        if orientation_lock is None or orientation_lock.get("policy") not in (
+                "LEVEL_YAW_FREE_V1","LEVEL_YAW_TARGET_V1","FIXED_ROTATION_V1"):
+            raise ValueError("hard level manifold requires a level orientation lock")
+        target_position=np.asarray(hard_manifold.get(
+            "goal_position_m",(np.asarray(request["T_body_model"])@
+                               fk(goal_candidates[0]))[:3,3]),dtype=float)
+        ik=RuntimeGoalIK(request["robot_yaml_urdf"],request["T_body_model"],
+                         request["T_link6_tcp"])
+        generated=build_level_manifold_seeds(
+            ik,start,target_position,
+            goal_yaw_rad=float(hard_manifold.get("goal_yaw_rad",0.0)),
+            horizon=int(planner.trajopt_solver.action_horizon),
+            sample_count=int(hard_manifold.get("ik_samples",25)),
+            offsets_m=hard_manifold.get("seed_offsets_m"),
+            max_joint_step_rad=float(hard_manifold.get("max_ik_step_rad",.22)))
+        if not generated:
+            raise RuntimeError("no continuous IK seed exists on requested level manifold")
+        goal_candidates=[seed.joints_rad[-1] for seed in generated]
+        manifold_seeds=[seed.joints_rad for seed in generated]
+        resolved_goal_metadata=[{
+            "hard_level_manifold":True,
+            "cartesian_seed_offset_m":list(seed.cartesian_offset_m),
+            "start_yaw_rad":seed.start_yaw_rad,
+            "goal_yaw_rad":seed.goal_yaw_rad,
+            "roll_branch":seed.roll_branch,
+            "seed_max_joint_step_rad":seed.max_joint_step_rad,
+        } for seed in generated]
+    def solve_segment(begin,end,seed_rows=None):
+        if seed_rows is not None:
+            seed_ordered=np.asarray(seed_rows,dtype=float)[:,[
+                ARM_NAMES.index(x) for x in names]]
+            seed_tensor=torch.tensor(seed_ordered,device="cuda:0",dtype=torch.float32)
+            seed_tensor=seed_tensor.contiguous().view(1,1,len(seed_ordered),6)
+            return planner.trajopt_solver.solve_cspace(
+                state(end),state(begin),seed_traj=seed_tensor,
+                num_seeds=params["num_trajopt_seeds"],
+                finetune_attempts=3,finetune_dt_scale=.75)
         return planner.plan_cspace(state(end),state(begin),max_attempts=params["max_attempts"],
                                    enable_graph_attempt=params["enable_graph_attempt"])
-    def solve(goal_value):
+    def solve(goal_value,candidate_index=0):
         at=time.perf_counter()
         try:
-            value=solve_segment(start,goal_value)
+            seed=(manifold_seeds[candidate_index] if manifold_seeds else None)
+            value=solve_segment(start,goal_value,seed)
             torch.cuda.synchronize();return [value],time.perf_counter()-at,None
         except Exception as exc:  # BLOCK may be rejected before an ordinary result is allocated.
             return None,time.perf_counter()-at,"%s: %s"%(type(exc).__name__,exc)
@@ -254,12 +323,12 @@ def main():
     if warmup_policy=="NONE":
         cached["warmup_done"]=True
     if not cached["warmup_done"]:
-        _,warmup_s,_=solve(goal_candidates[0])
+        _,warmup_s,_=solve(goal_candidates[0],0)
         cached["warmup_done"]=True
     samples=[];errors=[];result=None;selected_goal_index=None
     for candidate_index,candidate_goal in enumerate(goal_candidates):
         for _ in range(int(request.get("benchmark_runs",3))):
-            result,elapsed,error=solve(candidate_goal);samples.append(elapsed)
+            result,elapsed,error=solve(candidate_goal,candidate_index);samples.append(elapsed)
             if error:errors.append(error)
         if result is not None and all(bool(torch.all(part.success).item()) for part in result):
             selected_goal_index=candidate_index;break
@@ -354,12 +423,15 @@ def main():
         "execution_tool_envelope_revision":envelope["revision"] if envelope else None,
         "attached_object_collision_revision":attached["revision"] if attached else None,
         "active_collision_sphere_cell_m":sphere_cell_m,
+        "ignored_cuboid_ids":ignored,
         "world_cuboid_ids":list(cuboids),"start_rad":start.tolist(),"goal_rad":goal.tolist(),
         "selected_goal_candidate_index":selected_goal_index,
         "selected_goal_candidate_metadata":(
             resolved_goal_metadata[selected_goal_index]
             if selected_goal_index is not None and resolved_goal_metadata else None),
         "runtime_motion_goal":request.get("runtime_motion_goal"),
+        "hard_level_manifold":hard_manifold,
+        "manifold_seed_count":len(manifold_seeds),
         "goal_position_error_m":goal_position_error_m,
         "trajectory_points_rad":points,"tcp_path_body_m":tcp_body,"path_metrics":path_metrics(tcp_body),
         "clearance_m":{"start":start_gap,"goal":goal_gap,"joint_linear_baseline":baseline_gap,"planned_path":path_gap},

@@ -172,13 +172,15 @@ def resume_pick_from_pregrasp(pick_run,outer_run,manifest):
     return package/"first_pick_execution_package.json"
 
 
-def center_and_preplace(run_dir,pick_run,pick_package,pick_move,manifest,base):
+def center_and_preplace(run_dir,pick_run,pick_package,pick_move,manifest,base,
+                        whole_chain_audit):
     run_dir=Path(run_dir);pick_run=Path(pick_run);pick_package=Path(pick_package)
     center_epoch=run_dir/"center_epoch";capture("right_place_rightmost",center_epoch)
     center_plan=run_dir/"center_plan"
     run([CUROBO,"scripts/plan_named_pose_curobo.py","--epoch",center_epoch,
          "--template-plan",pick_run/"pregrasp_plan","--attached-package",
-         pick_package,"--pose","center","--output",center_plan],timeout=900)
+         pick_package,"--pose","center","--whole-chain-audit",whole_chain_audit,
+         "--chain-stage","center","--output",center_plan],timeout=900)
     native_send(center_plan/"center.native.txt",run_dir/"center_sender.jsonl")
     manifest.event("CENTER_TRANSFER","PASS",plan=str(center_plan))
 
@@ -228,6 +230,21 @@ def prepare_first_pick_with_fallback(prefer_staging=False):
     run([CUROBO,"scripts/prepare_authorized_first_pick.py","--epoch",epoch,
          "--template-plan",golden.TEMPLATE,"--output",plan,
          "--component-gripper"],timeout=300)
+    chain_audit=run_dir/"whole_chain_grasp_symmetry.json"
+    run([CUROBO,"scripts/audit_symmetric_grasp_full_chain.py",
+         plan/"preparation.json",plan/"planner_request.json",chain_audit],timeout=600)
+    chain=load(chain_audit);selected=chain["selected_grasp_symmetry_id"]
+    request_value=load(plan/"planner_request.json")
+    paired=list(zip(request_value["goal_candidates_rad"],
+                    request_value["goal_candidate_metadata"]))
+    paired.sort(key=lambda row:row[1].get("grasp_symmetry_id")!=selected)
+    request_value["goal_candidates_rad"]=[row[0] for row in paired]
+    request_value["goal_candidate_metadata"]=[row[1] for row in paired]
+    request_value["goal_rad"]=request_value["goal_candidates_rad"][0]
+    request_value["whole_chain_symmetry_binding"]={
+        "policy":chain["policy"],"selected_grasp_symmetry_id":selected,
+        "roll_branch":chain["selected_roll_branch"]}
+    write(plan/"planner_request.json",request_value)
     request=plan/"planner_request.json";planning=plan/"planning.json"
     environment=dict(os.environ,PYTHONPATH=str(ROOT/"src"))
     if prefer_staging:
@@ -243,25 +260,11 @@ def prepare_first_pick_with_fallback(prefer_staging=False):
              staging_request,staging_planning],timeout=900)
         staging_native=package_staging(staging_planning,staging_request,
                                        staging/"native")
-        return {"ready":False,"run_dir":run_dir,
+        return {"ready":False,"run_dir":run_dir,"whole_chain_audit":chain_audit,
                 "staging_native":staging_native,
                 "staging_planning":staging_planning}
-    fast=subprocess.run([str(CUROBO),"-m","ares_r.motion.production_scene_worker",
-        str(request),str(planning)],cwd=ROOT,env=environment,text=True,capture_output=True,timeout=900)
-    (plan/"planner_fast.log").write_text((fast.stdout or "")+(fast.stderr or ""))
-    if fast.returncode:
-        if planning.exists():shutil.move(str(planning),str(plan/"planning_fast_failed.json"))
-        value=load(request);params=value["planning_parameters"]
-        params.update(num_ik_seeds=8,num_trajopt_seeds=8,max_attempts=max(10,int(params.get("max_attempts",1))),
-                      enable_graph_attempt=1)
-        value["planner_profile_revision"]="FALLBACK_8_8_GRAPH_AFTER_FAST_NO_PATH"
-        write(plan/"planner_request_fallback.json",value)
-        shutil.copy2(plan/"planner_request_fallback.json",request)
-        fallback=subprocess.run([str(CUROBO),"-m","ares_r.motion.production_scene_worker",
-            str(request),str(planning)],cwd=ROOT,env=environment,text=True,
-            capture_output=True,timeout=900)
-        (plan/"planner_fallback.log").write_text(
-            (fallback.stdout or "")+(fallback.stderr or ""))
+    run([CUROBO,"scripts/plan_symmetric_first_pick.py","--plan-dir",plan,
+         "--chain-audit",chain_audit],timeout=1800)
     result=load(planning)
     if result.get("observed_result")!="SUCCESS":
         staging=run_dir/"pick_staging";staging.mkdir()
@@ -278,7 +281,7 @@ def prepare_first_pick_with_fallback(prefer_staging=False):
             raise RuntimeError("direct pick and cuRobo staging recovery both failed")
         staging_native=package_staging(staging_planning,staging_request,
                                        staging/"native")
-        return {"ready":False,"run_dir":run_dir,
+        return {"ready":False,"run_dir":run_dir,"whole_chain_audit":chain_audit,
                 "staging_native":staging_native,
                 "staging_planning":staging_planning}
     run([CUROBO,"scripts/build_first_pick_execution_package.py","--plan",plan,
@@ -290,7 +293,7 @@ def prepare_first_pick_with_fallback(prefer_staging=False):
         if "VALID_SUPERVISED_PATH" not in output:raise RuntimeError("native sender rejected "+name)
     golden._write_state(state="PREPARED_AWAITING_AUTHORIZATION",active_run_id=None,
         prepared_run_dir=str(run_dir),prepared_run_id=stamp)
-    return {"ready":True,"run_dir":run_dir}
+    return {"ready":True,"run_dir":run_dir,"whole_chain_audit":chain_audit}
 
 
 def prepare():
@@ -346,7 +349,7 @@ def execute(run_dir,prefer_pick_staging=False):
 
         center_and_preplace(run_dir,pick_run,
             pick_run/"first_pick_package/first_pick_execution_package.json",
-            pick_move,manifest,base)
+            pick_move,manifest,base,prepared["whole_chain_audit"])
     finally:base.close()
 
 
@@ -371,7 +374,11 @@ def main():
         base=Base()
         try:
             package=resume_pick_from_pregrasp(args.pick_run,output,manifest)
-            center_and_preplace(output,args.pick_run,package,[0.0,0.0],manifest,base)
+            chain_audit=Path(args.pick_run)/"whole_chain_grasp_symmetry.json"
+            if not chain_audit.exists():
+                raise RuntimeError("resume requires the immutable whole-chain grasp symmetry audit")
+            center_and_preplace(output,args.pick_run,package,[0.0,0.0],manifest,base,
+                                chain_audit)
         finally:base.close()
         return
     execute(output,prefer_pick_staging=args.prefer_pick_staging)

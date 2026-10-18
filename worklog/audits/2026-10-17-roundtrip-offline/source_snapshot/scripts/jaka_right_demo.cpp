@@ -1,0 +1,179 @@
+// Supervised RIGHT-ONLY SDK 2.2.2 bridge. Never enables power/robot or resumes programs.
+#include "JAKAZuRobot.h"
+#include <algorithm>
+#include <array>
+#include <chrono>
+#include <cmath>
+#include <csignal>
+#include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <stdexcept>
+#include <string>
+#include <thread>
+#include <vector>
+#include <ctime>
+#include <fcntl.h>
+#include <sys/file.h>
+#include <unistd.h>
+using Clock=std::chrono::steady_clock;
+using WallClock=std::chrono::system_clock;
+using Q=std::array<double,6>;
+static const auto process_started=Clock::now();
+static volatile std::sig_atomic_t interrupted=0;
+static void stop_signal(int){interrupted=1;}
+static void check(int rc,const char* op){if(rc)throw std::runtime_error(std::string(op)+" code="+std::to_string(rc));}
+static double rad(double deg){return deg*3.14159265358979323846/180;}
+static Q pose(CartesianPose p){return {{p.tran.x,p.tran.y,p.tran.z,p.rpy.rx,p.rpy.ry,p.rpy.rz}};}
+static void array_json(const Q& q){std::cout<<"[";for(int i=0;i<6;++i)std::cout<<(i?",":"")<<q[i];std::cout<<"]";}
+static double distance(const Q&a,const Q&b){double d=0;for(int j=0;j<6;++j)d=std::max(d,std::abs(a[j]-b[j]));return d;}
+static void stamp(){
+    auto wall=std::chrono::duration_cast<std::chrono::nanoseconds>(WallClock::now().time_since_epoch()).count();
+    auto elapsed=std::chrono::duration<double,std::milli>(Clock::now()-process_started).count();
+    std::cout<<",\"wall_unix_ns\":"<<wall<<",\"steady_elapsed_ms\":"<<elapsed;
+}
+static void json_string(const std::string&s){
+    std::cout<<"\"";for(char c:s){if(c=='\"'||c=='\\')std::cout<<'\\';if(c=='\n')std::cout<<"\\n";else std::cout<<c;}std::cout<<"\"";
+}
+struct State{Q q,tcp,tool;int tool_id,user_id;MotionStatus motion;};
+static State read(JAKAZuRobot& robot,bool tool_data=false){
+    RobotStatus_simple status{};State s{};JointValue q{};CartesianPose tcp{};BOOL drag=false;
+    check(robot.get_robot_status_simple(&status),"status");
+    check(robot.get_motion_status(&s.motion),"motion status");
+    check(robot.get_actual_joint_position(&q),"actual q");
+    check(robot.get_actual_tcp_position(&tcp),"actual TCP");
+    check(robot.get_tool_id(&s.tool_id),"tool ID");
+    check(robot.get_user_frame_id(&s.user_id),"user ID");
+    check(robot.is_in_drag_mode(&drag),"drag status");
+    if(status.errcode||!status.powered_on||!status.enabled||s.motion.isInEstop||s.motion.isInCollision||s.motion.isOnLimit||drag)
+        throw std::runtime_error(
+            "controller safety gate errcode="+std::to_string(status.errcode)+
+            " power="+std::to_string(status.powered_on)+
+            " enabled="+std::to_string(status.enabled)+
+            " estop="+std::to_string(s.motion.isInEstop)+
+            " collision="+std::to_string(s.motion.isInCollision)+
+            " limit="+std::to_string(s.motion.isOnLimit)+
+            " drag="+std::to_string(drag));
+    for(int j=0;j<6;++j){s.q[j]=q.jVal[j];if(!std::isfinite(s.q[j]))throw std::runtime_error("non-finite feedback");}
+    s.tcp=pose(tcp);for(double v:s.tcp)if(!std::isfinite(v))throw std::runtime_error("non-finite TCP");
+    if(tool_data){check(robot.get_tool_data(s.tool_id,&tcp),"tool data");s.tool=pose(tcp);}
+    return s;
+}
+struct Path{std::vector<Q> q;double dt,captured;int tool_id;Q tool,lo,hi;double speed_cap=.070,accel_cap=.10,tracking_stop_deg=.5;};
+static Path load(const char* file,bool micro,bool reset,bool pregrasp,bool supervised_path){
+    // A pregrasp move is a reposition-class motion, so it reuses the already
+    // commissioned reset envelope rather than inventing new tuned numbers.
+    const bool long_move=reset||pregrasp||supervised_path;
+    std::ifstream f(file);std::string magic,extra;int n=0;Path p{};
+    f>>magic>>n>>p.dt>>p.captured>>p.tool_id;
+    if(magic=="ARES_R_RIGHT_V2")f>>p.speed_cap>>p.accel_cap>>p.tracking_stop_deg;
+    if(!f||(magic!="ARES_R_RIGHT_V1"&&magic!="ARES_R_RIGHT_V2")||n<2||n>10000||!std::isfinite(p.dt)||std::abs(p.dt-.08)>1e-9)
+        throw std::runtime_error("invalid trajectory header");
+    if(supervised_path&&(!(p.speed_cap>0&&p.speed_cap<=.20)||!(p.accel_cap>0&&p.accel_cap<=.20)||
+            !(p.tracking_stop_deg>0&&p.tracking_stop_deg<=1.5)))
+        throw std::runtime_error("invalid A/B demo profile limits");
+    if(!std::isfinite(p.captured)||std::time(nullptr)-p.captured<0||std::time(nullptr)-p.captured>300)
+        throw std::runtime_error("expired live planning snapshot");
+    for(auto* row:{&p.tool,&p.lo,&p.hi})for(double& v:*row)if(!(f>>v)||!std::isfinite(v))throw std::runtime_error("invalid metadata");
+    for(int j=0;j<6;++j)if(p.lo[j]>=p.hi[j]||p.lo[j]<-7||p.hi[j]>7)throw std::runtime_error("invalid limits");
+    p.q.resize(n);Q previous_v{};
+    for(int i=0;i<n;++i){
+        for(double& v:p.q[i])if(!(f>>v)||!std::isfinite(v))throw std::runtime_error("invalid target");
+        for(int j=0;j<6;++j){
+            if(p.q[i][j]<p.lo[j]||p.q[i][j]>p.hi[j])throw std::runtime_error("joint limit");
+            // Long supervised paths remain bounded by controller/site joint
+            // limits.  The first-pick branch needs about 187 deg on J3, so the
+            // older A/B-demo 150 deg packaging envelope is widened only here.
+            const double cap=micro?(j==5?.5001:.005):(supervised_path?220:(long_move?150:20));
+            if(std::abs(p.q[i][j]-p.q[0][j])>rad(cap))throw std::runtime_error("excursion cap");
+            double v=i?(p.q[i][j]-p.q[i-1][j])/p.dt:0;
+            const double speed_cap=supervised_path?p.speed_cap:rad(micro?.5:3.0);
+            const double accel_cap=supervised_path?p.accel_cap:(micro?rad(1):.2);
+            if(std::abs(v)>speed_cap+1e-10||std::abs(v-previous_v[j])/p.dt>accel_cap+1e-10)
+                throw std::runtime_error("velocity/acceleration cap");
+            previous_v[j]=v;
+        }
+    }
+    for(double v:previous_v)if(std::abs(v)/p.dt>(supervised_path?p.accel_cap:(micro?rad(1):.2))+1e-10)throw std::runtime_error("end acceleration");
+    if(f>>extra)throw std::runtime_error("trailing data");
+    if((n-1)*p.dt>(long_move?240:115))throw std::runtime_error("duration cap");
+    return p;
+}
+int main(int argc,char**argv){
+    std::signal(SIGINT,stop_signal);std::signal(SIGTERM,stop_signal);std::signal(SIGHUP,stop_signal);
+    std::signal(SIGPIPE,SIG_IGN);
+    std::cout<<std::setprecision(16);
+    const bool snapshot=argc==2&&std::string(argv[1])=="snapshot";
+    const bool micro=argc==4&&std::string(argv[1])=="micro";
+    const bool demo=argc==4&&std::string(argv[1])=="demo20";
+    const bool reset=argc==4&&std::string(argv[1])=="reset";
+    const bool pregrasp=argc==4&&std::string(argv[1])=="pregrasp";
+    const bool supervised_path=argc==4&&std::string(argv[1])=="supervised_path";
+    const bool validate_supervised=argc==3&&std::string(argv[1])=="validate-supervised-path";
+    const bool long_move=reset||pregrasp||supervised_path;
+    const pid_t launch_parent=getppid();
+    if(!snapshot&&!validate_supervised&&(!(micro||demo||reset||pregrasp||supervised_path)||std::string(argv[3])!="CONFIRMED_RIGHT_CLEAR")){std::cerr<<"invalid explicit mode/confirmation\n";return 2;}
+    Path path;try{if(!snapshot)path=load(argv[2],micro,reset,pregrasp,supervised_path||validate_supervised);}catch(const std::exception&e){std::cerr<<e.what()<<std::endl;return 2;}
+    if(validate_supervised){std::cout<<"VALID_SUPERVISED_PATH samples="<<path.q.size()<<" duration_s="<<(path.q.size()-1)*path.dt<<" speed_cap_rad_s="<<path.speed_cap<<" accel_cap_rad_s2="<<path.accel_cap<<" tracking_stop_deg="<<path.tracking_stop_deg<<"; no controller connection"<<std::endl;return 0;}
+    int lock=open("/tmp/ares-r-right-servo.lock",O_CREAT|O_RDWR,0600);
+    if(lock<0||flock(lock,LOCK_EX|LOCK_NB)){std::cerr<<"right lock occupied\n";if(lock>=0)close(lock);return 2;}
+    JAKAZuRobot robot;bool logged=false,servo=false;int result=1;
+    try{
+        check(robot.login_in("192.168.99.101",false),"login");logged=true;
+        // Allow the SDK's read-only status cache to settle before the first
+        // safety check. Never retry a gate failure or delay checks in ServoJ.
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+        read(robot,true); // Warm-up only, before arming.
+        State start=read(robot,true);
+        std::cout<<"{\"event\":\"snapshot\"";stamp();std::cout<<",\"captured_at_unix\":"<<std::time(nullptr)<<",\"actual_rad\":";
+        array_json(start.q);std::cout<<",\"tcp_mm_rad\":";array_json(start.tcp);
+        std::cout<<",\"tool_mm_rad\":";array_json(start.tool);
+        std::cout<<",\"tool_id\":"<<start.tool_id<<",\"user_id\":"<<start.user_id
+                 <<",\"queue\":"<<start.motion.queue<<",\"active_queue\":"<<start.motion.active_queue
+                 <<",\"inpos\":"<<start.motion.inpos<<",\"paused\":"<<start.motion.paused<<"}"<<std::endl;
+        if(!snapshot){
+            BOOL active=false;check(robot.is_in_servomove(&active),"servo state");
+            if(active||start.motion.queue||start.motion.active_queue||!start.motion.inpos||interrupted)
+                throw std::runtime_error("not idle / pre-existing servo");
+            if(start.tool_id!=path.tool_id||distance(start.tool,path.tool)>1e-6||start.user_id!=0)
+                throw std::runtime_error("tool/user changed");
+            if(distance(start.q,path.q.front())>rad(.02))throw std::runtime_error("start moved; replan");
+            check(robot.servo_move_enable(true),"servo enable");servo=true;
+            auto deadline=Clock::now();Q previous=path.q.front();
+            for(size_t i=0;i<path.q.size();++i){
+                std::this_thread::sleep_until(deadline);
+                if(interrupted || (supervised_path && getppid()!=launch_parent))throw std::runtime_error("interrupted / supervisor lost");
+                auto before=Clock::now();State actual=read(robot,true);
+                double lag=std::chrono::duration<double>(Clock::now()-deadline).count();
+                if(lag>.04)throw std::runtime_error("feedback/send deadline");
+                if(actual.tool_id!=start.tool_id||actual.user_id!=start.user_id)throw std::runtime_error("tool/user changed");
+                if(distance(actual.tool,start.tool)>1e-6)throw std::runtime_error("tool offset changed");
+                if(distance(actual.q,previous)>rad(micro?.1:(supervised_path?path.tracking_stop_deg:.2)))throw std::runtime_error("tracking error");
+                double tcp_displacement=0;for(int j=0;j<3;++j)tcp_displacement+=std::pow(actual.tcp[j]-start.tcp[j],2);
+                if(std::sqrt(tcp_displacement)>(micro?5:(long_move?1500:250)))throw std::runtime_error("actual TCP displacement cap");
+                JointValue target{};for(int j=0;j<6;++j)target.jVal[j]=path.q[i][j];
+                check(robot.servo_j(&target,ABS,10),"servo_j");
+                if(Clock::now()-before>std::chrono::milliseconds(40))throw std::runtime_error("cycle budget");
+                std::cout<<"{\"event\":\"sample\"";stamp();std::cout<<",\"planned_time_s\":"<<i*path.dt<<",\"deadline_lag_ms\":"<<lag*1000<<",\"read_send_ms\":"<<std::chrono::duration<double,std::milli>(Clock::now()-before).count()<<",\"index\":"<<i<<",\"tracking_error_deg\":"<<distance(actual.q,previous)*180/3.14159265358979323846<<",\"actual_rad\":";array_json(actual.q);
+                std::cout<<",\"target_rad\":";array_json(path.q[i]);std::cout<<",\"tcp_mm_rad\":";array_json(actual.tcp);std::cout<<"}"<<std::endl;
+                if(!std::cout)throw std::runtime_error("log write failed");
+                previous=path.q[i];deadline+=std::chrono::milliseconds(80);
+            }
+            std::this_thread::sleep_until(deadline);
+            if(interrupted || (supervised_path && getppid()!=launch_parent))throw std::runtime_error("interrupted / supervisor lost");
+            auto before=Clock::now();State final=read(robot);
+            if(Clock::now()-before>std::chrono::milliseconds(40)||distance(final.q,path.q.back())>rad(.05))
+                throw std::runtime_error("final feedback mismatch");
+            std::cout<<"{\"event\":\"target_reached\"";stamp();std::cout<<",\"actual_rad\":";array_json(final.q);
+            std::cout<<",\"tcp_mm_rad\":";array_json(final.tcp);std::cout<<"}"<<std::endl;
+        }
+        result=0;
+    }catch(const std::exception&e){
+        std::cout<<"{\"event\":\"failed\"";stamp();std::cout<<",\"reason\":";json_string(e.what());std::cout<<"}"<<std::endl;
+        std::cerr<<"FAILED "<<e.what()<<std::endl;
+        if(servo){int rc=robot.motion_abort();std::cout<<"{\"event\":\"abort\"";stamp();std::cout<<",\"code\":"<<rc<<"}"<<std::endl;}
+    }
+    if(servo){int rc=robot.servo_move_enable(false);std::cout<<"{\"event\":\"servo_disabled\"";stamp();std::cout<<",\"code\":"<<rc<<"}"<<std::endl;if(rc)result=1;}
+    if(logged){int rc=robot.login_out();std::cout<<"{\"event\":\"logout\"";stamp();std::cout<<",\"code\":"<<rc<<"}"<<std::endl;if(rc)result=1;}
+    close(lock);return result;
+}

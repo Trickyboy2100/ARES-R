@@ -3,7 +3,11 @@ from unittest.mock import patch
 import tempfile
 from pathlib import Path
 
-from ares_r.scene_aware_dispatch import SceneAwareDispatcher
+from ares_r.scene_aware_dispatch import (
+    RIGHT_CENTER_BODY_M,
+    RIGHT_CENTER_YAW_RAD,
+    SceneAwareDispatcher,
+)
 
 
 class Scene:
@@ -22,6 +26,18 @@ class Motion:
 
 
 class DispatcherTests(unittest.TestCase):
+    def test_center_shortcut_uses_shared_scene_aware_motion(self):
+        dispatcher = SceneAwareDispatcher.__new__(SceneAwareDispatcher)
+        calls = []
+        dispatcher.motion_plan = lambda payload: calls.append(payload) or {"ok": True}
+        result = dispatcher.motion_plan_right_center()
+        self.assertTrue(result["ok"])
+        self.assertEqual(calls[0]["arm"], "right")
+        self.assertEqual(calls[0]["position_m"], list(RIGHT_CENTER_BODY_M))
+        self.assertEqual(calls[0]["orientation"], "LEVEL_YAW_TARGET")
+        self.assertEqual(calls[0]["yaw_target_rad"], RIGHT_CENTER_YAW_RAD)
+        self.assertEqual(calls[0]["scene_policy"], "FORCE_RESCAN")
+
     def test_art_and_ui_use_same_service_methods(self):
         scene,motion=Scene(),Motion();dispatcher=SceneAwareDispatcher({})
         with patch("ares_r.scene_aware_dispatch.build_services",return_value=(scene,motion)):
@@ -53,6 +69,45 @@ class DispatcherTests(unittest.TestCase):
         self.assertEqual(dispatcher.dispatch("task show task.tray_to_groove")["scheme_id"],"tray_to_groove_v1")
         with self.assertRaisesRegex(RuntimeError,"locked"):
             dispatcher.dispatch("task run task.tray_to_groove")
+
+
+    def test_carried_payload_geometry_reaches_the_planner_constraints(self):
+        # Regression: _motion_request used to drop attached_object_geometry, so
+        # every Web UI / ART plan ran with the held tray invisible to collision
+        # checking even though the planner and the independent validator both
+        # honour the field.
+        from ares_r.manipulation.attached_collision import (
+            attach_scene_object, build_attached_collision)
+        from ares_r.world import PoseSE3, SceneObject, SceneObjectRole
+        target=SceneObject("tray",SceneObjectRole.TARGET,"cuboid",
+            PoseSE3("body",(.7,-.3,.9),(1,0,0,0)),(.20,.10,.04),0,"OBS")
+        attached=attach_scene_object(target,[[1,0,0,.1],[0,1,0,0],[0,0,1,.2],[0,0,0,1]],
+                                     side="right",source_revision="GRASP_OBS")
+        geometry=build_attached_collision(attached,[[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]])
+        scene,motion=Scene(),Motion();dispatcher=SceneAwareDispatcher({})
+        with patch("ares_r.scene_aware_dispatch.build_services",return_value=(scene,motion)):
+            dispatcher.motion_plan({"arm":"right","position_m":[.6,-.09,1.22],
+                "orientation":"LEVEL_YAW_TARGET","yaw_target_rad":.0448,
+                "attached_object_geometry":geometry})
+        constraints=motion.request.constraints
+        self.assertEqual(constraints.attached_object_geometry["object_id"],"tray")
+        self.assertEqual(constraints.attached_object_revision,geometry["revision"])
+        motion.request.validate()
+
+    def test_tampered_payload_geometry_is_rejected_before_planning(self):
+        from ares_r.manipulation.attached_collision import build_attached_collision
+        from ares_r.world import AttachedObject, PoseSE3, SceneObject, SceneObjectRole
+        geometry=SceneObject("tray",SceneObjectRole.TARGET,"cuboid",
+            PoseSE3("body",(.7,-.3,.9),(1,0,0,0)),(.20,.10,.04),0,"OBS")
+        attached=AttachedObject("tray","right",PoseSE3("tcp",(.03,0,.08),(1,0,0,0)),
+                                geometry,"GRASP_OBS")
+        value=build_attached_collision(attached,[[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]])
+        value["link6_aabb"]["dims_m"][0]+=.05
+        scene,motion=Scene(),Motion();dispatcher=SceneAwareDispatcher({})
+        with patch("ares_r.scene_aware_dispatch.build_services",return_value=(scene,motion)):
+            with self.assertRaisesRegex(ValueError,"revision mismatch"):
+                dispatcher.motion_plan({"arm":"right","position_m":[.6,-.09,1.22],
+                    "attached_object_geometry":value})
 
 
 if __name__=="__main__":unittest.main()

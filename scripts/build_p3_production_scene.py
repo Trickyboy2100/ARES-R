@@ -18,6 +18,7 @@ from ares_r.perception.robot_collision import (arm_link_transforms,inactive_arm_
     load_geometry_snapshot,self_filter_body_cloud,transform_xyz_rpy)
 from ares_r.perception.robot_owned_filter import build_robot_owned_filter,filter_robot_owned
 from ares_r.perception.support_decomposition import (decompose_support_objects,
+    filter_isolated_micro_primitives,
     refine_robot_adjacent_primitives)
 from ares_r.world import (CalibrationSet,PointCloudRef,PoseSE3,RobotState,SafetyConstraint,
     SceneObject,SceneObjectRole,WorldModel,compile_snapshot,snapshot_dict)
@@ -193,6 +194,7 @@ def main():
     if a.obstacle_pipeline=="multi_primitive":
         decomposition_at=time.perf_counter()
         decomposition=decompose_support_objects(clean,boxes)
+        decomposition=filter_isolated_micro_primitives(decomposition)
         decomposition=refine_robot_adjacent_primitives(clean,decomposition,robot_owned)
         decomposition_s=time.perf_counter()-decomposition_at
         planning_boxes=decomposition["primitives"]

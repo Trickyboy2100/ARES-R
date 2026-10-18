@@ -44,6 +44,30 @@ class FakeModule:
 
 
 class JakaSdkArmTest(unittest.TestCase):
+    def test_left_readonly_status_decoder_reconnects_without_motion(self):
+        arm = self.build()
+        old = arm.robot
+        def broken():
+            raise SystemError('status decoder returned an exception')
+        old.get_robot_status = broken
+        with patch('ares_r.adapters.jaka_sdk.time.sleep'):
+            value = arm.diagnostics()
+        self.assertTrue(old.logged_out)
+        self.assertIsNot(arm.robot, old)
+        self.assertEqual(value['joint_position_rad'], [0.0] * 6)
+        self.assertEqual(old.control_calls + arm.robot.control_calls, [])
+
+    def test_control_enabled_status_session_is_not_reconnected(self):
+        arm = self.build()
+        arm.motion_enabled = True
+        old = arm.robot
+        old.get_robot_status = lambda: (_ for _ in ()).throw(SystemError('decoder'))
+        with patch('ares_r.adapters.jaka_sdk.time.sleep'):
+            with self.assertRaises(JakaSdkError):
+                arm.diagnostics()
+        self.assertIs(arm.robot, old)
+        self.assertFalse(old.logged_out)
+
     def build(self):
         with patch("ares_r.adapters.jaka_sdk.load_jkrc", return_value=FakeModule):
             return JakaSdkArm("left", {"ip": "192.0.2.1", "model": "JAKA Mini2"},

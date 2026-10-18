@@ -63,6 +63,12 @@ def scene_payload(dispatcher):
                 "limiting_object": plan.get("path_limiting_object_id"),
                 "path": plan.get("path_metrics"),
                 "hard_validity": handle.get("hard_validity")}
+    # Display-only annotations are never planner targets or execution requests.
+    result['display_markers'] = []
+    if hasattr(dispatcher, 'operations_status'):
+        for name, point in dispatcher.operations_status().get('keypoints', {}).items():
+            result['display_markers'].append(dict(point, name=name,
+                stale=point.get('base_pose_revision') != scene.get('base_pose_revision')))
     return result
 
 
@@ -117,10 +123,21 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         path=urlparse(self.path).path
-        if path=="/":
+        if path=="/static/roundtrip-panel.js":
+            data=INDEX.with_name('roundtrip_panel.js').read_bytes()
+            self.send_response(200);self.send_header('Content-Type','application/javascript; charset=utf-8')
+            self.send_header('Content-Length',str(len(data)));self.end_headers();self.wfile.write(data)
+        elif path=="/api/demo/roundtrip/status":self._json(self.dispatcher.roundtrip_status())
+        elif path=="/operations":
+            data=INDEX.with_name('operations.html').read_bytes()
+            self.send_response(200);self.send_header('Content-Type','text/html; charset=utf-8')
+            self.send_header('Content-Length',str(len(data)));self.end_headers();self.wfile.write(data)
+        elif path=="/":
             data=INDEX.read_bytes();self.send_response(200);self.send_header("Content-Type","text/html; charset=utf-8")
             self.send_header("Content-Length",str(len(data)));self.end_headers();self.wfile.write(data)
         elif path=="/api/system/status":self._json(system_status(self.dispatcher))
+        elif path=="/api/operations":self._json(self.dispatcher.operations_status())
+        elif path=="/api/operations/run-status":self._json(self.dispatcher.physical_status())
         elif path=="/api/scene/status":self._json(self.dispatcher.scene_status())
         elif path=="/api/motion/status":self._json(self.dispatcher.motion_status())
         elif path=="/api/scene/data":self._json(scene_payload(self.dispatcher))
@@ -150,9 +167,26 @@ class Handler(BaseHTTPRequestHandler):
         path=urlparse(self.path).path
         try:
             body=self._body()
-            if path=="/api/scene/scan":value=self.dispatcher.scene_scan(True,body.get("arm","right"))
+            if path=="/api/demo/roundtrip/start":value=self.dispatcher.roundtrip_start(body)
+            elif path=="/api/demo/roundtrip/stop":value=self.dispatcher.operations_stop()
+            elif path=="/api/scene/scan":value=self.dispatcher.scene_scan(True,body.get("arm","right"))
+            elif path=="/api/operations/update":value=self.dispatcher.operations_update(body['action'], body['body'])
+            elif path=="/api/operations/select":value=self.dispatcher.berth_select(body['operation'])
+            elif path=="/api/operations/detect-corner":value=self.dispatcher.berth_detect_corner()
+            elif path=="/api/operations/target":value=self.dispatcher.berth_target(body['slot_id'])
+            elif path=="/api/operations/offset-convert":value=self.dispatcher.operations_offset_convert(body)
+            elif path=="/api/operations/telemetry":value=self.dispatcher.robot_telemetry()
+            elif path=="/api/operations/jog":value=self.dispatcher.jog_plan(body)
+            elif path=="/api/operations/record":value=self.dispatcher.save_trajectory(body)
+            elif path=="/api/operations/base-preview":value=self.dispatcher.base_preview(body)
+            elif path=="/api/operations/base-move":value=self.dispatcher.base_move(body)
+            elif path=="/api/operations/execute":value=self.dispatcher.motion_execute(body)
+            elif path=="/api/operations/stop":value=self.dispatcher.operations_stop()
             elif path=="/api/scene/invalidate":value=self.dispatcher.scene_invalidate(body.get("reason","WEBUI"))
             elif path=="/api/motion/plan":value=self.dispatcher.motion_plan(body)
+            elif path=="/api/motion/plan-center":
+                if body.get("arm","right")!="right":raise ValueError("center shortcut is commissioned for right arm only")
+                value=self.dispatcher.motion_plan_right_center()
             elif path=="/api/motion/stop":value=self.dispatcher.motion_stop()
             elif path=="/api/task/ab/run-next":value=self.dispatcher.ab_plan_next(body["destination"])
             elif path=="/api/demo/select":value=self.dispatcher.demo_select(body["demo_id"])

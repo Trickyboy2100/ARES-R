@@ -27,6 +27,8 @@ class DecompositionProfile:
     slice_z_m: float = .03
     primitive_min_dim_m: float = .008
     inflation_m: float = .007
+    isolated_micro_max_extent_m: float = .050
+    isolated_micro_connection_gap_m: float = .020
 
 
 def _cloud(points):
@@ -234,6 +236,83 @@ def decompose_support_objects(points_body_m, old_boxes, profile=DecompositionPro
                            "assignment_decomposition_primitives": time.perf_counter() - support_s,
                            "total": time.perf_counter() - started}}
     return report
+
+
+def filter_isolated_micro_primitives(report, profile=DecompositionProfile()):
+    """Drop only disconnected observed components smaller than 5 cm.
+
+    Tiling can represent one real large object using many small boxes, so the
+    decision is made on connected components rather than individual tiles.
+    Supports are always preserved. A component is removed only when its
+    aggregate observed AABB has no dimension reaching the configured limit.
+    """
+    primitives = list(report["primitives"])
+    candidates = [index for index, value in enumerate(primitives)
+                  if value.get("semantic") != "SUPPORT_SURFACE"]
+    parent = {index: index for index in candidates}
+
+    def find(index):
+        while parent[index] != index:
+            parent[index] = parent[parent[index]]
+            index = parent[index]
+        return index
+
+    def union(first, second):
+        left, right = find(first), find(second)
+        if left != right:
+            parent[right] = left
+
+    def gap(first, second):
+        low_a, high_a = map(np.asarray, first["observed_bounds_m"])
+        low_b, high_b = map(np.asarray, second["observed_bounds_m"])
+        delta = np.maximum(np.maximum(low_a - high_b, low_b - high_a), 0.0)
+        return float(np.linalg.norm(delta))
+
+    for offset, first in enumerate(candidates):
+        for second in candidates[offset + 1:]:
+            if gap(primitives[first], primitives[second]) <= profile.isolated_micro_connection_gap_m:
+                union(first, second)
+    groups = {}
+    for index in candidates:
+        groups.setdefault(find(index), []).append(index)
+
+    remove = set(); records = []
+    for members in groups.values():
+        low = np.min([primitives[index]["observed_bounds_m"][0] for index in members], axis=0)
+        high = np.max([primitives[index]["observed_bounds_m"][1] for index in members], axis=0)
+        dims = high - low
+        if float(np.max(dims)) >= profile.isolated_micro_max_extent_m:
+            continue
+        remove.update(members)
+        records.append({
+            "primitive_ids": [primitives[index]["primitive_id"] for index in members],
+            "aggregate_dims_m": dims.tolist(),
+            "aggregate_center_m": ((low + high) / 2.0).tolist(),
+            "point_count": int(sum(primitives[index]["point_count"] for index in members)),
+            "reason": "ISOLATED_COMPONENT_MAX_EXTENT_BELOW_%.3f_M" %
+                      profile.isolated_micro_max_extent_m,
+        })
+    kept = [value for index, value in enumerate(primitives) if index not in remove]
+    output = dict(report)
+    output["primitives"] = kept
+    output["multi_primitive_count"] = len(kept)
+    output["primitive_point_count_sum"] = int(sum(item["point_count"] for item in kept))
+    output["multi_primitive_occupied_volume_m3"] = sum(
+        float(np.prod(item["dims_m"])) for item in kept)
+    old_volume = output.get("old_single_aabb_occupied_volume_m3")
+    output["occupied_volume_ratio"] = (
+        output["multi_primitive_occupied_volume_m3"] / old_volume if old_volume else None)
+    output["isolated_micro_filter"] = {
+        "policy": "CONNECTED_COMPONENT_MAX_EXTENT_V1",
+        "max_extent_m": profile.isolated_micro_max_extent_m,
+        "connection_gap_m": profile.isolated_micro_connection_gap_m,
+        "support_surfaces_always_preserved": True,
+        "removed_component_count": len(records),
+        "removed_primitive_count": len(remove),
+        "removed_point_count": int(sum(item["point_count"] for item in records)),
+        "removed_components": records,
+    }
+    return output
 
 
 def _aabb_sphere_gap(low, high, sphere, inflation):

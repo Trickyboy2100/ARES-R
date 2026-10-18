@@ -1,0 +1,50 @@
+# Unresolved file origins
+
+- Site effective scripts, loaded Python module SHAs, systemd install bytes and native/SDK binaries: NOT RETRIEVED.
+- Dirty file author cannot be established from Git status. Coworker AMR edits not merged or attributed.
+- .32 Oct16 per-request worker revision cannot be inferred from local file names.
+- 41 offsets duplicate files were nonresident at capture (see exact manifest); no guessed hashes.
+- Existing September/Oct12 pointclouds are not substituted for Oct16 pick/post-grasp scenes.
+- Legacy site config/asset pins do not prove currently installed package versions.
+
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_native_demo 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_observation_transaction_v2 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_obstacle_world 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_operations 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_p33_execution_hardening 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_p33a_fastlane 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_p33a_supervised_runner 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_p35_live_scene 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_p39_skill_runtime 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_p39_task_studio 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_p39b_backend_ui 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_p39b_central_exclusion 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_p39b_manipulation_alignment 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_p39b_scheme 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_pregrasp 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_pregrasp_planning 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_production_scene_worker 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_render_motion_scene_diagnostics 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_residual_cloud 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_robot_collision 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_robot_owned_filter 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_safety_kernel 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_scene_aware_dispatch 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_scene_aware_motion 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_scene_aware_planner 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_scene_aware_simulated_start 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_scene_compiler 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_scheme_backend 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_serial_gripper 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_singularity 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_speed_profiles 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_support_decomposition 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_target_contact_policy 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_target_primitive_binding 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_task_parameters 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_tcp_orientation 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_terminal 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_transfer_chain 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_tray_to_groove_scheme 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_world_geometry 2.py`
+- NONRESIDENT `local-ARES-R-offsets-20261016/tests/test_world_model 2.py`

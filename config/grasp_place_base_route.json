@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "revision": "GRASP_PLACE_BODY_ROUTE_2026_10_16_V2_GRASP_LEFT100MM",
+  "station_update": {
+    "authorization": "Operator requested current base BODY +Y 0.10m as new GRASP; PLACE unchanged",
+    "commanded_grasp_shift_body_m": [0.0, 0.10, 0.0],
+    "completion_marker": {"id": 72534, "queueId": 11305},
+    "completion": "SETTLED",
+    "place_changed": false,
+    "precision_commissioned": false,
+    "note": "Historical station poses and test evidence below remain historical. Updated route is command-relative, not SLAM precision certification; no repeated correction from noisy SLAM."
+  },
+  "purpose": "Operator-registered fixed base route; record only, no automatic execution",
+  "execution_enabled": false,
+  "frame": {"name": "BODY", "x_positive": "forward", "y_positive": "left", "z_positive": "up"},
+  "map": {"id": 379, "name": "831", "uuid": "daed22ba-a4fa-11f1-8205-bca8a6793fdd", "resolution_m": 0.025},
+  "stations": {
+    "GRASP": {
+      "status": "READONLY_SLAM_RECORDED_NOT_PRECISION_COMMISSIONED",
+      "recorded_at": "2026-10-16T15:20:59.416019+08:00",
+      "captured_at_unix": 1792135259.4160192,
+      "map_pose_xy_m_yaw_deg": [-0.5419269800186157, 1.0748000144958496, -6.330629825592041],
+      "controller_confidence_raw": "37.70",
+      "controller_state": "IDLE",
+      "note": "Current physical station designated GRASP by operator; SLAM pose is an instantaneous observation, not ground truth."
+    },
+    "PLACE": {
+      "status": "PREDICTED_NOT_OBSERVED",
+      "relative_to": "GRASP",
+      "body_relative_net_translation_m": [0.0, -0.75, 0.0],
+      "relative_yaw_deg": 0.0,
+      "map_pose_xy_m_yaw_deg_candidate": [-0.6246262237215298, 0.32937340168210927, -6.330629825592041],
+      "prediction_assumption": "SLAM yaw is BODY +X heading measured CCW from map +X; planar SE2, no yaw drift or map-to-BODY registration offset.",
+      "note": "No base movement performed. Read actual SLAM pose after supervised route completion and settle before commissioning."
+    }
+  },
+  "routes": {
+    "GRASP_TO_PLACE": {
+      "from": "GRASP", "to": "PLACE", "yaw_deg": 0.0,
+      "total_path_length_m": 1.45,
+      "net_translation_body_m": [0.0, -0.85, 0.0],
+      "segments": [
+        {"id": "back_030", "body_delta_m": [-0.30, 0.0, 0.0], "yaw_deg": 0.0, "settle_required": true},
+        {"id": "right_085", "body_delta_m": [0.0, -0.85, 0.0], "yaw_deg": 0.0, "settle_required": true},
+        {"id": "forward_030", "body_delta_m": [0.30, 0.0, 0.0], "yaw_deg": 0.0, "settle_required": true}
+      ],
+      "predicted_map_waypoints_xy_m": null,
+      "historical_v1_predicted_map_waypoints_xy_m": [[-0.8400976251441119, 1.1078797119770152], [-0.9227968688470259, 0.36245309916327484], [-0.6246262237215298, 0.32937340168210927]]
+    }
+  },
+  "scene_policy": {"invalidate_before_every_base_move": true, "require_completion_observer": true, "require_settle_after_each_segment": true, "fresh_scene_before_next_arm_motion": true},
+  "legacy_registry": {"path": "config/manipulation_stations.json", "unchanged": true, "reason": "Legacy runtime consumes a single direct translation and cannot safely represent this three-segment route; do not silently substitute its net displacement."},
+  "last_roundtrip_test": {
+    "result": "SUCCEEDED_SIX_SEGMENTS_COMPLETED_NOT_PRECISION_COMMISSIONED",
+    "evidence": "worklog/evidence/base-routes/1792135867655861998/roundtrip.json",
+    "speed_mps": 0.10,
+    "elapsed_s": 100.85555791854858,
+    "grasp_before_map_xy_m_yaw_deg": [-0.25674399733543396, 1.0085899829864502, -1.6953200101852417],
+    "place_observed_map_xy_m_yaw_deg": [-0.3098819851875305, 0.43790000677108765, 3.221529960632324],
+    "grasp_after_map_xy_m_yaw_deg": [-0.3515639901161194, 0.9906899929046631, 4.1422200202941895],
+    "slam_roundtrip_translation_error_m": 0.09649477019951554,
+    "slam_roundtrip_yaw_error_deg": 5.837540030479431,
+    "note": "PLACE now has an observed test sample; retain original predicted entry for provenance. No precision station commissioning: SLAM drift and physical return error have not been separated. No commanded yaw; no arm or gripper motion."
+  },
+  "localization_evidence": {
+    "motion_log_id": 72499, "motion_queue_id": 11298,
+    "samples": [
+      {"at_unix": 1792135259.4160192, "x_m": -0.5419269800186157, "y_m": 1.0748000144958496, "yaw_deg": -6.330629825592041, "confidence_raw": "37.70"},
+      {"at_unix": 1792135496.8320012, "x_m": -0.521668016910553, "y_m": 1.1204999685287476, "yaw_deg": -9.54321002960205, "confidence_raw": "32.91"},
+      {"at_unix": 1792135497.835914, "x_m": -0.5139539837837219, "y_m": 1.1322100162506104, "yaw_deg": -9.573829650878906, "confidence_raw": "31.70"},
+      {"at_unix": 1792135498.841185, "x_m": -0.5214319825172424, "y_m": 1.1295100450515747, "yaw_deg": -9.751070022583008, "confidence_raw": "31.70"}
+    ],
+    "warning": "Observed SLAM drift while controller reports IDLE; no confidence percentage interpretation asserted."
+  }
+}

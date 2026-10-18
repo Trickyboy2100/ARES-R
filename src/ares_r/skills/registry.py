@@ -16,6 +16,15 @@ def _skill(skill_id, category, capability, resources, properties=None, required=
 
 
 BUILTINS = (
+    _skill('resource.select_berth', 'observe', 'dryer.select', ['DRYER_BERTHS'],
+           {'operation':{'type':'string','enum':['PLACE','PICK']}}, ('operation',),
+           'Select a confirmed available dryer berth without changing occupancy'),
+    _skill('resource.reserve_berth', 'execution', 'dryer.reserve', ['DRYER_BERTHS'],
+           {'operation':{'type':'string','enum':['PLACE','PICK']}, 'slot_id':{'type':'string'}},
+           ('operation',), 'Reserve a berth with an exclusive operation token'),
+    _skill('resource.complete_berth', 'execution', 'dryer.complete', ['DRYER_BERTHS'],
+           {'slot_id':{'type':'string'}, 'token':{'type':'string'}, 'evidence_id':{'type':'string'}},
+           ('slot_id','token','evidence_id'), 'Commit occupancy after verified task completion'),
     _skill("observe.capture_scene", "observe", "scene.capture", ["CAMERA_5000", "SCENE_EPOCH"],
            {"profile":{"type":"string"}, "station":{"type":"string"}}),
     _skill("observe.detect_resource", "observe", "resource.detect", ["CAMERA_5700", "SCENE_EPOCH"],
@@ -23,7 +32,11 @@ BUILTINS = (
     _skill("observe.verify_predicate", "observe", "predicate.verify", ["SCENE_EPOCH"],
            {"predicate":{"type":"string"}, "method":{"type":"string"}}, ("predicate",)),
     _skill("navigate.registered_relative", "navigate", "base.navigate", ["BASE"],
-           {"station":{"type":"string"}, "speed_profile":{"type":"string"}}, ("station",)),
+           {"station":{"type":"string"}, "from_station":{"type":"string"},
+            "station_registry":{"type":"string"}, "speed_profile":{"type":"string"},
+            "invalidate_scene":{"type":"boolean"},
+            "require_settled":{"type":"boolean"},
+            "require_fresh_observation":{"type":"boolean"}}, ("station",)),
     _skill("navigate.align_for_manipulation", "navigate", "base.align_for_manipulation",
            ["BASE","CAMERA_5700","CAMERA_5000","SCENE_EPOCH","GPU_PLANNER"],
            {"target_profile":{"type":"string"},

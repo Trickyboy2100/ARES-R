@@ -5,6 +5,7 @@ import numpy as np
 
 from ares_r.perception.support_decomposition import (
     DecompositionProfile, decompose_support_objects, detect_support_levels,
+    filter_isolated_micro_primitives,
     refine_robot_adjacent_primitives)
 
 
@@ -51,6 +52,33 @@ class SupportDecompositionTest(unittest.TestCase):
         refined=refine_robot_adjacent_primitives(points,report,owned,cell_m=.015)
         self.assertEqual(sum(item["point_count"] for item in refined["primitives"]),2)
         self.assertEqual(len(refined["primitives"]),2)
+
+    def test_isolated_micro_filter_removes_only_disconnected_small_component(self):
+        support={"primitive_id":"support","semantic":"SUPPORT_SURFACE",
+                 "source_cluster":"support","point_count":100,"center_m":[0,0,0],
+                 "dims_m":[.3,.3,.008],"inflation_m":.007,
+                 "observed_bounds_m":[[-.15,-.15,-.004],[.15,.15,.004]]}
+        large={"primitive_id":"large","semantic":"UNKNOWN_OCCUPIED",
+               "source_cluster":"large","point_count":80,"center_m":[.5,0,.1],
+               "dims_m":[.08,.08,.08],"inflation_m":.007,
+               "observed_bounds_m":[[.46,-.04,.06],[.54,.04,.14]]}
+        joined={"primitive_id":"joined","semantic":"UNKNOWN_OCCUPIED",
+                "source_cluster":"large","point_count":5,"center_m":[.565,0,.1],
+                "dims_m":[.03,.02,.02],"inflation_m":.007,
+                "observed_bounds_m":[[.55,-.01,.09],[.58,.01,.11]]}
+        speck={"primitive_id":"speck","semantic":"UNKNOWN_OCCUPIED",
+               "source_cluster":"speck","point_count":4,"center_m":[.3,-.2,.4],
+               "dims_m":[.04,.022,.032],"inflation_m":.007,
+               "observed_bounds_m":[[.28,-.211,.384],[.32,-.189,.416]]}
+        report={"primitives":[support,large,joined,speck],
+                "old_single_aabb_occupied_volume_m3":.1,
+                "multi_primitive_count":4,"multi_primitive_occupied_volume_m3":.01}
+        filtered=filter_isolated_micro_primitives(report)
+        identifiers={item["primitive_id"] for item in filtered["primitives"]}
+        self.assertEqual(identifiers,{"support","large","joined"})
+        audit=filtered["isolated_micro_filter"]
+        self.assertEqual(audit["removed_primitive_count"],1)
+        self.assertEqual(audit["removed_components"][0]["primitive_ids"],["speck"])
 
 
 if __name__ == "__main__":
