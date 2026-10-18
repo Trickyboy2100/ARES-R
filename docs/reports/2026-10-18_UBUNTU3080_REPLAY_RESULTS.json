@@ -1,0 +1,187 @@
+{
+  "date": "2026-10-18",
+  "baseline_commit": "63887dddee15d8e58f4da24821d0c0a9e1a19864",
+  "code_commit": "aa26907428d33c4eb03542e38beb977a0711db25",
+  "branch": "codex/ubuntu3080-roundtrip-replay-20261018",
+  "flags": {
+    "RTX3080_CUDA_READY": "PASS",
+    "PINNED_CUROBO_READY": "PASS",
+    "OFFLINE_HARDWARE_ISOLATED": "PASS",
+    "OCT16_RAW_FIXTURES_AVAILABLE": "BLOCKED",
+    "FAST_EFFECTIVE_SINGLE_PASS": "PASS",
+    "FAST_CANCEL_NO_ORPHAN": "PASS",
+    "EARLY_CONTACT_LIFT_PRECHECK": "PARTIAL",
+    "ATTACHED_WORLD_IDENTITY_READY": "FAIL",
+    "19_STAGE_OFFLINE_REPLAY": "PARTIAL",
+    "READY_FOR_SITE_DEPLOYMENT": "FAIL"
+  },
+  "source_sha256": {
+    "src/ares_r/motion/production_scene_worker.py": "5e4db001a899ef1fab0682382780eb2cc4783e64417e070245aa66265577fb73",
+    "src/ares_r/motion/persistent_planner_service.py": "1b4cb28c94cb858dcc2c9d88b9e522bad25c205a34dc5fd1918f41c7aa51c803",
+    "src/ares_r/motion/planner_service_client.py": "24fe739a00ad4e4377eda21e13d4e2195cebef66d9c0b1ea6565aeecccc78f26",
+    "src/ares_r/manipulation/contact_lift_precheck.py": "dbaf90fc515b8712c3a3502e0d4660f76b73f7847856c2d8d75c5bdec8fd940e",
+    "src/ares_r/motion/runtime_goal_ik.py": "53367d2588cfd5ac4a8ad8067f9b084b3af63696561675ccf2f6825286af6c24",
+    "scripts/run_grasp_place_roundtrip.py": "fe84e9396b83ceedece4ee16c8e0d3ee8fd52f8bf6116576866839380900332b",
+    "scripts/prepare_authorized_first_pick.py": "a5be9b3b15b94b84fc703773d7c5ea0041a242db0e68cb945ca2cc7ae6e2bdb9",
+    "scripts/offline_sandbox.sh": "5a680cbc9d3f9051f9815fede4f319b88125dce4b6bee8e58532a72ee69f79c0",
+    "config/planner_latency_profiles.json": "ab33125d23528cebc6d604296e861ed3c9ab1cba02477d061cfa9ec415849ec1",
+    "demos/right_arm_grasp_place_roundtrip_v1/parameters.json": "75dbf1832405762a83eb1f0c79de2931b740342dc568cf4485cac09593ebbb61",
+    "config/grasp_place_base_route.json": "02521117b731b1d7f85598cfef92e2e074bc47154328a9b78424311ff193ba16",
+    "scripts/run_first_pick_demo.py": "e158482004601bbb1e562ee842fb590f27805813b7d7ee029ce5e59e41ea2bb0",
+    "demos/right_arm_epic_pick_lift_v1/demo.json": "25b78297558e755895d3a0202f0afe43147ac5625539c70bd7e790343b246056"
+  },
+  "curobo_verified_files": 444,
+  "pinned_asset_hashes_verified": 16,
+  "environment": {
+    "python": "3.11.15",
+    "environment": ".venv (read-only foundationpose system-site-packages)",
+    "curobo_commit": "8e734f3ced1df898990bcd92de40abce475907db",
+    "source_import": "verified source via .pth; no source edits",
+    "packages": {
+      "torch": "2.5.1+cu121",
+      "warp-lang": "1.18.0",
+      "cuda-core": "1.2.2",
+      "cuda-bindings": "12.9.10",
+      "nvidia-cuda-nvrtc-cu12": "12.9.86",
+      "nvidia-cuda-nvcc-cu12": "12.9.86",
+      "numpy": "2.4.6",
+      "scipy": "1.17.1",
+      "PyYAML": "6.0.3",
+      "numpy-quaternion": "2024.0.13",
+      "yourdfpy": "0.0.60",
+      "trimesh": "5.1.1",
+      "viser": "1.1.1",
+      "setuptools-scm": "10.3.4",
+      "einops": "0.8.2"
+    }
+  },
+  "gpu_smoke": {
+    "kind": "SYNTHETIC_GPU_SMOKE",
+    "total_bytes": 10331226112,
+    "cold_wall_s": 5.0910946760000115,
+    "warm_count": 10,
+    "warm_p50_s": 0.28310287950000657,
+    "warm_min_s": 0.2800344250000535,
+    "warm_max_s": 0.2932153000000426,
+    "peak_allocated_bytes": 546581504,
+    "reserved_bytes_by_warm_request": [
+      614465536,
+      614465536,
+      614465536,
+      614465536,
+      614465536,
+      614465536,
+      614465536,
+      614465536,
+      614465536,
+      614465536
+    ],
+    "effective_solver_config": {
+      "entrypoint": "trajopt_solver.solve_cspace",
+      "num_ik_seeds": 4,
+      "num_trajopt_seeds": 2,
+      "use_cuda_graph_requested": true,
+      "cuda_graph_state": {
+        "enabled": true,
+        "captured_optimizer_graphs": 1
+      },
+      "effective_trajopt_seeds": 2,
+      "effective_ik_seeds": 4,
+      "initial_iters": 50,
+      "finetune_attempts": 0,
+      "solve_calls": 1,
+      "warmup_solve_calls": 0,
+      "cuboid_capacity": 512,
+      "runtime_cache_count": 1,
+      "worker_sha256": "5e4db001a899ef1fab0682382780eb2cc4783e64417e070245aa66265577fb73"
+    },
+    "independent_validation": {
+      "validator": "independent_cpu_urdf_sphere_cuboid_v1",
+      "gripper_component_revision": null,
+      "input_trajectory_samples": 41,
+      "validation_knots": 22,
+      "maximum_knot_joint_step_rad": 0.0037920773029327393,
+      "dense_samples": 43,
+      "subdivisions": 2,
+      "ignored_object_ids": [],
+      "min_clearance_m": 16.893810668166047,
+      "limiting_object_id": "synthetic_far_box",
+      "limiting_robot_component_id": "gripper_union",
+      "central_tcp_margin_m": null,
+      "central_exclusion_enabled": false,
+      "collision_free": true,
+      "self_collision_independently_checked": false
+    }
+  },
+  "gpu_faults": [
+    {
+      "kind": "cancel_during_solve",
+      "wall_s": 2.8409693140001764,
+      "worker_reaped_before_response": true,
+      "output_exists": false,
+      "fault_scope": "REAL_CUROBO",
+      "post_cleanup_cuda_free_total_bytes": [
+        9697427456,
+        10331226112
+      ]
+    },
+    {
+      "kind": "cold_deadline",
+      "wall_s": 4.068914805999839,
+      "worker_reaped_before_response": true,
+      "output_exists": false,
+      "fault_scope": "REAL_CUROBO",
+      "post_cleanup_cuda_free_total_bytes": [
+        9698213888,
+        10331226112
+      ]
+    },
+    {
+      "kind": "allocator_oom",
+      "wall_s": 0.9779055919998427,
+      "worker_reaped_before_response": true,
+      "output_exists": false,
+      "fault_scope": "CUDA_ALLOCATOR_NOT_CUROBO_OOM",
+      "post_cleanup_cuda_free_total_bytes": [
+        9699655680,
+        10331226112
+      ]
+    },
+    {
+      "kind": "recovery_solve",
+      "wall_s": 4.825498071000084,
+      "worker_reaped_before_response": false,
+      "output_exists": true,
+      "fault_scope": "REAL_CUROBO",
+      "post_cleanup_cuda_free_total_bytes": [
+        9698148352,
+        10331226112
+      ]
+    }
+  ],
+  "precheck_synthetic": {
+    "reachable": {
+      "passed": true,
+      "elapsed_s": 0.8940013469999712,
+      "timed_out": false
+    },
+    "unreachable": {
+      "passed": false,
+      "elapsed_s": 1.1497130230000039,
+      "timed_out": false
+    }
+  },
+  "cycle_replay": {
+    "kind": "MOCK_STATE_MACHINE_ONLY",
+    "continuous_cycles": 10,
+    "stages_per_cycle": 19,
+    "fault_stops": 5,
+    "gpu_planning_used_in_cycle": false,
+    "resume_after_lift100": "NOT_IMPLEMENTED"
+  },
+  "cpu_tests": "656 passed, 3 skipped, 13 subtests passed",
+  "raw_evidence_location": "worklog/runtime (ignored, local only)",
+  "oct16_reproduced": false,
+  "physical_execution": false,
+  "site_model_commissioned": false
+}
