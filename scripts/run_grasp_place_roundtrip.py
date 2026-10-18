@@ -345,11 +345,13 @@ def main():
                 '230mm HOLD loaded base transport swept envelope requires site review']}
         write(out/'review_package.json',ready);print(json.dumps(ready,ensure_ascii=False,indent=2));return
     if args.replay:
-        class Mock:
-            def check_cancelled(self):pass
-            def stop(self):event('STOP','PASS',{})
-            def __getattr__(self,name):return lambda **kw:{'mock':True,'call':name,'arguments':kw}
-        result=CycleRunner(p,route,Mock(),event).run();write(out/'result.json',result);return
+        from ares_r.manipulation.roundtrip_replay import RoundtripReplayTransport
+        transport=RoundtripReplayTransport(p)
+        def replay_event(stage,state,detail):
+            transport.stage=stage;event(stage,state,detail)
+        result=CycleRunner(p,route,transport,replay_event).run()
+        result.update(evidence_kind='MOCK_STATE_MACHINE_ONLY',gpu_planning_used_in_cycle=False)
+        write(out/'result.json',result);return
     if not p['review_approved']:
         raise PermissionError('Demo parameter/serial-return review is pending; no motion')
     if args.authorization!=AUTH or not args.onsite_observer_confirmed or not sys.stdin.isatty():
