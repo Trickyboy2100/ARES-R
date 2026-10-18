@@ -58,6 +58,8 @@ def main(progress=None):
     if request.get("point_to_point_policy") is not None:
         validate_curobo_only_policy(request["point_to_point_policy"])
     scene=request["compiled_scene"]
+    from ares_r.manipulation.attached_world import verify_world_identity
+    verify_world_identity(scene,request.get("attached_object_collision"))
     if scene.get("planning_scope")!="P3_PRODUCTION_PLANNING_ONLY" or scene.get("execution_allowed") is not False:
         raise RuntimeError("compiled P3 planning-only scene required")
     if scene["scene_snapshot_id"]!=request["scene_snapshot_id"] or scene["digest"]!=request["scene_digest"]:

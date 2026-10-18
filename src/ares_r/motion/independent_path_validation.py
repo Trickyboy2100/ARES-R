@@ -94,6 +94,8 @@ def validate_dense_world(points, request, *, subdivisions=4):
         local["link6"].extend(grid_spheres_local(attached["link6_aabb"], cell))
         component_labels["link6"].extend(
             ["attached_object"] * len(grid_spheres_local(attached["link6_aabb"], cell)))
+    from ares_r.manipulation.attached_world import verify_world_identity
+    verify_world_identity(request["compiled_scene"],attached)
     origins = _urdf_joint_origins(request["robot_yaml_urdf"])
     tool = np.asarray(request["T_link6_tcp"], dtype=float)
     body_model = np.asarray(request["T_body_model"], dtype=float)

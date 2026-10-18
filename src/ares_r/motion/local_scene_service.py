@@ -119,15 +119,22 @@ class LocalSceneService:
                      scene_dir=None, created_at_unix=None, timings_s=None)
         return self._write(value)
 
-    def scan(self, *, force: bool = False, active_arm: str = "right") -> dict:
+    def scan(self, *, force: bool = False, active_arm: str = "right", attachment=None) -> dict:
         if active_arm not in ("left", "right"):
             raise ValueError("active arm must be left or right")
+        if attachment is not None:
+            from ares_r.manipulation.attached_collision import verify_attached_collision
+            verify_attached_collision(attachment)
+        attachment_revision=attachment['revision'] if attachment else None
         current = self.status()
         if current["state"] == SceneState.SCANNING.value:
             raise RuntimeError("local scene scan already in progress")
         if (current["state"] == SceneState.READY.value and not force and
-                current.get("active_arm") == active_arm):
+                current.get("active_arm") == active_arm and
+                current.get("attachment_revision")==attachment_revision):
             return current
+        reusable_capture=(current.get("scene_dir") if current["state"]==SceneState.READY.value and
+            current.get("active_arm")==active_arm and current.get("attachment_revision")!=attachment_revision else None)
         current.update(state=SceneState.SCANNING.value, reason="FRESH_SCAN_REQUESTED")
         self._write(current)
         evidence_root = Path(self.config.get("scene_aware_motion", {}).get(
@@ -137,10 +144,12 @@ class LocalSceneService:
                         + "_" + uuid.uuid4().hex[:8]))
         try:
             try:
-                built = self.scene_builder(self.config, destination, active_arm=active_arm)
+                built = self.scene_builder(self.config, destination, active_arm=active_arm,
+                    **({"attachment":attachment} if attachment is not None else {}),
+                    **({"reuse_capture":reusable_capture} if reusable_capture else {}))
             except TypeError as exc:
                 # Backward-compatible injection seam for deterministic unit fixtures.
-                if "active_arm" not in str(exc):
+                if attachment is not None or "active_arm" not in str(exc):
                     raise
                 built = self.scene_builder(self.config, destination)
             report = json.loads((Path(built["scene_dir"]) / "scene/scene_report.json").read_text())
@@ -165,23 +174,25 @@ class LocalSceneService:
             tool_revision=report["tool_revision"],
             created_at_unix=self.clock(),
             timings_s=built.get("timing_s"),
-            active_arm=active_arm,
+            active_arm=active_arm,attachment_revision=attachment_revision,
         )
         return self._write(value)
 
     def ensure_fresh(self, reason: str, policy=ScenePolicy.AUTO_FRESH,
-                     active_arm: str = "right") -> dict:
+                     active_arm: str = "right", attachment=None) -> dict:
+        attachment_revision=attachment['revision'] if attachment else None
         policy = ScenePolicy(policy)
         current = self.status()
         if policy is ScenePolicy.FORCE_RESCAN:
             self.invalidate("FORCE_RESCAN:%s" % reason, required=True)
-            return self.scan(force=True, active_arm=active_arm)
+            return self.scan(force=True, active_arm=active_arm, attachment=attachment)
         if (current["state"] == SceneState.READY.value and
-                current.get("active_arm") == active_arm):
+                current.get("active_arm") == active_arm and
+                current.get("attachment_revision")==attachment_revision):
             return current
         if policy is ScenePolicy.REUSE_IF_VALID:
             raise RuntimeError("scene is not reusable: %s" % current["state"])
-        return self.scan(force=True, active_arm=active_arm)
+        return self.scan(force=True, active_arm=active_arm, attachment=attachment)
 
     def snapshot(self) -> dict:
         current = self.status()

@@ -63,9 +63,14 @@ def compile_snapshot(snapshot, arm: str, T_body_model, planning_scope="DEMO_OFFL
     cuboids = {}
     targets = {}
     provenance = []
+    attachments=[value for value in (snapshot.left_attached_object,snapshot.right_attached_object) if value is not None]
+    attached_ids={value.object_id for value in attachments}
     for item in objects:
         if item.pose.frame_id != "body" or item.geometry_type != "cuboid":
             raise ValueError("SceneCompiler accepts BODY cuboids only")
+        if item.object_id in attached_ids:
+            provenance.append({'object_id':item.object_id,'role':'ATTACHED','used_as':'attached_only'})
+            continue
         inflated = (np.asarray(item.dimensions_m, dtype=float) + 2.0 * item.inflation_m).tolist()
         if planning_scope == "P3_PRODUCTION_PLANNING_ONLY":
             center, dims, orientation = transform_body_cuboid(item.pose.xyz_m, inflated, model_body)
@@ -98,5 +103,9 @@ def compile_snapshot(snapshot, arm: str, T_body_model, planning_scope="DEMO_OFFL
         "cuboids": cuboids, "targets": targets, "target_policy": target_policy,
         "provenance": provenance,
     }
+    active_attachment=next((item for item in attachments if item.attached_to==arm),None)
+    if active_attachment is not None:
+        payload['attached_object_id']=active_attachment.object_id
+        payload['attached_object_revision']=active_attachment.source_revision
     payload["digest"] = hashlib.sha256(json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
     return payload

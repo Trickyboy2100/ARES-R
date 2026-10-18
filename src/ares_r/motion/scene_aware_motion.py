@@ -260,7 +260,8 @@ class SceneAwareMotionService:
         self.config = dict(self.config, operations_policy_revision=operations['revision'])
         scene = self.local_scene.ensure_fresh(
             "MOTION_REQUEST:%s" % request.request_label, request.scene_policy,
-            active_arm=request.arm)
+            active_arm=request.arm, **({"attachment":request.constraints.attached_object_geometry}
+                if request.constraints.attached_object_geometry is not None else {}))
         if scene["state"] != "READY":
             raise RuntimeError("fresh local scene required")
         plan_id = "PLAN_" + uuid.uuid4().hex
