@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Package real replay receipts and timings; never runs hardware or invents PASS."""
-import argparse,csv,hashlib,json,subprocess,tarfile
+import argparse,csv,hashlib,json,re,subprocess,tarfile
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 def load(path):return json.loads(Path(path).read_text())
@@ -8,6 +8,7 @@ def sha(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--campaign',type=Path,required=True)
     parser.add_argument('--stop-campaign',type=Path,required=True);args=parser.parse_args()
+    args.campaign=args.campaign.resolve();args.stop_campaign=args.stop_campaign.resolve()
     out=ROOT/'release/roundtrip-rc1';out.mkdir(exist_ok=True,parents=True)
     campaign=load(args.campaign/'campaign.json');stops=load(args.stop_campaign/'campaign.json')
     cycles=[r for r in campaign if r['name'].startswith('cycle-')]
@@ -16,7 +17,9 @@ def main():
     runs=[load(Path(r['run_dir'])/'gpu_calls.json') for r in cycles]
     if any([r['label'] for r in run]!=['PREGRASP','HOLD230','PRELAND40'] for run in runs):raise RuntimeError('missing actual GPU stage')
     if any(not r['independent_dense_validation']['collision_free'] or not r['orientation_validation']['passed'] for run in runs for r in run):raise RuntimeError('plan proof missing')
-    sample=Path(cycles[-1]['run_dir']);events=load(sample/'events.json');rows=[]
+    sample=ROOT/'worklog/runtime/rc-final-normal'
+    if load(sample/'job.json')['state']!='COMPLETED' or load(ROOT/'worklog/runtime/rc-final-stress640/job.json')['state']!='COMPLETED':raise RuntimeError('final-code normal and 640-world receipts required')
+    events=load(sample/'events.json');rows=[]
     for event in events:
         if event['state']!='PASS':continue
         detail=event['detail'];gpu=detail.get('gpu') or {};native=float(detail.get('native_duration_s',0));base=float(detail.get('nominal_motion_s',0))
@@ -40,23 +43,27 @@ def main():
       'ATTACHED_WORLD_IDENTITY':'PASS','GRASP_TO_HOLD230_OFFLINE':'PASS','PLACE_RELEASE_RETURN_OFFLINE':'PASS',
       'CHECKPOINT_RESUME':'PASS','WEBUI_ART_SINGLE_JOB':'PASS','SITE_DEPLOYMENT_PACKAGE_READY':'CONDITIONAL'}
     extras={}
-    for name in ('rc-real-oom','rc-stress640'):
+    for name in ('rc-real-oom','rc-stress640','rc-final-normal','rc-final-stress640'):
         directory=ROOT/'worklog/runtime'/name
         if (directory/'job.json').exists():
             job=load(directory/'job.json');extras[name]={'state':job['state'],'stage':job['stage'],'failure':job['failure']}
             if (directory/'gpu_calls.json').exists():extras[name]['gpu_calls']=load(directory/'gpu_calls.json')
             if (directory/'planner_final_status.json').exists():extras[name]['planner_final_status']=load(directory/'planner_final_status.json')
+    for item in extras.values():
+        for call in item.get('gpu_calls',[]):
+            for key,value in call['gpu_memory_bytes'].items():memory[key]=max(memory[key],value)
     result={'schema_version':1,'release':'ARES_R_ROUNDTRIP_RC1_20261018','code_commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
        'evidence_kind':'SYNTHETIC_GPU_REPLAY','physical_execution':False,'oct16_reproduced':False,'commissioned':False,
        'flags':flags,'full_cycles':campaign[:len(cycles)],'all_acceptance_cases':campaign+stops,'extra_checks':extras,
-       'native_retiming':retime,'gpu_peak_bytes':memory,'representative_stages':rows,'representative_run_id':cycles[-1]['run_id'],
+       'native_retiming':retime,'gpu_peak_bytes':memory,'representative_stages':rows,'representative_run_id':load(sample/'job.json')['run_id'],
        'attached_filter_proofs':[{k:v for k,v in item.items() if k!='removed_indices'} for item in filters],
        'http_status_identity':load(ROOT/'worklog/runtime/rc-webui-art-http.json'),
-       'software_tests':{'runner':'unittest discover under offline_sandbox.sh','count':677,'status':'PASS'},
+       'software_tests':{'runner':'unittest discover under offline_sandbox.sh','count':int(re.search(r'Ran (\d+) tests', (ROOT/'worklog/runtime/rc-cpu-tests-final.log').read_text())[1]),'status':'PASS'},
        'engineering_cycle_target_s':150,'target_status':'UNCOMMISSIONED_ENGINEERING_TARGET',
        'modeled_core_cycle_s':sum(r['software_wall_s']+r['native_motion_s']+r['base_nominal_s'] for r in rows),
        'cycle_estimate_excludes':['real scans and Epic response time','physical gripper and settling latency','site network and safety overhead'],
        'limitations':['all device states, scene/ID1/ID3 observations and mounting transform are synthetic',
+           'ten normal GPU cycles predate the added int32 preallocation guard; normal-world effective buffer stays 5000; final-code standard/640 acceptance is recorded separately',
            'first three campaign cycles predate the final five-control-point retimer; subsequent full cycles and all checkpoint/fault cases use it',
            'campaign OOM/OOD/IK/vision/network faults are injected; rc-real-oom additionally exercises the actual CUDA allocator at a reduced budget',
            'native C++ settling source changed; actual site SDK/native binary compilation and commissioning pending',
@@ -72,9 +79,9 @@ def main():
         duration=row['software_wall_s']+row['native_motion_s']+row['base_nominal_s']
         axes[1].barh(i,duration,left=offset,color='#498c66' if row['native_motion_s'] else '#8c7a49');offset+=duration
     axes[1].set_title('Modeled sequential core (not physical measurement)');axes[1].set_xlabel('cumulative seconds')
-    axes[0].set_yticks(positions,[r['stage'] for r in rows]);axes[0].invert_yaxis();fig.tight_layout();fig.savefig(out/'stage_waterfall.svg');plt.close(fig)
+    axes[0].set_yticks(positions,[r['stage'] for r in rows]);axes[0].invert_yaxis();fig.tight_layout();fig.savefig(out/'stage_waterfall.svg');fig.savefig(out/'stage_waterfall.png',dpi=110);plt.close(fig)
     with tarfile.open(out/'replay_evidence.tar.gz','w:gz') as archive:
-        for root in (args.campaign,args.stop_campaign,ROOT/'worklog/runtime/rc-real-oom',ROOT/'worklog/runtime/rc-stress640'):
+        for root in (args.campaign,args.stop_campaign,ROOT/'worklog/runtime/rc-real-oom',ROOT/'worklog/runtime/rc-stress640',ROOT/'worklog/runtime/rc-final-normal',ROOT/'worklog/runtime/rc-final-stress640'):
             if not root.exists():continue
             for path in root.rglob('*'):
                 if path.is_file() and (path.suffix in ('.json','.npz') or path.name.endswith('.txt') or path.name=='planner.log'):

@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 import subprocess
 import sys
+import shutil,platform
 ROOT=Path(__file__).resolve().parents[1]
 PIN='8e734f3ced1df898990bcd92de40abce475907db'
 def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -16,6 +17,14 @@ def main():
     parser.add_argument('--require-site',action='store_true');args=parser.parse_args();checks=[]
     def record(name,status,detail):checks.append({'check':name,'status':status,'detail':detail})
     manifest=json.loads(args.manifest.read_text())
+    record('HOST_OS','PASS' if platform.system()=='Linux' else 'BLOCKED',platform.platform())
+    free=shutil.disk_usage(ROOT).free
+    record('FREE_DISK','PASS' if free>=5*1024**3 else 'BLOCKED',{'free_bytes':free,'minimum_bytes':5*1024**3})
+    addresses=[]
+    if shutil.which('ip'):
+        listing=json.loads(subprocess.check_output(['ip','-j','address','show'],text=True))
+        addresses=[a['local'] for row in listing for a in row.get('addr_info',[]) if a['family']=='inet']
+    record('SITE_HOST_SUFFIX_32','PASS' if any(a.endswith('.32') for a in addresses) else 'SITE_PENDING',{'local_ipv4':addresses,'required_for_site':True})
     bad=[name for name,expected in manifest['files_sha256'].items() if not (ROOT/name).is_file() or sha(ROOT/name)!=expected]
     record('RELEASE_FILE_HASHES','FAIL' if bad else 'PASS',bad)
     source=ROOT/'worklog/runtime/curobo-pinned';source_manifest=source/'ARES_R_SOURCE_MANIFEST.json'
@@ -33,7 +42,7 @@ def main():
         if not torch.cuda.is_available():raise RuntimeError('CUDA unavailable')
         torch.cuda.set_device(0);probe=torch.ones(32,device='cuda:0');torch.cuda.synchronize()
         total=torch.cuda.get_device_properties(0).total_memory
-        record('CUDA_GPU0','PASS',{'name':torch.cuda.get_device_name(0),'total_bytes':total,'torch':torch.__version__,'cuda':torch.version.cuda,'allocator_fraction':.75,'budget_bytes':int(total*.75),'probe_sum':probe.sum().item()})
+        record('CUDA_GPU0','PASS' if torch.__version__==manifest['runtime_versions']['torch'] and torch.version.cuda==manifest['runtime_versions']['cuda_runtime'] else 'FAIL',{'name':torch.cuda.get_device_name(0),'total_bytes':total,'torch':torch.__version__,'cuda':torch.version.cuda,'allocator_fraction':.75,'budget_bytes':int(total*.75),'probe_sum':probe.sum().item()})
     except Exception as exc:record('CUDA_GPU0','BLOCKED',str(exc))
     preview=ROOT/'worklog/runtime/preview-model'
     valid=all((preview/name).exists() and sha(preview/name)==expected for name,expected in manifest['preview_model_sha256'].items() if name!='robot.yml')
