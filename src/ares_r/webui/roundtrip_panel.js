@@ -32,8 +32,9 @@
     find('roundtripDetail').textContent=JSON.stringify({revision:value.revision,stage_count:value.stage_count,
       parameters:value.parameters,slot_offset_m_rad:value.slot_offset_m_rad,events:value.recent_events,
       run_dir:value.run_dir,log:value.log},null,2);
-    if(value.blockers.length)find('roundtripError').textContent=value.blockers.join('\n');
+    if((value.blockers||[]).length)find('roundtripError').textContent=value.blockers.join('\n');
     else if(value.failure_message)find('roundtripError').textContent=value.failure_message;
+    start.textContent=find('roundtripMode').value==='SITE'?'一键开始完整抓放（实机）':'一键开始完整GPU离线回放';
     start.disabled=pending||value.running||(find("roundtripMode").value==="SITE"&&(!value.can_start||!checkbox.checked));
     checkbox.disabled=pending||value.running;
     if(value.running)checkbox.checked=false;
@@ -44,8 +45,8 @@
   start.addEventListener('click',async()=>{
     if(pending||!current||current.running||(find("roundtripMode").value==="SITE"&&!checkbox.checked))return;
     pending=true;start.disabled=true;checkbox.disabled=true;find('roundtripError').textContent='';
-    try{paint(await call('/api/demo/roundtrip/start',{authorization:'RIGHT GRASP PLACE ROUNDTRIP',
-      onsite_observer_confirmed:checkbox.checked,execution_mode:find('roundtripMode').value,contract_sha256:current.contract_sha256}));checkbox.checked=false;}
+    try{await call('/api/demo/roundtrip/start',{authorization:'RIGHT GRASP PLACE ROUNDTRIP',
+      onsite_observer_confirmed:checkbox.checked,execution_mode:find('roundtripMode').value,contract_sha256:current.contract_sha256});checkbox.checked=false;}
     catch(error){find('roundtripError').textContent='未启动：'+error.message;}
     finally{pending=false;await refresh();}
   });
