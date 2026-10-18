@@ -52,7 +52,7 @@ def precheck_contact_lift(solver, grasp_xyz, rotation, direction, seeds,
                         for name,points in paths.items()}
                     branch['passed']=all(value['passed'] for value in branch['orientation_validation'].values())
                 if branch['passed']:
-                    accepted.append({'goal_rad':paths['contact'][0],
+                    accepted.append({'goal_rad':paths['contact'][0],'prechecked_paths':paths,
                         'grasp_symmetry_id':symmetry,'target_rotation_body':rot.tolist(),
                         'approach_direction_body':direction.tolist(),
                         'ik_position_error_m':max(row['position_error_m'] for row in branch['samples']),
@@ -64,6 +64,9 @@ def precheck_contact_lift(solver, grasp_xyz, rotation, direction, seeds,
             branch['max_orientation_error_deg']=max((v['orientation_error_deg'] for v in samples),default=None)
             if branch['passed'] or timed_out:break
         if timed_out:break
+    import hashlib,json
+    for candidate in accepted:
+        candidate['branch_sha256']=hashlib.sha256(json.dumps(candidate,sort_keys=True,separators=(',',':'),allow_nan=False).encode()).hexdigest()
     return {'schema_version':1,'evidence_kind':'MODEL_IK_PRECHECK_NOT_GPU_OR_COLLISION',
             'contact_m':contact_m,'lift_m':lift_m,'elapsed_s':time.monotonic()-start,
             'budget_s':budget_s,'timed_out':timed_out,'branches':branches,

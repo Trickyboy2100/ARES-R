@@ -169,6 +169,15 @@ def main():
                         and abs(candidate - start[index])
                         < abs(goal[index] - start[index])):
                     goal[index] = candidate
+    if args.early_contact_lift_precheck:
+        from ares_r.manipulation.roundtrip_demo import digest
+        for goal,item in zip(goals,metadata):
+            paths=item['prechecked_paths']
+            shift=np.asarray(goal)-np.asarray(paths['contact'][0])
+            for name,rows in paths.items():paths[name]=(np.asarray(rows)+shift).tolist()
+            item['observation_id']=observation['observation_id']
+            item.pop('branch_sha256',None)
+            item['branch_sha256']=digest(item)
     excursion = [abs(goals[0][index] - start[index]) for index in range(6)]
     print("goal on the branch nearest the live start: %s"
           % [round(math.degrees(v), 2) for v in goals[0]])

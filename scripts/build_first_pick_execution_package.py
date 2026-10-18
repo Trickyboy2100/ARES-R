@@ -49,7 +49,13 @@ def main():
     decomp=load(a.epoch/"live_scene/scene/support_decomposition.json")
     params=load(ROOT/"config/tray_to_groove_v2.json")
     solver=RuntimeGoalIK(request["robot_yaml_urdf"],request["T_body_model"],request["T_link6_tcp"])
-    if a.contact:
+    bound=None
+    if request.get('early_contact_lift_precheck'):
+        from ares_r.manipulation.first_pick_package import bound_contact_lift
+        q_contact,q_lift,bound=bound_contact_lift(planning,request,observation['observation_id'])
+        direction=np.asarray(bound['approach_direction_body'])
+        if a.contact or a.lift_start_audit:raise RuntimeError('bound branch cannot be replaced by an IK override')
+    elif a.contact:
         contact=load(a.contact/"contact_inflation_sweep.json")
         q_contact=[list(map(float,row)) for row in contact["contact_points_rad"]]
         direction=np.asarray(contact["approach_direction_body"],dtype=float)
@@ -85,10 +91,11 @@ def main():
     approach_validation=validate_bypass_segment(approach_samples,world,policy,
         expected_direction_body=direction,joint_lower=solver.lower,joint_upper=solver.upper,
         expire_at_end=False)
-    q_lift=[];seed=lift_start.copy();start=grasp_T[:3,3]
-    for z in np.linspace(0,.1,51):
-        solved=solver.solve(start+[0,0,z],grasp_T[:3,:3],seed);seed=np.asarray(solved.joints_rad)
-        q_lift.append(list(solved.joints_rad))
+    if bound is None:
+        q_lift=[];seed=lift_start.copy();start=grasp_T[:3,3]
+        for z in np.linspace(0,.1,51):
+            solved=solver.solve(start+[0,0,z],grasp_T[:3,:3],seed);seed=np.asarray(solved.joints_rad)
+            q_lift.append(list(solved.joints_rad))
     lift_samples=[{"tcp_position_body_m":solver.fk(q)[:3,3].tolist(),"joints_rad":q,
                    "arm_links":arm_geometry(q,request)} for q in q_lift]
     lift_validation=validate_bypass_segment(lift_samples,world,policy,
@@ -101,6 +108,16 @@ def main():
         0.,report["observation_id"])
     attached=attach_scene_object(target,grasp_T.tolist(),side="right",source_revision=policy.revision)
     attached_collision=build_attached_collision(attached,request["T_link6_tcp"],inflation_m=.004)
+    from ares_r.manipulation.attached_world import bind_owned_points,inside_boxes
+    source=np.load(a.epoch/'live_scene/scene/clean_residual.npz')['points_body_m']
+    lo=np.asarray(primitive['center_m'])-np.asarray(primitive['dims_m'])/2
+    hi=np.asarray(primitive['center_m'])+np.asarray(primitive['dims_m'])/2
+    candidates=np.all((source>=lo)&(source<=hi),axis=1)
+    protected=[row for row in decomp['primitives'] if row.get('semantic') in ('SUPPORT_SURFACE','STRUCTURE')]
+    candidates&=~inside_boxes(source,protected)
+    attached_collision=bind_owned_points(attached_collision,source[candidates],
+        grasp_T@np.linalg.inv(np.asarray(request['T_link6_tcp'])),
+        pointcloud_sha256=observation['pointcloud_sha256'])
     stages=[
       {"index":1,"action":"FRESH_ATOMIC_RIGHT_PICK_OBSERVATION","state":"BOUND"},
       {"index":2,"action":"CUROBO_MOVE_TO_50MM_PREGRASP","trajectory_hash":trajectory_hash(planning["trajectory_points_rad"])},
@@ -130,6 +147,7 @@ def main():
       "lift_start_provenance":({"kind":"POST_GRASP_READ_ONLY_JAKA_AUDIT",
           "path":str(a.lift_start_audit),"joints_rad":lift_start.tolist()}
           if a.lift_start_audit else {"kind":"PLANNED_CONTACT_ENDPOINT"}),
+      "prechecked_branch":bound,
       "trajectories":{"pregrasp":planning["trajectory_points_rad"],"contact":q_contact,"lift":q_lift},
       "FIRST_PICK_EXECUTION_PACKAGE_READY":True,"place_included":False}
     package["package_sha256"]=sha(package)

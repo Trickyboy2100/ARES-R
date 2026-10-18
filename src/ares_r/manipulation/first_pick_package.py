@@ -36,4 +36,25 @@ def verify_first_pick_package(value):
         raise ValueError("contact bypass central exclusion must be boolean")
     if not core.get("lift_validation",{}).get("expired_at_end"):
         raise ValueError("contact bypass must expire after initial lift")
+    if core.get('prechecked_branch'):
+        contact,lift,_=bound_contact_lift({'selected_goal_candidate_metadata':core['prechecked_branch'],
+            'trajectory_points_rad':core['trajectories']['pregrasp']},{},core['observation_id'])
+        if contact!=core['trajectories']['contact'] or lift!=core['trajectories']['lift']:
+            raise ValueError('prechecked contact/lift changed during packaging')
     return True
+
+
+def bound_contact_lift(planning,request,observation_id):
+    """Use the selected prechecked branch without another numerical IK solve."""
+    import numpy as np
+    selected=dict(planning.get('selected_goal_candidate_metadata') or {})
+    branch_hash=selected.pop('branch_sha256',None)
+    if not branch_hash or branch_hash!=_sha(selected):raise ValueError('PRECHECK_BRANCH_DIGEST_MISMATCH')
+    if selected.get('observation_id')!=observation_id:raise ValueError('PRECHECK_OBSERVATION_MISMATCH')
+    paths=selected['prechecked_paths'];pregrasp=np.asarray(planning['trajectory_points_rad'][-1])
+    contact=np.asarray(paths['contact']);lift=np.asarray(paths['lift'])
+    if contact.shape!=(26,6) or lift.shape!=(51,6):raise ValueError('PRECHECK_PATH_SHAPE')
+    if not np.isfinite(contact).all() or not np.isfinite(lift).all():raise ValueError('PRECHECK_NONFINITE')
+    if np.max(np.abs(contact[0]-pregrasp))>1e-4:raise ValueError('CUROBO_PRECHECK_BRANCH_SEAM')
+    if np.max(np.abs(contact[-1]-lift[0]))>1e-4:raise ValueError('CONTACT_LIFT_BRANCH_SEAM')
+    return contact.tolist(),lift.tolist(),dict(selected,branch_sha256=branch_hash)
