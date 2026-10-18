@@ -102,20 +102,45 @@ def plan_with_retries(parameters, attempt, event, check_cancelled):
 
 
 class CycleRunner:
-    def __init__(self, parameters, route, transport, event):
+    def __init__(self, parameters, route, transport, event, job=None):
         self.stages=recipe(parameters,route)
         self.transport=transport
-        self.event=event
+        self.event=event;self.job=job
 
     def run(self):
-        for stage in self.stages:
-            self.transport.check_cancelled()
-            self.event(stage['id'],'START',stage['arguments'])
-            try:
-                result=getattr(self.transport,stage['call'])(**stage['arguments'])
-            except BaseException as exc:
-                self.event(stage['id'],'FAULT',{'error':str(exc)})
-                self.transport.stop()
-                raise
-            self.event(stage['id'],'PASS',result)
-        return {'result':'RETURNED_GRASP','stages':len(self.stages)}
+        import time
+        job=self.job
+        if job:job.acquire()
+        try:
+            begin=job.restore(self.transport,self.stages) if job else 0
+            for stage in self.stages[begin:]:
+                self.transport.check_cancelled()
+                if job:
+                    token=job.begin(stage)
+                    self.transport.command_id=token
+                self.event(stage['id'],'START',stage['arguments'])
+                started=time.monotonic()
+                try:
+                    result=getattr(self.transport,stage['call'])(**stage['arguments'])
+                    if job:
+                        snapshot=self.transport.checkpoint_snapshot()
+                        recorder=getattr(self.transport,'record_completed',None)
+                        if recorder:recorder(stage,result,snapshot)
+                        job.complete(stage,result,snapshot)
+                except BaseException as exc:
+                    if job:job.fault(exc)
+                    self.event(stage['id'],'FAULT',{'error':str(exc)})
+                    self.transport.stop()
+                    raise
+                self.event(stage['id'],'PASS',dict(result or {},stage_wall_s=time.monotonic()-started))
+                if job and getattr(job,'pause_after',None)==stage['id']:
+                    job.value['state']='PAUSED';job.save()
+                    return {'state':'PAUSED','run_id':job.value['run_id'],'checkpoint':job.value['last_checkpoint']}
+            if job:job.finish()
+            return {'result':'RETURNED_GRASP','state':'COMPLETED','stages':len(self.stages),
+                    **({'run_id':job.value['run_id']} if job else {})}
+        except BaseException as exc:
+            if job and job.value['state'] not in ('FAULT','STOPPED'):job.fault(exc)
+            raise
+        finally:
+            if job:job.release()

@@ -107,6 +107,20 @@ class JakaSdkArm(Arm):
     def joint_position(self) -> List[float]:
         return list(self._query("get_joint_position", "%s joint position" % self.name))
 
+    def planning_state(self):
+        """Minimal read-only collision state; no verbose RobotStatus decoder."""
+        import math,time
+        tool_id=int(_value(self.robot.get_tool_id(),'tool id'))
+        payload=_payload(self.robot.get_tool_data(tool_id),'tool data')
+        joints=self.joint_position();tcp=list(self._query('get_tcp_position','TCP position'))
+        if len(joints)!=6 or not all(math.isfinite(float(v)) for v in joints):
+            raise JakaSdkError('six finite actual joints required')
+        if len(payload)!=2 or len(payload[1])!=6:raise JakaSdkError('actual tool data required')
+        return {'arm':self.name,'joint_position_rad':joints,'tcp_position_mm_rad':tcp,
+            'tool_id':tool_id,'tool_data':{'tool_id':int(payload[0]),'pose_mm_rad':list(payload[1])},
+            'robot_status':{'diagnostics_scope':'MINIMAL_READONLY_COLLISION_STATE'},
+            'captured_at_unix':time.time(),'source':'LIVE_MINIMAL_READONLY_SDK'}
+
     def diagnostics(self) -> Dict[str, object]:
         tool_id = int(_value(self.robot.get_tool_id(), "tool id"))
         tool_payload = _payload(self.robot.get_tool_data(tool_id), "tool data")

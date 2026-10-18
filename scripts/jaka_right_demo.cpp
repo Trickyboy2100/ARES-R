@@ -161,9 +161,19 @@ int main(int argc,char**argv){
             }
             std::this_thread::sleep_until(deadline);
             if(interrupted || (supervised_path && getppid()!=launch_parent))throw std::runtime_error("interrupted / supervisor lost");
-            auto before=Clock::now();State final=read(robot);
-            if(Clock::now()-before>std::chrono::milliseconds(40)||distance(final.q,path.q.back())>rad(.05))
-                throw std::runtime_error("final feedback mismatch");
+            std::cout<<"{\"event\":\"SETTLING\"}"<<std::endl;
+            auto settling_end=Clock::now()+std::chrono::seconds(2);int stable=0;State final{};
+            while(Clock::now()<settling_end){
+                if(interrupted || (supervised_path && getppid()!=launch_parent))throw std::runtime_error("interrupted / supervisor lost");
+                auto before=Clock::now();final=read(robot);
+                if(Clock::now()-before>std::chrono::milliseconds(40))throw std::runtime_error("settling read deadline");
+                if(final.tool_id!=start.tool_id||final.user_id!=start.user_id||distance(final.tool,start.tool)>1e-6)
+                    throw std::runtime_error("settling tool/user changed");
+                stable=(final.motion.inpos && distance(final.q,path.q.back())<=rad(.05))?stable+1:0;
+                if(stable>=2)break;
+                std::this_thread::sleep_for(std::chrono::milliseconds(80));
+            }
+            if(stable<2)throw std::runtime_error("arrival not confirmed");
             std::cout<<"{\"event\":\"target_reached\"";stamp();std::cout<<",\"actual_rad\":";array_json(final.q);
             std::cout<<",\"tcp_mm_rad\":";array_json(final.tcp);std::cout<<"}"<<std::endl;
         }

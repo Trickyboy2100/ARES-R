@@ -168,7 +168,9 @@ class Handler(BaseHTTPRequestHandler):
         try:
             body=self._body()
             if path=="/api/demo/roundtrip/start":value=self.dispatcher.roundtrip_start(body)
-            elif path=="/api/demo/roundtrip/stop":value=self.dispatcher.operations_stop()
+            elif path=="/api/demo/roundtrip/stop":value=self.dispatcher.roundtrip_stop(body)
+            elif path=="/api/demo/roundtrip/resume":value=self.dispatcher.roundtrip_resume(body)
+            elif path=="/api/demo/roundtrip/command-status":value=self.dispatcher.roundtrip_command_status(body)
             elif path=="/api/scene/scan":value=self.dispatcher.scene_scan(True,body.get("arm","right"))
             elif path=="/api/operations/update":value=self.dispatcher.operations_update(body['action'], body['body'])
             elif path=="/api/operations/select":value=self.dispatcher.berth_select(body['operation'])

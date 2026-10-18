@@ -30,6 +30,8 @@ class CanonicalBackend:
         self._physical_state={"state":"IDLE"}
         from .demos.roundtrip_launcher import RoundtripLauncher
         self.roundtrip=RoundtripLauncher(root)
+        from .motion.physical_command_ledger import PhysicalCommandLedger
+        self._commands=PhysicalCommandLedger(root)
         # Recover completed evidence, never resume a physical operation on restart.
         evidence = Path(root) / 'worklog/evidence/operations-execution'
         completed = sorted(evidence.glob('*/live/execution_result.json'))
@@ -40,7 +42,7 @@ class CanonicalBackend:
             self._physical_state = dict(feedback, state='LAST_COMPLETED',
                 output=str(output), recovered_evidence_only=True)
     def system_info(self):
-        task=self.dispatcher.task_status()
+        task=self.task_status()
         value=runtime_identity(self.root,started_monotonic=self.started,
                                active_scheme=task.get("scheme_id"))
         value["supervised_task"]=self.physical_status();return value
@@ -61,9 +63,33 @@ class CanonicalBackend:
                         from .motion.execution_feedback import execution_feedback
                         self._physical_state.update(execution_feedback(
                             self._physical_state['output'], self._physical_state.get('log')))
+                        if code==0 and not (self._physical_state.get('execution_result') or {}).get('target_reached'):
+                            self._physical_state.update(state='FAULT',failure_reason='ARRIVAL_PROOF_MISSING')
+            if self._physical_state.get('command_id') and self._physical_state.get('state') in ('SUCCEEDED','FAULT'):
+                self._command_ledger().update(self._physical_state['command_id'],
+                    'COMPLETED' if self._physical_state['state']=='SUCCEEDED' else 'UNCERTAIN',self._physical_state)
             return dict(self._physical_state)
 
-    def motion_execute(self, body):
+    def _command_ledger(self):
+        from .motion.physical_command_ledger import PhysicalCommandLedger
+        if not hasattr(self,'_commands'):self._commands=PhysicalCommandLedger(self.root)
+        return self._commands
+    def _dispatch_once(self,kind,body,invoke):
+        token=body.get('command_id')
+        if not token:return invoke(body)
+        fresh,record=self._command_ledger().reserve(token,kind,body)
+        if not fresh:
+            return dict(record.get('result') or {},command_id=token,dispatch_state=record['state'],duplicate_suppressed=True)
+        try:
+            result=invoke(body);self._physical_state['command_id']=token
+            result=dict(result,command_id=token)
+            self._command_ledger().update(token,'COMPLETED' if result.get('state')=='SUCCEEDED' else 'DISPATCHED',result)
+            return result
+        except BaseException as exc:
+            self._command_ledger().update(token,'UNCERTAIN',{'error':str(exc)});raise
+    def roundtrip_command_status(self,body):return self._command_ledger().read(body['command_id'])
+    def motion_execute(self,body):return self._dispatch_once('motion_execute',body,self._motion_execute_once)
+    def _motion_execute_once(self, body):
         """Start the existing supervised runner; preserve all its preflight gates."""
         self.roundtrip.check_physical_access(body)
         import pty
@@ -128,7 +154,8 @@ class CanonicalBackend:
         return dict(result, software_abort_requested=True,
                     physical_estop_independent=True)
 
-    def base_move(self, body):
+    def base_move(self,body):return self._dispatch_once('base_move',body,self._base_move_once)
+    def _base_move_once(self, body):
         import math
         from .adapters.amr_http import AmrHttpBase
         from .motion.base_motion_observer import BaseMotionObserver, BaseObservation
@@ -197,10 +224,22 @@ class CanonicalBackend:
                 raise RuntimeError('已有物理任务运行，无法启动完整流程')
             return self.roundtrip.start(body)
     def roundtrip_status(self):return self.roundtrip.status()
+    def roundtrip_resume(self,body):
+        with self._physical_guard:
+            if self._base_running or self._physical_process is not None:raise RuntimeError('physical resource busy')
+            return self.roundtrip.resume(body)
+    def roundtrip_stop(self,body=None):
+        self.roundtrip.stop(body)
+        status=self.roundtrip.status()
+        if status.get('execution_mode')=='SYNTHETIC_GPU_REPLAY':return status
+        return self.operations_stop()
+    def task_status(self):
+        from .manipulation.roundtrip_job import canonical_status
+        return canonical_status(self.root) or self.dispatcher.task_status()
     def call(self,method,args=(),kwargs=None):
         if method == 'motion_stop': return self.operations_stop()
         if method in ('motion_execute', 'operations_stop', 'base_move', 'physical_status',
-                      'roundtrip_start','roundtrip_status'):
+                      'roundtrip_start','roundtrip_status','roundtrip_resume','roundtrip_stop','roundtrip_command_status','task_status'):
             return getattr(self,method)(*list(args),**dict(kwargs or {}))
         allowed={
             "operations_status", "operations_update", "operations_offset_convert", "berth_select", "berth_target", "berth_detect_corner",

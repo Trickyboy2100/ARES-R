@@ -193,7 +193,13 @@ class SceneAwareDispatcher:
             try:
                 cfg = self.config['jaka']
                 arm = JakaSdkArm(side, cfg['arms'][side], cfg)
-                d = arm.diagnostics()
+                if side=='left':
+                    from .motion.arrival_contract import minimal_arm_state
+                    def fetch(_):
+                        d=arm.planning_state() if hasattr(arm,'planning_state') else arm.diagnostics()
+                        return {'joints_rad':d['joint_position_rad'],'tool_id':d['tool_id'],'diagnostics':d}
+                    d=minimal_arm_state(fetch,side)['diagnostics']
+                else:d = arm.diagnostics()
                 base = world['arms'][side]
                 t = transform_xyz_rpy(base['base_xyz_m'], base['base_rpy_rad']) @ np.asarray(
                     pose_mm_rad_to_matrix(d['tcp_position_mm_rad']))
@@ -357,7 +363,9 @@ class SceneAwareDispatcher:
     def task_show(self, task_id): return self.studio().task_show(task_id)
     def task_prepare(self, task_id): return self.studio().prepare(task_id)
     def task_replay(self, task_id): return self.studio().start_replay(task_id)
-    def task_status(self): return self.studio().status()
+    def task_status(self):
+        from .manipulation.roundtrip_job import canonical_status
+        return canonical_status(self.operations.root) or self.studio().status()
     def task_stop(self): return self.studio().stop()
 
     def system_info(self):

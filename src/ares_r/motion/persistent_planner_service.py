@@ -75,7 +75,8 @@ def cuda_worker(pipe):
 
 
 class PlannerSupervisor:
-    def __init__(self, worker_target=cuda_worker):
+    def __init__(self, worker_target=cuda_worker, cancelled=None):
+        self.cancelled=cancelled or (lambda:False)
         self.context=multiprocessing.get_context('spawn')
         self.worker_target=worker_target
         self.process=None;self.pipe=None;self.key=None
@@ -152,7 +153,7 @@ class PlannerSupervisor:
             staging.parent.mkdir(parents=True,exist_ok=True)
             self.pipe.send(dict(job,staging=str(staging)))
             while True:
-                if active['cancel'].is_set():raise RuntimeError('JOB_CANCELLED')
+                if self.cancelled() or active['cancel'].is_set():raise RuntimeError('JOB_CANCELLED')
                 if time.monotonic()>=deadline:raise RuntimeError('DEADLINE_EXCEEDED')
                 if connection and select.select([connection],[],[],0)[0]:
                     if not connection.recv(1,socket.MSG_PEEK):raise RuntimeError('CLIENT_DISCONNECTED')
@@ -165,12 +166,12 @@ class PlannerSupervisor:
                     break
                 if not self.process.is_alive():raise RuntimeError('WORKER_EXITED_WITHOUT_RESULT')
             # Check AGAIN after receiving/writing: a late SUCCESS is never published.
-            if time.monotonic()>=deadline or active['cancel'].is_set():raise RuntimeError('LATE_RESULT_DISCARDED')
+            if time.monotonic()>=deadline or self.cancelled() or active['cancel'].is_set():raise RuntimeError('LATE_RESULT_DISCARDED')
             result=json.loads(staging.read_text())
             result['planner_job']={'job_id':job['job_id'],'deadline_monotonic':deadline,
                 'supervisor_elapsed_s':time.monotonic()-started,'late_result_discarded':False}
             staging.write_text(json.dumps(result)+'\n')
-            if time.monotonic()>=deadline or active['cancel'].is_set():raise RuntimeError('LATE_RESULT_DISCARDED')
+            if time.monotonic()>=deadline or self.cancelled() or active['cancel'].is_set():raise RuntimeError('LATE_RESULT_DISCARDED')
             staging.replace(job['output'])
             self.last_job={'job_id':job['job_id'],'state':'COMPLETED','worker_reaped':False,'output':job['output']}
             return {'ok':True,'job_id':job['job_id'],'output':job['output']}
