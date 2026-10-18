@@ -65,7 +65,7 @@ class RoundtripDemoTests(unittest.TestCase):
 
     def test_terminal_model_and_resource_errors_do_not_consume_quality(self):
         for error in ('RESOURCE_EXHAUSTED','INVALID_START_COLLISION','INVALID_GOAL_COLLISION',
-                      'CONTACT_IK','CANCEL_NOT_ACKNOWLEDGED'):
+                      'CONTACT_IK','CANCEL_NOT_ACKNOWLEDGED','COLLISION_LAUNCH_BUDGET_EXCEEDED'):
             calls=[]
             def failed(mode,index):
                 calls.append(mode);raise PlanningAttemptFailure(error)

@@ -88,7 +88,7 @@ def plan_with_retries(parameters, attempt, event, check_cancelled):
             result=attempt(mode,index)
         except PlanningAttemptFailure as exc:
             terminal=('RESOURCE_EXHAUSTED','out of memory','INVALID_START','INVALID_GOAL',
-                      'CONTACT_IK','CANCEL_NOT_ACKNOWLEDGED','JOB_CANCELLED',
+                      'CONTACT_IK','CANCEL_NOT_ACKNOWLEDGED','JOB_CANCELLED','COLLISION_LAUNCH_BUDGET',
                       'scene_snapshot','revision mismatch','SCENE_REQUIRED')
             if any(code.lower() in str(exc).lower() for code in terminal):raise
             check_cancelled()

@@ -19,7 +19,7 @@ from ares_r.motion.independent_path_validation import validate_dense_world
 from ares_r.motion.tcp_orientation import (HORIZONTAL_FORWARD_R_BODY,validate_level_path,
                                            validate_path)
 from ares_r.motion.constrained_manifold_seed import build_level_manifold_seeds
-from ares_r.motion.latency_solver import validate_solver_policy,solve_single_pass,orientation_runtime_key
+from ares_r.motion.latency_solver import validate_solver_policy,solve_single_pass,orientation_runtime_key,bounded_interpolation_buffer
 
 
 def transform(xyz,rpy):
@@ -84,7 +84,7 @@ def main(progress=None):
         if sha!=item["sha"]:raise RuntimeError("modified cuRobo source: "+item["path"])
     robot_path=Path(request["robot_yaml"]);robot=yaml.safe_load(robot_path.read_text())
     collision_model=request["collision_model"]
-    params=request["planning_parameters"]
+    params=dict(request["planning_parameters"])
     solver_policy=validate_solver_policy(request.get('solver_policy'))
     if solver_policy:
         # Production FAST is exactly one solve; benchmark/warmup requests cannot
@@ -147,6 +147,8 @@ def main(progress=None):
     # "Cannot add cuboid, cache is full (512 cuboids)".  Bucketed to 256 so
     # similarly sized scenes still share a runtime.
     cuboid_capacity=max(512,((len(cuboids)+32+255)//256)*256)
+    params['interpolation_buffer_size'],launch_budget=bounded_interpolation_buffer(
+        params['interpolation_buffer_size'],params['num_trajopt_seeds'],sum(map(len,spheres.values())),cuboid_capacity)
     static_signature=hashlib.sha256(json.dumps({"robot":robot,"spheres":spheres,
         "parameters":params,"orientation_lock":signature_orientation,
         "cuboid_capacity":cuboid_capacity,"solver_policy":solver_policy,
@@ -505,6 +507,7 @@ def main(progress=None):
             "finetune_attempts":0 if solver_policy else None,
             "solve_calls":len(samples),"warmup_solve_calls":int(warmup_s>0),
             "cuboid_capacity":cuboid_capacity,"runtime_cache_count":len(_RUNTIME_CACHE),
+            "collision_launch_budget":launch_budget,
             "worker_sha256":hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         },
         "gpu_memory_bytes":{"allocated":torch.cuda.memory_allocated(),

@@ -28,3 +28,20 @@ def solve_single_pass(planner, goal, start, policy, seed=None):
     policy = validate_solver_policy(policy)
     return planner.trajopt_solver.solve_cspace(goal, start, seed_traj=seed,
         finetune_attempts=0, initial_iters=policy['initial_iters'], finetune_dt_scale=1.0)
+
+
+def bounded_interpolation_buffer(requested,seeds,spheres,cuboid_capacity):
+    """Pinned Warp uses signed int32 wp.tid over B*H*spheres*obstacles.
+
+    Bound only unused preallocation; dt, trajectory geometry and all validators
+    stay fixed. A path exceeding this capacity is rejected by cuRobo, not cut.
+    """
+    values=(requested,seeds,spheres,cuboid_capacity)
+    if any(isinstance(v,bool) or int(v)!=v or v<=0 for v in values):raise ValueError('invalid collision launch dimensions')
+    product=int(seeds)*int(spheres)*int(cuboid_capacity)
+    limit=((1<<31)-1)*9//10
+    effective=min(int(requested),limit//product)
+    if effective<64:raise RuntimeError('COLLISION_LAUNCH_BUDGET_EXCEEDED')
+    return effective,{'requested_interpolation_buffer_size':int(requested),
+        'effective_interpolation_buffer_size':effective,'dense_kernel_extent_upper_bound':effective*product,
+        'dense_kernel_extent_limit':limit,'path_truncation_allowed':False,'interpolation_dt_unchanged':True}
