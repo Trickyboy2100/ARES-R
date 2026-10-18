@@ -36,6 +36,11 @@ class SupervisorTests(unittest.TestCase):
         path=self.root/(name+'.request');path.write_text(json.dumps(dict(self.request,**values)))
         return {'job_id':name,'deadline_monotonic':time.monotonic()+budget,
                 'request':str(path),'output':str(self.root/(name+'.json')),'log':str(self.root/(name+'.log'))}
+    def test_invalid_job_does_not_latch_gpu_owner(self):
+        self.assertEqual(self.service.plan({'job_id':'../bad'})['error'],'INVALID_JOB_ENVELOPE')
+        self.assertFalse(self.service.lock.locked())
+        self.assertTrue(self.service.plan(self.job())['ok'])
+
     def test_success_and_same_profile_reuses_single_child(self):
         for i in range(10):
             self.assertTrue(self.service.plan(self.job(str(i)))['ok'])

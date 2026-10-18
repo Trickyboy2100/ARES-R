@@ -125,6 +125,11 @@ class PlannerSupervisor:
         return {'ok':False,'job_id':job_id,'cancel_acknowledged':False,'state':'NOT_ACTIVE'}
 
     def plan(self,job,connection=None):
+        if (not isinstance(job.get('job_id'),str) or not 1<=len(job['job_id'])<=64 or
+                not all(c.isalnum() or c in '_-' for c in job['job_id']) or
+                any(not isinstance(job.get(key),str) or not job[key]
+                    for key in ('request','output','log'))):
+            return {'ok':False,'error':'INVALID_JOB_ENVELOPE'}
         if not self.lock.acquire(blocking=False):return {'ok':False,'error':'PLANNER_BUSY: no queue'}
         active={'job_id':job['job_id'],'cancel':threading.Event(),'done':threading.Event()}
         staging=Path(job['output']).with_name(Path(job['output']).name+'.'+job['job_id']+'.pending')
@@ -170,8 +175,9 @@ class PlannerSupervisor:
             self.last_job={'job_id':job['job_id'],'state':'FAILED','error':str(exc),'worker_reaped':True}
             return dict(self.last_job,ok=False,cancel_acknowledged=True,late_result_discarded=True)
         finally:
-            staging.unlink(missing_ok=True)
-            self.active=None;active['done'].set();self.lock.release()
+            try:staging.unlink(missing_ok=True)
+            finally:
+                self.active=None;active['done'].set();self.lock.release()
 
 
 class Server(socketserver.ThreadingUnixStreamServer):
