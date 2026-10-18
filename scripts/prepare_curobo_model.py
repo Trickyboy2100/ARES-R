@@ -27,12 +27,22 @@ def download(name):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("directory", type=Path)
+    parser.add_argument("--source-directory",type=Path,help="pinned offline source bundle; no network")
     args = parser.parse_args()
     root = args.directory.resolve()
     # Refuse overwrites of previously prepared/site-edited models.
     root.mkdir(parents=True, exist_ok=False)
-    original_urdf = download("jaka_minicobo_gripper.urdf")
-    original_yaml = download("jaka_minicobo_curobo.yml")
+    if args.source_directory:
+        bundle=args.source_directory
+        original_urdf=(bundle/'source.urdf').read_bytes();original_yaml=(bundle/'source.yml').read_bytes()
+        pinned=json.loads((bundle/'manifest.json').read_text())
+        if pinned['source_commit']!=REVISION or pinned['commissioned']:
+            raise RuntimeError('offline preview source provenance mismatch')
+        for data,name in ((original_urdf,'source_urdf_sha256'),(original_yaml,'source_yaml_sha256')):
+            if hashlib.sha256(data).hexdigest()!=pinned[name]:raise RuntimeError('offline source hash mismatch')
+    else:
+        original_urdf = download("jaka_minicobo_gripper.urdf")
+        original_yaml = download("jaka_minicobo_curobo.yml")
     (root / "source.urdf").write_bytes(original_urdf)
     (root / "source.yml").write_bytes(original_yaml)
     robot = ET.fromstring(original_urdf)
