@@ -28,7 +28,7 @@ def main():
             'device_provider':detail.get('device_provider'),'replanned':bool(gpu or detail.get('planning_provider')),
             'output':detail})
     with (out/'stage_timings.csv').open('w') as stream:
-        writer=csv.DictWriter(stream,fieldnames=[k for k in rows[0] if k!='output']);writer.writeheader()
+        writer=csv.DictWriter(stream,fieldnames=[k for k in rows[0] if k!='output'],lineterminator='\n');writer.writeheader()
         writer.writerows({k:v for k,v in row.items() if k!='output'} for row in rows)
     memory={key:max(r['gpu_memory_bytes'][key] for run in runs for r in run) for key in runs[0][0]['gpu_memory_bytes']}
     retime=load(ROOT/'worklog/runtime/rc-retime-comparison.json')
