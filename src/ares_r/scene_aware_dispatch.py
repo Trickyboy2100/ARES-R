@@ -366,7 +366,13 @@ class SceneAwareDispatcher:
     def task_status(self):
         from .manipulation.roundtrip_job import canonical_status
         return canonical_status(self.operations.root) or self.studio().status()
-    def task_stop(self): return self.studio().stop()
+    def task_stop(self):
+        from .manipulation.roundtrip_job import canonical_status
+        status=canonical_status(self.operations.root)
+        if status and status['running']:
+            (Path(status['run_dir'])/'stop.request').write_text('ART_TASK_STOP\n')
+            return dict(status,state='STOP_REQUESTED')
+        return self.studio().stop()
 
     def system_info(self):
         task=self.task_status()

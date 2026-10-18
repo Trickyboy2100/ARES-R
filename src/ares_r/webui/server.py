@@ -219,8 +219,7 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument("--host",default="127.0.0.1");parser.add_argument("--port",type=int,default=8765)
     parser.add_argument("--config",default="config/system.json");args=parser.parse_args()
     backend_url=os.environ.get("ARES_R_BACKEND_URL")
-    Handler.dispatcher=(CanonicalBackendClient(backend_url) if backend_url else
-                        SceneAwareDispatcher(load_config(args.config)))
+    Handler.dispatcher=CanonicalBackendClient(backend_url)
     server=ThreadingHTTPServer((args.host,args.port),Handler)
     print("ARES-R scene-aware UI: http://%s:%d"%(args.host,args.port),flush=True)
     try:server.serve_forever()

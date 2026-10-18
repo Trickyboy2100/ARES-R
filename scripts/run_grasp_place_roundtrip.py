@@ -222,7 +222,7 @@ class Live:
         def sample():
             right=self.telemetry()['arms']['right'];controller=right.get('controller_status') or {}
             return {'joints_rad':right['joints_rad'],'in_position':controller.get('in_position',False),
-                    'tool_valid':right.get('tool_id')==1,'fault':bool(controller.get('errcode',0))}
+                    'tool_valid':right.get('tool_id')==1,'fault':bool(controller.get('errcode',0)) or any(controller.get(k,False) for k in ('emergency_stop','protective_stop','drag_mode','on_soft_limit'))}
         return await_arrival(sample,target,event=lambda state:self.event(self.job.value['stage'],state,{}))
     def _record_path(self,token=None):
         import hashlib
