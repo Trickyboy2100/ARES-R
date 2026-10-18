@@ -48,7 +48,7 @@ def precheck_contact_lift(solver, grasp_xyz, rotation, direction, seeds,
                 branch['passed']=all(row['passed'] for row in branch['samples'])
                 if branch['passed']:
                     branch['orientation_validation']={name:validate_level_path(
-                        solver.fk,points,tolerance_deg=level_deg,subdivisions=1)
+                        solver.fk,points,tolerance_deg=level_deg,subdivisions=4)
                         for name,points in paths.items()}
                     branch['passed']=all(value['passed'] for value in branch['orientation_validation'].values())
                 if branch['passed']:
