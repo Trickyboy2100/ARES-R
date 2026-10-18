@@ -19,6 +19,7 @@ from ares_r.motion.independent_path_validation import validate_dense_world
 from ares_r.motion.tcp_orientation import (HORIZONTAL_FORWARD_R_BODY,validate_level_path,
                                            validate_path)
 from ares_r.motion.constrained_manifold_seed import build_level_manifold_seeds
+from ares_r.motion.latency_solver import validate_solver_policy,solve_single_pass,orientation_runtime_key
 
 
 def transform(xyz,rpy):
@@ -79,6 +80,13 @@ def main():
     robot_path=Path(request["robot_yaml"]);robot=yaml.safe_load(robot_path.read_text())
     collision_model=request["collision_model"]
     params=request["planning_parameters"]
+    solver_policy=validate_solver_policy(request.get('solver_policy'))
+    if solver_policy:
+        # Production FAST is exactly one solve; benchmark/warmup requests cannot
+        # accidentally turn a four-second request into several optimizer runs.
+        request["benchmark_runs"]=1
+        request["warmup_policy"]="NONE"
+        solver_policy["max_goal_candidates"]=1
     sphere_cell_m=float(params.get("active_sphere_cell_m",.035))
     if not .015 <= sphere_cell_m <= .060:
         raise ValueError("active sphere cell must be between 15 and 60 mm")
@@ -114,12 +122,7 @@ def main():
         return value@tool
     torch.manual_seed(params["random_seed"])
     orientation_lock=request.get("orientation_lock")
-    signature_orientation=orientation_lock
-    if orientation_lock is not None and orientation_lock.get("policy") in (
-            "LEVEL_YAW_FREE_V1","LEVEL_YAW_TARGET_V1"):
-        signature_orientation={key:value for key,value in orientation_lock.items()
-            if key not in ("candidate_target_rotations","candidate_yaws_rad",
-                           "final_yaw_target_rad")}
+    signature_orientation=orientation_runtime_key(orientation_lock)
     # Objects the caller declares as the manipulation target rather than as
     # free-space obstacles.  A goal that is DEFINED relative to an object cannot
     # also be blocked by that object's own coarse cluster AABB; the grab is the
@@ -141,11 +144,13 @@ def main():
     cuboid_capacity=max(512,((len(cuboids)+32+255)//256)*256)
     static_signature=hashlib.sha256(json.dumps({"robot":robot,"spheres":spheres,
         "parameters":params,"orientation_lock":signature_orientation,
-        "cuboid_capacity":cuboid_capacity},sort_keys=True,
+        "cuboid_capacity":cuboid_capacity,"solver_policy":solver_policy},sort_keys=True,
         separators=(",",":")).encode()).hexdigest()
     world_at=time.perf_counter()
     cached=_RUNTIME_CACHE.get(static_signature)
     if cached is None:
+        if _RUNTIME_CACHE:
+            raise RuntimeError("RUNTIME_PROFILE_CHANGE_REQUIRES_PROCESS_RECYCLE")
         cfg=MotionPlannerCfg.create(robot=robot,scene_model={"cuboid":cuboids},
             collision_cache={"cuboid":cuboid_capacity},interpolation_dt=params["interpolation_dt"],
             interpolation_buffer_size=params["interpolation_buffer_size"],num_trajopt_seeds=params["num_trajopt_seeds"],
@@ -224,7 +229,15 @@ def main():
             values[name]=signed.min(axis=1)
         return values
     def clearance_details(rows):
+        if solver_policy and solver_policy.get('distance_backend')=='NATIVE_CPU_V1':
+            return native_clearance(rows)[0]
         return {name:float(values.min()) for name,values in clearance_by_sample(rows).items()}
+    def native_clearance(rows):
+        from .cpu_distance import distances
+        rows=np.asarray(rows,dtype=float).reshape(-1,6)
+        current=planner.compute_kinematics(state(rows)).robot_spheres.detach().cpu().numpy().reshape(len(rows),-1,4)
+        valid=current[0,:,3]>0
+        return distances(current[:,valid,:3],current[0,valid,3],cuboids)
     def clearance_trace(rows):
         values=clearance_by_sample(rows)
         if not values:return [float("inf")]*len(rows)
@@ -260,12 +273,14 @@ def main():
                 "goal_nearest":sorted(clearance_details([reference[-1]]).items(),key=lambda x:x[1])[:6]}),flush=True)
             raise RuntimeError("A/B endpoint or scene invalid; no planning fallback")
     # Explicit world update is separately timed from planner initialization.
-    typed=SceneCfg.create({"cuboid":cuboids});planner.update_world(typed);torch.cuda.synchronize()
+    typed=SceneCfg.create({"cuboid":cuboids})
     updates=[]
     for _ in range(int(request.get("benchmark_runs",3))):
         at=time.perf_counter();planner.update_world(typed);torch.cuda.synchronize();updates.append(time.perf_counter()-at)
     start=np.asarray(request["start_rad"],dtype=float)
+    ik_at=time.perf_counter()
     goal_candidates,resolved_goal_metadata=runtime_goal_candidates(start)
+    goal_ik_s=time.perf_counter()-ik_at
     hard_manifold=request.get("hard_level_manifold")
     manifold_seeds=[]
     if hard_manifold is not None:
@@ -297,6 +312,12 @@ def main():
             "seed_max_joint_step_rad":seed.max_joint_step_rad,
         } for seed in generated]
     def solve_segment(begin,end,seed_rows=None):
+        if solver_policy is not None:
+            seed_tensor=None
+            if seed_rows is not None:
+                seed_ordered=np.asarray(seed_rows,dtype=float)[:,[ARM_NAMES.index(x) for x in names]]
+                seed_tensor=torch.tensor(seed_ordered,device='cuda:0',dtype=torch.float32).contiguous().view(1,1,len(seed_ordered),6)
+            return solve_single_pass(planner,state(end),state(begin),solver_policy,seed_tensor)
         if seed_rows is not None:
             seed_ordered=np.asarray(seed_rows,dtype=float)[:,[
                 ARM_NAMES.index(x) for x in names]]
@@ -314,6 +335,8 @@ def main():
             seed=(manifold_seeds[candidate_index] if manifold_seeds else None)
             value=solve_segment(start,goal_value,seed)
             torch.cuda.synchronize();return [value],time.perf_counter()-at,None
+        except torch.cuda.OutOfMemoryError:
+            raise  # Supervisor reaps the failed CUDA context; never QUALITY retry.
         except Exception as exc:  # BLOCK may be rejected before an ordinary result is allocated.
             return None,time.perf_counter()-at,"%s: %s"%(type(exc).__name__,exc)
     warmup_s=0.0
@@ -327,14 +350,20 @@ def main():
         cached["warmup_done"]=True
     samples=[];errors=[];result=None;selected_goal_index=None
     for candidate_index,candidate_goal in enumerate(goal_candidates):
+        if solver_policy and candidate_index>=solver_policy['max_goal_candidates']:break
         for _ in range(int(request.get("benchmark_runs",3))):
             result,elapsed,error=solve(candidate_goal,candidate_index);samples.append(elapsed)
             if error:errors.append(error)
         if result is not None and all(bool(torch.all(part.success).item()) for part in result):
             selected_goal_index=candidate_index;break
     goal=goal_candidates[selected_goal_index if selected_goal_index is not None else 0]
-    baseline=np.linspace(start,goal,101);start_details=clearance_details([start]);goal_details=clearance_details([goal])
-    start_gap=min(start_details.values());goal_gap=min(goal_details.values());baseline_gap=clearance(baseline)
+    baseline=np.linspace(start,goal,101)
+    endpoint_at=time.perf_counter();endpoints=clearance_by_sample([start,goal])
+    start_details={name:float(values[0]) for name,values in endpoints.items()}
+    goal_details={name:float(values[1]) for name,values in endpoints.items()}
+    start_gap=min(start_details.values());goal_gap=min(goal_details.values())
+    baseline_gap=clearance(baseline) if solver_policy is None else None
+    endpoint_diagnostic_s=time.perf_counter()-endpoint_at
     success=result is not None and all(bool(torch.all(part.success).item()) for part in result);points=[];tcp_body=[];path_gap=None
     path_details={}
     central_margin=None
@@ -342,7 +371,7 @@ def main():
     independent=None
     planner_clearance_trace=[]
     independent_validation_s=0.0
-    orientation_validation=None
+    orientation_validation=None;orientation_validation_s=0.0;planner_dense_s=0.0
     goal_position_error_m=None
     postprocess_at=time.perf_counter()
     if success:
@@ -383,9 +412,16 @@ def main():
         validation_knots=bounded_validation_knots(q)
         dense=np.concatenate([a+(b-a)*np.arange(2)[:,None]/2
                               for a,b in zip(validation_knots,validation_knots[1:])]+[validation_knots[-1:]])
-        path_details=clearance_details(dense)
-        planner_clearance_trace=clearance_trace(dense)
+        dense_at=time.perf_counter()
+        if solver_policy and solver_policy.get('distance_backend')=='NATIVE_CPU_V1':
+            path_details,_,planner_clearance_trace=native_clearance(dense)
+        else:
+            dense_gaps=clearance_by_sample(dense)
+            path_details={name:float(values.min()) for name,values in dense_gaps.items()}
+            planner_clearance_trace=(np.min(np.stack(list(dense_gaps.values()),axis=1),axis=1).tolist()
+                                     if dense_gaps else [float('inf')]*len(dense))
         path_gap=min(path_details.values()) if path_details else float("inf")
+        planner_dense_s=time.perf_counter()-dense_at
         if ((central_enabled and central_margin<=0) or path_gap<=0 or
                 not np.isfinite(q).all() or max_step>.15 or
                 (runtime_goal is not None and goal_position_error_m>
@@ -398,6 +434,7 @@ def main():
             if not independent["collision_free"]:
                 success=False
         if success and orientation_lock is not None:
+            orientation_at=time.perf_counter()
             if orientation_lock["policy"] in ("LEVEL_YAW_FREE_V1","LEVEL_YAW_TARGET_V1"):
                 orientation_validation=validate_level_path(
                     lambda row:T@fk(row),q,subdivisions=4,
@@ -410,6 +447,7 @@ def main():
                     target_rotation=orientation_lock["target_R_body_tcp"])
             if not orientation_validation["passed"]:
                 success=False
+            orientation_validation_s=time.perf_counter()-orientation_at
     mode=request["mode"];expected="FAILURE" if mode=="BLOCK" else "SUCCESS";observed="SUCCESS" if success else "FAILURE"
     payload={"schema_version":3,"planner":"cuRobo","mode":mode,"planning_only":True,"execution_allowed":False,
         "expected_result":expected,"observed_result":observed,"expectation_met":expected==observed,
@@ -431,6 +469,24 @@ def main():
             if selected_goal_index is not None and resolved_goal_metadata else None),
         "runtime_motion_goal":request.get("runtime_motion_goal"),
         "hard_level_manifold":hard_manifold,
+        "solver_policy":solver_policy,
+        "effective_solver_config":{
+            "entrypoint":"trajopt_solver.solve_cspace" if solver_policy else "plan_cspace",
+            "num_ik_seeds":params["num_ik_seeds"],
+            "num_trajopt_seeds":params["num_trajopt_seeds"],
+            "use_cuda_graph_requested":params["use_cuda_graph"],
+            "cuda_graph_state":"REQUESTED_NOT_INSTRUMENTED",
+            "initial_iters":solver_policy["initial_iters"] if solver_policy else None,
+            "finetune_attempts":0 if solver_policy else None,
+            "solve_calls":len(samples),"warmup_solve_calls":int(warmup_s>0),
+            "cuboid_capacity":cuboid_capacity,"runtime_cache_count":len(_RUNTIME_CACHE),
+            "worker_sha256":hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+        },
+        "gpu_memory_bytes":{"allocated":torch.cuda.memory_allocated(),
+            "reserved":torch.cuda.memory_reserved(),
+            "peak_allocated":torch.cuda.max_memory_allocated(),
+            "peak_reserved":torch.cuda.max_memory_reserved()},
+        "diagnostic_joint_linear_baseline_evaluated":solver_policy is None,
         "manifold_seed_count":len(manifold_seeds),
         "goal_position_error_m":goal_position_error_m,
         "trajectory_points_rad":points,"tcp_path_body_m":tcp_body,"path_metrics":path_metrics(tcp_body),
@@ -449,6 +505,9 @@ def main():
         "timing_s":{"cuda_import":import_s,"curobo_world_and_planner_init":world_init_s,
                     "persistent_runtime_reused":runtime_reused,
                     "one_time_warmup_s":warmup_s,
+                    "goal_ik":goal_ik_s,"endpoint_diagnostics":endpoint_diagnostic_s,
+                    "planner_dense_collision":planner_dense_s,
+                    "orientation_validation":orientation_validation_s,
                     "world_update_samples":updates,"planning_samples":samples,
                     "planning_errors":errors,
                     "independent_dense_validation":independent_validation_s,
@@ -478,8 +537,15 @@ def main():
     serialization_at=time.perf_counter();encoded=json.dumps(payload,indent=2)+"\n"
     payload["timing_s"]["serialization"]=time.perf_counter()-serialization_at
     payload["timing_s"]["request_to_result_wall"]=time.perf_counter()-request_at
+    latency=request.get('latency_contract')
+    if latency:
+        payload['latency_contract']=latency
+        payload['latency_budget_exceeded']=payload['timing_s']['request_to_result_wall']>float(latency['result_deadline_s'])
+        if payload['latency_budget_exceeded']:
+            payload['observed_result']='FAILURE';payload['expectation_met']=expected=='FAILURE'
+            payload['failure_reason']='PLANNING_RESULT_DEADLINE_EXCEEDED_NO_EXECUTION_CANDIDATE'
     output.write_text(json.dumps(payload,indent=2)+"\n")
-    print(json.dumps({"mode":mode,"observed":observed,"expectation_met":payload["expectation_met"],
+    print(json.dumps({"mode":mode,"observed":payload['observed_result'],"expectation_met":payload["expectation_met"],
                       "minimum_clearance_m":path_gap,"planning_samples_s":samples}))
     if not payload["expectation_met"]:raise SystemExit(2)
 
