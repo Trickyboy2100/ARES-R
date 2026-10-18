@@ -28,7 +28,7 @@
 
 - 合并 operations 的 single-pass／native CPU distance路径，保留canonical cuboid容量分桶与容量进入cache key的修复，没有整文件替换。
 - FAST强制一次正式solve、一个候选、不运行请求内warmup/benchmark重复；输出实际4/2 seeds、50 initial iterations、finetune=0、graph启用和实际捕获数、solve调用数及worker SHA。
-- 独立CPU supervisor持有至多一个CUDA子进程。profile、模型/附件、solver参数或容量桶变化，先回收旧进程，再建新context，避免FAST/QUALITY/持物缓存叠加。Torch allocator限额75%；这不是所有Warp/CUDA分配的全局硬显存上限，完整大场景仍待验证。
+- 独立CPU supervisor持有至多一个CUDA子进程。profile、模型URDF实际字节/附件、solver参数或容量桶变化，先回收旧进程，再建新context，避免FAST/QUALITY/持物缓存叠加。Torch allocator限额75%；这不是所有Warp/CUDA分配的全局硬显存上限，完整大场景仍待验证。
 - job_id、绝对monotonic deadline、no-queue BUSY、独立cancel请求/ack、客户端断连检测、晚到结果丢弃。只有期限内结果才从job私有pending文件发布。超时/取消/OOM均join本任务子进程；父进程退出也有PDEATHSIG保护。取消ack不能用吞BrokenPipe代替。
 - 请求端点碰撞提前返回 `INVALID_START_COLLISION`/`INVALID_GOAL_COLLISION`；OOM归类 `RESOURCE_EXHAUSTED`。terminal错误不进入QUALITY重试。输入错误不锁死GPU owner。
 - 独立CPU/URDF世界碰撞验证现在对没有tool-envelope的历史规划请求也执行。它独立校验world；self collision仍由cuRobo检查，不能把报告中的 `self_collision_independently_checked=false` 隐去。
@@ -43,10 +43,10 @@
 
 ### 真实cuRobo合成smoke：通过
 
-最终worker对应 `gpu-smoke-03`：单GPU、pinned solver、preview模型、明确的合成远障碍世界；未修改历史fixture来伪称历史成功。
+最终worker对应 `gpu-smoke-04`：单GPU、pinned solver、preview模型、明确的合成远障碍世界；未修改历史fixture来伪称历史成功。
 
-- 冷请求5.091秒，包含import/init/首次graph capture；不能承诺冷启动4秒。
-- 10次warm请求连续成功：p50 **0.2831秒**，范围 **0.2800–0.2932秒**，包含独立world验证。
+- 冷请求4.939秒，包含import/init/首次graph capture；不能承诺冷启动4秒。
+- 10次warm请求连续成功：p50 **0.2944秒**，范围 **0.2928–0.3038秒**，包含独立world验证。
 - 每次实际solve=1、warmup solve=0、trajopt seeds=2、IK seeds=4、initial_iters=50，启用graph并捕获1个optimizer graph。
 - Torch peak allocated **546,581,504 bytes**，reserved **614,465,536 bytes**；10次reserved完全一致，runtime cache=1。只代表该smoke负载，不外推现场1727 spheres/大量cuboid的延迟或VRAM。
 - 41点路径；独立CPU/URDF验证43个dense samples通过。合成障碍很远，这不是现场安全净空认证。
@@ -57,16 +57,16 @@
 
 ### 真实CUDA故障：通过已测试范围
 
-`gpu-faults-02`（无实机、合成规划输入）：
+`gpu-faults-03`（无实机、合成规划输入）：
 
 | 案例 | 结果 |
 |---|---|
-| cuRobo进入SOLVE_START后取消 | cancel ack，子进程join，未发布结果；整个冷请求约2.841秒结束 |
-| 冷cuRobo四秒deadline | 4.000秒触发回收，约4.069秒完成join，未发布迟到结果 |
-| 限额CUDA allocator OOM | 实际Torch OutOfMemoryError，RESOURCE_EXHAUSTED，context回收，约0.978秒 |
-| 故障后真实cuRobo恢复求解 | 成功，独立world验证通过，约4.825秒冷请求 |
+| cuRobo进入SOLVE_START后取消 | cancel ack，子进程join，未发布结果；整个冷请求约2.825秒结束 |
+| 冷cuRobo四秒deadline | 4.000秒触发回收，约4.078秒完成join，未发布迟到结果 |
+| 限额CUDA allocator OOM | 实际Torch OutOfMemoryError，RESOURCE_EXHAUSTED，context回收，约0.968秒 |
+| 故障后真实cuRobo恢复求解 | 成功，独立world验证通过，约4.808秒冷请求 |
 
-OOM通过1% allocator限额触发512MiB申请失败，不是伪造异常，也**不是完整cuRobo大场景OOM复现**。全部context最终回收，清理后CUDA free约9.698GB，与初始接近；没有操作其他GPU进程。4秒是触发deadline而非硬实时零延迟回收，实测清理尾部约69ms。
+OOM通过1% allocator限额触发512MiB申请失败，不是伪造异常，也**不是完整cuRobo大场景OOM复现**。全部context最终回收，清理后CUDA free约9.698GB，与初始接近；没有操作其他GPU进程。4秒是触发deadline而非硬实时零延迟回收，实测清理尾部约78ms。
 
 CPU进程及真实Unix socket测试另覆盖10次复用、profile切换、BUSY、超时ack、完成/取消竞态撤销产物、OOM错误和无效job恢复。
 
@@ -82,7 +82,7 @@ CPU进程及真实Unix socket测试另覆盖10次复用、profile切换、BUSY�
 
 ### 全量测试与golden
 
-最终 **656 passed, 3 skipped, 13 subtests passed**。初始正式tests为635通过、2失败、3跳过；两项旧测试期待registered-relative，而交付scheme实际早已使用autoalignment，本轮修正测试对已有scheme的断言，没有改变任务路线/策略。显式注入假服务的delegation测试局部mock拒绝guard；另有独立测试验证真实provider离线execute拒绝。
+最终 **657 passed, 3 skipped, 13 subtests passed**。初始正式tests为635通过、2失败、3跳过；两项旧测试期待registered-relative，而交付scheme实际早已使用autoalignment，本轮修正测试对已有scheme的断言，没有改变任务路线/策略。显式注入假服务的delegation测试局部mock拒绝guard；另有独立测试验证真实provider离线execute拒绝。
 
 pytest默认只收集正式`tests/`，不执行audit source_snapshot、operations备份测试或旧硬件prototype。golden两个文件SHA256与交付完全一致：
 
