@@ -51,5 +51,7 @@ def cubic_verified(points,dt,speed,accel,max_duration,validator):
         try:
             rows,proof=_cubic_candidate(q[indices].tolist(),dt,speed,accel,max_duration,validator)
             return rows,dict(proof,geometry_candidate_control_points=len(indices),source_control_points=len(q))
-        except (ValueError,RuntimeError) as exc:last=exc
+        except (ValueError,RuntimeError) as exc:
+            if any(code in str(exc) for code in ('STOP_REQUESTED','JOB_CANCELLED','CANCEL_NOT_ACKNOWLEDGED')):raise
+            last=exc
     raise ValueError('bounded cubic candidates rejected: '+str(last))

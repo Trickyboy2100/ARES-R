@@ -95,6 +95,7 @@ def package_native_preview(points, source_dt_s, site_limits, *, tool_id,
             sampled,geometry_proof=cubic_verified(source,NATIVE_DT_S,speed,accel,max_duration_s,geometry_validator)
             effective_retimer='CUBIC_REVALIDATED_V1'
         except (ValueError,RuntimeError) as exc:
+            if any(code in str(exc) for code in ('STOP_REQUESTED','JOB_CANCELLED','CANCEL_NOT_ACKNOWLEDGED')):raise
             retiming_fallback=str(exc)
             sampled=local_polyline(source,NATIVE_DT_S,speed,accel,max_duration_s)
             effective_retimer='LOCAL_EXACT_POLYLINE_V1'

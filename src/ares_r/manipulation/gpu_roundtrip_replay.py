@@ -260,7 +260,7 @@ class GpuRoundtripReplay(ReplayCapabilityProvider):
         request['early_contact_lift_precheck']={'passed':True,'observation_id':obs,'contact_m':.055,'lift_m':.1}
         result,plan_folder,gpu=self._solve(request,'PREGRASP')
         atomic(plan_folder/'planner_request.json',request)
-        epoch=self.out/'pick_epoch';epoch.mkdir(exist_ok=True)
+        epoch=plan_folder/'pick_epoch';epoch.mkdir(exist_ok=True)
         import shutil
         shutil.copytree(Path(scene['scene_dir'])/'scene',epoch/'live_scene/scene',dirs_exist_ok=True)
         observation={'observation_id':obs,'scene_snapshot_id':scene['scene_snapshot_id'],'scene_digest':scene['scene_digest'],
@@ -268,7 +268,7 @@ class GpuRoundtripReplay(ReplayCapabilityProvider):
             'target':{'pose_m_rad':self.grasp.tolist()+[0.,0.,0.],'orientation_convention':'ZYX','approach_axis':'+z'}}
         report=load(epoch/'live_scene/scene/scene_report.json');report['observation_id']=obs
         atomic(epoch/'live_scene/scene/scene_report.json',report);atomic(epoch/'manipulation_observation.json',observation)
-        package=self.out/'pick_package'
+        package=plan_folder/'pick_package'
         subprocess.run([sys.executable,str(ROOT/'scripts/build_first_pick_execution_package.py'),
             '--plan',str(plan_folder),'--epoch',str(epoch),'--output',str(package)],check=True,cwd=ROOT,
             stdout=(self.out/'build-package.log').open('w'),stderr=subprocess.STDOUT)
@@ -283,7 +283,7 @@ class GpuRoundtripReplay(ReplayCapabilityProvider):
         from ares_r.motion.short_motion import validate_short_motion
         direction=package['prechecked_branch']['approach_direction_body'] if segment=='contact' else [0,0,1]
         validator=lambda rows:validate_short_motion(rows,self.context['request'],segment=segment,
-            observation_id=package['observation_id'],direction=direction,central_exclusion=False)
+            observation_id=package['observation_id'],direction=direction,central_exclusion=False,check_cancelled=self.check_cancelled)
         text,audit=package_native_preview(points,.008,load(ROOT/'config/jaka_mini2_motion.site.json'),tool_id=1,
             controller_tool_pose_mm_rad=self.fixture['synthetic_tcp_mm_rad'],captured_at_unix=time.time(),
             speed_ceiling_rad_s=.05 if segment=='contact' else .2,accel_ceiling_rad_s2=.1 if segment=='contact' else .2,

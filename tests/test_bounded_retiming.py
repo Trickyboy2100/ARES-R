@@ -22,3 +22,10 @@ class RetimingTests(unittest.TestCase):
         def reject(rows):calls.append(len(rows));return {'passed':False}
         with self.assertRaises(ValueError):cubic_verified(q,.08,[.05]*6,[.1]*6,240,reject)
         self.assertLessEqual(len(calls),3);self.assertGreaterEqual(len(calls),1)
+
+    def test_stop_during_geometry_validation_is_never_a_retiming_fallback(self):
+        calls=[]
+        def stopped(rows):calls.append(1);raise RuntimeError('STOP_REQUESTED')
+        with self.assertRaisesRegex(RuntimeError,'STOP_REQUESTED'):
+            cubic_verified([[0]*6,[.05]*6,[.1]*6],.08,[.05]*6,[.1]*6,240,stopped)
+        self.assertEqual(calls,[1])

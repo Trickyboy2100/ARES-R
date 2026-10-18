@@ -172,7 +172,7 @@ class Live:
         direction=branch.get('approach_direction_body',[1,0,0]) if segment=='contact' else [0,0,1]
         return validate_short_motion(points,self.request,segment=segment,
             observation_id=self.package['observation_id'],direction=direction,
-            central_exclusion=load(ROOT/'config/scene_aware_motion.json')['central_exclusion']['enabled'])
+            central_exclusion=load(ROOT/'config/scene_aware_motion.json')['central_exclusion']['enabled'],check_cancelled=self.check_cancelled)
     def pick_segment(self,segment):
         from ares_r.motion.native_execution_package import package_native_preview
         from ares_r.motion.live_state import base_stationarity

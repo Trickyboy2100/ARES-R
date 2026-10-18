@@ -39,3 +39,20 @@ class ContactBypassTests(unittest.TestCase):
 
 
 if __name__=="__main__":unittest.main()
+
+class BroadPhaseTests(unittest.TestCase):
+    def test_rotated_overlap_pairs_are_never_rejected(self):
+        import numpy as np
+        from scipy.spatial.transform import Rotation
+        from ares_r.manipulation.contact_bypass import HardWorldBroadPhase
+        from ares_r.manipulation.contact_motion import _geometry_overlap
+        rng=np.random.default_rng(283)
+        def random_box():
+            return {'center_body_m':rng.uniform(-.5,.5,3).tolist(),
+                'half_extents_m':rng.uniform(.01,.3,3).tolist(),
+                'rotation_body':Rotation.random(random_state=rng).as_matrix().tolist()}
+        world={str(i):random_box() for i in range(60)};broadphase=HardWorldBroadPhase(world)
+        for _ in range(30):
+            link=random_box();candidates={name for name,_ in broadphase.candidates(link)}
+            for name,obstacle in world.items():
+                if _geometry_overlap(link,obstacle):self.assertIn(name,candidates)
