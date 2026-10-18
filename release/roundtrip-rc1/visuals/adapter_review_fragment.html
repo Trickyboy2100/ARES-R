@@ -1,0 +1,12 @@
+<table><tr><th>正式Live与离线provider的差异</th><th>本轮处理与证据</th><th>仍需现场处理</th></tr>
+<tr><td>resume引用不存在的gripper_open_raw</td><td>已修复：使用现有gripper_release_raw，并校验真实读回时间戳、闭爪/开爪界限；直接Live.validate_resume合同通过。</td><td>夹持力/真实物体留持不能由raw位置单独确认，视觉重新确认SITE_PENDING。</td></tr>
+<tr><td>释放后仍为GRASP_CONFIRMED，resume误把空爪当丢物；detach无独立释放门禁</td><td>已修复：PRELAND_ARRIVED→确认开爪→RELEASE_CONFIRMED，持久化release_confirmed/preland_arrived，detach拒绝无确认结果。</td><td>开爪反馈不等于物体落座。无落座/释放后目标重新观测证据。</td></tr>
+<tr><td>正式Stop只使plan失效，in-flight结果可能晚到重新READY</td><td>已修复：Live直连与正式planner客户端传递取消令牌；只取消所属job，等待worker回收；generation锁拒绝晚到READY。经一次真实GPU SOLVE_START→正式客户端Stop证明。</td><td>真实SDK/native servo abort与底盘物理静止未验收；子进程退出不等于机器人已停。</td></tr>
+<tr><td>ID1/ID3参数命令未显式绑定实际Epic profile</td><td>已修复：右臂、object_id=1/3、完整命令与COMMISSIONED profile核对，并将profile版本签名绑定site checkpoint。</td><td>现有profile标签来自历史配置，不能替代本次真实帧、标定和安装模型核验。</td></tr>
+<tr><td>RC1 left_transient故障开关拼写不一致</td><td>本轮修复别名；原归档该案例并未注入预期失败，不能作为重试成功证据。新增正式telemetry合同验证两次SystemError后第三次最小只读读取成功。</td><td>真实SDK短暂断连/工具数据异常仍待现场验证。</td></tr>
+<tr><td>持物scene、native contact/lift、100+130mm与PLACE</td><td>Live的POST_LIFT确认、attached identity进入正式AUTO_FRESH规划、230mm绝对目标、原生sender门禁、ID3偏置+40mm逻辑已审核；合同检查实际Live方法。</td><td>离线provider绕开真实相机/Epic/native服务，无法证明这些端到端现场路径。现场payload模板稳健性与模型覆盖未commissioned。</td></tr>
+<tr><td>响应丢失与已派发命令恢复</td><td>离线设备有完整command_id完成凭据，可自动跳过；Live本地不完整dispatch保持UNCERTAIN，拒绝盲重发。</td><td>现场缺少将native/gripper/AMR丢ACK与新鲜遥测自动闭合的reconcile操作流程；需要人工证据核对。</td></tr>
+<tr><td>CONTACT_BYPASS未绑定目标配对，原工具/world碰撞范围过宽</td><td>本轮增强正式roundtrip native路径：明确目标ID；工具对其余world保留独立碰撞验证；原始路径也先验检查，禁止fallback掩盖拒绝。同一接触几何换为非目标时合同明确失败。</td><td>原golden入口保持不变；本次新增门禁需随正式Live一起部署。现场目标归属与工具模型仍待标定。</td></tr>
+<tr><td>独立验证范围</td><td>自由空间有独立URDF/world sphere-cuboid验证；cuRobo启用self collision。短contact/lift另有独立OBB self/world检查。</td><td>自由空间validator自身明确self_collision_independently_checked=false，不能把它称作独立自碰撞通过。</td></tr>
+<tr><td>初始100mm候选持物外形</td><td>保留原受控抬升；已新增工具对非目标障碍门禁。</td><td>未把未确认candidate tray作为独立载荷包络验证整个初始抬升，仍是软件安全覆盖缺口，不能仅凭原native通过推导真实持物净空。</td></tr>
+<tr><td>640规模场景、85cm底盘、不收臂返回、现场10GB并发</td><td>已量化640个物体均在保存的扫掠AABB之外；另用近障碍真实AVOID证明绕行。底盘图形仅名义位移。</td><td>真实里程、整机/持物底盘扫掠、ID3坐标偏置、native新二进制、视觉+规划并发显存均SITE_PENDING。</td></tr></table>
