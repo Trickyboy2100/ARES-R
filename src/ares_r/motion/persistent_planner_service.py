@@ -23,6 +23,20 @@ import traceback
 from .latency_solver import orientation_runtime_key
 
 
+def attachment_runtime_geometry(request):
+    """CUDA construction uses link6 AABB; observation ownership stays per request.
+
+    Full revision validation happens before reuse and again in the worker.
+    This is a runtime construction key, never an execution/scene freshness key.
+    """
+    value = request.get('attached_object_collision')
+    if value is None:
+        return None
+    from ares_r.manipulation.attached_collision import verify_attached_collision
+    verify_attached_collision(value, (request.get('motion_constraints') or {}).get('attached_object_revision'))
+    return {'attached_to': value['attached_to'], 'link6_aabb': value['link6_aabb']}
+
+
 def runtime_key(request):
     """World poses update in place; construction/profile/geometry changes recycle."""
     ignored=set((request.get('motion_constraints') or {}).get('ignore_cuboid_ids') or [])
@@ -33,7 +47,8 @@ def runtime_key(request):
     urdf=Path(config['kinematics']['urdf_path'])
     values={key:request.get(key) for key in (
         'collision_model','planning_parameters','solver_policy','execution_tool_envelope',
-        'attached_object_collision','T_body_model','T_link6_tcp','expected_commit')}
+        'T_body_model','T_link6_tcp','expected_commit')}
+    values['attachment_runtime_geometry'] = attachment_runtime_geometry(request)
     values.update(robot_sha256=hashlib.sha256(robot.read_bytes()).hexdigest(),
                   urdf_sha256=hashlib.sha256(urdf.read_bytes()).hexdigest(),
                   orientation=orientation_runtime_key(request.get('orientation_lock')),
@@ -158,7 +173,11 @@ class PlannerSupervisor:
             if not started < deadline < started+3600:raise RuntimeError('INVALID_OR_EXPIRED_DEADLINE')
             if Path(job['output']).exists():raise RuntimeError('OUTPUT_ALREADY_EXISTS')
             key=runtime_key(json.loads(Path(job['request']).read_text()))
-            if key!=self.key or self.process is None or not self.process.is_alive():
+            cache_hit = key == self.key and self.process is not None and self.process.is_alive()
+            cache_reason = ('REUSED' if cache_hit else
+                            'CONSTRUCTION_KEY_CHANGED' if self.key is not None and key != self.key
+                            else 'NO_LIVE_WORKER')
+            if not cache_hit:
                 self.reap()
                 self.pipe,child=self.context.Pipe()
                 self.process=self.context.Process(target=self.worker_target,args=(child,),daemon=True)
@@ -184,7 +203,9 @@ class PlannerSupervisor:
             if time.monotonic()>=deadline or self.cancelled() or active['cancel'].is_set():raise RuntimeError('LATE_RESULT_DISCARDED')
             result=json.loads(staging.read_text())
             result['planner_job']={'job_id':job['job_id'],'deadline_monotonic':deadline,
-                'supervisor_elapsed_s':time.monotonic()-started,'late_result_discarded':False}
+                'supervisor_elapsed_s':time.monotonic()-started,'late_result_discarded':False,
+                'runtime_cache_hit':cache_hit, 'runtime_cache_reason':cache_reason,
+                'runtime_construction_key':key}
             staging.write_text(json.dumps(result)+'\n')
             if time.monotonic()>=deadline or self.cancelled() or active['cancel'].is_set():raise RuntimeError('LATE_RESULT_DISCARDED')
             staging.replace(job['output'])
