@@ -1,0 +1,112 @@
+<frozen importlib._bootstrap_external>:511: ResourceWarning: unclosed file <_io.FileIO name='/var/folders/bz/5z1jgxm17nlf7skxqy28r16c0000gn/T/tmp5kybvnha/loop.lock' mode='ab+' closefd=True>
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+<frozen importlib._bootstrap_external>:511: ResourceWarning: unclosed file <_io.FileIO name='/var/folders/bz/5z1jgxm17nlf7skxqy28r16c0000gn/T/tmpybmr5_ha/loop.lock' mode='ab+' closefd=True>
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+RESET: planning from fresh actual joints to saved start (no direct joint jump).
+127.0.0.1 - - [20/Oct/2026 15:51:06] code 405, message Offline review has no device or mutation endpoint
+127.0.0.1 - - [20/Oct/2026 15:51:06] "POST /api/operations/execute HTTP/1.1" 405 -
+/usr/local/Cellar/python@3.14/3.14.2_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/tempfile.py:484: ResourceWarning: Implicitly cleaning up <HTTPError 405: 'Offline review has no device or mutation endpoint'>
+  _warnings.warn(self.warn_message, ResourceWarning)
+127.0.0.1 - - [20/Oct/2026 15:51:06] code 400, message unknown slot
+127.0.0.1 - - [20/Oct/2026 15:51:06] "POST /api/workbench/draft HTTP/1.1" 400 -
+/usr/local/Cellar/python@3.14/3.14.2_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/tempfile.py:484: ResourceWarning: Implicitly cleaning up <HTTPError 400: 'unknown slot'>
+  _warnings.warn(self.warn_message, ResourceWarning)
+127.0.0.1 - - [20/Oct/2026 15:51:07] "POST /api/workbench/draft HTTP/1.1" 200 -
+======================================================================
+ERROR: test_one_leg_accepts_live_endpoint_direction (test_ab_clear_loop.BoundedLoopTest.test_one_leg_accepts_live_endpoint_direction)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/andyee/Documents/ChatGPT/local/ARES-R-golden-preservation-20261020/tests/test_ab_clear_loop.py", line 65, in test_one_leg_accepts_live_endpoint_direction
+    loop.run(1, 180, legs=1)
+    ~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/Users/andyee/Documents/ChatGPT/local/ARES-R-golden-preservation-20261020/scripts/run_ab_clear_loop.py", line 156, in run
+    "pid": os.getpid(), "start_ticks": _start_ticks(os.getpid()),
+                                       ~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/andyee/Documents/ChatGPT/local/ARES-R-golden-preservation-20261020/scripts/run_ab_clear_loop.py", line 42, in _start_ticks
+    return int(Path("/proc/%d/stat" % pid).read_text().rsplit(")", 1)[1].split()[19])
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/usr/local/Cellar/python@3.14/3.14.2_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.14/3.14.2_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/proc/40939/stat'
+
+======================================================================
+ERROR: test_plan_only_never_starts_native_runner (test_ab_clear_loop.BoundedLoopTest.test_plan_only_never_starts_native_runner)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/andyee/Documents/ChatGPT/local/ARES-R-golden-preservation-20261020/tests/test_ab_clear_loop.py", line 41, in test_plan_only_never_starts_native_runner
+    loop.run(1, 180, plan_only=True)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andyee/Documents/ChatGPT/local/ARES-R-golden-preservation-20261020/scripts/run_ab_clear_loop.py", line 156, in run
+    "pid": os.getpid(), "start_ticks": _start_ticks(os.getpid()),
+                                       ~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/andyee/Documents/ChatGPT/local/ARES-R-golden-preservation-20261020/scripts/run_ab_clear_loop.py", line 42, in _start_ticks
+    return int(Path("/proc/%d/stat" % pid).read_text().rsplit(")", 1)[1].split()[19])
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/usr/local/Cellar/python@3.14/3.14.2_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/Cellar/python@3.14/3.14.2_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/proc/40939/stat'
+
+----------------------------------------------------------------------
+Ran 797 tests in 26.489s
+
+FAILED (errors=2, skipped=2)
+RIGHT ONLY: empty gripper, clear the whole swept workspace, on-site observation, physical E-stop within reach. No automatic return after the move.
+Cancelled; no motion.
+RIGHT ONLY: empty gripper, clear the whole swept workspace, on-site observation, physical E-stop within reach. No automatic return after the move.
+Cancelled; no motion.
+RIGHT ONLY: empty gripper, clear the whole swept workspace, on-site observation, physical E-stop within reach. No automatic return after the move.
+Cancelled; no motion.
+RIGHT ONLY: empty gripper, clear the whole swept workspace, on-site observation, physical E-stop within reach. No automatic return after the move.
+Hardware-enabled commands:
+  curobo demo start show|save|replace  inspect/save fixed start; no motion
+  curobo demo reset              planned return to saved start; confirms RESET RIGHT START
+  curobo demo plan-reset         plan current -> fixed start only; preview reset-last
+  curobo demo tcp                actual body/world TCP six-dimensional pose; no motion
+  curobo demo cycle20            reset -> plan20 -> execute; confirms RUN RIGHT CYCLE20
+  curobo scene load FILE         load legacy manual cuboids only
+  servo waypoints FILE / servo spline FILE OUT  offline waypoint inspection/geometry
+  curobo demo plan20             plan right TCP ~20 cm around a virtual obstacle; no motion
+  curobo demo run20 FILE         native supervised demo; confirms RUN RIGHT 20CM
+  curobo status / curobo plan right JN deg DELTA / curobo preview FILE
+  curobo plan-file FILE          offline start_rad/goal_rad request; no motion
+  curobo execute-micro FILE      BLOCKED pending stable actual-feedback channel
+  epic status / epic detect pick / epic detect place [1-6]
+  epic pointcloud capture|inspect FILE  capture/audit only; never moves a robot
+  epic obstacles inspect FILE / epic obstacles convert FILE left|right OUT (offline candidate)
+  amr status|battery|map|position-types  read the physical AMR
+  amr move-position ID NAME [RETRIES] / amr move-relative X Y YAW_DEG [...]
+  amr run-task TASK_ID / amr stop
+  gripper status|read SIDE / gripper set SIDE VALUE / gripper open|close SIDE [--delay SECONDS]
+                              --delay waits SECONDS after YES, before moving
+                              (type the flag without the brackets, e.g. --delay 5)
+  status / world view / jaka status SIDE / jaka joints SIDE
+  world status                  show snapshot/environment planning gates
+  pose list / pose show NAME [left|right]  inspect BODY-frame named poses
+  pose go NAME SIDE direct [Ndeg/s]  supervised MoveJ; default 2.86deg/s, range 1..5
+  pose go ready right curobo [2x|3x] cuRobo -> ServoJ; stable default 2x
+  pregrasp capture-start CASE_ID SIDE   read and save an experiment start; no motion
+  pregrasp capture-goal TARGET_ID SIDE  read and save a pregrasp goal; no motion
+  pregrasp plan CASE_ID PROFILE  cuRobo planning only; never moves an arm
+  pregrasp preview [last|DIR]    singularity and geometry review; no motion
+  pregrasp run [last|DIR]        supervised right-arm ServoJ; confirms RUN PREGRASP CASE_ID
+  jaka plan SIDE UNIT Q1..Q6      preview an absolute target
+  jaka step SIDE JN UNIT DELTA    preview a relative one-joint target
+  jaka move SIDE UNIT Q1..Q6      execute a nearby absolute target (asks MOVE SIDE)
+  jaka move-step SIDE JN UNIT D   execute a small one-joint change (asks MOVE SIDE)
+  jaka abort SIDE                 abort current JAKA motion
+  help / quit
+
+UNIT is deg or rad. Manual jaka moves: <=0.05 rad/s and <=3 degrees per joint.
+Native curobo: demo <=20 deg, generic reposition <=150 deg; the versioned first-pick supervised sender permits <=220 deg while retaining site limits and acceleration gates.
+
+{
+  "plan_id": "PLAN_TEST"
+}
