@@ -1,0 +1,144 @@
+"""Copy-only site custody. Never imports ARES or any hardware SDK."""
+from pathlib import Path
+import datetime
+import hashlib
+import json
+import os
+import re
+import shutil
+import subprocess
+import tarfile
+
+HOME = Path('/home/yikun')
+ROOT = HOME / 'ARES-R'
+
+
+def sha(path):
+    h = hashlib.sha256()
+    with path.open('rb') as f:
+        for chunk in iter(lambda: f.read(4 * 1024 * 1024), b''):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def run(*args):
+    p = subprocess.run(args, capture_output=True, text=True,
+                       env=dict(os.environ, GIT_OPTIONAL_LOCKS='0'))
+    return {'returncode': p.returncode, 'stdout': p.stdout, 'stderr': p.stderr}
+
+
+def main():
+    stamp = datetime.datetime.now().strftime('%Y%m%dT%H%M%S')
+    out = HOME / ('ARES-R_SITE_PRESERVE_' + stamp)
+    out.mkdir(mode=0o700)
+    os.umask(0o077)
+    git = {}
+    for name, args in {
+        'head': ['rev-parse', 'HEAD'], 'branch': ['branch', '--show-current'],
+        'status': ['status', '--porcelain=v1', '-z', '--untracked-files=all'],
+        'ignored': ['ls-files', '--others', '--ignored', '--exclude-standard', '-z'],
+        'remotes': ['remote', '-v'], 'worktrees': ['worktree', 'list', '--porcelain'],
+        'worktree_patch': ['diff', '--binary'], 'index_patch': ['diff', '--cached', '--binary']
+    }.items():
+        git[name] = run('git', '-C', str(ROOT), *args)
+    (out / 'git-state.private.json').write_text(json.dumps(git, indent=2))
+    git['bundle'] = run('git', '-C', str(ROOT), 'bundle', 'create', str(out/'all-refs.bundle'), '--all')
+    (out / 'git-bundle-result.json').write_text(json.dumps(git['bundle'], indent=2))
+    source = []
+    for rel in ('src', 'scripts', 'config', 'tests', 'demos', 'deploy'):
+        source.extend(p for p in (ROOT / rel).rglob('*') if p.is_file()
+                      and not p.is_symlink() and '__pycache__' not in p.parts)
+    source.extend(p for p in (ROOT/'README.md', ROOT/'pyproject.toml', ROOT/'.gitignore') if p.is_file())
+    seed = []
+    runs = ('web_1792140369955017446', 'web_1792141460049419632', 'web_1792142393480633163')
+    for name in runs:
+        seed.append(ROOT/'worklog/evidence/demo-runs/right_arm_grasp_place_roundtrip_v1'/name)
+        seed.append(ROOT/'logs'/('roundtrip-'+name.replace('_','-',1)+'.log'))
+    for name in ('PLAN_998c1812d2ff462e934e5872c1079a3c',
+                 'PLAN_5fac3267121c41dba683bc9b043823b5',
+                 'PLAN_b570ced607b64a5e981b15c67ab9d68b'):
+        seed.append(ROOT/'worklog/evidence/scene-aware-motion'/name)
+    # Runtime registry is separate from source config, never inferred from defaults.
+    seed.extend(p for p in (ROOT/'logs').glob('*.json') if p.is_file())
+    files = set()
+    missing = []
+    for path in seed:
+        if path.is_dir():
+            files.update(p.resolve() for p in path.rglob('*') if p.is_file() and not p.is_symlink())
+        elif path.is_file(): files.add(path.resolve())
+        else: missing.append(str(path))
+    processed = set(); skipped = []
+    def strings(value):
+        if isinstance(value, str): yield value
+        elif isinstance(value, dict):
+            for v in value.values(): yield from strings(v)
+        elif isinstance(value, list):
+            for v in value: yield from strings(v)
+    # Follow frozen JSON references to camera/scene/geometry/native files.
+    for depth in range(8):
+        batch = [p for p in files-processed if p.suffix=='.json' and p.stat().st_size<16*1024**2]
+        if not batch: break
+        for path in batch:
+            processed.add(path)
+            try: values = list(strings(json.loads(path.read_text())))
+            except Exception: continue
+            for value in values:
+                if not value.startswith('/home/yikun/') or '\n' in value: continue
+                candidate = Path(value)
+                if any(x in candidate.parts for x in ('.ssh','.aws','.git','site-packages','__pycache__')): continue
+                if candidate.is_file() and candidate.suffix.lower() in (
+                    '.json','.jsonl','.txt','.log','.ply','.pcd','.npz','.npy','.png',
+                    '.jpg','.jpeg','.yaml','.yml','.urdf','.stl'):
+                    files.add(candidate.resolve())
+                elif candidate.is_dir() and candidate.is_relative_to(ROOT) and len(candidate.relative_to(ROOT).parts)>=3:
+                    if candidate.relative_to(ROOT).parts[0] not in ('worklog','captures'): continue
+                    members = [p.resolve() for p in candidate.rglob('*') if p.is_file() and not p.is_symlink()]
+                    total = sum(p.stat().st_size for p in members)
+                    if len(members)>10000 or total>1024**3: skipped.append({'path':str(candidate),'reason':'bounded collection cap'});continue
+                    files.update(members)
+        if len(files)>50000 or sum(p.stat().st_size for p in files)>8*1024**3:
+            raise RuntimeError('reference expansion exceeded private collection cap; originals untouched')
+    external = []
+    for unit in ('ares-r-backend.service','ares-r-webui.service'):
+        p=HOME/'.config/systemd/user'/unit
+        if p.is_file(): external.append(p)
+    for name in ('jaka_right_supervised_path_v5','jaka_right_supervised_path_v6_pick'):
+        p=HOME/'ares-r-curobo-assets'/name
+        if p.is_file(): external.append(p)
+    rows=[]
+    for label, paths in (('source', source),('evidence',files),('services-native',external)):
+        paths=sorted(set(paths)); destination=out/(label+'.tar.gz')
+        with tarfile.open(destination,'w:gz',compresslevel=1) as archive:
+            for p in paths:
+                before=p.stat(); digest=sha(p)
+                archive.add(p,arcname=str(p.relative_to(HOME)),recursive=False)
+                after=p.stat()
+                rows.append({'group':label,'path':str(p),'size':before.st_size,
+                    'mtime_ns':before.st_mtime_ns,'sha256':digest,
+                    'stable':(before.st_size,before.st_mtime_ns)==(after.st_size,after.st_mtime_ns)})
+        print(json.dumps({'archive':destination.name,'files':len(paths),'bytes':destination.stat().st_size}),flush=True)
+    manifest={'schema_version':1,'created':stamp,'source_root':str(ROOT),
+        'head':git['head']['stdout'].strip(),'motion':False,'original_files_modified':False,
+        'runs':list(runs),'files':rows,'missing_seed_paths':missing,'skipped_reference_dirs':skipped,
+        'remaining_json_reference_work':sum(p.suffix=='.json' for p in files-processed)}
+    (out/'MANIFEST.private.json').write_text(json.dumps(manifest,indent=2))
+    expected={(row['group'],row['path']):row for row in rows};bad=[];verified=0
+    for group in ('source','evidence','services-native'):
+        with tarfile.open(out/(group+'.tar.gz'),'r:gz') as archive:
+            for member in archive:
+                original=str(HOME/member.name); f=archive.extractfile(member);h=hashlib.sha256()
+                for chunk in iter(lambda:f.read(4*1024*1024),b''):h.update(chunk)
+                if h.hexdigest()!=expected[(group,original)]['sha256']:bad.append(original)
+                verified+=1
+    state_after=run('git','-C',str(ROOT),'status','--porcelain=v1','-z','--untracked-files=all')['stdout']
+    validation={'verified_members':verified,'bad':bad,'unstable':[r['path'] for r in rows if not r['stable']],
+                'original_dirty_status_unchanged':state_after==git['status']['stdout']}
+    (out/'VALIDATION.json').write_text(json.dumps(validation,indent=2))
+    checks=[]
+    for p in sorted(out.iterdir()):
+        if p.is_file():checks.append(sha(p)+'  '+p.name)
+    (out/'SHA256SUMS').write_text('\n'.join(checks)+'\n')
+    print(json.dumps({'output':str(out),'validation':validation,'missing':missing,'skipped':skipped}),flush=True)
+
+
+if __name__=='__main__':main()

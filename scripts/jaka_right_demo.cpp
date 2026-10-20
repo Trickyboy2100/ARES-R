@@ -72,7 +72,10 @@ static Path load(const char* file,bool micro,bool reset,bool pregrasp,bool super
     if(supervised_path&&(!(p.speed_cap>0&&p.speed_cap<=.20)||!(p.accel_cap>0&&p.accel_cap<=.20)||
             !(p.tracking_stop_deg>0&&p.tracking_stop_deg<=1.5)))
         throw std::runtime_error("invalid A/B demo profile limits");
-    if(!std::isfinite(p.captured)||std::time(nullptr)-p.captured<0||std::time(nullptr)-p.captured>300)
+    // Capture timestamps have fractional seconds; time(nullptr) truncation
+    // falsely marks a fresh same-second artifact as coming from the future.
+    const double now_seconds=std::chrono::duration<double>(std::chrono::system_clock::now().time_since_epoch()).count();
+    if(!std::isfinite(p.captured)||now_seconds-p.captured<0||now_seconds-p.captured>300)
         throw std::runtime_error("expired live planning snapshot");
     for(auto* row:{&p.tool,&p.lo,&p.hi})for(double& v:*row)if(!(f>>v)||!std::isfinite(v))throw std::runtime_error("invalid metadata");
     for(int j=0;j<6;++j)if(p.lo[j]>=p.hi[j]||p.lo[j]<-7||p.hi[j]>7)throw std::runtime_error("invalid limits");
@@ -120,6 +123,10 @@ int main(int argc,char**argv){
     JAKAZuRobot robot;bool logged=false,servo=false;int result=1;
     try{
         check(robot.login_in("192.168.99.101",false),"login");logged=true;
+        // Prime the full SDK status path before consuming the simplified
+        // cache. No error is cleared and all following state gates remain.
+        RobotStatus initial_status{};
+        check(robot.get_robot_status(&initial_status),"warm full status");
         // Allow the SDK's read-only status cache to settle before the first
         // safety check. Never retry a gate failure or delay checks in ServoJ.
         std::this_thread::sleep_for(std::chrono::milliseconds(200));
@@ -161,9 +168,19 @@ int main(int argc,char**argv){
             }
             std::this_thread::sleep_until(deadline);
             if(interrupted || (supervised_path && getppid()!=launch_parent))throw std::runtime_error("interrupted / supervisor lost");
-            auto before=Clock::now();State final=read(robot);
-            if(Clock::now()-before>std::chrono::milliseconds(40)||distance(final.q,path.q.back())>rad(.05))
-                throw std::runtime_error("final feedback mismatch");
+            std::cout<<"{\"event\":\"SETTLING\"}"<<std::endl;
+            auto settling_end=Clock::now()+std::chrono::seconds(2);int stable=0;State final{};
+            while(Clock::now()<settling_end){
+                if(interrupted || (supervised_path && getppid()!=launch_parent))throw std::runtime_error("interrupted / supervisor lost");
+                auto before=Clock::now();final=read(robot);
+                if(Clock::now()-before>std::chrono::milliseconds(40))throw std::runtime_error("settling read deadline");
+                if(final.tool_id!=start.tool_id||final.user_id!=start.user_id||distance(final.tool,start.tool)>1e-6)
+                    throw std::runtime_error("settling tool/user changed");
+                stable=(final.motion.inpos && distance(final.q,path.q.back())<=rad(.05))?stable+1:0;
+                if(stable>=2)break;
+                std::this_thread::sleep_for(std::chrono::milliseconds(80));
+            }
+            if(stable<2)throw std::runtime_error("arrival not confirmed");
             std::cout<<"{\"event\":\"target_reached\"";stamp();std::cout<<",\"actual_rad\":";array_json(final.q);
             std::cout<<",\"tcp_mm_rad\":";array_json(final.tcp);std::cout<<"}"<<std::endl;
         }

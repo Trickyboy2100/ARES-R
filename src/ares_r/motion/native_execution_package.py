@@ -63,7 +63,8 @@ def package_native_preview(points, source_dt_s, site_limits, *, tool_id,
                            speed_ceiling_rad_s=FIRST_DEMO_SPEED_RAD_S,
                            accel_ceiling_rad_s2=FIRST_DEMO_ACCEL_RAD_S2,
                            tracking_stop_threshold_deg=SUPERVISED_HARD_TRACKING_GATE_DEG,
-                           max_excursion_rad=NATIVE_MAX_EXCURSION_RAD):
+                           max_excursion_rad=NATIVE_MAX_EXCURSION_RAD,
+                           retiming_policy="LEGACY",geometry_validator=None):
     """Return native file text and audit, or raise without writing a file."""
     source = [[float(v) for v in row] for row in points]
     if (len(source) < 2 or any(len(row) != 6 or not all(math.isfinite(v) for v in row)
@@ -87,15 +88,32 @@ def package_native_preview(points, source_dt_s, site_limits, *, tool_id,
              for i in range(6)]
     if not 0 < max_duration_s <= NATIVE_MAX_DURATION_S:
         raise ValueError("cannot exceed 240 s native reposition duration")
-    sampled = resample_for_native(source, float(source_dt_s), NATIVE_DT_S,
-                                  speed, accel, max_duration_s=max_duration_s)
+    geometry_proof=None;retiming_fallback=None;source_geometry_proof=None
+    if retiming_policy=='VERIFIED_SHORT_V1':
+        if geometry_validator is None:raise ValueError('geometry validator required')
+        source_geometry_proof=geometry_validator(source)
+        if not source_geometry_proof.get('passed'):raise RuntimeError('SOURCE_SHORT_GEOMETRY_REJECTED')
+        from .bounded_retiming import cubic_verified,local_polyline
+        try:
+            sampled,geometry_proof=cubic_verified(source,NATIVE_DT_S,speed,accel,max_duration_s,geometry_validator)
+            effective_retimer='CUBIC_REVALIDATED_V1'
+        except (ValueError,RuntimeError) as exc:
+            if any(code in str(exc) for code in ('STOP_REQUESTED','JOB_CANCELLED','CANCEL_NOT_ACKNOWLEDGED')):raise
+            retiming_fallback=str(exc)
+            sampled=local_polyline(source,NATIVE_DT_S,speed,accel,max_duration_s)
+            effective_retimer='LOCAL_EXACT_POLYLINE_V1'
+    elif retiming_policy=='LEGACY':
+        sampled = resample_for_native(source, float(source_dt_s), NATIVE_DT_S,
+                                      speed, accel, max_duration_s=max_duration_s)
+        effective_retimer='LEGACY_GLOBAL_DILATION'
+    else:raise ValueError('unknown native retiming policy')
     duration = (len(sampled) - 1) * NATIVE_DT_S
     if len(sampled) > NATIVE_MAX_SAMPLES or duration > NATIVE_MAX_DURATION_S:
         raise ValueError("native point/duration cap")
     if sampled[0] != source[0] or sampled[-1] != source[-1]:
         raise ValueError("time scaling changed path endpoints")
     geometry_error = _geometry_error(source, sampled)
-    if geometry_error > 1e-8:
+    if geometry_error > 1e-8 and (geometry_proof is None or not geometry_proof.get('passed')):
         raise ValueError("time scaling changed joint-path geometry")
     excursion = max(abs(value - source[0][joint])
                     for row in sampled for joint, value in enumerate(row))
@@ -128,7 +146,23 @@ def package_native_preview(points, source_dt_s, site_limits, *, tool_id,
     acceleration = max(abs((sampled[j][i]-sampled[j-1][i]) / NATIVE_DT_S
                            - (sampled[j-1][i]-sampled[j-2][i]) / NATIVE_DT_S)
                        / NATIVE_DT_S for j in range(2, len(sampled)) for i in range(6))
+    import numpy as np,json
+    q=np.asarray(sampled);vel=np.diff(q,axis=0)/NATIVE_DT_S
+    acc=np.diff(np.vstack([np.zeros((1,6)),vel,np.zeros((1,6))]),axis=0)/NATIVE_DT_S
+    velocity_ratios=np.max(np.abs(vel),axis=0)/np.asarray(speed)
+    accel_ratios=np.max(np.abs(acc),axis=0)/np.asarray(accel)
     audit = {
+        'retiming_policy':effective_retimer,'retiming_fallback':retiming_fallback,
+        'geometry_changed':geometry_error>1e-8,'geometry_validation':geometry_proof,
+        'source_geometry_validation':source_geometry_proof,
+        'source_duration_s':(len(source)-1)*float(source_dt_s),
+        'time_stretch':duration/((len(source)-1)*float(source_dt_s)),
+        'joint_path_length_rad':np.sum(np.abs(np.diff(source,axis=0)),axis=0).tolist(),
+        'effective_velocity_limits_rad_s':speed,'effective_acceleration_limits_rad_s2':accel,
+        'limiting_velocity_joint':int(np.argmax(velocity_ratios))+1,
+        'limiting_acceleration_joint':int(np.argmax(accel_ratios))+1,
+        'source_path_sha256':hashlib.sha256(json.dumps(source,separators=(',',':')).encode()).hexdigest(),
+        'native_path_sha256':hashlib.sha256(json.dumps(sampled,separators=(',',':')).encode()).hexdigest(),
         "format": "ARES_R_RIGHT_V2", "native_sender_mode_for_future_review": "supervised_path",
         "planning_only": True, "execution_allowed": False,
         "sample_period_s": NATIVE_DT_S, "sample_count": len(sampled),

@@ -8,6 +8,7 @@ struct CartesianTran{double x,y,z;};
 struct Rpy{double rx,ry,rz;};
 struct CartesianPose{CartesianTran tran;Rpy rpy;};
 struct RobotStatus_simple{int errcode=0,powered_on=1,enabled=1;};
+struct RobotStatus{int errcode=0;};
 struct MotionStatus{bool isInEstop=false,isInCollision=false,isOnLimit=false,inpos=true,paused=true;int queue=0,active_queue=0;};
 class JAKAZuRobot{
     JointValue q{};bool servo=false;int sends=0;
@@ -16,6 +17,7 @@ public:
     int login_in(const char*ip,bool){trace(ip);return 0;}
     int login_out(){trace("logout");return 0;}
     int get_robot_status_simple(RobotStatus_simple*s){*s=RobotStatus_simple();return 0;}
+    int get_robot_status(RobotStatus*s){trace("full_status_read");*s=RobotStatus();return 0;}
     int get_motion_status(MotionStatus*s){*s=MotionStatus();if(std::getenv("FAKE_BUSY"))s->queue=1;return 0;}
     int get_actual_joint_position(JointValue*v){*v=q;if(sends&&std::getenv("FAKE_TRACKING_ERROR"))v->jVal[5]+=.01;return 0;}
     int get_actual_tcp_position(CartesianPose*p){*p=CartesianPose();return 0;}

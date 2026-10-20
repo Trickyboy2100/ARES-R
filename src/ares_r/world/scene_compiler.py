@@ -42,7 +42,9 @@ def _quaternion_wxyz(rotation):
         [matrix[1, 2]-matrix[2, 1], matrix[2, 0]-matrix[0, 2], matrix[0, 1]-matrix[1, 0], matrix.trace()],
     ]) / 3.0)
     xyzw = eigenvectors[:, int(np.argmax(eigenvalues))]
-    value = np.asarray([xyzw[3], xyzw[0], xyzw[1], xyzw[2]])
+    # This K-matrix convention returns the passive/inverse quaternion.
+    # Scene cuboids require active wxyz: Q(R) must reconstruct R, not R.T.
+    value = np.asarray([xyzw[3], -xyzw[0], -xyzw[1], -xyzw[2]])
     if value[0] < 0: value = -value
     return (value / np.linalg.norm(value)).tolist()
 
@@ -63,9 +65,14 @@ def compile_snapshot(snapshot, arm: str, T_body_model, planning_scope="DEMO_OFFL
     cuboids = {}
     targets = {}
     provenance = []
+    attachments=[value for value in (snapshot.left_attached_object,snapshot.right_attached_object) if value is not None]
+    attached_ids={value.object_id for value in attachments}
     for item in objects:
         if item.pose.frame_id != "body" or item.geometry_type != "cuboid":
             raise ValueError("SceneCompiler accepts BODY cuboids only")
+        if item.object_id in attached_ids:
+            provenance.append({'object_id':item.object_id,'role':'ATTACHED','used_as':'attached_only'})
+            continue
         inflated = (np.asarray(item.dimensions_m, dtype=float) + 2.0 * item.inflation_m).tolist()
         if planning_scope == "P3_PRODUCTION_PLANNING_ONLY":
             center, dims, orientation = transform_body_cuboid(item.pose.xyz_m, inflated, model_body)
@@ -91,6 +98,7 @@ def compile_snapshot(snapshot, arm: str, T_body_model, planning_scope="DEMO_OFFL
                            })
     payload = {
         "schema_version": 1, "frame": "curobo_model_base", "arm": arm,
+        "rotation_encoding_revision": "SCENE_COMPILER_ACTIVE_WXYZ_V2",
         "source": "scene_snapshot_compiler", "planning_scope": planning_scope,
         "execution_allowed": False, "scene_snapshot_id": snapshot.snapshot_id,
         "planning_context_digest": snapshot.planning_context_digest,
@@ -98,5 +106,9 @@ def compile_snapshot(snapshot, arm: str, T_body_model, planning_scope="DEMO_OFFL
         "cuboids": cuboids, "targets": targets, "target_policy": target_policy,
         "provenance": provenance,
     }
+    active_attachment=next((item for item in attachments if item.attached_to==arm),None)
+    if active_attachment is not None:
+        payload['attached_object_id']=active_attachment.object_id
+        payload['attached_object_revision']=active_attachment.source_revision
     payload["digest"] = hashlib.sha256(json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
     return payload

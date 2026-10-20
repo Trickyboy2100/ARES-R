@@ -8,7 +8,8 @@ import json
 import math
 from typing import Mapping, Sequence
 
-from ares_r.manipulation.contact_motion import _geometry_overlap
+from ares_r.manipulation.contact_motion import _geometry_overlap,_collision_box
+import numpy as np
 
 
 _STAGES = {"PICK_CONTACT_ESCAPE", "PICK_APPROACH", "PICK_INITIAL_LIFT",
@@ -51,11 +52,30 @@ class ContactBypassPolicy:
     def as_dict(self):return asdict(self)
 
 
+class HardWorldBroadPhase:
+    """Conservative BODY AABBs; every overlapping pair still uses full OBB SAT."""
+    def __init__(self,world):
+        self.items=list(world.items());self.centers=[];self.extents=[]
+        for name,item in self.items:
+            center,extent=self.bounds(item);self.centers.append(center);self.extents.append(extent)
+        self.centers=np.asarray(self.centers).reshape(-1,3);self.extents=np.asarray(self.extents).reshape(-1,3)
+    @staticmethod
+    def bounds(item):
+        box=_collision_box(item,item.get('geometry_id','world'))
+        center=np.asarray(box.center_body_m);extent=np.abs(np.asarray(box.rotation_body))@np.asarray(box.half_extents_m)
+        if not np.isfinite(center).all() or not np.isfinite(extent).all():raise ValueError('nonfinite hard-world geometry')
+        return center,extent+1e-6+np.sum(extent)*1e-7
+    def candidates(self,link):
+        center,extent=self.bounds(link)
+        indices=np.flatnonzero(np.all(np.abs(self.centers-center)<=self.extents+extent,axis=1))
+        return [self.items[i] for i in indices]
+
+
 def validate_bypass_segment(samples: Sequence[Mapping[str, object]],
                             world_obstacles: Mapping[str, Mapping[str, object]],
                             policy: ContactBypassPolicy, *,
                             expected_direction_body, joint_lower, joint_upper,
-                            expire_at_end=True):
+                            expire_at_end=True,check_cancelled=lambda:None):
     """Hard-check everything except active tool/gripper vs observed world."""
     if not isinstance(policy,ContactBypassPolicy) or policy.policy_id!="CONTACT_BYPASS_V1":
         raise RuntimeError("CONTACT_BYPASS_V1 manipulation policy required")
@@ -63,8 +83,9 @@ def validate_bypass_segment(samples: Sequence[Mapping[str, object]],
     direction=[float(v) for v in expected_direction_body]
     norm=math.sqrt(sum(v*v for v in direction));direction=[v/norm for v in direction]
     start=[float(v) for v in samples[0]["tcp_position_body_m"]];prior=-1e-9
-    min_central=float("inf")
+    min_central=float("inf");broadphase=HardWorldBroadPhase(world_obstacles);exact_pairs=0
     for index,sample in enumerate(samples):
+        check_cancelled()
         q=[float(v) for v in sample["joints_rad"]]
         if len(q)!=6 or any(q[i]<float(joint_lower[i]) or q[i]>float(joint_upper[i]) for i in range(6)):
             raise RuntimeError("bypass joint limit violation")
@@ -80,7 +101,8 @@ def validate_bypass_segment(samples: Sequence[Mapping[str, object]],
         links=list(sample["arm_links"])
         if len(links)<6:raise RuntimeError("Link1..Link6 geometry is required")
         for link in links:
-            for obstacle_id,obstacle in world_obstacles.items():
+            for obstacle_id,obstacle in broadphase.candidates(link):
+                exact_pairs+=1
                 if _geometry_overlap(link,obstacle):
                     raise RuntimeError("arm link contacted hard world object %s"%obstacle_id)
         # Adjacent conservative link boxes may overlap by construction.  All
@@ -97,4 +119,5 @@ def validate_bypass_segment(samples: Sequence[Mapping[str, object]],
             "ignored_collision_pair":"ACTIVE_RIGHT_GRIPPER_TOOL_VS_OBSERVED_POINTCLOUD_ONLY",
             "arm_links_world_hard":True,"inactive_left_arm_hard":True,
             "self_collision_hard":True,"automatic_expiry":True,
-            "expired_at_end":bool(expire_at_end)}
+            "expired_at_end":bool(expire_at_end),"world_obstacles_retained":len(world_obstacles),
+            "exact_obb_world_pairs":exact_pairs,"broadphase":"CONSERVATIVE_BODY_AABB_V1"}

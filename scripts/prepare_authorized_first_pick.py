@@ -36,6 +36,11 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--component-gripper", action="store_true",
                         help="use the pinned 40%% opening component model; legacy default is unchanged")
+    parser.add_argument("--early-contact-lift-precheck", action="store_true")
+    parser.add_argument("--contact-observed-narrowphase",action="store_true",
+                        help="contact-only raw occupancy refinement; no obstacle deletion")
+    parser.add_argument('--task-tcp-offset-m-rad',default='[0,0,0,0,0,0]')
+    parser.add_argument('--demo-tcp-orientation-compensation',default='{}')
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=False)
 
@@ -105,6 +110,17 @@ def main():
     xyz = np.asarray(target["pose_m_rad"][:3], dtype=float)
     rotation = np.asarray(rotation_matrix(*target["pose_m_rad"][3:],
                                           target["orientation_convention"]), dtype=float)
+    from ares_r.manipulation.task_tcp_offset import apply_task_pose,offset_revision,validate_offset
+    task_offset=validate_offset(json.loads(args.task_tcp_offset_m_rad))
+    xyz,rotation=apply_task_pose(xyz,rotation,task_offset)
+    from ares_r.manipulation.task_tcp_offset import demo_local_rotation
+    compensation=json.loads(args.demo_tcp_orientation_compensation)
+    rotation=demo_local_rotation(rotation,{'demo_tcp_orientation_compensation':compensation})
+    request['demo_tcp_orientation_compensation']=compensation
+    request['task_tcp_offset_m_rad']=task_offset
+    request['task_tcp_offset_revision']=offset_revision(task_offset)
+    from scipy.spatial.transform import Rotation
+    request['task_target_pose_body_m_rad']=xyz.tolist()+Rotation.from_matrix(rotation).as_euler('xyz').tolist()
     direction = np.asarray(approach_direction(rotation, target["approach_axis"]), dtype=float)
     task=load_task_parameters(ROOT/"config/tray_to_groove_v2.json")
     pregrasp_distance=float(task["contact"].get("selected_pregrasp_distance_m",.05))
@@ -116,17 +132,39 @@ def main():
     # last independently validated pregrasp solution; this is only a numerical
     # seed and all target/provenance fields still come from the fresh epoch.
     goals=[];metadata=[]
-    for symmetry_id,candidate_rotation in two_finger_grasp_rotations(rotation):
-        try:
-            goal=solver.solve(pregrasp_xyz,candidate_rotation,request["goal_rad"])
-        except ValueError:
-            continue
-        goals.append(list(goal.joints_rad))
-        metadata.append({"grasp_symmetry_id":symmetry_id,
-            "target_rotation_body":candidate_rotation.tolist(),
-            "approach_direction_body":direction.tolist(),
-            "ik_position_error_m":goal.position_error_m,
-            "ik_orientation_error_deg":float(np.degrees(goal.orientation_error_rad))})
+    if args.early_contact_lift_precheck:
+        from ares_r.manipulation.contact_lift_precheck import precheck_contact_lift
+        site=load(ROOT/"config/jaka_mini2_motion.site.json")
+        margin=float(site["soft_limit_margin_rad"])
+        solver.lower=np.maximum(solver.lower,np.asarray(site["lower_rad"])+margin)
+        solver.upper=np.minimum(solver.upper,np.asarray(site["upper_rad"])-margin)
+        def physical_reference_fk(q):
+            pose=solver.fk(q).copy()
+            pose[:3,:3]=demo_local_rotation(pose[:3,:3],{'demo_tcp_orientation_compensation':compensation},inverse=True)
+            return pose
+        precheck=precheck_contact_lift(solver,xyz,rotation,direction,
+            [request["goal_rad"],start],contact_m=pregrasp_distance,level_fk=physical_reference_fk)
+        (args.output/"contact_lift_precheck.json").write_text(json.dumps(precheck,indent=2)+"\n")
+        if not precheck['passed']:
+            raise RuntimeError(precheck['failure_code']+": see contact_lift_precheck.json; no QUALITY retry")
+        for candidate in precheck['accepted']:
+            goals.append(list(candidate['goal_rad']))
+            metadata.append({k:v for k,v in candidate.items() if k!='goal_rad'})
+        request['early_contact_lift_precheck']={
+            'passed':True,'contact_m':pregrasp_distance,'lift_m':.1,
+            'observation_id':observation['observation_id']}
+    else:
+        for symmetry_id,candidate_rotation in two_finger_grasp_rotations(rotation):
+            try:
+                goal=solver.solve(pregrasp_xyz,candidate_rotation,request["goal_rad"])
+            except ValueError:
+                continue
+            goals.append(list(goal.joints_rad))
+            metadata.append({"grasp_symmetry_id":symmetry_id,
+                "target_rotation_body":candidate_rotation.tolist(),
+                "approach_direction_body":direction.tolist(),
+                "ik_position_error_m":goal.position_error_m,
+                "ik_orientation_error_deg":float(np.degrees(goal.orientation_error_rad))})
     if not goals:
         raise RuntimeError("neither two-finger grasp symmetry is reachable")
 
@@ -150,6 +188,15 @@ def main():
                         and abs(candidate - start[index])
                         < abs(goal[index] - start[index])):
                     goal[index] = candidate
+    if args.early_contact_lift_precheck:
+        from ares_r.manipulation.roundtrip_demo import digest
+        for goal,item in zip(goals,metadata):
+            paths=item['prechecked_paths']
+            shift=np.asarray(goal)-np.asarray(paths['contact'][0])
+            for name,rows in paths.items():paths[name]=(np.asarray(rows)+shift).tolist()
+            item['observation_id']=observation['observation_id']
+            item.pop('branch_sha256',None)
+            item['branch_sha256']=digest(item)
     excursion = [abs(goals[0][index] - start[index]) for index in range(6)]
     print("goal on the branch nearest the live start: %s"
           % [round(math.degrees(v), 2) for v in goals[0]])
@@ -166,9 +213,20 @@ def main():
         "goal_candidate_metadata": metadata,
         "geometry_revision": report["geometry_revision"],
         "inactive_arm_revision": report["inactive_arm_revision"],
+        "tool_revision": report["tool_revision"],
         "physical_state": "LIVE_AUTHORIZED_FIRST_PICK",
         "runtime_motion_goal": None,
     })
+    request['manipulation_contact_scope']={
+        'schema_version':1,'observation_id':observation['observation_id'],
+        'scene_snapshot_id':observation['scene_snapshot_id'],
+        'scene_digest':observation['scene_digest'],
+        'pointcloud_sha256':observation['pointcloud_sha256'],
+        'geometry_revision':report['geometry_revision'],'tool_revision':report['tool_revision'],
+        'target_object_ids':ignored_ids,
+        'source':'FRESH_DETECTION_BOUND_TARGET_COMPONENT',
+        'allowed_stages':['contact','lift'],
+        'maximum_initial_lift_m':.100,'remaining_lift_uses_full_scene':True}
     request.setdefault("planning_parameters",{})[
         "optimizer_collision_activation_distance"]=.010
     request.setdefault("planner_clearance_policy",{}).update({
@@ -178,8 +236,14 @@ def main():
     request["execution_tool_envelope"] = build_execution_tool_envelope(
         request["collision_model"], request["controller_tool_pose_mm_rad"],
         inflation_m=0.008, max_opening_percent=40,
-        use_component_geometry=args.component_gripper,
+        use_component_geometry=args.component_gripper or args.contact_observed_narrowphase,
         component_inflation_m=0.0)
+    if args.contact_observed_narrowphase:
+        # Seal after the same final provenance normalisation written below.
+        request['compiled_scene']['scene_snapshot_id']=observation['scene_snapshot_id']
+        request['compiled_scene']['planning_context_digest']=observation['scene_digest']
+        from ares_r.manipulation.observed_contact_geometry import build_observed_contact_geometry
+        request['contact_observed_geometry']=build_observed_contact_geometry(args.epoch,request)
     # Fresh scene owns these values; do not retain stale template provenance.
     request["compiled_scene"]["scene_snapshot_id"] = observation["scene_snapshot_id"]
     request["compiled_scene"]["planning_context_digest"] = observation["scene_digest"]

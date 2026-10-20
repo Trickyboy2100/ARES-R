@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass, field, replace
 from enum import Enum
 import hashlib
+import threading
 import json
 import math
 from pathlib import Path
@@ -59,11 +60,15 @@ class MotionGoal:
     position_tolerance_m: float = 0.003
     orientation_tolerance_deg: float = 3.0
     source: str = "runtime"
+    ik_seed_joints_rad: Optional[Sequence[Sequence[float]]] = None
     schema_version: int = 1
 
     def validate(self) -> None:
         if self.schema_version != 1 or self.frame != "BODY":
             raise ValueError("MotionGoal v1 requires BODY frame")
+        if self.ik_seed_joints_rad is not None:
+            if len(self.ik_seed_joints_rad)>4 or any(len(q)!=6 or not all(math.isfinite(float(v)) for v in q) for q in self.ik_seed_joints_rad):
+                raise ValueError('at most four finite six-joint IK seeds required')
         if (len(self.position_m) != 3 or
                 not all(math.isfinite(float(v)) for v in self.position_m)):
             raise ValueError("three finite BODY target coordinates required")
@@ -224,6 +229,7 @@ class SceneAwareMotionService:
         self.packager = packager
         self.state_path = Path(state_path)
         self.clock = clock
+        self._publication_guard=threading.RLock();self._generation=0
         self.clearance_policy = clearance_policy or ClearancePolicy(
             revision="scene-aware-clearance-v1", preferred_clearance_m=0.030)
         if not self.state_path.exists():
@@ -243,11 +249,19 @@ class SceneAwareMotionService:
         return value
 
     def invalidate_plans(self, reason: str):
-        value = self._read()
-        value.update(state="STALE", execution_state="STOPPED", reason=str(reason), plan_id=None)
-        return self._write(value)
+        with self._publication_guard:
+            self._generation+=1
+            cancel=getattr(self.planner,'cancel',None)
+            if callable(cancel):cancel()
+            value = self._read()
+            value.update(state="STALE", execution_state="STOPPED", reason=str(reason), plan_id=None)
+            return self._write(value)
 
     def plan(self, request: MotionRequest) -> dict:
+        with self._publication_guard:
+            generation=self._generation
+            reset=getattr(self.planner,'reset_cancellation',None)
+            cancel_token=reset() if callable(reset) else None
         request.validate()
         from ares_r.operations import OperationsRegistry
         operations = OperationsRegistry().read()
@@ -260,16 +274,19 @@ class SceneAwareMotionService:
         self.config = dict(self.config, operations_policy_revision=operations['revision'])
         scene = self.local_scene.ensure_fresh(
             "MOTION_REQUEST:%s" % request.request_label, request.scene_policy,
-            active_arm=request.arm)
+            active_arm=request.arm, **({"attachment":request.constraints.attached_object_geometry}
+                if request.constraints.attached_object_geometry is not None else {}))
         if scene["state"] != "READY":
             raise RuntimeError("fresh local scene required")
         plan_id = "PLAN_" + uuid.uuid4().hex
         output = Path("worklog/evidence/scene-aware-motion") / plan_id
-        self._write({"state": "PLANNING", "execution_state": "IDLE",
-                     "plan_id": plan_id, "scene_epoch": scene["scene_epoch"],
-                     "scene_snapshot_id": scene["scene_snapshot_id"]})
+        with self._publication_guard:
+            if generation!=self._generation:raise RuntimeError('JOB_CANCELLED: admission revoked')
+            self._write({"state": "PLANNING", "execution_state": "IDLE",
+                         "plan_id": plan_id, "scene_epoch": scene["scene_epoch"],
+                         "scene_snapshot_id": scene["scene_snapshot_id"]})
         try:
-            plan = dict(self.planner(request, scene, output))
+            plan = dict(self.planner(request,scene,output,cancelled=cancel_token.is_set) if isinstance(cancel_token,threading.Event) else self.planner(request,scene,output))
             plan['operations_policy_revision'] = operations['revision']
             limits = operations.get('software_limits', {})
             rows = plan.get('trajectory_points_rad') or []
@@ -285,8 +302,10 @@ class SceneAwareMotionService:
             if not validity["hard_valid"]:
                 raise RuntimeError("hard trajectory validation failed: %s" % validity)
         except Exception as exc:
-            self._write({"state": "FAILED", "execution_state": "IDLE",
-                         "plan_id": None, "reason": "%s:%s" % (type(exc).__name__, exc)})
+            with self._publication_guard:
+                if generation==self._generation:
+                    self._write({"state": "FAILED", "execution_state": "IDLE",
+                                 "plan_id": None, "reason": "%s:%s" % (type(exc).__name__, exc)})
             raise
         trajectory = plan.get("trajectory_points_rad") or []
         digest_value = hashlib.sha256(json.dumps(trajectory, separators=(",", ":")).encode()).hexdigest()
@@ -333,16 +352,18 @@ class SceneAwareMotionService:
             "planner_timing_s":plan.get('timing_s'),
             "latency_contract":plan.get('latency_contract'),
         }
-        output.mkdir(parents=True, exist_ok=True)
-        _atomic_json(output / "plan_handle.json", handle)
-        self._write({"state": "READY",
-                     "execution_state": ("ARMED" if package else "PREVIEW_ONLY"),
-                     "execution_package_error": package_error,
-                     "plan_id": plan_id,
-                     "plan_handle": str(output / "plan_handle.json"),
-                     "scene_epoch": scene["scene_epoch"],
-                     "scene_snapshot_id": scene["scene_snapshot_id"],
-                     "planner_timing_s": plan.get("timing_s")})
+        with self._publication_guard:
+            if generation!=self._generation:raise RuntimeError('JOB_CANCELLED: late plan publication denied')
+            output.mkdir(parents=True, exist_ok=True)
+            _atomic_json(output / "plan_handle.json", handle)
+            self._write({"state": "READY",
+                         "execution_state": ("ARMED" if package else "PREVIEW_ONLY"),
+                         "execution_package_error": package_error,
+                         "plan_id": plan_id,
+                         "plan_handle": str(output / "plan_handle.json"),
+                         "scene_epoch": scene["scene_epoch"],
+                         "scene_snapshot_id": scene["scene_snapshot_id"],
+                         "planner_timing_s": plan.get("timing_s")})
         return handle
 
     def preview(self, plan_id: Optional[str] = None) -> dict:

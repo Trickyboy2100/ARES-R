@@ -36,7 +36,7 @@ class LatencySolverTests(unittest.TestCase):
         policy,contract=apply_latency_profile(p,request)
         self.assertEqual(policy['initial_iters'],50)
         self.assertFalse(contract['automatic_quality_fallback'])
-        self.assertEqual(contract['result_deadline_s'],4)
+        self.assertEqual(contract['result_deadline_s'],15)
 
     def test_fast_request_never_cold_starts_slow_worker(self):
         from unittest.mock import patch
@@ -46,3 +46,16 @@ class LatencySolverTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError,'NOT_READY'):
                 plan('/unused','/unused','request','output','log',2,autostart=False)
             process.assert_not_called()
+
+
+class CollisionLaunchBudgetTests(unittest.TestCase):
+    def test_preallocation_bound_preserves_normal_world_and_guards_int32(self):
+        from ares_r.motion.latency_solver import bounded_interpolation_buffer
+        normal,proof=bounded_interpolation_buffer(5000,2,360,512)
+        self.assertEqual(normal,5000)
+        large,proof=bounded_interpolation_buffer(5000,2,360,768)
+        self.assertLess(large,5000);self.assertLess(proof['dense_kernel_extent_upper_bound'],2**31)
+        self.assertFalse(proof['path_truncation_allowed'])
+        site,proof=bounded_interpolation_buffer(5000,2,1727,768)
+        self.assertGreaterEqual(site,64);self.assertLess(proof['dense_kernel_extent_upper_bound'],2**31)
+        with self.assertRaisesRegex(RuntimeError,'BUDGET_EXCEEDED'):bounded_interpolation_buffer(5000,200,1727,768)

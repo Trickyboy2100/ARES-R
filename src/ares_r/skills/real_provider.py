@@ -51,6 +51,11 @@ class RealCapabilityProvider(CanonicalCapabilityProvider):
             "motion.execute":self._execute,
         })
 
+    def execute(self, definition, plan, invocation, context):
+        from ares_r.offline import reject_physical_io
+        reject_physical_io()
+        return super().execute(definition, plan, invocation, context)
+
     def _berth_select(self,phase,payload):
         from ares_r.operations import OperationsRegistry
         return OperationsRegistry().select(payload['parameters']['operation'])

@@ -1,0 +1,80 @@
+"""Copy existing source bytes into an isolated delivery tree; no algorithm edits."""
+from pathlib import Path
+import hashlib
+import json
+import shutil
+import stat
+
+BASE = Path('/Users/andyee/Documents/ChatGPT/local')
+SRC = BASE / 'ARES-R-offsets-20261016'
+ALT = BASE / 'ARES-R-operations-20261015'
+RC = BASE / 'ARES-R-release-candidate-20261018'
+OUT = BASE / 'ARES-R-source-delivery-20261018'
+RECORD = OUT / 'worklog/source-delivery/2026-10-18'
+EXTS = {'.py', '.cpp', '.c', '.h', '.hpp', '.html', '.js', '.css', '.svg',
+        '.json', '.toml', '.yaml', '.yml', '.sh', '.service', '.md', '.txt'}
+
+
+def candidates(root, folders):
+    for folder in folders:
+        for p in sorted((root / folder).rglob('*')):
+            if not p.is_file() or p.is_symlink() or '__pycache__' in p.parts:
+                continue
+            if ' 2.' in p.name or p.suffix not in EXTS:
+                continue
+            if p.stat().st_flags & 0x40000000:
+                continue
+            yield p, p.relative_to(root)
+
+
+def main():
+    RECORD.mkdir(parents=True, exist_ok=True)
+    manifest = {'schema_version': 1, 'date': '2026-10-18',
+        'base': '7120c3f3aad17330d0af6ada1e39c60bc58fe7fb',
+        'status': 'SOURCE_DELIVERY_NOT_SITE_COMMISSIONED',
+        'canonical_source': SRC.name, 'alternative_source': ALT.name,
+        'source_records': [], 'variant_records': [], 'excluded': [
+            'private raw pointclouds/images/run logs', 'vendor SDK/model binaries',
+            'credentials/private keys', 'pycache/venv/node_modules',
+            'iCloud nonresident duplicate files', 'historical files named * 2.*']}
+    selected = list(candidates(SRC, ['src', 'scripts', 'tests', 'config', 'demos', 'deploy']))
+    selected += [(SRC / n, Path(n)) for n in ('pyproject.toml', '.gitignore')]
+    selected += [(p, p.relative_to(SRC)) for p in (SRC / 'docs').rglob('*.md')
+                 if ('2026-10-' in str(p.relative_to(SRC))) and ' 2.' not in p.name]
+    selected += list(candidates(RC, ['scripts/audit', 'docs/audits']))
+    selected += [(p, p.relative_to(RC)) for p in (RC / 'docs/reports').glob('2026-10-18*.md')]
+    for p, rel in selected:
+        data = p.read_bytes()
+        target = OUT / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists() or target.read_bytes() != data:
+            shutil.copy2(p, target)
+        manifest['source_records'].append({'path': str(rel), 'source_tree': (
+            'rc-custody-reports' if p.is_relative_to(RC) else SRC.name),
+            'size': len(data), 'sha256': hashlib.sha256(data).hexdigest()})
+    # Alternative functional implementations remain separate; no blind merge.
+    for p, rel in candidates(ALT, ['src', 'scripts', 'tests', 'config', 'deploy']):
+        data = p.read_bytes()
+        canonical = OUT / rel
+        if canonical.exists() and canonical.read_bytes() == data:
+            continue
+        target = RECORD / 'operations-variants' / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(p, target)
+        manifest['variant_records'].append({'path': str(target.relative_to(OUT)),
+             'original_path': str(rel), 'size': len(data),
+             'sha256': hashlib.sha256(data).hexdigest()})
+    # Exact planner diffs, reviewed text reports, and file hashes only.
+    for p in (BASE / 'presite-20261018-private/diffs').glob('*.diff'):
+        d = RECORD / 'planner-diffs' / p.name
+        d.parent.mkdir(exist_ok=True); shutil.copy2(p, d)
+    (RECORD / 'SOURCE_MANIFEST.json').write_text(json.dumps(manifest, indent=2) + '\n')
+    sums = [r['sha256'] + '  ' + r['path'] for r in
+            manifest['source_records'] + manifest['variant_records']]
+    (RECORD / 'SHA256SUMS').write_text('\n'.join(sums) + '\n')
+    print(json.dumps({'canonical': len(manifest['source_records']),
+                      'variants': len(manifest['variant_records'])}))
+
+
+if __name__ == '__main__':
+    main()

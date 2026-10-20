@@ -53,6 +53,7 @@ def _motion_request(payload, default_central_exclusion=True):
             "yaw_target_rad": payload.get("yaw_target_rad"),
             "explicit_rotation": payload.get("explicit_rotation"),
             "source": payload.get("source", "runtime"),
+            "ik_seed_joints_rad": payload.get("ik_seed_joints_rad"),
         }
     goal = (None if goal_payload is None else MotionGoal(
         position_m=goal_payload["position_m"],
@@ -62,7 +63,8 @@ def _motion_request(payload, default_central_exclusion=True):
         explicit_rotation=goal_payload.get("explicit_rotation"),
         position_tolerance_m=float(goal_payload.get("position_tolerance_m", .003)),
         orientation_tolerance_deg=float(goal_payload.get("orientation_tolerance_deg", 3.0)),
-        source=goal_payload.get("source", payload.get("source", "runtime"))))
+        source=goal_payload.get("source", payload.get("source", "runtime")),
+        ik_seed_joints_rad=goal_payload.get('ik_seed_joints_rad')))
     return MotionRequest(
         arm=payload["arm"], goal_joints_rad=payload.get("goal_joints_rad"), goal=goal,
         goal_pose_body_m_rad=payload.get("goal_pose_body_m_rad"),
@@ -193,7 +195,13 @@ class SceneAwareDispatcher:
             try:
                 cfg = self.config['jaka']
                 arm = JakaSdkArm(side, cfg['arms'][side], cfg)
-                d = arm.diagnostics()
+                if side=='left':
+                    from .motion.arrival_contract import minimal_arm_state
+                    def fetch(_):
+                        d=arm.planning_state() if hasattr(arm,'planning_state') else arm.diagnostics()
+                        return {'joints_rad':d['joint_position_rad'],'tool_id':d['tool_id'],'diagnostics':d}
+                    d=minimal_arm_state(fetch,side)['diagnostics']
+                else:d = arm.diagnostics()
                 base = world['arms'][side]
                 t = transform_xyz_rpy(base['base_xyz_m'], base['base_rpy_rad']) @ np.asarray(
                     pose_mm_rad_to_matrix(d['tcp_position_mm_rad']))
@@ -357,8 +365,16 @@ class SceneAwareDispatcher:
     def task_show(self, task_id): return self.studio().task_show(task_id)
     def task_prepare(self, task_id): return self.studio().prepare(task_id)
     def task_replay(self, task_id): return self.studio().start_replay(task_id)
-    def task_status(self): return self.studio().status()
-    def task_stop(self): return self.studio().stop()
+    def task_status(self):
+        from .manipulation.roundtrip_job import canonical_status
+        return canonical_status(self.operations.root) or self.studio().status()
+    def task_stop(self):
+        from .manipulation.roundtrip_job import canonical_status
+        status=canonical_status(self.operations.root)
+        if status and status['running']:
+            (Path(status['run_dir'])/'stop.request').write_text('ART_TASK_STOP\n')
+            return dict(status,state='STOP_REQUESTED')
+        return self.studio().stop()
 
     def system_info(self):
         task=self.task_status()

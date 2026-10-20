@@ -188,3 +188,14 @@ class SceneAwareMotionTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+class InflightStopTests(unittest.TestCase):
+    def test_late_success_after_stop_cannot_rearm(self):
+        with tempfile.TemporaryDirectory() as d:
+            scene=LocalSceneService({'scene_aware_motion':{'evidence_directory':d}},state_path=Path(d)/'scene.json',scene_builder=fake_scene_builder)
+            owner={}
+            def planner(*args):owner['motion'].stop();return plan_result()
+            motion=SceneAwareMotionService({},scene,planner,state_path=Path(d)/'motion.json');owner['motion']=motion
+            with self.assertRaisesRegex(RuntimeError,'late plan publication denied'):motion.plan(MotionRequest('right',[.1]*6))
+            self.assertEqual(motion.status()['execution_state'],'STOPPED')
+            with self.assertRaisesRegex(RuntimeError,'no ready'):motion.preview()

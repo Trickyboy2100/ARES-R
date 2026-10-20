@@ -322,7 +322,8 @@ def _aabb_sphere_gap(low, high, sphere, inflation):
 
 
 def refine_robot_adjacent_primitives(points_body_m, report, robot_owned,
-                                     cell_m=.015, inflation_m=.003):
+                                     cell_m=.015, inflation_m=.003,
+                                     additional_collision_spheres=()):
     """Split only abstraction-induced robot collisions; never delete points.
 
     A primitive is refined when its inflated AABB intersects exact planning
@@ -330,14 +331,17 @@ def refine_robot_adjacent_primitives(points_body_m, report, robot_owned,
     A genuine point-level collision is retained unchanged and reported.
     """
     points = np.asarray(points_body_m, dtype=float); output=[]; records=[]
+    # Payload spheres participate in abstraction refinement, NOT self-filtering.
+    # They must never confer ownership on nearby environmental observations.
+    spheres = tuple(robot_owned.spheres) + tuple(additional_collision_spheres)
     for primitive in report["primitives"]:
         low, high = map(np.asarray, primitive["observed_bounds_m"])
         member = points[np.all((points >= low - 1e-9) & (points <= high + 1e-9), axis=1)]
         aabb_gap = min(_aabb_sphere_gap(low, high, sphere, primitive["inflation_m"])
-                       for sphere in robot_owned.spheres)
+                       for sphere in spheres)
         point_gap = min(float(np.min(np.linalg.norm(member - np.asarray(sphere.center_body_m), axis=1)
                                       - sphere.radius_m))
-                        for sphere in robot_owned.spheres) if len(member) else float("inf")
+                        for sphere in spheres) if len(member) else float("inf")
         if aabb_gap >= 0 or point_gap <= 0:
             output.append(primitive)
             if point_gap <= 0:

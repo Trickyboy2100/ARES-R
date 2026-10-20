@@ -1,0 +1,74 @@
+"""Read-only contracts shared by the site adapter; no device creation or I/O."""
+import hashlib,json,math,time
+from ares_r.motion.arrival_contract import check_start
+
+def validate_hold_readback(parameters,readback,*,now=None):
+    now=time.time() if now is None else now
+    try:raw=float(readback['position_raw']);stamp=float(readback['captured_at_unix'])
+    except (KeyError,TypeError,ValueError) as exc:raise RuntimeError('RESUME_GRIPPER_EVIDENCE_UNAVAILABLE') from exc
+    closed=float(parameters['gripper_closed_raw']);opened=float(parameters['gripper_release_raw'])
+    tolerance=float(parameters['gripper_open_readback_tolerance_raw'])
+    if not all(math.isfinite(v) for v in (raw,stamp,closed,opened,tolerance)) or not 0<=now-stamp<=5:
+        raise RuntimeError('RESUME_GRIPPER_EVIDENCE_STALE_OR_INVALID')
+    if not closed+tolerance<raw<opened-tolerance:raise RuntimeError('RESUME_HELD_OBJECT_UNCERTAIN')
+    return {'state':'HOLD_READBACK_COMPATIBLE','position_raw':raw,'captured_at_unix':stamp,'visual_reconfirmation':'SITE_PENDING'}
+
+def validate_resume_telemetry(actual,expected):
+    for side in ('left','right'):
+        a=actual['arms'][side];e=expected['arms'][side];check_start(a['joints_rad'],e['joints_rad'])
+        if a.get('tool_id') is None or a['tool_id']!=e['tool_id']:raise RuntimeError('RESUME_TOOL_CHANGED')
+    old=(expected.get('base') or {}).get('info') or {};new=(actual.get('base') or {}).get('info') or {}
+    if not all(k in old and k in new for k in ('mapId','x','y','yawNumber')):raise RuntimeError('RESUME_BASE_POSE_UNAVAILABLE')
+    values=[float(row[k]) for row in (old,new) for k in ('x','y','yawNumber')]
+    if not all(math.isfinite(v) for v in values):raise RuntimeError('RESUME_BASE_POSE_NONFINITE')
+    yaw=abs((float(new['yawNumber'])-float(old['yawNumber'])+180)%360-180)
+    if not old['mapId'] or new['mapId']!=old['mapId'] or math.hypot(float(new['x'])-float(old['x']),float(new['y'])-float(old['y']))>.02 or yaw>.5:
+        raise RuntimeError('RESUME_BASE_STATE_CHANGED: site reconciliation required')
+
+def perception_profile_contract(parameters,config):
+    profiles=config['epic']['task_profiles'];bound={}
+    for kind,object_id in (('pick',1),('place',3)):
+        name=parameters[kind+'_profile'];profile=profiles[name]
+        if profile['arm']!='right' or profile['object_id']!=object_id or profile['command']!=parameters[kind+'_command']:
+            raise RuntimeError('ROUNDTRIP_PERCEPTION_PROFILE_MISMATCH:'+kind)
+        if profile.get('state')!='COMMISSIONED':raise RuntimeError('ROUNDTRIP_PERCEPTION_PROFILE_UNCOMMISSIONED:'+kind)
+        bound[kind]={'name':name,**{k:profile.get(k) for k in ('command','object_id','output_frame','translation_unit','rotation_unit','orientation_convention','tool_revision','calibration_revision')}}
+    return hashlib.sha256(json.dumps(bound,sort_keys=True).encode()).hexdigest()
+
+def reconcile_confirmed_stationary_base(actual,expected,authorization,*,run_id,base_revision,now=None):
+    """One explicit site reconciliation, not a global localization tolerance."""
+    import copy
+    now=time.time() if now is None else now
+    expected_hash=hashlib.sha256(json.dumps(expected,sort_keys=True,separators=(',',':')).encode()).hexdigest()
+    if (authorization.get('operator_confirmed_no_physical_base_motion') is not True or
+        authorization.get('run_id')!=run_id or authorization.get('expected_telemetry_sha256')!=expected_hash or
+        authorization.get('base_pose_revision')!=base_revision or now>authorization.get('expires_at_unix',0)):
+        raise RuntimeError('BASE_RECONCILIATION_AUTHORIZATION_INVALID')
+    old=expected['base'];new=actual['base']
+    if old['info']['mapId']!=new['info']['mapId']:raise RuntimeError('BASE_RECONCILIATION_MAP_CHANGED')
+    if any(old.get('log',{}).get(k)!=new.get('log',{}).get(k) for k in ('id','queueId')):
+        raise RuntimeError('BASE_RECONCILIATION_MOTION_TASK_CHANGED')
+    rebound=copy.deepcopy(expected);rebound['base']=copy.deepcopy(new)
+    validate_resume_telemetry(actual,rebound)
+    return rebound
+
+
+def validate_place_dispatch_state(actual,expected):
+    """Full active-controller health; inactive minimal collision state is explicit."""
+    scopes={}
+    for side in ('left','right'):
+        arm=actual['arms'][side];old=expected['arms'][side]
+        check_start(arm['joints_rad'],old['joints_rad'])
+        if arm.get('tool_id') is None or arm['tool_id']!=old['tool_id']:raise RuntimeError('PLACE_TOOL_CHANGED')
+        status=arm.get('controller_status') or {}
+        if status.get('errcode') or any(status.get(k) for k in ('emergency_stop','protective_stop','drag_mode','on_soft_limit')):
+            raise RuntimeError('PLACE_CONTROLLER_FAULT:'+side)
+        if side=='right':
+            if 'errcode' not in status or not status.get('in_position'):
+                raise RuntimeError('PLACE_ACTIVE_CONTROLLER_STATE_UNAVAILABLE')
+            scopes[side]='FULL_ACTIVE_CONTROLLER'
+        elif 'errcode' in status:scopes[side]='FULL_INACTIVE_CONTROLLER'
+        elif status.get('diagnostics_scope')=='MINIMAL_READONLY_COLLISION_STATE':
+            scopes[side]='JOINT_TOOL_COLLISION_STATE_ONLY_NOT_CONTROLLER_HEALTH'
+        else:raise RuntimeError('PLACE_INACTIVE_STATE_SCOPE_UNAVAILABLE')
+    return {'passed':True,'controller_state_scopes':scopes}

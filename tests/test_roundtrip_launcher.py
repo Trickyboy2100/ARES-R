@@ -20,7 +20,7 @@ class RoundtripLauncherTests(unittest.TestCase):
             p[key]='assets/'+key
         self.write('demos/right_arm_grasp_place_roundtrip_v1/parameters.json',p)
         self.write(p['base_route'],json.loads((ROOT/'config/grasp_place_base_route.json').read_text()))
-        self.write('config/planner_latency_profiles.json',{'fast':{'result_deadline_s':4}})
+        self.write('config/planner_latency_profiles.json',{'fast':{'result_deadline_s':p['planning_deadline_s']}})
         self.write(p['template_plan']+'/planner_request.json',{})
         for key in ('contact_sender','pick_scene_python','curobo_python'):self.write(p[key],{})
         self.write('scripts/run_grasp_place_roundtrip.py',{})
@@ -46,6 +46,22 @@ class RoundtripLauncherTests(unittest.TestCase):
             status=self.launcher.status()
         self.assertEqual(status['state'],'IDLE');spawn.assert_not_called()
         self.assertFalse(status['parameters']['review_approved'])
+
+    def test_task_offset_saved_without_motion_and_contract_changes(self):
+        old=self.launcher.status()['contract_sha256']
+        offset=[.001,-.002,.003,.01,0,-.02]
+        with patch('ares_r.demos.roundtrip_launcher.subprocess.Popen') as spawn:
+            value=self.launcher.settings({'contract_sha256':old,'task_tcp_offset_m_rad':offset})
+        spawn.assert_not_called()
+        self.assertEqual(value['parameters']['task_tcp_offset_m_rad'],offset)
+        self.assertNotEqual(old,value['contract_sha256'])
+        with self.assertRaisesRegex(ValueError,'参数已变化'):
+            self.launcher.settings({'contract_sha256':old,'task_tcp_offset_m_rad':[0]*6})
+
+    def test_running_task_offset_change_rejected(self):
+        with patch.object(self.launcher,'status',return_value={'running':True}):
+            with self.assertRaisesRegex(RuntimeError,'运行中'):
+                self.launcher.settings({'task_tcp_offset_m_rad':[0]*6})
 
     def test_authorization_and_digest_required_before_spawn(self):
         for body in ({},{'authorization':AUTH},dict(self.body(),onsite_observer_confirmed=False),

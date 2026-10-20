@@ -41,6 +41,29 @@ class NativeDemoTest(unittest.TestCase):
         self.assertEqual(calls[-2:],["servo_off","logout"])
         self.assertNotIn("192.168.99.100",calls)
 
+    def test_validate_only_accepts_fractional_capture_and_keeps_expiry(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);path=root/"synthetic_format";trace=root/"trace"
+            for delta,expected in ((0,0),(-301,2),(30,2)):
+                path.write_text("ARES_R_RIGHT_V2 3 0.08 %.17g 2 0.2 0.2 1.5\n"%(time.time()+delta)+
+                    "0 0 0 0 0 0\n-6 -6 -6 -6 -6 -6\n6 6 6 6 6 6\n"+"0 0 0 0 0 0\n"*3)
+                result=subprocess.run([str(self.binary),"validate-supervised-path",str(path)],
+                    env=dict(os.environ,FAKE_TRACE=str(trace)),capture_output=True,text=True,timeout=5)
+                self.assertEqual(result.returncode,expected,result.stderr)
+                self.assertFalse(trace.exists(),"format validation must never connect")
+
+    def test_snapshot_primes_full_status_without_servo(self):
+        with tempfile.TemporaryDirectory() as directory:
+            trace=Path(directory)/"trace"
+            result=subprocess.run([str(self.binary),"snapshot"],env=dict(os.environ,FAKE_TRACE=str(trace)),
+                capture_output=True,text=True,timeout=5)
+            self.assertEqual(result.returncode,0,result.stderr)
+            calls=trace.read_text().splitlines()
+            self.assertIn("full_status_read",calls)
+            self.assertNotIn("servo_on",calls)
+            self.assertNotIn("servo_j",calls)
+            self.assertNotIn("abort",calls)
+
     def test_faults_abort_and_disable(self):
         for flag in ("FAKE_SERVO_FAIL","FAKE_TRACKING_ERROR"):
             result,calls=self.run_case({flag:"1"})

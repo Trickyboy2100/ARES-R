@@ -1,0 +1,101 @@
+"""Explicitly authorized one-shot: PLACE descent50 -> release -> return.
+No pick, stow, controller reset or automatic motion retry.
+"""
+import copy,importlib.util,json,math,os,subprocess,time
+from pathlib import Path
+import numpy as np
+from urllib.request import Request,urlopen
+from ares_r.motion.runtime_goal_ik import RuntimeGoalIK
+from ares_r.motion.scene_aware_motion import build_services
+from ares_r.motion.native_execution_package import package_native_preview,verify_installed_sender
+from ares_r.motion.arrival_contract import check_start
+from ares_r.motion.live_state import base_stationarity
+from ares_r.manipulation.demo_place_contact import validate
+R=Path('/home/yikun/ARES-R-RC1-20261019');os.chdir(R)
+O=R/'worklog/evidence/operations-single/20261019-descend50-release-return-once';O.mkdir(parents=True,exist_ok=False)
+os.environ['ARES_R_ROUNDTRIP_API_URL']='http://127.0.0.1:8775'
+def load(p):return json.loads(p.read_text())
+def write(n,v):(O/n).write_text(json.dumps(v,indent=2)+'\n')
+def get(p):return json.load(urlopen('http://127.0.0.1:8775'+p,timeout=20))
+def telemetry():return json.load(urlopen(Request('http://127.0.0.1:8775/api/operations/telemetry',data=b'{}',headers={'Content-Type':'application/json'}),timeout=20))
+events=[]
+def event(stage,state,detail):
+    row={'stage':stage,'state':state,'at_unix':time.time(),'detail':detail};events.append(row);write('events.json',events);print(json.dumps(row),flush=True)
+live=None
+try:
+    state=get('/api/demo/roundtrip/status')
+    if state.get('running') or get('/api/operations/run-status').get('state')=='RUNNING':raise RuntimeError('another task active')
+    if state.get('run_id')!='5a12e18d682d4d2696875f22b6b3ba29' or state.get('stage')!='PLACE_DESCENT50':raise RuntimeError('unexpected source state')
+    run=Path(state['run_dir']);all_events=load(run/'events.json')
+    if not any(e['stage']=='MOVE_PRELAND' and e['state']=='PASS' for e in all_events):raise RuntimeError('preland not verified')
+    slot=next(e['detail']['slot_body_m'] for e in all_events if e['stage']=='FRESH_ID3_OFFSET_PRELAND' and e['state']=='PASS')
+    old=load(R/'worklog/evidence/scene-aware-motion/PLAN_44a4072ea23e409aa732c9b29ba6e8a7/planner_request.json')
+    p=load(R/'demos/right_arm_grasp_place_roundtrip_v1/parameters.json');config=load(R/'config/system.json');site=load(R/'config/jaka_mini2_motion.site.json')
+    before=telemetry();write('before.json',before)
+    if before.get('errors') or before['arms']['right']['controller_status']['errcode']:raise RuntimeError('live controller state unavailable/faulted')
+    if not base_stationarity(config)['stationary']:raise RuntimeError('base not stationary')
+    event('PLACE_CONTACT_PREPARE','START',{'distance_m':.05,'slot_body_m':slot})
+    scene,_=build_services(config);fresh=scene.scan(force=True,active_arm='right',attachment=old['attached_object_collision'])
+    write('fresh-scene.json',fresh);folder=Path(fresh['scene_dir']);folder=folder/'scene' if (folder/'scene').exists() else folder
+    report=load(folder/'scene_report.json');request=copy.deepcopy(old)
+    request.update(compiled_scene=load(folder/'compiled_scene.json'),scene_snapshot_id=fresh['scene_snapshot_id'],
+        scene_digest=fresh['scene_digest'],geometry_revision=report['geometry_revision'],inactive_arm_revision=report['inactive_arm_revision'])
+    actual=telemetry();write('fresh-telemetry.json',actual)
+    if actual.get('errors') or actual['arms']['right']['controller_status']['errcode']:raise RuntimeError('controller not healthy')
+    for side in ('left','right'):
+        if max(abs(a-b) for a,b in zip(actual['arms'][side]['joints_rad'],before['arms'][side]['joints_rad']))>math.radians(.02):raise RuntimeError('arm moved during scan')
+    q=np.array(actual['arms']['right']['joints_rad']);request['start_rad']=q.tolist()
+    ik=RuntimeGoalIK(request['robot_yaml_urdf'],request['T_body_model'],request['T_link6_tcp']);start=ik.fk(q)
+    points=[q.tolist()]
+    for d in np.linspace(.002,.05,25):
+        q=np.array(ik.solve(start[:3,3]+[0,0,-d],start[:3,:3],q).joints_rad);points.append(q.tolist())
+    write('request.json',request);write('points.json',points)
+    def validator(rows):return validate(rows,request,ik,slot,p)
+    sender=Path(p['contact_sender']);verify_installed_sender(sender)
+    text,audit=package_native_preview(points,.008,site,tool_id=1,
+        controller_tool_pose_mm_rad=request['controller_tool_pose_mm_rad'],captured_at_unix=time.time(),
+        speed_ceiling_rad_s=p['contact_velocity_rad_s'],accel_ceiling_rad_s2=p['contact_acceleration_rad_s2'],
+        tracking_stop_threshold_deg=p['tracking_stop_deg'],max_excursion_rad=math.radians(220),
+        retiming_policy='VERIFIED_SHORT_V1',geometry_validator=validator)
+    path=O/'descent50.native.txt';path.write_text(text);write('native-audit.json',audit)
+    check=subprocess.run([str(sender),'validate-supervised-path',str(path)],cwd=R,capture_output=True,text=True,timeout=20)
+    (O/'native-validate.log').write_text(check.stdout+check.stderr)
+    if check.returncode:raise RuntimeError('native format rejected')
+    final=telemetry();write('before-dispatch.json',final)
+    if final.get('errors') or final['arms']['right']['controller_status']['errcode']:raise RuntimeError('controller not healthy at dispatch')
+    check_start(final['arms']['right']['joints_rad'],points[0])
+    if scene.status()['base_pose_revision']!=fresh['base_pose_revision'] or not base_stationarity(config)['stationary']:raise RuntimeError('base moved')
+    for side in ('left','right'):
+        if final['arms'][side]['tool_id']!=actual['arms'][side]['tool_id']:raise RuntimeError('tool changed')
+    if max(abs(a-b) for a,b in zip(final['arms']['left']['joints_rad'],actual['arms']['left']['joints_rad']))>math.radians(.02):raise RuntimeError('inactive arm moved')
+    spec=importlib.util.spec_from_file_location('formal',R/'scripts/run_grasp_place_roundtrip.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
+    live=m.Live(p,O,event);live.attached=request['attached_object_collision'];live.preland_arrived=True
+    stop=live.stopfile
+    if stop.exists():
+        if stop.read_text().strip()!='CANONICAL_OPERATOR_STOP':raise RuntimeError('unexpected stop latch')
+        stop.rename(stop.with_name('stop-preserved-authorized-place-finish-'+str(time.time_ns())+'.request'))
+    with (O/'dispatch-once.json').open('x') as f:json.dump({'authorized_down_m':.05,'release_raw':p['gripper_release_raw'],
+        'base_return_body_m':[[-.32,0,0],[0,.85,0],[.4,0,0]],'at_unix':time.time()},f)
+    live.check_cancelled();scene.invalidate('OPERATOR_PLACE_CONTACT_DESCENT50',required=True)
+    event('DESCENT50','EXECUTING',{'native_duration_s':audit['duration_s']})
+    log=O/'descent50.jsonl';live.command([sender,'supervised_path',path,'CONFIRMED_RIGHT_CLEAR'],log,audit['duration_s']+30)
+    terminal=[json.loads(line) for line in log.read_text().splitlines() if line.startswith('{')]
+    done=next((x for x in terminal if x.get('event')=='target_reached'),None)
+    if (not done or not any(x.get('event')=='servo_disabled' and x.get('code')==0 for x in terminal)
+        or any(x.get('event') in ('failed','abort') for x in terminal)):raise RuntimeError('native arrival not confirmed')
+    arrived=live._settle(points[-1]);live.place_descent_arrived=True
+    event('DESCENT50','PASS',{'arrival':arrived,'native':done})
+    event('RELEASE','START',{});release=live.gripper(p['gripper_release_raw']);event('RELEASE','PASS',release);live.detach()
+    for name,delta in [('RETURN_BACK032',[-.32,0,0]),('RETURN_LEFT085',[0,.85,0]),('RETURN_FORWARD040',[.4,0,0])]:
+        event(name,'START',{'delta':delta});result=live.base(delta);write(name+'.json',result);event(name,'PASS',{})
+    after=live.telemetry();write('after.json',after)
+    result={'state':'DESCENDED_RELEASED_RETURNED_GRASP','descent_m':.05,'arm_stow':False,'release_confirmed':live.release_confirmed,
+        'actual_tcp_before_body_m':start[:3,3].tolist(),'actual_tcp_after_body_m':after['arms']['right']['position_m'],
+        'source_demo_run_id':state['run_id'],'original_demo_history_preserved':True}
+    write('REPORT.json',result);event('DONE','PASS',result)
+except BaseException as e:
+    write('FAULT.json',{'error':str(e),'automatic_retry':False});event('FAULT','FAIL',{'error':str(e)})
+    if live:live.stop()
+    raise
+finally:
+    if live:live.pool.shutdown(wait=False)

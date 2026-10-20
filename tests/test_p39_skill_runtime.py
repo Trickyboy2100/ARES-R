@@ -4,6 +4,7 @@ import tempfile
 import threading
 import time
 import unittest
+from unittest.mock import patch
 
 from ares_r.skills import default_registry, SkillRuntime
 from ares_r.skills.contracts import SkillInvocation, SkillResult, SkillStatus
@@ -97,7 +98,8 @@ class P39RuntimeTests(unittest.TestCase):
         self.assertEqual(store.load("source"),original)
         with self.assertRaisesRegex(ValueError,"cannot be mutated"):store.save_draft({**original,"lifecycle":"DRAFT"})
 
-    def test_real_provider_delegates_and_coalesces_observation(self):
+    @patch("ares_r.offline.reject_physical_io")
+    def test_real_provider_delegates_and_coalesces_observation(self, mocked_guard):
         class Service:
             def __init__(self):self.calls=[]
             def capture(self,profile):self.calls.append(profile);return {"profile":profile,"request_id":"D"}

@@ -161,6 +161,7 @@ def main():
                    help="early conservative BODY ROI voxelization; 0 keeps legacy path")
     p.add_argument("--detection-artifact",
                    help="Epic detection bound to this ObservationEpoch")
+    p.add_argument("--attachment");
     p.add_argument("--output",required=True);a=p.parse_args();started=time.perf_counter()
     out=Path(a.output);out.mkdir(parents=True,exist_ok=False)
     cloud,meta=load_artifact(Path(a.manifest));geometry=load_geometry_snapshot(Path(a.geometry))
@@ -199,6 +200,38 @@ def main():
         decomposition_s=time.perf_counter()-decomposition_at
         planning_boxes=decomposition["primitives"]
         (out/"support_decomposition.json").write_text(json.dumps(decomposition,indent=2)+"\n")
+    attachment=load(a.attachment) if a.attachment else None
+    attachment_filter=None;body_link6=None
+    if attachment is not None:
+        if attachment['attached_to']!=a.active:raise RuntimeError('attachment arm mismatch')
+        from ares_r.manipulation.attached_world import filter_attached_points
+        from ares_r.perception.robot_collision import arm_link_transforms
+        arm=world['arms'][a.active]
+        audit=audits[a.active]
+        body_model=transform_xyz_rpy(arm['base_xyz_m'],arm['base_rpy_rad'])@np.asarray(audit['T_controller_model'])
+        urdf=Path(model['asset_root'])/model['urdf']
+        body_link6=body_model@arm_link_transforms(urdf,audit['diagnostics']['joint_position_rad'])['link6']
+        if decomposition is None:raise RuntimeError('attachment requires multi_primitive scene')
+        protected=[row for row in decomposition['primitives'] if row['semantic'] in ('SUPPORT_SURFACE','STRUCTURE')]
+        keep,attachment_filter=filter_attached_points(clean,attachment,body_link6,protected)
+        clean=clean[keep]
+        np.savez_compressed(out/'clean_residual.npz',points_body_m=clean)
+        decomposition=decompose_support_objects(clean,[])
+        decomposition=filter_isolated_micro_primitives(decomposition)
+        from ares_r.perception.robot_owned_filter import RobotOwnedSphere,grid_spheres_local
+        payload_spheres=[]
+        for serial,sphere in enumerate(grid_spheres_local(attachment['link6_aabb'],.035)):
+            center=body_link6[:3,:3]@np.asarray(sphere['center'])+body_link6[:3,3]
+            payload_spheres.append(RobotOwnedSphere(
+                'payload/refinement_%d'%serial,a.active,tuple(center),sphere['radius'],
+                attachment['revision']))
+        # Keep the original scene's 7 mm inflation for these child boxes.
+        # This resolves empty AABB bridges without deleting a single point.
+        decomposition=refine_robot_adjacent_primitives(clean,decomposition,robot_owned,
+            inflation_m=.007,additional_collision_spheres=payload_spheres)
+        planning_boxes=decomposition['primitives']
+        (out/'support_decomposition.json').write_text(json.dumps(decomposition,indent=2)+'\n')
+        (out/'attachment_filter.json').write_text(json.dumps(attachment_filter,indent=2)+'\n')
     detection_artifact=load(a.detection_artifact) if a.detection_artifact else None
     target_binding=None
     target_primitive_id=None
@@ -290,6 +323,11 @@ def main():
         ("robot_joint_snapshot",geometry.joint_snapshot_revision),("residual_cleanup",DEFAULT_PROFILE),
         ("robot_owned_filter",filter_revision),("obstacle_decomposition",decomposition_revision))))
     wm.commit_observation(obs)
+    if attachment is not None:
+        from ares_r.manipulation.attached_world import snapshot_attachment
+        from ares_r.motion.se3 import pose_mm_rad_to_matrix
+        T_link6_tcp=np.asarray(pose_mm_rad_to_matrix(audits[a.active]['diagnostics']['tool_data']['pose_mm_rad']))
+        wm.attach(a.active,snapshot_attachment(attachment,T_link6_tcp,body_link6))
     snapshot=wm.freeze_snapshot(geometry.geometry_revision,geometry.tool_revision,
         constraints=(SafetyConstraint("central_body_exclusion","body_y_forbidden",(("half_width_m",.07),)),))
     compile_at=time.perf_counter();arm=world["arms"][a.active]
@@ -310,7 +348,7 @@ def main():
         "target_binding":target_binding,
         "obstacle_pipeline":a.obstacle_pipeline,"deployment_prefilter":prefilter,
         "generic_scene_profile":scene_profile,
-        "self_filter":sf,"cleanup":cleanup,
+        "self_filter":sf,"cleanup":cleanup,"attachment_filter":attachment_filter,
         "robot_owned_filter":robot_owned.as_dict() if robot_owned else None,
         "support_decomposition":decomposition,"old_single_aabb_obstacles":boxes,
         "objects":provenance,"T_body_model":T_body_model.tolist(),

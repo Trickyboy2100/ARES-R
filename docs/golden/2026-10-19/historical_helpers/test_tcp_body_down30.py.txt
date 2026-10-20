@@ -1,0 +1,79 @@
+"""One operator-requested local TCP Z rotation. Planning only unless --execute.
+
+No base/gripper/tool-calibration operations. Preserve held payload and scene gates.
+"""
+import json, subprocess, time, sys
+from pathlib import Path
+from urllib.request import Request, urlopen
+from urllib.error import HTTPError
+import numpy as np
+from scipy.spatial.transform import Rotation
+
+ROOT=Path('/home/yikun/ARES-R-RC1-20261019')
+OUT=ROOT/'worklog/evidence/operations-single/20261019-tcp-body-down30-physical-compensated'
+def write(n,v): (OUT/n).write_text(json.dumps(v,indent=2)+'\n')
+def get(p): return json.load(urlopen('http://127.0.0.1:8775'+p,timeout=15))
+def post(p,b,timeout=300):
+    try: return json.load(urlopen(Request('http://127.0.0.1:8775'+p,data=json.dumps(b).encode(),headers={'Content-Type':'application/json'}),timeout=timeout))
+    except HTTPError as e: raise RuntimeError(str(e.code)+': '+e.read().decode()) from e
+def snapshot():
+    raw=subprocess.check_output([str(ROOT/'native/jaka_right_rc1'),'snapshot'],text=True,cwd=ROOT)
+    row=next(json.loads(x) for x in raw.splitlines() if x.startswith('{') and json.loads(x).get('event')=='snapshot')
+    base=json.loads((ROOT/'config/robot_world.json').read_text())['arms']['right']
+    t=np.eye(4);t[:3,:3]=Rotation.from_euler('xyz',base['base_rpy_rad']).as_matrix();t[:3,3]=base['base_xyz_m']
+    v=row['tcp_mm_rad'];a=np.eye(4);a[:3,:3]=Rotation.from_euler('xyz',v[3:]).as_matrix();a[:3,3]=np.array(v[:3])/1000
+    return row,t@a
+def idle():
+    if get('/api/demo/roundtrip/status').get('running') or get('/api/operations/run-status').get('state')=='RUNNING': raise RuntimeError('another motion active')
+def main():
+    idle()
+    if '--execute' not in sys.argv:
+        OUT.mkdir(parents=True,exist_ok=False)
+        row,t=snapshot();write('before.json',{'snapshot':row,'T_body_tcp':t.tolist()})
+        r=t[:3,:3].copy();target=t[:3,3].copy();target[2]-=.03
+        run=ROOT/'worklog/evidence/demo-runs/right_arm_grasp_place_roundtrip_v1/web_1792382763337808664'
+        attached=json.loads(next(run.glob('pick_attempt_2_QUALITY_*/package/first_pick_execution_package.json')).read_text())['coarse_attached_object_collision']
+        body={'arm':'right','position_m':target.tolist(),'orientation':'EXPLICIT','explicit_rotation':r.tolist(),
+              'environment_avoidance':'ON','scene_policy':'FORCE_RESCAN','planning_mode':'FAST','speed_profile':'right_scene_aware_0_20',
+              'source':'OPERATOR_BODY_Z_MINUS30','request_label':'BODY_DOWN30_HOLD_PHYSICAL_ORIENTATION_ONLY',
+              'attached_object_geometry':attached,'attached_object_revision':attached['revision']}
+        write('request.json',body)
+        handle=post('/api/motion/plan',body);write('handle.json',handle);print(json.dumps(handle),flush=True)
+        return
+    handle=json.loads((OUT/'handle.json').read_text());plan=handle['plan_id'];sha=handle['trajectory_hash']
+    status=get('/api/motion/status')
+    if status['plan_id']!=plan or status['state']!='READY': raise RuntimeError('exact plan not READY')
+    candidate=json.loads((ROOT/'worklog/evidence/scene-aware-motion'/plan/'native_package/candidate_manifest.json').read_text())
+    if candidate['trajectory_hash']!=sha or time.time()>candidate['expires_at_unix']:raise RuntimeError('candidate hash/expiry mismatch')
+    validated=json.loads((ROOT/'worklog/evidence/scene-aware-motion'/plan/'planning.json').read_text())
+    tcp=np.array(validated['tcp_path_body_m']);q=np.array(validated['trajectory_points_rad'])
+    from ares_r.motion.runtime_goal_ik import RuntimeGoalIK
+    from ares_r.manipulation.task_tcp_offset import validate_body_descent
+    request=json.loads((ROOT/'worklog/evidence/scene-aware-motion'/plan/'planner_request.json').read_text())
+    ik=RuntimeGoalIK(request['robot_yaml_urdf'],request['T_body_model'],request['T_link6_tcp'])
+    proof=validate_body_descent(q,ik.fk,.03,tolerance_m=.003)
+    write('body-z-descent-proof.json',proof)
+    if not validated['independent_dense_validation']['collision_free']:
+        raise RuntimeError('dense path invalid')
+    marker=OUT/'execution-once.json'
+    with marker.open('x') as f: json.dump({'plan_id':plan,'hash':sha,'at':time.time()},f)
+    body={'plan_id':plan,'trajectory_hash':sha,'authorization':'RIGHT SCENE_AWARE SUPERVISED','onsite_observer_confirmed':True,'command_id':'OPERATOR_BODY_Z_MINUS30_20261019'}
+    response=post('/api/operations/execute',body,30);write('dispatch.json',response);print(json.dumps(response),flush=True)
+    until=time.monotonic()+90
+    while time.monotonic()<until:
+        result=get('/api/operations/run-status');write('last-status.json',result)
+        if result.get('state')!='RUNNING':
+            write('terminal-result.json',result)
+            if result.get('state')!='SUCCEEDED':raise RuntimeError('single rotation failed; no retry')
+            row,t=snapshot();old=np.array(json.loads((OUT/'before.json').read_text())['T_body_tcp'])
+            measured={'snapshot':row,'T_body_tcp':t.tolist(),'translation_change_mm':float(np.linalg.norm(t[:3,3]-old[:3,3])*1000),
+                      'body_displacement_mm':((t[:3,3]-old[:3,3])*1000).tolist(),
+                      'local_relative_rotvec_deg':np.degrees(Rotation.from_matrix(old[:3,:3].T@t[:3,:3]).as_rotvec()).tolist(),
+                      'remaining_20mm_not_executed':True}
+            write('after.json',measured);print(json.dumps(measured),flush=True);return
+        time.sleep(.5)
+    raise RuntimeError('monitor timeout; no retry')
+try:main()
+except BaseException as e:
+    if OUT.exists():write('FAULT.json',{'error':str(e)})
+    raise

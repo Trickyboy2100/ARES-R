@@ -1,0 +1,48 @@
+"""Summarize the monitored run. Never sends hardware or HTTP commands."""
+import hashlib,json,shutil,time
+from pathlib import Path
+from ares_r.motion.persistent_planner_service import runtime_key
+ROOT=Path('/home/yikun/ARES-R-RC1-20261019')
+RUN=ROOT/'worklog/evidence/demo-runs/right_arm_grasp_place_roundtrip_v1/web_1792382763337808664'
+OUT=RUN/'observer';OUT.mkdir(exist_ok=True)
+def load(p):return json.loads(p.read_text())
+events=load(RUN/'events.json');job=load(RUN/'job.json')
+stages=[];begins={}
+for e in events:
+    stage=e['stage']
+    if e['state']=='START' and stage!='PLANNING_ATTEMPT':begins[stage]=e['at_unix']
+    if e['state'] in ('PASS','FAULT') and stage!='PLANNING_ATTEMPT':
+        stages.append({'stage':stage,'state':e['state'],
+          'wall_s':e['detail'].get('stage_wall_s',e['at_unix']-begins[stage] if stage in begins else None),
+          'detail':e['detail']})
+first=next(RUN.glob('pick_attempt_1_FAST_*/pregrasp_plan/planner_request.json'))
+warm=ROOT/'worklog/evidence/2026-10-19-pick-retest-15s-1135/pregrasp_plan/planner_request.json'
+a,b=load(warm),load(first)
+keys={'prewarm':runtime_key(a),'actual_fast':runtime_key(b)}
+issues=[{'id':'MONITOR_01','kind':'PLANNING_LATENCY',
+ 'detail':'FAST15s cancelled; prewarm and actual optimizer_collision_activation_distance differ (10mm vs30mm), invalidating runtime cache.',
+ 'runtime_keys':keys,'confirmed_cache_key_mismatch':keys['prewarm']!=keys['actual_fast']},
+ {'id':'MONITOR_02','kind':'UI_OBSERVABILITY','detail':'Canonical status log points at absent run_dir/runner.log; real launcher log is under repository logs/roundtrip-web-*.log.'},
+ {'id':'MONITOR_03','kind':'UI_OBSERVABILITY','detail':'Canonical running status has elapsed_s=null; full-cycle timer is missing.'}]
+plans=[]
+for p in RUN.glob('pick_attempt_*/pregrasp_plan/planning.json'):
+    value=load(p);plans.append({'path':str(p),'result':value['observed_result'],'timing_s':value['timing_s']})
+log=ROOT/'logs/roundtrip-web-1792382763337808664.log'
+if log.exists():shutil.copyfile(log,OUT/'launcher-log.snapshot.jsonl')
+native=[]
+for p in RUN.glob('pick_attempt_*/native/*.execute.jsonl'):
+    rows=[]
+    for line in p.read_text().splitlines():
+        try:rows.append(json.loads(line))
+        except ValueError:pass
+    native.append({'path':str(p),'sha256':hashlib.sha256(p.read_bytes()).hexdigest(),
+       'record_count':len(rows),'terminal_events':[r for r in rows if r.get('event') not in ('sample','snapshot')]})
+report={'schema_version':1,'run_id':job.get('run_id'),'run_dir':str(RUN),
+ 'recorded_at_unix':time.time(),'job':job,'stage_results':stages,'planning':plans,
+ 'issues':issues,'native_logs':native,'observer_sent_motion_commands':False,
+ 'automatic_retry_or_parameter_changes_by_observer':False,
+ 'wall_from_first_to_last_event_s':events[-1]['at_unix']-events[0]['at_unix']}
+(OUT/'RUN_MONITOR_REPORT.json').write_text(json.dumps(report,indent=2,ensure_ascii=False)+'\n')
+inputs=[RUN/'events.json',RUN/'job.json',RUN/'parameters.json',log,*RUN.glob('pick_attempt_*/pregrasp_plan/planner_request.json'),*RUN.glob('pick_attempt_*/pregrasp_plan/planning.json')]
+(OUT/'SHA256SUMS').write_text(''.join(hashlib.sha256(p.read_bytes()).hexdigest()+'  '+str(p)+'\n' for p in inputs if p.exists()))
+print(json.dumps({'state':job.get('state'),'stage':job.get('stage'),'report':str(OUT/'RUN_MONITOR_REPORT.json'),'stage_results':[{k:r[k] for k in ('stage','state','wall_s')} for r in stages]},ensure_ascii=False))

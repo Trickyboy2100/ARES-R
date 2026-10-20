@@ -52,6 +52,8 @@ def main():
                    choices=(.005,.0075,.010), help="deployment scene voxel size")
     p.add_argument("--detection-artifact", type=Path,
                    help="Epic detection captured in the same manipulation transaction")
+    p.add_argument("--reuse-capture",type=Path)
+    p.add_argument("--attachment",type=Path)
     args = p.parse_args()
     output = args.output.resolve()
     if output.exists():
@@ -63,28 +65,40 @@ def main():
     deployment_voxel = (float(args.deployment_voxel_m) if args.deployment_voxel_m is not None
                         else float(scene_profile["deployment_voxel_m"]))
     started = time.perf_counter()
-    manifest = capture_body_cloud(config)
-    capture_s = time.perf_counter() - started
-    # Pixel Pro acquisition briefly loads the shared controller network.  Let
-    # it settle before independent, read-only JAKA state snapshots; retries
-    # below still fail closed instead of using yesterday's joint positions.
-    settle_at=time.perf_counter();time.sleep(.5);settle_s=time.perf_counter()-settle_at
-    model = json.loads(Path(config["robot_collision"]["model"]).read_text())
-    robot_urdf = Path(model["asset_root"]) / model["urdf"]
-    left = output / "left_fk_audit.json"
-    right = output / "right_fk_audit.json"
-    audit_at=time.perf_counter();audit_with_readonly_retry(robot_urdf, left, "left")
-    audit_with_readonly_retry(robot_urdf, right, "right");audit_s=time.perf_counter()-audit_at
-    geometry = output / "whole_robot_geometry.json"
-    geometry_at=time.perf_counter();run(ROOT / "scripts/export_whole_robot_geometry.py", "--model",
-        config["robot_collision"]["model"], "--world", ROOT / "config/robot_world.json",
-        "--left-audit", left, "--right-audit", right, "--output", geometry)
-    geometry_s=time.perf_counter()-geometry_at
-    pointer = json.loads((manifest.parents[2] / "latest.json").read_text())
-    pointer["manifest"] = str(manifest.resolve())
-    pointer["camera_capture_elapsed_s"] = capture_s
-    pointer["capture_body_total_s"] = capture_s
-    (output / "capture_pointer.json").write_text(json.dumps(pointer, indent=2)+"\n")
+    if args.reuse_capture:
+        import shutil
+        previous=args.reuse_capture
+        pointer=json.loads((previous/'capture_pointer.json').read_text())
+        manifest=Path(pointer['manifest']);capture_s=settle_s=audit_s=geometry_s=0.
+        for name in ('left_fk_audit.json','right_fk_audit.json','whole_robot_geometry.json'):
+            shutil.copyfile(previous/name,output/name)
+        left=output/'left_fk_audit.json';right=output/'right_fk_audit.json'
+        geometry=output/'whole_robot_geometry.json'
+        pointer['reprocessed_without_capture']=True
+        (output/'capture_pointer.json').write_text(json.dumps(pointer,indent=2)+'\n')
+    else:
+        manifest = capture_body_cloud(config)
+        capture_s = time.perf_counter() - started
+        # Pixel Pro acquisition briefly loads the shared controller network.  Let
+        # it settle before independent, read-only JAKA state snapshots; retries
+        # below still fail closed instead of using yesterday's joint positions.
+        settle_at=time.perf_counter();time.sleep(.5);settle_s=time.perf_counter()-settle_at
+        model = json.loads(Path(config["robot_collision"]["model"]).read_text())
+        robot_urdf = Path(model["asset_root"]) / model["urdf"]
+        left = output / "left_fk_audit.json"
+        right = output / "right_fk_audit.json"
+        audit_at=time.perf_counter();audit_with_readonly_retry(robot_urdf, left, "left")
+        audit_with_readonly_retry(robot_urdf, right, "right");audit_s=time.perf_counter()-audit_at
+        geometry = output / "whole_robot_geometry.json"
+        geometry_at=time.perf_counter();run(ROOT / "scripts/export_whole_robot_geometry.py", "--model",
+            config["robot_collision"]["model"], "--world", ROOT / "config/robot_world.json",
+            "--left-audit", left, "--right-audit", right, "--output", geometry)
+        geometry_s=time.perf_counter()-geometry_at
+        pointer = json.loads((manifest.parents[2] / "latest.json").read_text())
+        pointer["manifest"] = str(manifest.resolve())
+        pointer["camera_capture_elapsed_s"] = capture_s
+        pointer["capture_body_total_s"] = capture_s
+        (output / "capture_pointer.json").write_text(json.dumps(pointer, indent=2)+"\n")
     scene = output / "scene"
     target_args = []
     if args.mode == "BLOCK":
@@ -112,7 +126,8 @@ def main():
         "--capture-pointer",
         output / "capture_pointer.json", "--output", scene,
         *(["--detection-artifact", args.detection_artifact]
-          if args.detection_artifact is not None else []), *target_args,
+          if args.detection_artifact is not None else []),
+        *(["--attachment",args.attachment] if args.attachment else []), *target_args,
         python=str(args.open3d_python))
     report = json.loads((scene / "scene_report.json").read_text())
     summary = {"planning_only": True, "execution_allowed": False,

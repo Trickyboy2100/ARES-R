@@ -168,7 +168,10 @@ class Handler(BaseHTTPRequestHandler):
         try:
             body=self._body()
             if path=="/api/demo/roundtrip/start":value=self.dispatcher.roundtrip_start(body)
-            elif path=="/api/demo/roundtrip/stop":value=self.dispatcher.operations_stop()
+            elif path=="/api/demo/roundtrip/settings":value=self.dispatcher.roundtrip_settings(body)
+            elif path=="/api/demo/roundtrip/stop":value=self.dispatcher.roundtrip_stop(body)
+            elif path=="/api/demo/roundtrip/resume":value=self.dispatcher.roundtrip_resume(body)
+            elif path=="/api/demo/roundtrip/command-status":value=self.dispatcher.roundtrip_command_status(body)
             elif path=="/api/scene/scan":value=self.dispatcher.scene_scan(True,body.get("arm","right"))
             elif path=="/api/operations/update":value=self.dispatcher.operations_update(body['action'], body['body'])
             elif path=="/api/operations/select":value=self.dispatcher.berth_select(body['operation'])
@@ -217,8 +220,7 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument("--host",default="127.0.0.1");parser.add_argument("--port",type=int,default=8765)
     parser.add_argument("--config",default="config/system.json");args=parser.parse_args()
     backend_url=os.environ.get("ARES_R_BACKEND_URL")
-    Handler.dispatcher=(CanonicalBackendClient(backend_url) if backend_url else
-                        SceneAwareDispatcher(load_config(args.config)))
+    Handler.dispatcher=CanonicalBackendClient(backend_url)
     server=ThreadingHTTPServer((args.host,args.port),Handler)
     print("ARES-R scene-aware UI: http://%s:%d"%(args.host,args.port),flush=True)
     try:server.serve_forever()

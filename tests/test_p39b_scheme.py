@@ -17,8 +17,8 @@ class P39BSchemeTest(unittest.TestCase):
         result=SchemeValidator(default_registry()).validate(self.scheme)
         self.assertTrue(result["valid"],result["errors"])
         skills=[node["skill"] for node in self.scheme["nodes"]]
-        self.assertEqual(skills.count("navigate.registered_relative"),2)
-        self.assertNotIn("navigate.align_for_manipulation",skills)
+        self.assertEqual(skills.count("navigate.align_for_manipulation"),2)
+        self.assertNotIn("navigate.registered_relative",skills)
         self.assertNotIn("manipulation.release",skills)
         self.assertEqual(self.scheme["nodes"][-1]["parameters"]["predicate"],"HOLD_ABOVE_PLACE")
 
@@ -55,20 +55,21 @@ class P39BSchemeTest(unittest.TestCase):
         self.assertTrue(stations["scene_policy"]
                         ["require_fresh_observation_epoch_after_arrival"])
 
-    def test_scheme_uses_registered_pick_then_place_station(self):
-        by_id={node["id"]:node for node in self.scheme["nodes"]}
-        pick=by_id["move_pick_station"]["parameters"]
-        place=by_id["return_place_station"]["parameters"]
-        self.assertEqual((pick["from_station"],pick["station"]),
-                         ("PLACE_STATION","PICK_STATION"))
-        self.assertEqual((place["from_station"],place["station"]),
-                         ("PICK_STATION","PLACE_STATION"))
-        self.assertEqual(pick["station_registry"],"config/manipulation_stations.json")
-        self.assertEqual(place["station_registry"],"config/manipulation_stations.json")
+    def test_scheme_binds_autoalignment_to_registered_stations(self):
+        # The source-delivered scheme already uses bounded autoalignment.
+        # This test does not change the current 19-stage route or commission it.
+        by_id={node['id']:node for node in self.scheme['nodes']}
+        pick=by_id['align_pick']['parameters'];place=by_id['align_place']['parameters']
+        self.assertEqual((pick['expected_start_station'],pick['target_station']),
+                         ('PLACE_STATION','PICK_STATION'))
+        self.assertEqual((place['expected_start_station'],place['target_station']),
+                         ('PICK_STATION','PLACE_STATION'))
         for row in (pick,place):
-            self.assertTrue(row["invalidate_scene"])
-            self.assertTrue(row["require_settled"])
-            self.assertTrue(row["require_fresh_observation"])
+            self.assertEqual(row['station_registry'],'config/manipulation_stations.json')
+            self.assertEqual(row['arm'],'right')
+            self.assertLessEqual(row['max_corrections'],3)
+            self.assertLessEqual(row['x_bound_m'],.15)
+            self.assertLessEqual(row['y_bound_m'],.40)
 
 
 if __name__=="__main__":unittest.main()

@@ -24,7 +24,7 @@ def _stamp():
 
 def build_live_planning_scene(config: dict, destination: Path | None = None,
                               active_arm: str = "right",
-                              detection_artifact: Path | None = None) -> dict:
+                              detection_artifact: Path | None = None, attachment=None, reuse_capture=None) -> dict:
     """Build one immutable scene solely from a fresh scan and current state."""
     if active_arm not in ("left", "right"):
         raise ValueError("active arm must be left or right")
@@ -37,6 +37,14 @@ def build_live_planning_scene(config: dict, destination: Path | None = None,
                "--open3d-python", str(python), "--active", active_arm]
     if detection_artifact is not None:
         command.extend(("--detection-artifact", str(Path(detection_artifact).resolve())))
+    if reuse_capture is not None:command.extend(("--reuse-capture",str(Path(reuse_capture).resolve())))
+    if attachment is not None:
+        from ares_r.manipulation.attached_collision import verify_attached_collision
+        verify_attached_collision(attachment)
+        destination.parent.mkdir(parents=True,exist_ok=True)
+        attachment_path=destination.with_suffix('.attachment.json')
+        with attachment_path.open('x') as stream:json.dump(attachment,stream)
+        command.extend(('--attachment',str(attachment_path.resolve())))
     result = subprocess.run(command, cwd=ROOT,
                             env=dict(os.environ, PYTHONPATH=str(ROOT / "src")),
                             text=True, capture_output=True, timeout=240, check=False)
@@ -62,6 +70,7 @@ def build_live_planning_scene(config: dict, destination: Path | None = None,
         "total_s": summary["total_s"],
         "valid": True,
         "active_arm": active_arm,
+        "attachment_revision":attachment["revision"] if attachment else None,
         "detection_ids": report.get("detection_ids", []),
         "runtime_inputs": ["fresh_camera", "current_robot_state",
                            "commissioned_calibration", "generic_scene_parameters"],

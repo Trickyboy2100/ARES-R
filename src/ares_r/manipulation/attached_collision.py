@@ -95,6 +95,7 @@ def build_attached_collision(attached, T_link6_tcp: Sequence[Sequence[float]],
           "source_observation_id":attached.collision_geometry.source_observation_id,
           "T_link6_object":T_link6_object,"link6_aabb":box,
           "inflation_m":float(inflation_m),
+          "object_dimensions_m":list(attached.collision_geometry.dimensions_m),
           "geometry_policy":"TCP_LOCAL_CUBOID_TO_CONSERVATIVE_LINK6_AABB_V1"}
     core["revision"]="sha256:"+hashlib.sha256(json.dumps(
         core,sort_keys=True,separators=(",",":")).encode()).hexdigest()
