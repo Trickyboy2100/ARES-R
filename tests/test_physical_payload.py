@@ -5,6 +5,21 @@ from ares_r.manipulation.attached_collision import verify_attached_collision
 
 
 class PhysicalPayloadTests(unittest.TestCase):
+    def test_formal_hook_default_is_unchanged_and_unknown_policy_rejected(self):
+        from ares_r.manipulation.physical_payload import prepare_task_payload
+        legacy=self.build(self.profile())
+        self.assertIs(prepare_task_payload(legacy),legacy)
+        with self.assertRaises(ValueError):
+            prepare_task_payload(legacy,"UNREVIEWED_AUTO_SHRINK")
+
+    def test_formal_hook_matches_successful_override(self):
+        from ares_r.manipulation.physical_payload import prepare_task_payload,demo_exposed_payload_override,DEMO_PAYLOAD_POLICY
+        legacy=self.build(self.profile())
+        context=dict(T_body_grasp_tcp=np.eye(4),T_body_grasp_link6=np.eye(4),
+            points_body=[[0,0,0],[.05,0,0],[-.09,0,0]],pointcloud_sha256='SOURCE')
+        self.assertEqual(prepare_task_payload(legacy,DEMO_PAYLOAD_POLICY,**context),
+                         demo_exposed_payload_override(legacy,**context))
+
     def profile(self):
         return {'schema_version':1,'revision':'MEASURED_TEST','geometry_source':'OPERATOR_PHYSICAL_OBJECT',
           'dimensions_m':[.18,.10,.02],'T_tcp_object':np.eye(4).tolist(),'inflation_m':.004}

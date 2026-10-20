@@ -10,6 +10,17 @@ from .attached_world import seal,bind_owned_points,inside_boxes
 from ares_r.world import AttachedObject,PoseSE3,SceneObject,SceneObjectRole
 from ares_r.world.scene_compiler import _quaternion_wxyz
 
+DEMO_PAYLOAD_POLICY = "DEMO_EXPOSED160_WIDTH100_REAR20_RETAINED_V2"
+
+
+def prepare_task_payload(legacy, policy=None, **context):
+    """Opt-in formal package hook. Legacy/golden defaults remain byte-equivalent."""
+    if policy is None:
+        return legacy
+    if policy != DEMO_PAYLOAD_POLICY:
+        raise ValueError("unknown task payload policy")
+    return demo_exposed_payload_override(legacy, **context)
+
 
 def _rigid(value,name):
     try:t=np.asarray(value,dtype=float)

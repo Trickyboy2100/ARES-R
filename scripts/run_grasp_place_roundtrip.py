@@ -186,7 +186,10 @@ class Live:
                 raise PlanningAttemptFailure('%s pregrasp solve: %s'%(mode,exc)) from exc
         if load(target/'planning.json').get('observed_result')!='SUCCESS':raise PlanningAttemptFailure(mode+' pregrasp planning failed')
         package_dir=folder/'package'
-        self.command([py,'scripts/build_first_pick_execution_package.py','--plan',target,'--epoch',epoch,'--output',package_dir],folder/'build.log')
+        package_args=[py,'scripts/build_first_pick_execution_package.py','--plan',target,'--epoch',epoch,'--output',package_dir]
+        if self.p.get('payload_model_policy'):
+            package_args+=['--payload-policy',self.p['payload_model_policy']]
+        self.command(package_args,folder/'build.log')
         self.package=load(package_dir/'first_pick_execution_package.json');verify_first_pick_package(self.package)
         self.pick_observation=load(epoch/'manipulation_observation.json')
         # Never mutate the golden package: new timing lives in this isolated demo.

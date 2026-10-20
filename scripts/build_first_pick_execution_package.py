@@ -43,6 +43,9 @@ def main():
     p.add_argument("--epoch",type=Path,required=True);p.add_argument("--contact",type=Path)
     p.add_argument("--lift-start-audit",type=Path,
                    help="read-only post-grasp JAKA audit used as the vertical-lift start")
+    p.add_argument("--payload-policy", default=None,
+                   choices=["DEMO_EXPOSED160_WIDTH100_REAR20_RETAINED_V2"],
+                   help="explicit candidate Demo payload geometry; golden default unchanged")
     p.add_argument("--output",type=Path,required=True);a=p.parse_args();a.output.mkdir(parents=True,exist_ok=False)
     request=load(a.plan/"planner_request.json");planning=load(a.plan/"planning.json")
     observation=load(a.epoch/"manipulation_observation.json");report=load(a.epoch/"live_scene/scene/scene_report.json")
@@ -118,6 +121,12 @@ def main():
     attached_collision=bind_owned_points(attached_collision,source[candidates],
         grasp_T@np.linalg.inv(np.asarray(request['T_link6_tcp'])),
         pointcloud_sha256=observation['pointcloud_sha256'])
+    from ares_r.manipulation.physical_payload import prepare_task_payload
+    attached_collision=prepare_task_payload(attached_collision,a.payload_policy,
+        T_body_grasp_tcp=grasp_T,
+        T_body_grasp_link6=grasp_T@np.linalg.inv(np.asarray(request['T_link6_tcp'])),
+        points_body=source,pointcloud_sha256=observation['pointcloud_sha256'],
+        protected_boxes=protected)
     stages=[
       {"index":1,"action":"FRESH_ATOMIC_RIGHT_PICK_OBSERVATION","state":"BOUND"},
       {"index":2,"action":"CUROBO_MOVE_TO_50MM_PREGRASP","trajectory_hash":trajectory_hash(planning["trajectory_points_rad"])},
