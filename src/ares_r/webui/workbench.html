@@ -1,0 +1,69 @@
+<!doctype html><html lang="zh"><meta charset="utf-8"><meta name="viewport" content="width=device-width">
+<title>ARES-R · Golden 工作台</title>
+<style>
+body{font:15px system-ui;background:#101821;color:#e4edf6;margin:24px}h1{font-size:25px}h2{font-size:19px}
+.note{color:#b3c7d9}section{background:#1b2836;border-radius:12px;padding:18px;margin:16px 0}
+button,input,select{font:inherit;padding:7px;margin:5px;background:#263a4d;color:white;border:1px solid #637b91;border-radius:5px}
+button{cursor:pointer}pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:360px;overflow:auto}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(250px,1fr));gap:12px}canvas{width:100%;background:#111c29;border-radius:8px}
+table{width:100%;border-collapse:collapse}td,th{padding:8px;border-bottom:1px solid #3c4d60;text-align:left}
+.warn{color:#ffd389}.purple{color:#d994ff}@media(max-width:700px){.grid{grid-template-columns:1fr}}
+</style>
+<h1>ARES-R · Golden 复盘与任务准备</h1>
+<p class="note">本地离线工作台 · 没有运动入口 · 原 golden 流程与生产参数保持不变</p>
+<section><h2>成功基线与数据完整性</h2><p id="health">读取本地保全数据…</p><details><summary>查看缺失文件</summary><pre id="gaps"></pre></details></section>
+<section><h2>分阶段流程</h2><p class="note">点选阶段查看实际参数。此页面不恢复或执行任何阶段。</p><select id="stage"></select><pre id="stageInfo"></pre><details><summary>偏置与恢复所需输入</summary><pre id="offsets"></pre></details></section>
+<section><h2>碰撞模型解释器 · 三视图与透视图</h2>
+<p>紫色＝持物；红色＝导入的环境/其他模型；橙色＝历史持物包络对比。尺寸、padding和坐标系单独显示。<strong>显示开关不修改碰撞策略。</strong></p>
+<p class="note">导入 attachment.json，或标准JSON：{frame, boxes:[{id,role,center_m,dims_m,rotation,source}], points:[[x,y,z],…]}。
+attachment仅有link6变换时按LINK6显示，不冒充BODY位置；点云必须与boxes同一frame。文件留在浏览器内。</p>
+<input id="file" type="file" accept=".json"><button id="sample">查看历史尺寸对比（示意）</button>
+<label><input type="checkbox" id="points" checked>显示原始点</label>
+<label><input type="checkbox" id="padding" checked>显示外扩模型</label>
+<select id="objects"></select><pre id="objectInfo"></pre>
+<div class="grid"><canvas width="650" height="370"></canvas><canvas width="650" height="370"></canvas><canvas width="650" height="370"></canvas><canvas width="650" height="370"></canvas></div>
+<p id="frameLabel" class="warn"></p></section>
+<section><h2>称前站 ↔ 烘干机前站 · 多泊位草稿</h2><p class="note">保留GRASP/PLACE名称作为别名。历史9月站位表不覆盖。新草稿尚未连接实机Scheme。</p>
+<p>称前站 → 后退40cm → 右移81cm → 前进32cm → 烘干机前站；返程32/81/40cm。</p><details><summary>站位表和路线原始参数</summary><pre id="stations"></pre></details>
+<select id="direction"><option value="SCALE_TO_DRYER">称前站取料 → 多泊位放置</option><option value="DRYER_TO_SCALE">多泊位取料 → 称前站放置</option></select>
+<div id="slots"></div><button id="download">保存离线任务意图草稿</button>
+<p class="warn">占用状态默认为UNKNOWN。五次取料需要确认称上补料；反向多次放到称上需要清空称台。草稿不会声称这些条件已满足。</p></section>
+<section><h2>实际接续时序</h2><p class="note">阶段与规划attempt有嵌套，不相加；阶段时间不冒充cuRobo solve时间。</p><table><thead><tr><th>阶段</th><th>模式</th><th>结果</th><th>秒</th></tr></thead><tbody id="timings"></tbody></table></section>
+<script>
+const $=id=>document.getElementById(id);let data,scene={frame:'SCHEMATIC_OBJECT_LOCAL',boxes:[],points:[]};
+const I=[[1,0,0],[0,1,0],[0,0,1]],signs=[[-1,-1,-1],[-1,-1,1],[-1,1,-1],[-1,1,1],[1,-1,-1],[1,-1,1],[1,1,-1],[1,1,1]];
+const labels={CENTER_BEFORE_PICK:'抓取前回center',PICK_PREPARE:'扫描、ID1检测与预抓取规划',GRIPPER40:'夹爪开至40%',MOVE_PREGRASP:'移动到预抓取位',CONTACT_APPROACH:'接近抓取点',CLOSE:'闭合夹爪',VERIFY_GRASP:'验证抓取',LIFT230_CONTINUOUS:'连续抬升230mm',ATTACH:'绑定持物模型',FRESH_ID3_OFFSET_PRELAND:'ID3检测＋泊位偏置',MOVE_PRELAND:'移动到泊位上方40mm',PLACE_DESCENT50:'下降50mm',RELEASE:'松爪',DETACH:'解除持物',RETREAT_BASE032:'底盘后退32cm',RETURN_LEFT081:'底盘左移81cm',RETURN_FORWARD040:'底盘前进40cm',TO_PLACE_back_040:'底盘后退40cm',TO_PLACE_right_081:'底盘右移81cm',TO_PLACE_forward_032:'底盘前进32cm'};
+function dims(v){return Array.isArray(v)&&v.length===3&&v.every(x=>Number.isFinite(x)&&x>0&&x<100)}
+function xyz(v){return Array.isArray(v)&&v.length===3&&v.every(Number.isFinite)}
+function corners(b){const r=b.rotation||I;return signs.map(s=>b.center_m.map((c,i)=>c+s.reduce((a,x,j)=>a+r[i][j]*x*b.dims_m[j]/2,0)))}
+function sample(){scene={frame:'SCHEMATIC_OBJECT_LOCAL — 历史尺寸示意，不是当前BODY现场',points:[],boxes:[
+{id:'旧cluster加padding',role:'historical_payload',center_m:[0,0,0],dims_m:[.220155,.217217,.113491],source:'历史错误源cluster推算，示意同中心'},
+{id:'修正主段',role:'payload',center_m:[0,0,0],dims_m:[.16,.10,.105491],source:'160×100mm；厚度沿用历史值，不代表已测物理厚度'},
+{id:'夹持后段',role:'payload',center_m:[-.09,0,0],dims_m:[.02,.10,.105491],source:'20mm后段仍参与碰撞'}]};refresh()}
+function refresh(){$('objects').replaceChildren(...scene.boxes.map((b,i)=>new Option(b.id,i)));details();draw()}
+function details(){let b=scene.boxes[+$('objects').value]||{};$('objectInfo').textContent=(b.dims_m?'尺寸：'+b.dims_m.map(x=>(x*1000).toFixed(1)).join(' × ')+' mm\n':'')+JSON.stringify(b,null,2)}
+function draw(){const views=[['TOP：横向−Y、纵向+X',p=>[-p[1],p[0]]],['REAR：横向−Y、纵向+Z',p=>[-p[1],p[2]]],['RIGHT：横向+X、纵向+Z',p=>[p[0],p[2]]],['三维透视',p=>[.8*p[0]-.65*p[1],p[2]-.35*p[0]-.25*p[1]]]];
+document.querySelectorAll('canvas').forEach((c,ix)=>{let g=c.getContext('2d'),[title,proj]=views[ix],boxes=scene.boxes.filter(b=>$('padding').checked||!b.padded),raw=$('points').checked?(scene.points||[]):[],pts=[...boxes.flatMap(corners),...raw],p2=pts.map(proj);
+g.clearRect(0,0,c.width,c.height);g.font='14px system-ui';g.fillStyle='#b5c9db';g.fillText(title,18,22);if(!p2.length)return;
+let lo=[0,1].map(i=>Math.min(...p2.map(p=>p[i]))),hi=[0,1].map(i=>Math.max(...p2.map(p=>p[i]))),scale=Math.min((c.width-100)/Math.max(hi[0]-lo[0],.05),(c.height-90)/Math.max(hi[1]-lo[1],.05)),mid=lo.map((x,i)=>(x+hi[i])/2);
+const screen=p=>{let q=proj(p);return [c.width/2+(q[0]-mid[0])*scale,c.height/2+15-(q[1]-mid[1])*scale]};
+g.strokeStyle='#334b60';for(let i=0;i<=4;i++){let x=50+i*(c.width-100)/4,y=50+i*(c.height-90)/4;g.beginPath();g.moveTo(x,45);g.lineTo(x,c.height-35);g.stroke();g.fillText(((x-c.width/2)/scale+mid[0]).toFixed(3)+'m',x-20,c.height-12);g.fillText(((c.height/2+15-y)/scale+mid[1]).toFixed(3),4,y)}
+g.fillStyle='#b1b1b1';raw.forEach(p=>{let [x,y]=screen(p);g.fillRect(x,y,2,2)});
+boxes.forEach(b=>{let v=corners(b).map(screen);g.strokeStyle=b.role==='payload'?'#d994ff':b.role==='historical_payload'?'#ffbc65':'#ff736b';g.lineWidth=b===scene.boxes[+$('objects').value]?3:1.3;for(let i=0;i<8;i++)for(let j=i+1;j<8;j++)if(signs[i].filter((x,k)=>x!==signs[j][k]).length===1){g.beginPath();g.moveTo(...v[i]);g.lineTo(...v[j]);g.stroke()}});
+});$('frameLabel').textContent='当前坐标系：'+scene.frame+'；'+scene.boxes.length+'个模型，'+(scene.points||[]).length+'个显示点。'}
+$('file').onchange=async e=>{try{let a=JSON.parse(await e.target.files[0].text());if(a.T_link6_object){let t=a.T_link6_object;const mk=(id,d,tt)=>({id,role:'payload',center_m:tt.slice(0,3).map(r=>r[3]),dims_m:d,rotation:tt.slice(0,3).map(r=>r.slice(0,3)),source:a.physical_model_provenance,revision:a.revision});
+scene={frame:'LINK6 — 需同一时刻FK才能转换为BODY',boxes:[mk(a.object_id,a.object_dimensions_m,t)],points:a.point_ownership?.points_link6_m||[]};
+if(a.clamped_segment?.T_link6_object)scene.boxes.push(mk('夹持后段',a.clamped_segment.dimensions_m,a.clamped_segment.T_link6_object));
+if(a.link6_aabb)scene.boxes.push({id:'规划包络（含padding与后段）',role:'payload',center_m:a.link6_aabb.center_m,dims_m:a.link6_aabb.dims_m,padded:true,source:a.geometry_policy});
+}else{if(!a.frame||!Array.isArray(a.boxes))throw Error('缺少frame/boxes');scene=a}
+if(scene.boxes.length>5000||(scene.points||[]).length>20000)throw Error('显示上限5000模型/20000点，请先降采样');
+for(let b of scene.boxes){if(!xyz(b.center_m)||!dims(b.dims_m))throw Error('无效模型尺寸/中心');if(b.rotation&&(!Array.isArray(b.rotation)||b.rotation.length!==3||!b.rotation.every(xyz)))throw Error('无效旋转')}
+if(!(scene.points||[]).every(xyz))throw Error('无效点');refresh()}catch(err){$('objectInfo').textContent=String(err)}};
+$('objects').onchange=()=>{details();draw()};$('padding').onchange=draw;$('points').onchange=draw;$('sample').onclick=sample;
+$('download').onclick=async()=>{try{let slots=[...document.querySelectorAll('[data-slot]:checked')].map(e=>e.dataset.slot);if(!slots.length)return alert('至少选一个泊位');let r=await fetch('/api/workbench/draft',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({direction:$('direction').value,slots})});if(!r.ok)throw Error('草稿校验失败');let v=await r.json();let blob=new Blob([JSON.stringify(v,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='transfer-intent-draft.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}catch(e){alert(e.message)}};
+fetch('/api/workbench').then(r=>{if(!r.ok)throw Error('工作台数据不可用');return r.json()}).then(v=>{data=v;$('health').textContent=`任务完成（含故障后接续）；源码${v.custody.source_files}份。本地预览绑定文件${v.gaps.filter(x=>x.local_matches.length).length}/${v.gaps.length}齐备，尚非完整现场镜像。`;
+$('gaps').textContent=JSON.stringify(v.gaps,null,2);$('offsets').textContent=JSON.stringify(v.reproduction_inputs,null,2);$('stage').replaceChildren(...v.stages.map((s,i)=>new Option((i+1)+'. '+(labels[s.id]||s.id),i)));$('stage').onchange=()=>$('stageInfo').textContent=JSON.stringify(v.stages[+$('stage').value],null,2);$('stage').onchange();$('stations').textContent=JSON.stringify(v.stations,null,2);
+for(let s of v.slots){let label=document.createElement('label'),b=document.createElement('input');b.type='checkbox';b.dataset.slot=s;label.append(b,document.createTextNode(s));$('slots').append(label)}
+for(let row of v.recovery_timing.intervals){let tr=document.createElement('tr');for(let x of [row.stage,row.mode||'—',row.state,row.elapsed_s.toFixed(3)]){let td=document.createElement('td');td.textContent=x;tr.append(td)}$('timings').append(tr)}
+}).catch(e=>$('health').textContent=String(e));sample();
+</script></html>

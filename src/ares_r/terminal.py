@@ -402,6 +402,10 @@ def run_terminal(controller: TaskController) -> None:
         try:
             args = shlex.split(input("ares-r> ").strip())
             if not args: continue
+            if args == ["golden", "review"]:
+                from .demo_workbench import snapshot
+                print(json.dumps(snapshot(Path.cwd()), ensure_ascii=False, indent=2))
+                continue
             if controller.mode == "jaka-readonly" and not _allowed_in_jaka_readonly(args):
                 raise RuntimeError("command blocked by jaka-readonly mode; no control API called")
             if (controller.mode == "hardware-enabled" and
