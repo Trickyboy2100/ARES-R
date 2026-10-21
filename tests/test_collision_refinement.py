@@ -1,10 +1,21 @@
 import unittest
+from unittest.mock import patch
 import numpy as np
 from ares_r.manipulation.attached_world import seal
 from ares_r.manipulation.collision_refinement import payload_spheres_link6, observed_obb
 
 
 class CollisionRefinementTests(unittest.TestCase):
+    def test_dense_cloud_uses_thin_svd_and_preserves_points(self):
+        points = np.random.default_rng(12).normal(size=(20000, 3)) * [.1, .02, .005]
+        original_svd = np.linalg.svd
+        with patch('numpy.linalg.svd', wraps=original_svd) as svd:
+            box = observed_obb(points, .007)
+        self.assertTrue(svd.called)
+        self.assertTrue(all(call.kwargs.get('full_matrices') is False for call in svd.call_args_list))
+        local = np.abs((points - box['center_body_m']) @ np.array(box['rotation_body'])) + .007
+        self.assertTrue(np.all(local <= np.array(box['half_extents_m']) + 1e-9))
+
     def attachment(self):
         from ares_r.manipulation.attached_collision import build_attached_collision
         from ares_r.world import AttachedObject, PoseSE3, SceneObject, SceneObjectRole

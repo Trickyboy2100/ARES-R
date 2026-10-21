@@ -141,23 +141,35 @@ def validate_dense_world(points, request, *, subdivisions=4):
     # coarse cluster AABB.
     ignored_objects = {str(value) for value in request.get(
         "motion_constraints", {}).get("ignore_cuboid_ids", [])}
-    for name, box in request["compiled_scene"]["cuboids"].items():
-        if name in ignored_objects:
-            continue
-        rotation = _quaternion_rotation(box["pose"][3:])
-        center = np.asarray(box["pose"][:3], dtype=float)
-        dims = np.asarray(box["dims"], dtype=float)
-        local_centers = (sphere_centers - center) @ rotation
-        delta = np.abs(local_centers) - dims / 2
-        signed = (np.linalg.norm(np.maximum(delta, 0), axis=-1)
-                  + np.minimum(np.max(delta, axis=-1), 0) - sphere_radii[None, :])
-        flat_index = int(np.argmin(signed))
-        by_object[name] = float(signed.flat[flat_index])
-        sphere_index = flat_index % signed.shape[1]
-        limiting_component_by_object[name] = labels[sphere_index]
+    backend = request.get('independent_distance_backend', 'NUMPY_REFERENCE')
+    if backend not in ('NUMPY_REFERENCE', 'NATIVE_CPU_V1'):
+        raise ValueError('unknown independent distance backend')
+    if backend == 'NATIVE_CPU_V1':
+        from .cpu_distance import distances
+        boxes = {name: box for name, box in request['compiled_scene']['cuboids'].items()
+                 if name not in ignored_objects}
+        by_object, flat_indices, _ = distances(sphere_centers, sphere_radii, boxes)
+        limiting_component_by_object = {
+            name: labels[index % len(sphere_radii)] for name, index in flat_indices.items()}
+    else:
+        for name, box in request["compiled_scene"]["cuboids"].items():
+            if name in ignored_objects:
+                continue
+            rotation = _quaternion_rotation(box["pose"][3:])
+            center = np.asarray(box["pose"][:3], dtype=float)
+            dims = np.asarray(box["dims"], dtype=float)
+            local_centers = (sphere_centers - center) @ rotation
+            delta = np.abs(local_centers) - dims / 2
+            signed = (np.linalg.norm(np.maximum(delta, 0), axis=-1)
+                      + np.minimum(np.max(delta, axis=-1), 0) - sphere_radii[None, :])
+            flat_index = int(np.argmin(signed))
+            by_object[name] = float(signed.flat[flat_index])
+            sphere_index = flat_index % signed.shape[1]
+            limiting_component_by_object[name] = labels[sphere_index]
     minimum_name = min(by_object, key=by_object.get) if by_object else None
     minimum = by_object[minimum_name] if minimum_name else float("inf")
     return {"validator": "independent_cpu_urdf_sphere_cuboid_v1",
+            "distance_backend": backend,
             "gripper_component_revision": (
                 (envelope.get("component_model") or {}).get("revision")
                 if envelope else None),

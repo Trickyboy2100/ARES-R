@@ -21,7 +21,20 @@ def point_box_distance(points,box):
     d=np.abs(p)-box['half_extents_m']
     return np.linalg.norm(np.maximum(d,0),axis=1)+np.minimum(np.max(d,axis=1),0)
 
-def build_observed_contact_geometry(epoch,request):
+def _bounded_cloud(points, low, high, tree=None):
+    """Exactly the original inclusive box query; index only reduces candidates."""
+    low,high=np.asarray(low,dtype=float),np.asarray(high,dtype=float)
+    if tree is None:
+        candidates=points
+    else:
+        center=(low+high)/2
+        radius=np.nextafter(float(np.linalg.norm((high-low)/2+1e-6)),np.inf)
+        indices=tree.query_ball_point(center,radius)
+        candidates=points[np.sort(np.asarray(indices,dtype=np.intp))]
+    return candidates[np.all((candidates>=low-1e-6)&(candidates<=high+1e-6),axis=1)]
+
+
+def build_observed_contact_geometry(epoch,request,*,indexed=True):
     epoch=Path(epoch);scene=epoch/'live_scene/scene'
     report=json.loads((scene/'scene_report.json').read_text())
     observation=json.loads((epoch/'manipulation_observation.json').read_text())
@@ -32,6 +45,13 @@ def build_observed_contact_geometry(epoch,request):
     if manifest['source']['sha256']!=scope['pointcloud_sha256']:
         raise RuntimeError('CONTACT_OCCUPANCY_SOURCE_MISMATCH')
     raw_path=Path(manifest['artifact_npz']);raw=np.load(raw_path)['points_body_m']
+    # Nonfinite points could never satisfy the original box test.
+    raw=raw[np.isfinite(raw).all(axis=1)]
+    if indexed:
+        from scipy.spatial import cKDTree
+        tree=cKDTree(raw)
+    else:
+        tree=None
     objects={x['id']:x for x in report['objects']};decomp=json.loads((scene/'support_decomposition.json').read_text())
     rows=[];cell=.002
     for primitive in decomp['primitives']:
@@ -41,7 +61,7 @@ def build_observed_contact_geometry(epoch,request):
                           primitive.get('source_cluster')=='remaining_observed')
         if primitive.get('semantic') not in ('SUPPORT_SURFACE','STRUCTURE') and not observed_unknown:continue
         low,high=np.asarray(primitive['observed_bounds_m'],dtype=float)
-        cloud=raw[np.all((raw>=low-1e-6)&(raw<=high+1e-6),axis=1)]
+        cloud=_bounded_cloud(raw,low,high,tree)
         if len(cloud)<10:continue  # missing/sparse evidence keeps the coarse hard box
         keys=np.unique(np.floor(cloud/cell).astype(np.int64),axis=0)
         if len(keys)>20000:continue

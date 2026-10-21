@@ -43,7 +43,8 @@ def observed_obb(points, padding_m):
     if not 0 <= padding_m <= .05:
         raise ValueError('invalid observed uncertainty padding')
     origin = points.mean(0)
-    _, _, vt = np.linalg.svd(points-origin, full_matrices=True)
+    # Only a 3x3 frame is needed. Full U would allocate NxN for a dense cloud.
+    _, _, vt = np.linalg.svd(points-origin, full_matrices=False)
     rotation = vt.T
     # Stable proper frame. Geometry is invariant to these axis sign choices.
     for i in range(2):
