@@ -80,6 +80,9 @@ def planning_assessment(stats,config):
 
 def _fast_capture(config, root):
     pc=config["epic_pointcloud"]
+    # The shared camera worker may have another repository as its cwd.
+    # Resolve in the caller before crossing the process boundary.
+    root=Path(root).resolve()
     socket_path=Path("/tmp/ares_r_epic_capture.sock")
     service=Path(__file__).resolve().parents[2]/"scripts"/"epic_capture_service.py"
     def request():
