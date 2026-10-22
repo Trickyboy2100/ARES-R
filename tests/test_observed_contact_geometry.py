@@ -39,6 +39,17 @@ class ObservedContactGeometryTests(unittest.TestCase):
         r,q,w=self.fixture();w['known_wall']['center_body_m']=self.gripper_center(r,q)
         with self.assertRaisesRegex(RuntimeError,'known_wall'):
             validate_observed_contact(q,r,w,segment='contact')
+    def test_protrusion_requires_explicit_measured_v2_and_stays_hard_at_points(self):
+        r,q,w=self.fixture()
+        self.change(r,lambda v:v['rows'][0].update(semantic='PROTRUDING_OBSTACLE',source_kind='MEASURED_POINTCLOUD_PRIMITIVE',raw_point_count=50))
+        with self.assertRaisesRegex(RuntimeError,'UNKNOWN_VOLUME'):
+            validate_observed_contact(q,r,w,segment='contact')
+        self.change(r,lambda v:v.update(policy='CONTACT_OBSERVED_OCCUPANCY_V2',measured_protrusion_refinement=True))
+        self.assertTrue(validate_observed_contact(q,r,w,segment='contact')['collision_free'])
+        center=self.gripper_center(r,q)
+        self.change(r,lambda v:v['rows'][0].update(centers_body_m=[center]))
+        with self.assertRaisesRegex(RuntimeError,'NON_TARGET_WORLD_COLLISION'):
+            validate_observed_contact(q,r,w,segment='contact')
     def test_unknown_volume_cannot_be_refined(self):
         r,q,w=self.fixture();self.change(r,lambda v:v['rows'][0].update(semantic='UNKNOWN_OCCUPIED'))
         with self.assertRaisesRegex(RuntimeError,'UNKNOWN_VOLUME'):

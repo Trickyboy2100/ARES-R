@@ -54,6 +54,7 @@ def main():
                    help="Epic detection captured in the same manipulation transaction")
     p.add_argument("--reuse-capture",type=Path)
     p.add_argument("--attachment",type=Path)
+    p.add_argument('--observed-obb',action='store_true')
     args = p.parse_args()
     output = args.output.resolve()
     if output.exists():
@@ -127,7 +128,8 @@ def main():
         output / "capture_pointer.json", "--output", scene,
         *(["--detection-artifact", args.detection_artifact]
           if args.detection_artifact is not None else []),
-        *(["--attachment",args.attachment] if args.attachment else []), *target_args,
+        *(["--attachment",args.attachment] if args.attachment else []),
+        *(['--observed-obb'] if args.observed_obb else []), *target_args,
         python=str(args.open3d_python))
     report = json.loads((scene / "scene_report.json").read_text())
     summary = {"planning_only": True, "execution_allowed": False,

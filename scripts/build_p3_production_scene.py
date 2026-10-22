@@ -133,11 +133,12 @@ def targets(active,audit,world,model,existing=None,goal_delta_rad=None):
             "execution_allowed":False}
 
 
-def add(objects,observation,identifier,role,center,dims,inflation,source):
-    objects.append(SceneObject(identifier,role,"cuboid",PoseSE3("body",tuple(center),(1,0,0,0)),
+def add(objects,observation,identifier,role,center,dims,inflation,source,quaternion=(1,0,0,0)):
+    objects.append(SceneObject(identifier,role,"cuboid",PoseSE3("body",tuple(center),tuple(quaternion)),
                                tuple(max(.001,float(x)) for x in dims),float(inflation),observation,
                                confidence=1.0))
-    return {"id":identifier,"source":source,"center_m":center,"dims_m":dims,"inflation_m":inflation}
+    return {"id":identifier,"source":source,"center_m":center,"dims_m":dims,"inflation_m":inflation,
+            "quaternion_wxyz":list(quaternion)}
 
 
 def main():
@@ -162,6 +163,7 @@ def main():
     p.add_argument("--detection-artifact",
                    help="Epic detection bound to this ObservationEpoch")
     p.add_argument("--attachment");
+    p.add_argument('--observed-obb',action='store_true',help='opt-in point-enclosing observed geometry; preserves all source points and padding')
     p.add_argument("--output",required=True);a=p.parse_args();started=time.perf_counter()
     out=Path(a.output);out.mkdir(parents=True,exist_ok=False)
     cloud,meta=load_artifact(Path(a.manifest));geometry=load_geometry_snapshot(Path(a.geometry))
@@ -268,6 +270,11 @@ def main():
     provenance.append(add(objects,obs,"known_support_table",SceneObjectRole.FIXED,
         [(lo[0]+hi[0])/2,(lo[1]+hi[1])/2,table["median_z_m"]-.020],
         [hi[0]-lo[0],hi[1]-lo[1],.040],0.0,"P1 table validation"))
+    oriented_proofs=[]
+    refiner=None
+    if a.observed_obb:
+        from ares_r.manipulation.observed_scene_obb import ObservedSceneOBB
+        refiner=ObservedSceneOBB(cloud.points_body_m)
     for box in planning_boxes:
         if a.obstacle_pipeline=="multi_primitive":
             identifier="observed_"+box["primitive_id"]
@@ -278,9 +285,13 @@ def main():
         role=(SceneObjectRole.TARGET if target_primitive_id is not None and
               box.get("primitive_id",box.get("object_id"))==target_primitive_id
               else SceneObjectRole.OBSTACLE)
-        provenance.append(add(objects,obs,identifier,role,
-                              box["center_m"],box["dims_m"],
-                              planning_inflation(role,inflation,box.get("semantic")),source))
+        padding=planning_inflation(role,inflation,box.get('semantic'))
+        refined=(refiner.refine(box,padding) if refiner is not None and role is SceneObjectRole.OBSTACLE and a.obstacle_pipeline=='multi_primitive' else None)
+        center,dims,quaternion=box['center_m'],box['dims_m'],(1,0,0,0)
+        if refined is not None:
+            center,dims,quaternion=refined['center_m'],refined['dims_m'],refined['quaternion_wxyz']
+            oriented_proofs.append(dict(object_id=identifier,**refined))
+        provenance.append(add(objects,obs,identifier,role,center,dims,padding,source,quaternion))
     inactive=inactive_arm_obstacles(geometry,a.active)
     for box in inactive["boxes"]:
         if box["kind"]=="central_exclusion":
@@ -321,7 +332,8 @@ def main():
     wm.register_calibration(obs,CalibrationSet((("T_body_camera",cloud.transform_revision),
         ("T_body_camera_validation",cloud.validation_revision),("robot_geometry",geometry.geometry_revision),
         ("robot_joint_snapshot",geometry.joint_snapshot_revision),("residual_cleanup",DEFAULT_PROFILE),
-        ("robot_owned_filter",filter_revision),("obstacle_decomposition",decomposition_revision))))
+        ("robot_owned_filter",filter_revision),("obstacle_decomposition",decomposition_revision),
+        ('observed_obb',hashlib.sha256(json.dumps(oriented_proofs,sort_keys=True).encode()).hexdigest() if a.observed_obb else 'OFF'))))
     wm.commit_observation(obs)
     if attachment is not None:
         from ares_r.manipulation.attached_world import snapshot_attachment
@@ -347,7 +359,7 @@ def main():
         "detection_artifact":str(Path(a.detection_artifact).resolve()) if a.detection_artifact else None,
         "target_binding":target_binding,
         "obstacle_pipeline":a.obstacle_pipeline,"deployment_prefilter":prefilter,
-        "generic_scene_profile":scene_profile,
+        "generic_scene_profile":scene_profile,"observed_obb_refinements":oriented_proofs,
         "self_filter":sf,"cleanup":cleanup,"attachment_filter":attachment_filter,
         "robot_owned_filter":robot_owned.as_dict() if robot_owned else None,
         "support_decomposition":decomposition,"old_single_aabb_obstacles":boxes,

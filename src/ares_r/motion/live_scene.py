@@ -24,7 +24,8 @@ def _stamp():
 
 def build_live_planning_scene(config: dict, destination: Path | None = None,
                               active_arm: str = "right",
-                              detection_artifact: Path | None = None, attachment=None, reuse_capture=None) -> dict:
+                              detection_artifact: Path | None = None, attachment=None, reuse_capture=None,
+                              observed_obb=False) -> dict:
     """Build one immutable scene solely from a fresh scan and current state."""
     if active_arm not in ("left", "right"):
         raise ValueError("active arm must be left or right")
@@ -37,6 +38,7 @@ def build_live_planning_scene(config: dict, destination: Path | None = None,
                "--open3d-python", str(python), "--active", active_arm]
     if detection_artifact is not None:
         command.extend(("--detection-artifact", str(Path(detection_artifact).resolve())))
+    if observed_obb:command.append('--observed-obb')
     if reuse_capture is not None:command.extend(("--reuse-capture",str(Path(reuse_capture).resolve())))
     if attachment is not None:
         from ares_r.manipulation.attached_collision import verify_attached_collision

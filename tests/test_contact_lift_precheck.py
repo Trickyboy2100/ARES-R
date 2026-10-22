@@ -36,10 +36,12 @@ class PrecheckTests(unittest.TestCase):
     def test_complete_contact_lift_both_symmetries_before_planner(self):
         solver=DiagnosticSolver();result=self.run_check(solver)
         self.assertTrue(result['passed']);self.assertEqual(len(result['accepted']),2)
-        self.assertEqual(len(solver.calls),154)
+        self.assertEqual(len(solver.calls),152)
         self.assertEqual([b['symmetry_id'] for b in result['branches']],['NORMAL','FLIPPED_180'])
         np.testing.assert_allclose(solver.calls[0],[.745,-.2,1.])
-        np.testing.assert_allclose(solver.calls[76],[.8,-.2,1.1])
+        np.testing.assert_allclose(solver.calls[75],[.8,-.2,1.1])
+        for candidate in result['accepted']:
+            self.assertEqual(candidate['prechecked_paths']['contact'][-1],candidate['prechecked_paths']['lift'][0])
     def test_goal_periodic_normalization_cannot_mutate_contact_start_by_alias(self):
         result=self.run_check(DiagnosticSolver())
         candidate=result['accepted'][0]

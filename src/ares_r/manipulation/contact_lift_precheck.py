@@ -43,8 +43,13 @@ def precheck_contact_lift(solver, grasp_xyz, rotation, direction, seeds,
                     for index,xyz in enumerate(targets):
                         if time.monotonic()>=deadline:
                             timed_out=True;raise TimeoutError('CONTACT_PRECHECK_BUDGET_EXCEEDED')
-                        result=solver.solve_diagnostic(xyz,rot,q)
-                        q=np.asarray(result.joints_rad,dtype=float)
+                        # The lift's first Cartesian knot is exactly the last
+                        # contact knot. Solving it again can jump IK branch near
+                        # an elbow singularity despite almost identical TCP pose.
+                        # Reuse the already checked result, not just its XYZ.
+                        if not (segment=='lift' and index==0):
+                            result=solver.solve_diagnostic(xyz,rot,q)
+                            q=np.asarray(result.joints_rad,dtype=float)
                         passed=(np.isfinite(q).all() and result.position_error_m<=.0015 and
                                 result.orientation_error_rad<=math.radians(.6) and
                                 np.all(q>=solver.lower) and np.all(q<=solver.upper))

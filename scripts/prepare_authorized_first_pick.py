@@ -41,6 +41,7 @@ def main():
                         help="contact-only raw occupancy refinement; no obstacle deletion")
     parser.add_argument('--task-tcp-offset-m-rad',default='[0,0,0,0,0,0]')
     parser.add_argument('--demo-tcp-orientation-compensation',default='{}')
+    parser.add_argument('--contact-measured-protrusions',action='store_true',help='opt-in measured occupancy rather than solid envelopes for observed protrusions during contact only')
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=False)
 
@@ -243,7 +244,8 @@ def main():
         request['compiled_scene']['scene_snapshot_id']=observation['scene_snapshot_id']
         request['compiled_scene']['planning_context_digest']=observation['scene_digest']
         from ares_r.manipulation.observed_contact_geometry import build_observed_contact_geometry
-        request['contact_observed_geometry']=build_observed_contact_geometry(args.epoch,request)
+        request['contact_observed_geometry']=build_observed_contact_geometry(args.epoch,request,
+            refine_measured_protrusions=args.contact_measured_protrusions)
     # Fresh scene owns these values; do not retain stale template provenance.
     request["compiled_scene"]["scene_snapshot_id"] = observation["scene_snapshot_id"]
     request["compiled_scene"]["planning_context_digest"] = observation["scene_digest"]

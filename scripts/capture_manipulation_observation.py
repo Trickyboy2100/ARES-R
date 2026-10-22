@@ -23,6 +23,7 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--profile", choices=("right_pick", "right_place_rightmost"),
                         default="right_pick")
+    parser.add_argument('--observed-obb',action='store_true')
     args = parser.parse_args()
     config = json.loads((ROOT / "config/system.json").read_text(encoding="utf-8"))
     model = json.loads(Path(config["robot_collision"]["model"]).read_text())
@@ -44,7 +45,7 @@ def main():
     transaction = ManipulationObservationTransaction(
         config, detect=lambda name: epic._detect_profile(
             name, config["epic"]["task_profiles"][name]["purpose"]),
-        read_robot_state=read_state, scene_builder=build_live_planning_scene)
+        read_robot_state=read_state, scene_builder=lambda *a,**kw:build_live_planning_scene(*a,**kw,observed_obb=args.observed_obb))
     artifact = transaction.capture(args.output, profile=args.profile)
     print(json.dumps(artifact, indent=2))
 

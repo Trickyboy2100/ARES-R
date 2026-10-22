@@ -34,7 +34,7 @@ def _bounded_cloud(points, low, high, tree=None):
     return candidates[np.all((candidates>=low-1e-6)&(candidates<=high+1e-6),axis=1)]
 
 
-def build_observed_contact_geometry(epoch,request,*,indexed=True):
+def build_observed_contact_geometry(epoch,request,*,indexed=True,refine_measured_protrusions=False):
     epoch=Path(epoch);scene=epoch/'live_scene/scene'
     report=json.loads((scene/'scene_report.json').read_text())
     observation=json.loads((epoch/'manipulation_observation.json').read_text())
@@ -59,7 +59,9 @@ def build_observed_contact_geometry(epoch,request,*,indexed=True):
         if name in scope['target_object_ids'] or name not in request['compiled_scene']['cuboids']:continue
         observed_unknown=(primitive.get('semantic')=='UNKNOWN_OCCUPIED' and
                           primitive.get('source_cluster')=='remaining_observed')
-        if primitive.get('semantic') not in ('SUPPORT_SURFACE','STRUCTURE') and not observed_unknown:continue
+        measured_protrusion=(refine_measured_protrusions and primitive.get('semantic')=='PROTRUDING_OBSTACLE'
+                             and primitive.get('point_count',0)>=30 and primitive.get('observed_bounds_m') is not None)
+        if primitive.get('semantic') not in ('SUPPORT_SURFACE','STRUCTURE') and not observed_unknown and not measured_protrusion:continue
         low,high=np.asarray(primitive['observed_bounds_m'],dtype=float)
         cloud=_bounded_cloud(raw,low,high,tree)
         if len(cloud)<10:continue  # missing/sparse evidence keeps the coarse hard box
@@ -83,11 +85,14 @@ def build_observed_contact_geometry(epoch,request,*,indexed=True):
         'gripper_opening_max_percent':40,'closed_opening_sweep_step_percent':5,
         'opening_sweep_padding_m':.0011,
         'known_and_unknown_world':'HARD_ORIGINAL_GEOMETRY','arm_world':'HARD_ORIGINAL_GEOMETRY'}
+    if refine_measured_protrusions:
+        value.update(policy='CONTACT_OBSERVED_OCCUPANCY_V2',measured_protrusion_refinement=True,
+                     known_and_unknown_world='MEASURED_PROTRUSION_VOXELS_OTHER_ORIGINAL_GEOMETRY')
     return dict(value,revision=digest(value))
 
 def validate_observed_contact(points,request,world,*,segment,check_cancelled=lambda:None):
     value=request['contact_observed_geometry'];core=dict(value);revision=core.pop('revision',None)
-    if revision!=digest(core) or core.get('policy')!='CONTACT_OBSERVED_OCCUPANCY_V1':
+    if revision!=digest(core) or core.get('policy') not in ('CONTACT_OBSERVED_OCCUPANCY_V1','CONTACT_OBSERVED_OCCUPANCY_V2'):
         raise RuntimeError('CONTACT_OCCUPANCY_REVISION_MISMATCH')
     scope=request['manipulation_contact_scope']
     for key in ('scene_snapshot_id','scene_digest','pointcloud_sha256','geometry_revision','tool_revision','target_object_ids'):
@@ -102,6 +107,9 @@ def validate_observed_contact(points,request,world,*,segment,check_cancelled=lam
     if any(row['semantic'] not in ('SUPPORT_SURFACE','STRUCTURE') and not
            (row['semantic']=='UNKNOWN_OCCUPIED' and row.get('source_cluster')=='remaining_observed'
             and row.get('source_kind')=='MEASURED_POINTCLOUD_PRIMITIVE' and row.get('raw_point_count',0)>=10)
+           and not (core.get('policy')=='CONTACT_OBSERVED_OCCUPANCY_V2' and core.get('measured_protrusion_refinement') is True
+                    and row['semantic']=='PROTRUDING_OBSTACLE' and row.get('source_kind')=='MEASURED_POINTCLOUD_PRIMITIVE'
+                    and row.get('raw_point_count',0)>=30)
            for row in value['rows']):
         raise RuntimeError('CONTACT_OCCUPANCY_UNKNOWN_VOLUME_MUST_STAY_HARD')
     centers=np.concatenate([np.asarray(row['centers_body_m'],dtype=float) for row in value['rows']]) if refined else np.empty((0,3))

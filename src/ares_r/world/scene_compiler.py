@@ -49,10 +49,20 @@ def _quaternion_wxyz(rotation):
     return (value / np.linalg.norm(value)).tolist()
 
 
-def transform_body_cuboid(center_m, dimensions_m, T_arm_body):
+def _rotation_wxyz(q):
+    q=np.asarray(q,dtype=float)
+    if q.shape!=(4,) or not np.isfinite(q).all() or not np.isclose(np.linalg.norm(q),1.,atol=1e-6):
+        raise ValueError('finite unit cuboid quaternion required')
+    w,x,y,z=q
+    return np.array([[1-2*(y*y+z*z),2*(x*y-z*w),2*(x*z+y*w)],
+                     [2*(x*y+z*w),1-2*(x*x+z*z),2*(y*z-x*w)],
+                     [2*(x*z-y*w),2*(y*z+x*w),1-2*(x*x+y*y)]])
+
+
+def transform_body_cuboid(center_m, dimensions_m, T_arm_body, orientation_wxyz=(1,0,0,0)):
     transform = _matrix(T_arm_body, "T_arm_body")
     center = transform[:3, :3] @ np.asarray(center_m, dtype=float) + transform[:3, 3]
-    return center.tolist(), list(dimensions_m), _quaternion_wxyz(transform[:3, :3])
+    return center.tolist(), list(dimensions_m), _quaternion_wxyz(transform[:3, :3]@_rotation_wxyz(orientation_wxyz))
 
 
 def compile_snapshot(snapshot, arm: str, T_body_model, planning_scope="DEMO_OFFLINE_ONLY",
@@ -75,9 +85,13 @@ def compile_snapshot(snapshot, arm: str, T_body_model, planning_scope="DEMO_OFFL
             continue
         inflated = (np.asarray(item.dimensions_m, dtype=float) + 2.0 * item.inflation_m).tolist()
         if planning_scope == "P3_PRODUCTION_PLANNING_ONLY":
-            center, dims, orientation = transform_body_cuboid(item.pose.xyz_m, inflated, model_body)
+            center, dims, orientation = transform_body_cuboid(item.pose.xyz_m, inflated, model_body,item.pose.quaternion_wxyz)
         else:
-            center, dims = transform_body_aabb(item.pose.xyz_m, inflated, model_body)
+            rotation=_rotation_wxyz(item.pose.quaternion_wxyz)
+            corners=np.asarray(list(itertools.product((-1.,1.),repeat=3)))*np.asarray(inflated)/2
+            corners=(corners@rotation.T+np.asarray(item.pose.xyz_m))@model_body[:3,:3].T+model_body[:3,3]
+            center=((corners.min(0)+corners.max(0))/2).tolist()
+            dims=(corners.max(0)-corners.min(0)).tolist()
             orientation = [1, 0, 0, 0]
         entry = {"dims": dims, "pose": center + orientation, "inflation_m": item.inflation_m}
         if item.role is SceneObjectRole.TARGET:
@@ -98,7 +112,7 @@ def compile_snapshot(snapshot, arm: str, T_body_model, planning_scope="DEMO_OFFL
                            })
     payload = {
         "schema_version": 1, "frame": "curobo_model_base", "arm": arm,
-        "rotation_encoding_revision": "SCENE_COMPILER_ACTIVE_WXYZ_V2",
+        "rotation_encoding_revision": "SCENE_COMPILER_ACTIVE_OBJECT_WXYZ_V3",
         "source": "scene_snapshot_compiler", "planning_scope": planning_scope,
         "execution_allowed": False, "scene_snapshot_id": snapshot.snapshot_id,
         "planning_context_digest": snapshot.planning_context_digest,
