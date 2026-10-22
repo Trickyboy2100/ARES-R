@@ -73,6 +73,11 @@ def main():
         file=out/'post-lift-verification.json';live.command([params['curobo_python'],'scripts/verify_authorized_first_pick.py','--epoch',live.epoch,'--post-scene',scene['scene_dir'],'--readbacks',reads,'--phase','POST_LIFT','--lift-arrived','--lift-displacement-m',live.initial_lift_displacement,'--expected-lift-m',.23,'--output',file],out/'post-lift-verify.log')
         return load(file)
     try:
+        def gripper_preflight():
+            path=out/'gripper-runtime-preflight.json';live.command([sys.executable,'scripts/gripper_direct_once.py','status'],path,10);status=load(path)
+            if status['fault_code']:raise RuntimeError('gripper hardware fault: '+str(status['fault_flags']))
+            return status
+        measured('GRIPPER_RUNTIME_PREFLIGHT',gripper_preflight)
         from ares_r.adapters.epic import EpicClient
         from ares_r.motion.grasp import rotation_matrix
         import numpy as np
