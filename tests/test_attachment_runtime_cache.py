@@ -45,6 +45,10 @@ class AttachmentRuntimeCacheTests(unittest.TestCase):
         a["link6_aabb"]["half_extents_m"][0] = .09
         self.assertNotEqual(runtime_key(self.request), runtime_key(self.replace(a)))
 
+    def test_initialization_only_does_not_change_construction_identity(self):
+        initialized=dict(self.request,initialize_only=True)
+        self.assertEqual(runtime_key(initialized),runtime_key(self.request))
+
     def test_tampered_revision_rejected_before_cache(self):
         bad = copy.deepcopy(self.request)
         bad["attached_object_collision"]["source_observation_id"] = "tampered"

@@ -193,6 +193,7 @@ class Handler(BaseHTTPRequestHandler):
             elif path=="/api/operations/record":value=self.dispatcher.save_trajectory(body)
             elif path=="/api/operations/base-preview":value=self.dispatcher.base_preview(body)
             elif path=="/api/operations/base-move":value=self.dispatcher.base_move(body)
+            elif path=="/api/operations/pick-reset-timing/start":value=self.dispatcher.start_pick_reset_timing(body)
             elif path=="/api/operations/execute":value=self.dispatcher.motion_execute(body)
             elif path=="/api/operations/stop":value=self.dispatcher.operations_stop()
             elif path=="/api/scene/invalidate":value=self.dispatcher.scene_invalidate(body.get("reason","WEBUI"))

@@ -68,6 +68,31 @@ class CanonicalBackend:
             if self._physical_state.get('command_id') and self._physical_state.get('state') in ('SUCCEEDED','FAULT'):
                 self._command_ledger().update(self._physical_state['command_id'],
                     'COMPLETED' if self._physical_state['state']=='SUCCEEDED' else 'UNCERTAIN',self._physical_state)
+            if self._physical_state.get('mode')=='PICK_RESET_TIMING':
+                status=Path(self._physical_state['study_output'])/'status.json'
+                if status.is_file():
+                    study=json.loads(status.read_text());self._physical_state.update(current_stage=study.get('stage'),study_state=study.get('state'),study_elapsed_s=study.get('elapsed_s'),study_error=study.get('error'))
+                if self._physical_state.get('state')=='SUCCEEDED' and (not status.is_file() or study.get('state')!='COMPLETED'):
+                    self._physical_state.update(state='FAULT',failure_reason='pick/reset completion missing')
+            return dict(self._physical_state)
+
+    def start_pick_reset_timing(self,body):
+        self.roundtrip.check_physical_access(body)
+        if body.get('authorization')!='RIGHT PICK RESET TIMING' or body.get('onsite_observer_confirmed') is not True:
+            raise PermissionError('explicit supervised stationary pick/reset authorization required')
+        root=Path(self.root).resolve();prepared=Path(body['prepared']).resolve()
+        if root/'worklog/evidence' not in prepared.parents or not (prepared/'native-manifest.json').is_file():
+            raise ValueError('prepared native evidence under canonical root required')
+        if (prepared/'execution').exists() or (prepared/'timing-stop.request').exists():raise ValueError('candidate already used or stopped')
+        self.physical_status()
+        with self._physical_guard:
+            if self._base_running or self._physical_process is not None:raise RuntimeError('another physical operation active')
+            log=prepared/'timing-runner.log';stream=log.open('x')
+            argv=[sys.executable,str(root/'scripts/run_pick_reset_timing.py'),'--prepared',str(prepared),'--output',str(prepared/'execution'),'--authorization','RIGHT PICK RESET TIMING','--onsite-observer-confirmed']
+            try:self._physical_process=subprocess.Popen(argv,cwd=root,stdout=stream,stderr=subprocess.STDOUT,env=dict(os.environ,PYTHONPATH=str(root/'src')))
+            except BaseException:stream.close();raise
+            self._physical_stream=stream;self._physical_abort_path=prepared/'timing-stop.request'
+            self._physical_state=dict(state='RUNNING',mode='PICK_RESET_TIMING',pid=self._physical_process.pid,log=str(log),study_output=str(prepared/'execution'),started_at_unix=time.time())
             return dict(self._physical_state)
 
     def _command_ledger(self):
@@ -245,7 +270,7 @@ class CanonicalBackend:
         return canonical_status(self.root) or self.dispatcher.task_status()
     def call(self,method,args=(),kwargs=None):
         if method == 'motion_stop': return self.operations_stop()
-        if method in ('motion_execute', 'operations_stop', 'base_move', 'physical_status',
+        if method in ('motion_execute', 'operations_stop', 'base_move', 'physical_status','start_pick_reset_timing',
                       'roundtrip_start','roundtrip_status','roundtrip_settings','roundtrip_resume','roundtrip_stop','roundtrip_command_status','task_status'):
             return getattr(self,method)(*list(args),**dict(kwargs or {}))
         allowed={

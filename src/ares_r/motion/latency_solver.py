@@ -45,3 +45,8 @@ def bounded_interpolation_buffer(requested,seeds,spheres,cuboid_capacity):
     return effective,{'requested_interpolation_buffer_size':int(requested),
         'effective_interpolation_buffer_size':effective,'dense_kernel_extent_upper_bound':effective*product,
         'dense_kernel_extent_limit':limit,'path_truncation_allowed':False,'interpolation_dt_unchanged':True}
+def cuboid_cache_capacity(request,count):
+    floor=request.get('cuboid_capacity_floor',512)
+    if type(floor) is not int or not 512<=floor<=2048 or floor%256:
+        raise ValueError('cuboid capacity floor must be512..2048 in256 increments')
+    return max(floor,((count+32+255)//256)*256)

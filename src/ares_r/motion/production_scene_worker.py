@@ -146,7 +146,8 @@ def main(progress=None):
     # small-scene runtime is reused for a big live scene and cuRobo raises
     # "Cannot add cuboid, cache is full (512 cuboids)".  Bucketed to 256 so
     # similarly sized scenes still share a runtime.
-    cuboid_capacity=max(512,((len(cuboids)+32+255)//256)*256)
+    from .latency_solver import cuboid_cache_capacity
+    cuboid_capacity=cuboid_cache_capacity(request,len(cuboids))
     params['interpolation_buffer_size'],launch_budget=bounded_interpolation_buffer(
         params['interpolation_buffer_size'],params['num_trajopt_seeds'],sum(map(len,spheres.values())),cuboid_capacity)
     static_signature=hashlib.sha256(json.dumps({"robot":robot,"spheres":spheres,
@@ -188,6 +189,17 @@ def main(progress=None):
     else:
         planner=cached["planner"];names=cached["names"];runtime_reused=True
     world_init_s=time.perf_counter()-world_at
+    if request.get('initialize_only') is True:
+        # Explicit pre-initialization overlaps camera/CPU work. No warm-up solve,
+        # endpoint certification, trajectory, or execution candidate is produced.
+        output.parent.mkdir(parents=True,exist_ok=True)
+        output.write_text(json.dumps({'observed_result':'INITIALIZED_NOT_PLANNED',
+            'planning_only':True,'execution_allowed':False,'solve_calls':0,
+            'scene_snapshot_id':request['scene_snapshot_id'],
+            'runtime_signature':static_signature,'persistent_runtime_reused':runtime_reused,
+            'timing_s':{'cuda_import':import_s,'planner_init':world_init_s,
+                        'request_wall_s':time.perf_counter()-request_at}})+'\n')
+        return
     def state(rows):
         rows=np.asarray(rows,dtype=float).reshape(-1,6);ordered=rows[:,[ARM_NAMES.index(x) for x in names]]
         return JointState.from_position(torch.tensor(ordered,device="cuda:0",dtype=torch.float32).contiguous(),joint_names=names)

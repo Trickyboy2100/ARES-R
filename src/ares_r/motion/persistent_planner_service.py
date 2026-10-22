@@ -20,7 +20,7 @@ import threading
 import time
 import traceback
 
-from .latency_solver import orientation_runtime_key
+from .latency_solver import orientation_runtime_key,cuboid_cache_capacity
 
 
 def attachment_runtime_geometry(request):
@@ -52,7 +52,7 @@ def runtime_key(request):
     values.update(robot_sha256=hashlib.sha256(robot.read_bytes()).hexdigest(),
                   urdf_sha256=hashlib.sha256(urdf.read_bytes()).hexdigest(),
                   orientation=orientation_runtime_key(request.get('orientation_lock')),
-                  cuboid_capacity=max(512,((count+32+255)//256)*256))
+                  cuboid_capacity=cuboid_cache_capacity(request,count))
     return hashlib.sha256(json.dumps(values,sort_keys=True).encode()).hexdigest()
 
 
