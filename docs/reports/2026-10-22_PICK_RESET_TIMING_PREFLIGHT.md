@@ -126,3 +126,45 @@ Study archive SHA256:
 Verified after transfer. Cloud binaries referenced by scene manifests are outside
 this archive; this archive alone is not a portable whole-scene replay bundle.
 Capture-path regression1/1 passed. No automatic push.
+
+## Authorized forward60mm follow-up
+
+Operator explicitly authorized one BODY+X60mm translation with on-site monitoring.
+Executed through canonical backend, linear speed0.05m/s, yaw request0, no lateral
+motion, no station/route edits, no arm/gripper movement. Fresh AMR completion
+marker72698/queue11338 and observerSETTLED,7.220s dispatch-to-confirmation.
+SLAM displacement44.5mm and yaw change-0.936deg have low localization confidence;
+they do not certify true physical travel. No extra correction move was issued.
+
+Fresh ID1 target BODY `[.7807163425,-.1133351544,.9909769700]m`, X58.03mm nearer
+than before. Observation14.502s. Preparation1.974s, including contact/lift IK
+precheck0.650s. NORMAL andFLIPPED contact55mm +initial100mm-lift IK pass:
+maximum position residual0.0753mm /0.00247mm, orientation0.0303deg /0.000779deg.
+**Continuous230mm, reverse descent and reset have not thereby been validated.**
+
+The original coarse world still rejects the pregrasp endpoints (-22.38mm /
+-13.05mm) against `observed_support_00_component_01_protruding`. A separate
+diagnostic OBB world preserves every source point and original padding; endpoint
+gaps become+3.102mm /+3.187mm. Production SceneSnapshot was not overwritten.
+Derived request is explicitly planning-only/execution-disallowed; it must not
+be relabeled an executable whole-task package without canonical scene/contact
+binding, dense validation and all return paths.
+
+Fresh derived-scene25iteration1/4 CUDA-graph benchmark3/3 successful:
+
+| Run | Full request including validation | Core solve |
+|---|---:|---:|
+| Cold |25.729s|6.890s|
+| Warm1 |4.457s|1.553s|
+| Warm2 |4.514s|1.546s|
+
+This is actual current-scene pregrasp planning measurement, not physical-motion
+timing. Core warm solve meets2s, end-to-end still exceeds2s due to world update,
+two validation paths, reporting and process overhead. No discarded full warm-up
+solve per request. Only two warm samples, so no broad latency guarantee.
+
+Follow-up evidence is `forward60/` under the study. Mac archive:
+`site-private-20261022/20261022-pick-reset-after-forward60.tar.gz`, SHA256
+`50531673645aae95f55752272c64144649f7f59dd6e4b46c7d59cd844e95ec4b`.
+Robot remains at the adjusted position, right arm near center and object still
+ungrasped. Old pre-base-motion scenes/trajectories were invalidated by backend.
