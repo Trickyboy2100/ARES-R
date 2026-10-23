@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "demo_id": "right_arm_pick_lift_replace_reset_v1",
+  "name": "右臂原位抓取—230mm抬升—放回复位 · 正式版",
+  "version": "1.0.0",
+  "category": "manipulation",
+  "description": "当前固定夹具场景：fresh ID1/Pixel Pro、cuRobo预抓取、接近闭爪、连续230mm抬升、滚动新鲜反馈验证、原路放回释放并回初始center；下一段Native准备与当前段执行重叠。",
+  "commissioning_state": "COMMISSIONED_FIXED_FIXTURE_WARM_AND_PLANNER_COLD_2026_10_23",
+  "scope": {
+    "active_arm": "right",
+    "inactive_arm": "HOLD_CURRENT",
+    "base": "STATIONARY",
+    "station_transfer": false,
+    "place_included": "REPLACE_ORIGINAL_FIXTURE_ONLY",
+    "requires_initial_center": true,
+    "arbitrary_scene_commissioned": false,
+    "cold_start_scope": "RC1_PLANNER_PROCESS_CUDA_RUNTIME_ONLY_CAMERA_SERVICE_UNCHANGED"
+  },
+  "freshness_policy": {
+    "observation": "FRESH_EVERY_RUN",
+    "robot_state": "FRESH_BEFORE_EACH_SEGMENT_AND_ARRIVAL",
+    "scene": "FRESH_PER_STATIONARY_CYCLE",
+    "trajectory": "NEW_EACH_RUN_EXACT_REVERSE_WITHIN_SAME_CYCLE_ONLY",
+    "gripper_readback": "ROLLING_GENUINE_WINDOW_UNCHANGED_5S_VALIDATOR"
+  },
+  "stages": [
+    "FRESH_RIGHT_PICK_OBSERVATION",
+    "FULL_CHAIN_GEOMETRY_AND_IK_CHECK",
+    "INITIAL_NATIVE_PACKAGE",
+    "START_NEXT_NATIVE_PREPARATION",
+    "GRIPPER_40",
+    "CUROBO_PREGRASP",
+    "AWAIT_AND_VERIFY_NEXT_NATIVE",
+    "CONTACT_55MM",
+    "CLOSE",
+    "VERIFY_HOLD_CANDIDATE",
+    "CONTINUOUS_BODY_Z_LIFT_230MM",
+    "ROLLING_READBACK_AND_SCENE_VERIFY",
+    "REVERSE_LOWER_230MM",
+    "FIXTURE_ARRIVAL_CHECK",
+    "RELEASE",
+    "REVERSE_RETREAT",
+    "REVERSE_TO_INITIAL_CENTER"
+  ],
+  "hard_gates": [
+    "ACTIVE_AND_INACTIVE_ARM_STATE_TOOL_MATCH",
+    "FRESH_TARGET_CONFIRMATION",
+    "FRESH_CONTINUOUS_BASE_IDLE_WINDOW",
+    "FULL_CHAIN_GEOMETRY_PROOF",
+    "EXACT_NATIVE_HASH_BINDING",
+    "NATIVE_LIMITS_TRACKING_DEADLINE_ESTOP",
+    "GENUINE_GRASP_VERIFICATION",
+    "FIXTURE_ARRIVAL_BEFORE_RELEASE"
+  ],
+  "execution": {
+    "entrypoint": "scripts/run_pick_reset_demo.py",
+    "backend_entrypoint": "scripts/run_pick_reset_timing.py",
+    "prepare_command": ".venv/bin/python scripts/run_pick_reset_demo.py --prepare",
+    "run_command": ".venv/bin/python scripts/run_pick_reset_demo.py --execute --authorization 'RIGHT PICK RESET TIMING' --onsite-observer-confirmed",
+    "stop_command": ".venv/bin/python scripts/run_pick_reset_demo.py --stop",
+    "authorization_phrase": "RIGHT PICK RESET TIMING",
+    "requires_art_tty": false,
+    "webui_execution_allowed": false,
+    "canonical_start_api": "/api/operations/pick-reset-timing/start",
+    "canonical_stop_api": "/api/operations/stop"
+  },
+  "parameters": {
+    "source_snapshot": "demos/right_arm_pick_lift_replace_reset_v1/source_parameters.json",
+    "pinned_inputs": "demos/right_arm_pick_lift_replace_reset_v1/pinned_inputs.json",
+    "pregrasp_distance_m": 0.055,
+    "lift_body_z_m": 0.23,
+    "gripper_raw": {
+      "pregrasp": 400,
+      "close": 0,
+      "release": 400
+    },
+    "motion_speed_ceiling_rad_s": "site/native effective approximately 0.10; contact 0.05; inherited profile name is not actual speed",
+    "demo_compensation": "unchanged TCP_LOCAL_Z -10deg",
+    "source_snapshot_contains_unused_place_fields": true
+  },
+  "commissioning_evidence": "demos/right_arm_pick_lift_replace_reset_v1/evidence.json",
+  "golden_fallback": "right_arm_epic_pick_lift_v1"
+}
