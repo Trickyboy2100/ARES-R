@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "demos": [
+    {
+      "alias": "demo-1-main-grasphold",
+      "demo_id": "right_arm_epic_pick_lift_v1",
+      "demo_type": "GOLDEN",
+      "validation_level": "VERIFIED_HOLD",
+      "title": "识别抓取 → 抬升100mm → 保持",
+      "strategy": "first_pick",
+      "preparation": "料盘在抓取夹具中，头部相机可通过5700 ID1识别目标；底盘和双臂静止，右臂工作区净空。结束时保持持物，不自动放回。",
+      "verification_note": "历史实机抓取保持成功；旧golden原代码保留，不等同于最新流水线提速版。",
+      "result": "HOLD_AFTER_100MM_LIFT"
+    },
+    {
+      "alias": "demo-2-main-graspplace",
+      "demo_id": "right_arm_grasp_place_roundtrip_v1",
+      "demo_type": "GOLDEN",
+      "validation_level": "HISTORICAL_SUCCESS_WITH_RECOVERY",
+      "title": "取料 → 底盘转场 → 泊位放置 → 返回",
+      "strategy": "roundtrip",
+      "preparation": "底盘处于已登记GRASP站，ID1可见取料盘；PLACE站ID3可见、目标泊位为空，路线与偏置已核对；完整底盘扫掠、持物和释放区域净空。此版不适用于任意站位。",
+      "verification_note": "完整取放曾在修正后接续完成；不是已证明无人干预连续成功的版本。启动会按现有全链执行器尝试，失败停止，不自动续跑。",
+      "result": "RETURNED_GRASP"
+    },
+    {
+      "alias": "demo-2-branch-grasprptspdup",
+      "demo_id": "right_arm_pick_lift_replace_reset_v1",
+      "demo_type": "GOLDEN",
+      "validation_level": "VERIFIED_CONTINUOUS_WARM_AND_PLANNER_COLD",
+      "title": "抓取 → 抬升230mm → 原位放回 → 回center · 提速版",
+      "strategy": "pick_reset",
+      "preparation": "保持当前已验收站位，或确保头部相机视野中5700 ID1能识别同一夹具内料盘；右臂从当前静止姿态开始（已验收默认center），夹具原位可放回，工作区净空。无需手工输入目标坐标。",
+      "verification_note": "固定夹具下两次自动闭环：热态134.54秒、planner冷态144.13秒。其他站位/物体仍需fresh规划验证，不代表任意场景已验收。",
+      "result": "PICK_LIFT_REPLACE_RESET_COMPLETE"
+    }
+  ]
+}

@@ -123,7 +123,14 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         path=urlparse(self.path).path
-        if path=="/api/workbench":
+        if path=="/demo-console":
+            data=INDEX.with_name('demo_console.html').read_bytes()
+            self.send_response(200);self.send_header('Content-Type','text/html; charset=utf-8')
+            self.send_header('Content-Length',str(len(data)));self.end_headers();self.wfile.write(data)
+        elif path=="/api/demo-console/catalog":self._json(self.dispatcher.demo_console_catalog())
+        elif path=="/api/demo-console/status":self._json(self.dispatcher.demo_console_status())
+        elif path=="/api/demo-console/scene":self._json(self.dispatcher.demo_console_scene())
+        elif path=="/api/workbench":
             from ares_r.demo_workbench import snapshot
             self._json(snapshot(ROOT))
         elif path=="/workbench":
@@ -174,7 +181,9 @@ class Handler(BaseHTTPRequestHandler):
         path=urlparse(self.path).path
         try:
             body=self._body()
-            if path=="/api/workbench/draft":
+            if path=="/api/demo-console/start":value=self.dispatcher.demo_console_start(body)
+            elif path=="/api/demo-console/stop":value=self.dispatcher.demo_console_stop()
+            elif path=="/api/workbench/draft":
                 from ares_r.demo_workbench import task_draft
                 value=task_draft(body["direction"],body["slots"],{},ROOT)
             elif path=="/api/demo/roundtrip/start":value=self.dispatcher.roundtrip_start(body)

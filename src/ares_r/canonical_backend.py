@@ -32,6 +32,9 @@ class CanonicalBackend:
         self.roundtrip=RoundtripLauncher(root)
         from .motion.physical_command_ledger import PhysicalCommandLedger
         self._commands=PhysicalCommandLedger(root)
+        # Restore a lost console owner before accepting any new control RPC.
+        from .demos.console import DemoConsole
+        self._demo_console=DemoConsole(self)
         # Recover completed evidence, never resume a physical operation on restart.
         evidence = Path(root) / 'worklog/evidence/operations-execution'
         completed = sorted(evidence.glob('*/live/execution_result.json'))
@@ -166,6 +169,7 @@ class CanonicalBackend:
             return dict(self._physical_state)
 
     def operations_stop(self):
+        if hasattr(self,'_demo_console'):self._demo_console.request_stop()
         # Additive cycle runner polls this latch during contact-native segments
         # too; WebUI/ART STOP must not only stop generic motion/base requests.
         cycle_root = Path(self.root) / 'worklog/runtime/right_arm_grasp_place_roundtrip_v1'
@@ -276,7 +280,36 @@ class CanonicalBackend:
     def task_status(self):
         from .manipulation.roundtrip_job import canonical_status
         return canonical_status(self.root) or self.dispatcher.task_status()
+    def _console(self):
+        if not hasattr(self,'_demo_console'):
+            from .demos.console import DemoConsole
+            self._demo_console=DemoConsole(self)
+        return self._demo_console
+    def demo_console_catalog(self):return self._console().catalog()
+    def demo_console_status(self):return self._console().status()
+    def demo_console_start(self,body):return self._console().start(body)
+    def demo_console_stop(self):
+        self.operations_stop();return self._console().status()
+    def demo_console_scene(self):
+        console=self._console();console.status()
+        return console.monitor.scene_payload()
     def call(self,method,args=(),kwargs=None):
+        if method=='dispatch' and args:
+            if args[0] in ('demo console status','demo console list','demo console stop'):
+                return {'demo console status':self.demo_console_status,'demo console list':self.demo_console_catalog,
+                        'demo console stop':self.demo_console_stop}[args[0]]()
+            if args[0] in ('demo stop','motion stop') and getattr(self,'_demo_console',None) and self._demo_console.active():return self.demo_console_stop()
+        if method in ('demo_console_catalog','demo_console_status','demo_console_start','demo_console_stop','demo_console_scene'):
+            return getattr(self,method)(*list(args),**dict(kwargs or {}))
+        console=getattr(self,'_demo_console',None)
+        if console and console.active():
+            body=args[0] if args and isinstance(args[0],dict) else {}
+            critical={'motion_execute','base_move','start_pick_reset_timing','roundtrip_start','roundtrip_resume',
+                      'roundtrip_settings','operations_update','run_p39b'}
+            if method in critical and not console.permits(body):raise RuntimeError('Demo控制台占用执行资源；先停止当前任务')
+            if method=='dispatch' and args and args[0] not in ('status','help','demo list','system info'):
+                raise RuntimeError('Demo运行中禁止其他ART控制指令；使用统一停止按钮')
+            if method=='demo_stop':return self.demo_console_stop()
         if method == 'motion_stop': return self.operations_stop()
         if method in ('motion_execute', 'operations_stop', 'base_move', 'physical_status','start_pick_reset_timing',
                       'roundtrip_start','roundtrip_status','roundtrip_settings','roundtrip_resume','roundtrip_stop','roundtrip_command_status','task_status'):

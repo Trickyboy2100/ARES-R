@@ -11,7 +11,7 @@ from . import __version__
 
 
 TASK_RUNTIME_VERSION = "1.1.0-p39b"
-WEBUI_BUILD_VERSION = "2026.10.16-operations-v5-full-cycle-start"
+WEBUI_BUILD_VERSION = "2026.10.23-golden-demo-console-v1"
 
 
 def git_sha(root="."):

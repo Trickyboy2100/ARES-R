@@ -7,6 +7,9 @@ if R!=Path('/home/yikun/ARES-R-RC1-20261019'):raise RuntimeError('isolated RC1 o
 def get(p):return json.load(urlopen('http://127.0.0.1:8775'+p,timeout=10))
 if get('/api/demo/roundtrip/status').get('running') or get('/api/operations/run-status').get('state')=='RUNNING':
     raise RuntimeError('physical job active: no restart')
+console_state=R/'worklog/runtime/demo-console/job.json'
+if console_state.exists() and json.loads(console_state.read_text()).get('state') not in ('IDLE','SUCCEEDED','FAULT','STOPPED'):
+    raise RuntimeError('Demo console active or recovery required: no restart')
 manifest=O/'services.json';value=json.loads(manifest.read_text())
 selected=[next(x for x in value['processes'] if x['service']==name) for name in ('webui','backend')]
 for item in selected:

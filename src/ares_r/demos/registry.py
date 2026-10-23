@@ -41,6 +41,12 @@ class DemoRegistry:
             if value.get("execution", {}).get("entrypoint") is None:
                 raise ValueError("demo %s has no execution entrypoint" % demo_id)
             values[demo_id] = dict(value, definition_path=str(path))
+        aliases=self.root/'catalog_aliases.json'
+        if aliases.exists():
+            for item in json.loads(aliases.read_text()).get('demos',[]):
+                if item['demo_id'] in values:
+                    values[item['demo_id']].update(display_alias=item['alias'],demo_type=item['demo_type'],
+                        validation_level=item['validation_level'])
         return values
 
     def list(self):
@@ -48,11 +54,15 @@ class DemoRegistry:
         return [{"demo_id": value["demo_id"], "name": value["name"],
                  "version": value["version"], "category": value["category"],
                  "commissioning_state": value["commissioning_state"],
+                 "display_alias":value.get('display_alias'),"demo_type":value.get('demo_type'),
+                 "validation_level":value.get('validation_level'),
                  "selected": value["demo_id"] == selected,
                  "description": value.get("description", "")}
                 for value in self._definitions().values()]
 
     def inspect(self, demo_id):
+        for value in self._definitions().values():
+            if value.get('display_alias')==demo_id:return value
         try:
             return self._definitions()[demo_id]
         except KeyError:
@@ -71,6 +81,7 @@ class DemoRegistry:
 
     def select(self, demo_id):
         definition = self.inspect(demo_id)
+        demo_id=definition['demo_id']
         value = {"schema_version": 1, "state": "SELECTED",
                  "selected_demo_id": demo_id, "selected_version": definition["version"],
                  "active_run_id": None, "last_run": self.status().get("last_run")}
