@@ -47,7 +47,8 @@ def lift():
  points=build_path(package,r,.23);save(O/'lift230-path.json',points)
  # First prove full non-target clearance; no old fixture exception is needed
  # or applicable if the loaded path already passes the hard-world checks.
- proof=validate_path(points,r,package,contact_escape=None);save(O/'lift230-validation.json',proof)
+ from ares_r.manipulation.pick_reset_pipeline import bind_geometry_proof
+ proof=bind_geometry_proof(validate_path(points,r,package,contact_escape=None),points,r,package);save(O/'lift230-validation.json',proof)
  paths=dict(pregrasp=package['trajectories']['pregrasp'],contact=package['trajectories']['contact'],lift230=points,lower230=list(reversed(points)),retreat=list(reversed(package['trajectories']['contact'])),center=list(reversed(package['trajectories']['pregrasp'])))
  save(O/'pick-reset-paths.json',paths)
  empty=validate_dense_world(paths['center'],r,subdivisions=4);save(O/'reset-center-validation.json',empty)

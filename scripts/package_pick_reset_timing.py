@@ -23,16 +23,36 @@ def reverse_native(text,audit,source_points,reverse_of):
     return '\n'.join(lines[:4]+list(reversed(lines[4:])))+'\n',result
 
 def main():
-    parser=argparse.ArgumentParser();parser.add_argument('--prepared',type=Path,required=True);a=parser.parse_args()
+    parser=argparse.ArgumentParser();parser.add_argument('--prepared',type=Path,required=True)
+    parser.add_argument('--segments',default='pregrasp,contact,lift230,lower230,retreat,center')
+    parser.add_argument('--append',action='store_true');a=parser.parse_args()
     root=Path(__file__).resolve().parents[1];out=a.prepared.resolve();load=lambda p:json.loads(Path(p).read_text())
     ready=load(out/'preparation-ready.json')
     if not ready.get('geometry_prepared'):raise ValueError('geometry preparation missing')
     request=load(out/'pregrasp/planner_request.json');package=load(out/'package/first_pick_execution_package.json');paths=load(out/'pick-reset-paths.json');params=load(root/'demos/right_arm_grasp_place_roundtrip_v1/parameters.json');site=load(root/'config/jaka_mini2_motion.site.json')
-    verify_installed_sender(Path(params['contact_sender']));dest=out/'native';dest.mkdir(exist_ok=False);rows=[];memo={};at=time.monotonic()
+    from ares_r.manipulation.pick_reset_pipeline import digest,reuse_geometry_proof
+    selected=set(a.segments.split(','))
+    if not selected or selected-set(paths):raise ValueError('unknown native segment')
+    source_cache=out/'lift230-validation.json'
+    if source_cache.exists() and load(source_cache).get('exact_input_binding'):
+        # Check even in partial mode, before any physical stage can begin.
+        reuse_geometry_proof(load(source_cache),paths['lift230'],request,package)
+    verify_installed_sender(Path(params['contact_sender']));dest=out/'native';dest.mkdir(exist_ok=a.append);rows=[];memo={};at=time.monotonic()
+    prior=load(out/'native-manifest.json') if a.append else None
+    if prior:
+        if (prior['path_set_sha256']!=digest(paths) or prior['package_sha256']!=package['package_sha256'] or
+                prior['scene_snapshot_id']!=request['scene_snapshot_id']):raise ValueError('append candidate changed')
+        rows=list(prior['segments'])
+        if selected&{r['segment'] for r in rows}:raise ValueError('cannot overwrite packaged segment')
     direction=package['prechecked_branch']['approach_direction_body']
     def geometry(name,points):
         key=(name,hashlib.sha256(json.dumps(points).encode()).hexdigest())
         if key in memo:return memo[key]
+        source_proof=out/'lift230-validation.json'
+        if name=='lift230' and source_proof.exists():
+            cached=load(source_proof)
+            if cached.get('exact_input_binding') and digest(points)==digest(paths['lift230']):
+                proof=reuse_geometry_proof(cached,points,request,package);memo[key]=proof;return proof
         if name in ('pregrasp','center'):
             proof=validate_dense_world(points,request,subdivisions=4);proof['passed']=proof['collision_free']
         elif name in ('lift230','lower230'):
@@ -42,6 +62,7 @@ def main():
             proof=validate_short_motion(points,request,segment='contact',observation_id=package['observation_id'],direction=axis,central_exclusion=request['motion_constraints'].get('central_exclusion',False))
         memo[key]=proof;return proof
     for name,points in paths.items():
+        if name not in selected:continue
         reverse_of={'lower230':'lift230','retreat':'contact','center':'pregrasp'}.get(name)
         if reverse_of:
             t=time.monotonic();text,audit=reverse_native((dest/(reverse_of+'.native.txt')).read_text(),load(dest/(reverse_of+'.audit.json')),points,reverse_of)
@@ -55,6 +76,8 @@ def main():
         (dest/(name+'.native.txt')).write_text(text);(dest/(name+'.audit.json')).write_text(json.dumps(audit,indent=2)+'\n')
         rows.append(dict(segment=name,packaging_s=time.monotonic()-t,duration_s=audit['duration_s'],native_path_sha256=audit['native_path_sha256'],speed_rad_s=audit['max_joint_speed_rad_s'],tracking_prediction_deg=audit['predicted_tracking_gate_deg']))
         print(json.dumps(rows[-1]),flush=True)
-    manifest=dict(schema_version=1,physical_motion=False,execution_allowed=False,prepared=str(out),parameters=params,scene_snapshot_id=request['scene_snapshot_id'],pointcloud_sha256=package['pointcloud_sha256'],package_sha256=package['package_sha256'],elapsed_s=time.monotonic()-at,segments=rows)
-    (out/'native-manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
+    pending=sorted(set(paths)-{r['segment'] for r in rows})
+    manifest=dict(schema_version=2,physical_motion=False,execution_allowed=False,prepared=str(out),parameters=params,scene_snapshot_id=request['scene_snapshot_id'],pointcloud_sha256=package['pointcloud_sha256'],package_sha256=package['package_sha256'],elapsed_s=time.monotonic()-at,segments=rows,
+                  path_set_sha256=digest(paths),pending_segments=pending,packaging_mode='PIPELINED_NATIVE_V1' if pending or prior else 'COMPLETE')
+    temporary=out/'native-manifest.tmp';temporary.write_text(json.dumps(manifest,indent=2)+'\n');temporary.replace(out/'native-manifest.json')
 if __name__=='__main__':main()
