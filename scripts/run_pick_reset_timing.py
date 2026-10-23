@@ -4,17 +4,45 @@ from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
 ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'src'))
 AUTH='RIGHT PICK RESET TIMING'
+RETURN_AUTH='RIGHT PICK RESET RETURN'
 
 def load(p):return json.loads(Path(p).read_text())
 def save(p,v):
     p=Path(p);t=p.with_suffix('.tmp');t.write_text(json.dumps(v,indent=2)+'\n');t.replace(p)
 def path_hash(points):return hashlib.sha256(json.dumps(points,separators=(',',':')).encode()).hexdigest()
 
+def settle_segment(live,target,stage,event):
+    """Use the arrival contract without requiring the legacy Scheme job object."""
+    from ares_r.motion.arrival_contract import await_arrival
+    def sample():
+        live.check_cancelled()
+        right=live.telemetry()['arms']['right'];controller=right.get('controller_status') or {}
+        return dict(joints_rad=right['joints_rad'],in_position=controller.get('in_position',False),
+                    tool_valid=right.get('tool_id')==1,
+                    fault=bool(controller.get('errcode',0)) or any(controller.get(k,False) for k in
+                        ('emergency_stop','protective_stop','drag_mode','on_soft_limit')))
+    return await_arrival(sample,target,event=lambda phase:event(stage,phase,{}))
+
+def verify_return_checkpoint(prepared):
+    previous=load(prepared/'execution/status.json')
+    if previous.get('state')!='FAULT' or previous.get('stage')!='VERIFY_AFTER_LIFT_PARALLEL':
+        raise RuntimeError('return requires the interrupted post-lift checkpoint')
+    rows=[]
+    for line in (prepared/'execution/lift230.jsonl').read_text().splitlines():
+        try:rows.append(json.loads(line))
+        except ValueError:pass
+    if (not any(r.get('event')=='target_reached' for r in rows) or
+            not any(r.get('event')=='servo_disabled' and r.get('code')==0 for r in rows) or
+            any(r.get('event') in ('failed','abort') for r in rows)):
+        raise RuntimeError('completed lift and Servo cleanup evidence required')
+    return previous
+
 def main():
-    parser=argparse.ArgumentParser();parser.add_argument('--prepared',type=Path,required=True);parser.add_argument('--output',type=Path,required=True);parser.add_argument('--authorization',required=True);parser.add_argument('--onsite-observer-confirmed',action='store_true');a=parser.parse_args()
-    if a.authorization!=AUTH or not a.onsite_observer_confirmed:raise PermissionError('explicit supervised authorization required')
+    parser=argparse.ArgumentParser();parser.add_argument('--prepared',type=Path,required=True);parser.add_argument('--output',type=Path,required=True);parser.add_argument('--authorization',required=True);parser.add_argument('--onsite-observer-confirmed',action='store_true');parser.add_argument('--return-only',action='store_true');a=parser.parse_args()
+    if a.authorization!=(RETURN_AUTH if a.return_only else AUTH) or not a.onsite_observer_confirmed:raise PermissionError('explicit supervised authorization required')
     os.chdir(ROOT);prepared=a.prepared.resolve();out=a.output.resolve()
-    if ROOT/'worklog/evidence' not in prepared.parents or out!=prepared/'execution':raise ValueError('isolated evidence directory required')
+    if ROOT/'worklog/evidence' not in prepared.parents or out!=prepared/('return-execution' if a.return_only else 'execution'):raise ValueError('isolated evidence directory required')
+    if a.return_only:verify_return_checkpoint(prepared)
     out.mkdir(exist_ok=False);manifest=load(prepared/'native-manifest.json');package=load(prepared/'package/first_pick_execution_package.json');request=load(prepared/'pregrasp/planner_request.json');params=manifest['parameters'];paths=load(prepared/'pick-reset-paths.json')
     from ares_r.manipulation.first_pick_package import verify_first_pick_package
     verify_first_pick_package(package)
@@ -28,13 +56,13 @@ def main():
     events=[];start=time.monotonic();state={'state':'RUNNING','stage':'PREFLIGHT','holding_verified':False}
     def event(name,phase,detail):
         events.append(dict(stage=name,state=phase,elapsed_s=time.monotonic()-start,detail=detail));save(out/'events.json',events);state['stage']=name;save(out/'status.json',state)
-    live=legacy.Live(params,out,event);live.stopfile=prepared/'timing-stop.request';live.package=package;live.request=request;live.epoch=prepared/'epoch';live.pick_observation=load(live.epoch/'manipulation_observation.json');live.pick_folder=prepared;live.lift230=paths['lift230']
-    if not 0<=time.time()-live.pick_observation['captured_at_unix']<=300:
+    live=legacy.Live(params,out,event);live.stopfile=prepared/('timing-return-stop.request' if a.return_only else 'timing-stop.request');live.package=package;live.request=request;live.epoch=prepared/'epoch';live.pick_observation=load(live.epoch/'manipulation_observation.json');live.pick_folder=prepared;live.lift230=paths['lift230']
+    if not a.return_only and not 0<=time.time()-live.pick_observation['captured_at_unix']<=300:
         raise RuntimeError('fresh stationary experiment candidate required within300s')
     begin=live.telemetry();save(out/'before.json',begin)
     from ares_r.motion.arrival_contract import check_start
-    check_start(begin['arms']['right']['joints_rad'],paths['pregrasp'][0])
-    initial_left=begin['arms']['left'];rows=[]
+    check_start(begin['arms']['right']['joints_rad'],paths['lower230'][0] if a.return_only else paths['pregrasp'][0])
+    initial_left=(load(prepared/'execution/before.json')['arms']['left'] if a.return_only else begin['arms']['left']);rows=[]
     def measured(name,call):
         live.check_cancelled();live.command_id='PICK_RESET_'+str(out.parent.name)+'_'+name;event(name,'START',{});t=time.monotonic()
         try:
@@ -56,7 +84,7 @@ def main():
             try:data.append(json.loads(line))
             except ValueError:pass
         if any(v.get('event') in ('failed','abort') for v in data) or not any(v.get('event')=='target_reached' for v in data) or not any(v.get('event')=='servo_disabled' and v.get('code')==0 for v in data):raise RuntimeError('sender arrival/cleanup missing')
-        arrival=live._settle(paths[name][-1]);now=live.telemetry();save(out/(name+'.arrival.json'),now)
+        arrival=settle_segment(live,paths[name][-1],name,event);now=live.telemetry();save(out/(name+'.arrival.json'),now)
         if name=='lift230':live.initial_lift_displacement=now['arms']['right']['position_m'][2]-live._grasp_position()[2]
         return dict(native_duration_s=audit['duration_s'],log=str(log),tcp_body=now['arms']['right']['T_body_tcp'],arrival=arrival)
     def verify_after_lift():
@@ -78,6 +106,22 @@ def main():
             if status['fault_code']:raise RuntimeError('gripper hardware fault: '+str(status['fault_flags']))
             return status
         measured('GRIPPER_RUNTIME_PREFLIGHT',gripper_preflight)
+        if a.return_only:
+            save(out/'return-contract.json',dict(operator_authorized_original_reverse_only=True,
+                new_scene_claimed=False,new_grasp_claimed=False,base_motion_allowed=False,
+                source_execution=str(prepared/'execution'),segments=['lower230','release','retreat','center']))
+            measured('LOWER230',lambda:segment('lower230'))
+            from ares_r.motion.runtime_goal_ik import RuntimeGoalIK
+            import numpy as np
+            target=RuntimeGoalIK(request['robot_yaml_urdf'],request['T_body_model'],request['T_link6_tcp']).fk(paths['contact'][-1])
+            actual=np.asarray(live.telemetry()['arms']['right']['T_body_tcp'])
+            if np.linalg.norm(target[:3,3]-actual[:3,3])>.003:raise RuntimeError('original fixture TCP arrival exceeds3mm; no release')
+            measured('RELEASE',lambda:live.gripper(params['gripper_release_raw']))
+            measured('RETREAT',lambda:segment('retreat'));measured('RESET_CENTER',lambda:segment('center'))
+            state.update(state='COMPLETED',stage='CENTER',elapsed_s=time.monotonic()-start);save(out/'status.json',state)
+            save(out/'result.json',dict(result='RETURN_FROM_LIFT_COMPLETE',target_reached=True,reset_complete=True,
+                elapsed_s=time.monotonic()-start,stages=rows,final=live.telemetry()))
+            return
         from ares_r.adapters.epic import EpicClient
         from ares_r.motion.grasp import rotation_matrix
         import numpy as np

@@ -78,21 +78,29 @@ class CanonicalBackend:
 
     def start_pick_reset_timing(self,body):
         self.roundtrip.check_physical_access(body)
-        if body.get('authorization')!='RIGHT PICK RESET TIMING' or body.get('onsite_observer_confirmed') is not True:
+        return_only=body.get('return_only') is True
+        if body.get('authorization')!=('RIGHT PICK RESET RETURN' if return_only else 'RIGHT PICK RESET TIMING') or body.get('onsite_observer_confirmed') is not True:
             raise PermissionError('explicit supervised stationary pick/reset authorization required')
         root=Path(self.root).resolve();prepared=Path(body['prepared']).resolve()
         if root/'worklog/evidence' not in prepared.parents or not (prepared/'native-manifest.json').is_file():
             raise ValueError('prepared native evidence under canonical root required')
-        if (prepared/'execution').exists() or (prepared/'timing-stop.request').exists():raise ValueError('candidate already used or stopped')
+        output=prepared/('return-execution' if return_only else 'execution')
+        stop=prepared/('timing-return-stop.request' if return_only else 'timing-stop.request')
+        if output.exists() or stop.exists():raise ValueError('candidate already used or stopped')
+        if return_only:
+            prior=json.loads((prepared/'execution/status.json').read_text())
+            if prior.get('state')!='FAULT' or prior.get('stage')!='VERIFY_AFTER_LIFT_PARALLEL':
+                raise ValueError('return requires interrupted post-lift checkpoint')
         self.physical_status()
         with self._physical_guard:
             if self._base_running or self._physical_process is not None:raise RuntimeError('another physical operation active')
-            log=prepared/'timing-runner.log';stream=log.open('x')
-            argv=[sys.executable,str(root/'scripts/run_pick_reset_timing.py'),'--prepared',str(prepared),'--output',str(prepared/'execution'),'--authorization','RIGHT PICK RESET TIMING','--onsite-observer-confirmed']
+            log=prepared/('timing-return-runner.log' if return_only else 'timing-runner.log');stream=log.open('x')
+            argv=[sys.executable,str(root/'scripts/run_pick_reset_timing.py'),'--prepared',str(prepared),'--output',str(output),'--authorization',body['authorization'],'--onsite-observer-confirmed']
+            if return_only:argv.append('--return-only')
             try:self._physical_process=subprocess.Popen(argv,cwd=root,stdout=stream,stderr=subprocess.STDOUT,env=dict(os.environ,PYTHONPATH=str(root/'src')))
             except BaseException:stream.close();raise
-            self._physical_stream=stream;self._physical_abort_path=prepared/'timing-stop.request'
-            self._physical_state=dict(state='RUNNING',mode='PICK_RESET_TIMING',pid=self._physical_process.pid,log=str(log),study_output=str(prepared/'execution'),started_at_unix=time.time())
+            self._physical_stream=stream;self._physical_abort_path=stop
+            self._physical_state=dict(state='RUNNING',mode='PICK_RESET_TIMING',pid=self._physical_process.pid,log=str(log),study_output=str(output),started_at_unix=time.time())
             return dict(self._physical_state)
 
     def _command_ledger(self):
