@@ -56,8 +56,8 @@ def lift():
 def main():
  os.chdir(R);O.mkdir(parents=True,exist_ok=False)
  try:
-        stage('GRIPPER_RUNTIME_PREFLIGHT',lambda:command([PY,'scripts/gripper_direct_once.py','status'],'gripper-runtime.json'))
-        if load(O/'gripper-runtime.json')['fault_code']:raise RuntimeError('gripper hardware fault; do not scan or plan')
+  stage('GRIPPER_RUNTIME_PREFLIGHT',lambda:command([PY,'scripts/gripper_direct_once.py','status'],'gripper-runtime.json'))
+  if load(O/'gripper-runtime.json')['fault_code']:raise RuntimeError('gripper hardware fault; do not scan or plan')
   with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
    camera=pool.submit(stage,'OBSERVATION' if args.source_epoch is None else 'REUSE_FROZEN_DIAGNOSTIC_NOT_EXECUTION',lambda:command([CAM,'scripts/capture_manipulation_observation.py','--profile','right_pick','--observed-obb','--output',E],'capture.log') if args.source_epoch is None else load(E/'manipulation_observation.json'))
    planner=pool.submit(stage,'PLANNER_INITIALIZE_NO_SOLVE',init)

@@ -1,10 +1,14 @@
-import tempfile,unittest
+import ast,tempfile,unittest
 from pathlib import Path
 from unittest.mock import Mock,patch
 from ares_r.canonical_backend import CanonicalBackend
 
 
 class PickResetAuthorizationTests(unittest.TestCase):
+    def test_preparation_entrypoint_parses_without_executing(self):
+        source=Path(__file__).resolve().parents[1]/'scripts/studies/20261022-pick-reset/prepare_pick_reset_bundle.py'
+        ast.parse(source.read_text(),filename=str(source))
+
     def backend(self,root):
         backend=object.__new__(CanonicalBackend);backend.root=Path(root);backend.roundtrip=Mock();return backend
     def test_explicit_authorization_required_before_launch(self):
