@@ -64,5 +64,5 @@ def main():
  import csv
  (a.output/'tables').mkdir(exist_ok=True)
  with (a.output/'tables/rasc_stage_counts.csv').open('w') as f:
-  w=csv.writer(f);w.writerow(['stage','N_in','N_out','cold_ms','warm_median_ms','warm_p95_ms','K_primitives','K_curobo_obstacles']);w.writerows([[i+1,*counts[i],times[0][i],metrics['median_ms'][i],metrics['p95_ms'][i],metrics['new_k'] if i>=4 else '',metrics['k_curobo_obstacles'] if i==5 else ''] for i in range(6)])
+  w=csv.writer(f,lineterminator="\n");w.writerow(['stage','N_in','N_out','cold_ms','warm_median_ms','warm_p95_ms','K_primitives','K_curobo_obstacles']);w.writerows([[i+1,*counts[i],times[0][i],metrics['median_ms'][i],metrics['p95_ms'][i],metrics['new_k'] if i>=4 else '',metrics['k_curobo_obstacles'] if i==5 else ''] for i in range(6)])
 if __name__=='__main__':main()

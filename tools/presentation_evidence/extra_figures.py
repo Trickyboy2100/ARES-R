@@ -43,7 +43,7 @@ if paths:
  ax.legend(loc='upper left');r.finish(fig,'planning/route_overlay','同源OLD与NEW的真实GPU轨迹并列保留','Same requested start/target and solver budget • full URDF FK TCP paths\nNo OLD-fail/NEW-success effect is asserted when both pass',source=sha(a.output/'runlogs/compare_planning.json'),limits='Only final selected outputs are exported by worker; no fabricated seed trajectories. Reconstructed offline runtime, no motion.')
  fig=r.figure();ax=fig.add_subplot()
  with (a.output/'tables/gap_vs_path.csv').open('w') as f:
-  w=csv.writer(f);w.writerow(['representation','sample_index','normalized_index','gap_m'])
+  w=csv.writer(f,lineterminator="\n");w.writerow(['representation','sample_index','normalized_index','gap_m'])
   for name,v in paths:
    gaps=v['independent_dense_validation'].get('clearance_trace_m') or v['planner_clearance_trace_m'];x=np.linspace(0,1,len(gaps));ax.plot(x,np.array(gaps)*1000,lw=2,label=name.upper());w.writerows([[name,i,float(x[i]),g] for i,g in enumerate(gaps)])
  ax.axhline(0,c='#ce6345',ls='--');ax.set(xlabel='Normalized dense path sample index (not time)',ylabel='GPU sphere/world modeled gap [mm]');ax.legend();ax.grid(alpha=.2);r.finish(fig,'planning/gap_vs_path','全路径净空曲线与独立最小净空分别核对','Modeled GPU dense trace; independent CPU minimum in compare_planning.json\nTrace index is not physical time',source=sha(a.output/'runlogs/compare_planning.json'),limits='World validation is independent; independent self-collision coverage remains false. No physical clearance measurement.')

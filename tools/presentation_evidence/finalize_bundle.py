@@ -4,7 +4,11 @@ from pathlib import Path
 from PIL import Image,ImageDraw,ImageFont
 from replay_rasc import load,save,sha
 ROOT=Path(__file__).resolve().parents[2]
-p=argparse.ArgumentParser();p.add_argument('--output',type=Path,required=True);p.add_argument('--private',type=Path,required=True);a=p.parse_args();o=a.output;manifest=load(o/'ASSET_MANIFEST.json');assets=manifest['assets'];m=load(o/'runlogs/rasc_stage_metrics.json');font=ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',32)
+p=argparse.ArgumentParser();p.add_argument('--output',type=Path,required=True);p.add_argument('--private',type=Path,required=True);a=p.parse_args();o=a.output
+for generated in o.rglob('*'):
+ if generated.is_file() and generated.suffix in ['.svg','.csv']:
+  value=generated.read_text();value='\n'.join(line.rstrip() for line in value.splitlines())+'\n';generated.write_text(value)
+manifest=load(o/'ASSET_MANIFEST.json');assets=manifest['assets'];m=load(o/'runlogs/rasc_stage_metrics.json');font=ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',32)
 # Never paint buttons/status. Add a separate caption below the original UI pixels.
 for image in sorted((o/'panels/runtime').glob('webui_*.png')):
  original=a.private/'ui_originals'/image.name;original.parent.mkdir(exist_ok=True)

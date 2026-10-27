@@ -192,7 +192,7 @@ class Renderer:
     ax.legend(loc='upper left',bbox_to_anchor=(-.2,1),fontsize=10)
    ep=row['endpoints'];self.finish(fig,'planning/planning_'+name,f"同条件{ name.upper()}规划：{row.get('result') or row.get('supervisor_error') or 'not solved'}",f"start gap {ep['start']['min_clearance_m']*1000:.2f} mm; goal gap {ep['goal']['min_clearance_m']*1000:.2f} mm\n50 iters / 2 traj seeds / 4 IK / same q0, goal, tool, payload / uniform 7mm",source=sha(p),limits='Reconstructed offline runtime; no physical approval. Capture q differs from planning q0; both representations share that q0.')
   with (self.out/'tables/failure_reason.csv').open('w') as f:
-   w=csv.writer(f);w.writerow(['representation','result','start_gap_m','goal_gap_m','gpu_attempted']);w.writerows([[r['representation'],r.get('result') or r.get('supervisor_error'),r['endpoints']['start']['min_clearance_m'],r['endpoints']['goal']['min_clearance_m'],r['gpu_attempted']] for r in d['rows']])
+   w=csv.writer(f,lineterminator="\n");w.writerow(['representation','result','start_gap_m','goal_gap_m','gpu_attempted']);w.writerows([[r['representation'],r.get('result') or r.get('supervisor_error'),r['endpoints']['start']['min_clearance_m'],r['endpoints']['goal']['min_clearance_m'],r['gpu_attempted']] for r in d['rows']])
  def run(self,groups=None):
   for name in (groups or ['rasc','geometry_ab','servo','performance','diagrams','payload','planning']):getattr(self,name)()
   previous=load(self.out/'ASSET_MANIFEST.json') if groups and (self.out/'ASSET_MANIFEST.json').exists() else dict(schema_version=1,assets=[],missing_value_policy='Null means unavailable/not applicable; see asset interpretation and reports.')
