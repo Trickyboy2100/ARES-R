@@ -212,7 +212,7 @@ def main():
                  counts=[len(p) for p in viewer_sets],removed=arr['removed'].round(6).tolist(),
                  roles=role_index.tolist(),boxes=[box_corners(b,.007).round(6).tolist() for b in new],
                  compiled=[cor.round(6).tolist() for _,cor in compiled_corners],bounds=full,focus=focus,ownership=ownership,target=target.tolist(),metrics=m)
-    save(out/'viewer_data.json',payload)
+    (out/'viewer_data.json').write_text(json.dumps(payload,separators=(',',':'),ensure_ascii=False)+'\n')
     save(out/'VISUAL_MANIFEST.json',dict(source_kind='FROZEN_REPLAY',station='GRASP',source_camera_sha256=m['source_camera_sha256'],
         source_data_commit='dc70016a8fc95d8d0e6efb52ef935d5cec9d408e',assets=entries,
         compiler_max_center_roundtrip_error_m=max(compiler_errors),

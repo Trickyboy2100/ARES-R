@@ -1,11 +1,21 @@
 #!/usr/bin/env python3
 """Check bundle provenance, hashes, local links and quantitative invariants."""
-import argparse, re
+import argparse, re, json
 from pathlib import Path
 from replay_rasc import load, sha
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('output',type=Path);a=p.parse_args();out=a.output
+    p=argparse.ArgumentParser();p.add_argument('output',type=Path);p.add_argument('--refresh',action='store_true',help='Index generated browser QA files before checking');a=p.parse_args();out=a.output
+    if a.refresh:
+        for file in out.rglob('*'):
+            if file.suffix in ['.svg','.csv']:
+                file.write_text('\n'.join(line.rstrip() for line in file.read_text().splitlines())+'\n')
+        manifest=load(out/'MANIFEST.json');manifest['files']=[dict(path=f.relative_to(out).as_posix(),bytes=f.stat().st_size,sha256=sha(f)) for f in sorted(out.rglob('*')) if f.is_file() and f.name not in ['MANIFEST.json','SHA256SUMS']]
+        for name in manifest['generation_scripts_sha256']:
+            source=Path(__file__).resolve().parents[2]/name
+            if source.is_file():manifest['generation_scripts_sha256'][name]=sha(source)
+        (out/'MANIFEST.json').write_text(json.dumps(manifest,indent=2,ensure_ascii=False)+'\n')
+        (out/'SHA256SUMS').write_text(''.join(sha(f)+'  '+f.relative_to(out).as_posix()+'\n' for f in sorted(out.rglob('*')) if f.is_file() and f.name!='SHA256SUMS'))
     m=load(out/'runlogs/rasc_stage_metrics.json');assert m['station']=='GRASP'
     assert m['source_camera_sha256']=='62d45bd32a882bb6e8d3e080cc7b0edb239cdad8fab14d28c1dc69926d4f42a6'
     assert m['body_recomputed_bit_exact'] and m['owned_filter_revision_exact']

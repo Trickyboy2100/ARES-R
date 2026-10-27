@@ -1,5 +1,7 @@
 # RASC / cuRobo 技术汇报研发证据
 
+新增：[真实GRASP完整V3](grasp_v3/index.html)（10月21日原始包；交互六阶段、独立大图、薄层对照及真实GPU预抓取FK动画）。
+
 新增：[点云可读性V2试版](clarity_v2/index.html)（9张，独立于原68张；含显示剖切与薄层对照）。
 
 先打开 **[离线素材总览 index.html](index.html)**；独立子图可直接下载，**没有制作最终PPT**。

@@ -8,7 +8,11 @@ python="${ARES_EVIDENCE_PYTHON:-$workspace/repos/ARES-R/.venv/bin/python}"
 private="$root/worklog/runtime/grasp_v3"
 out="$root/docs/presentations/assets/20261028_rasc_curobo/grasp_v3"
 model="$private/model"
+node="${ARES_EVIDENCE_NODE:-$HOME/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node}"
+export ARES_PLAYWRIGHT="${ARES_PLAYWRIGHT:-$HOME/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright}"
 export OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2
+mkdir -p "$out/runlogs"
+scripts/offline_sandbox.sh --gpu "$python" tools/presentation_evidence/check_isolation.py "$out/runlogs/isolation.json"
 git fetch origin codex/data-grasp-20261021-public
 "$python" tools/presentation_evidence/fetch_grasp_v3.py --output "$private/source"
 "$python" tools/presentation_evidence/prepare_model.py --ares-repo "$workspace/repos/ARES" --output "$model"
@@ -17,4 +21,6 @@ scripts/offline_sandbox.sh "$python" tools/presentation_evidence/compute_compari
 scripts/offline_sandbox.sh --gpu "$python" tools/presentation_evidence/replay_grasp_gpu.py --study "$private/source/unpacked/worklog/evidence/20261021-center-grasp-planner-study" --private "$private/replay" --output "$out" --model "$model"
 scripts/offline_sandbox.sh "$python" tools/presentation_evidence/render_grasp_v3.py --source "$private/source/unpacked" --private "$private/replay" --output "$out"
 scripts/offline_sandbox.sh "$python" tools/presentation_evidence/finalize_grasp_v3.py --source "$private/source/unpacked" --private "$private/replay" --output "$out" --model "$model"
+scripts/offline_sandbox.sh "$node" tools/presentation_evidence/qa_grasp_v3.cjs "$out"
+"$python" tools/presentation_evidence/verify_grasp_v3.py "$out" --refresh
 printf '%s\n' "Open $out/index.html"
