@@ -1,0 +1,12 @@
+"""Prepare API fixtures using actual code; no CanonicalBackend/device imports."""
+import sys,argparse,json
+from pathlib import Path
+import numpy as np
+ROOT=Path(__file__).resolve().parents[2];sys.path.insert(0,str(ROOT/'src'))
+from ares_r.task_studio import TaskStudio
+from ares_r.demo_workbench import snapshot
+from replay_rasc import load,save,sha
+p=argparse.ArgumentParser();p.add_argument('--private',type=Path,required=True);p.add_argument('--output',type=Path,required=True);a=p.parse_args();studio=TaskStudio(ROOT);skills=studio.skill_list();schemes=studio.scheme_list();tasks=studio.task_list();task=next(t for t in tasks if t['task_id']=='task.tray_to_groove');result=studio.replay(task['task_id'],failures={('manipulation.move_free','prepare'):'OFFLINE_INJECTED_PLANNER_FAILURE'});fault=studio.status();stopped=studio.stop();report=load(a.private/'reference_report.json');cloud=np.load(a.private/'rasc_arrays.npz')['clean']
+fixture={'/api/system/status':{'BASE':'OFFLINE','SCENE':'FROZEN_OCT10','PLANNER':'NO_LIVE_SERVICE','EXECUTION':'DISCONNECTED','scene_epoch':'FROZEN_20261010','base_pose_revision':'HISTORICAL_ONLY','scene_snapshot_id':report['snapshot_id'],'pointcloud_age_s':None,'system_info':{'ares_r_version':'OFFLINE_FIXTURE','git_sha_short':'21cd158','task_runtime_version':'p39-replay','webui_build_version':'repository-index.html','backend_health':'NO_DEVICE_CONNECTION'}},'/api/scene/data':{'pointcloud':cloud.tolist(),'collision_primitives':report['objects'],'robot_geometry':load(a.private/'geometry.json')['boxes'],'trajectory':[]},'/api/studio/skills':skills,'/api/studio/schemes':schemes,'/api/studio/tasks':tasks,'/api/studio/task/status':fault,'/api/demos':[],'/api/demo/status':{'state':'OFFLINE_FIXTURE','selected_demo_id':None},'/api/demo/roundtrip/status':{'state':'OFFLINE_REVIEW','running':False,'error':'All hardware disconnected; screenshot fixture only'},'/api/workbench':snapshot(ROOT)}
+for s in schemes:fixture['/api/studio/scheme/'+s['scheme_id']]=studio.scheme_show(s['scheme_id'])
+save(a.private/'ui_fixture.json',fixture);save(a.output/'runlogs/ui_replay_receipt.json',{'source_kind':'OFFLINE_SYNTHETIC','state':fault,'stop':stopped,'injected_failure':'OFFLINE_INJECTED_PLANNER_FAILURE','provider':'ReplayCapabilityProvider','actual_hardware_io':False,'scene_kind':'FROZEN_REPLAY Oct10 pointcloud displayed separately','ui_source_sha256':sha(ROOT/'src/ares_r/webui/index.html')})
