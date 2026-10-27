@@ -39,6 +39,24 @@ class SupportDecompositionTest(unittest.TestCase):
         self.assertLess(result["multi_primitive_occupied_volume_m3"],
                         result["old_single_aabb_occupied_volume_m3"])
 
+    def test_sparse_boundary_of_cleaned_protrusion_keeps_every_observation(self):
+        # A dense connected protrusion straddles a tile boundary. Its final
+        # tile contains two valid points, which are not a new noise component.
+        from unittest.mock import patch
+        x, y = np.meshgrid(np.linspace(.4, .8, 101), [0., .002])
+        points = np.column_stack((x.ravel(), y.ravel(), np.full(x.size, .90)))
+        support = {"z_m": .85, "xy_min_m": [.3, -.1], "xy_max_m": [.9, .1]}
+        old = [{"min_m": points.min(0).tolist(), "max_m": points.max(0).tolist()}]
+        with patch("ares_r.perception.support_decomposition.detect_support_levels",
+                   return_value=[support]):
+            result = decompose_support_objects(points, old)
+        covered = np.zeros(len(points), dtype=bool)
+        for primitive in result["primitives"]:
+            covered |= np.all(np.abs(points - primitive["center_m"]) <=
+                              np.asarray(primitive["dims_m"]) / 2 + 1e-9, axis=1)
+        self.assertTrue(covered.all(), "Surviving observations need uninflated coverage")
+        self.assertEqual(result["primitive_point_count_sum"], len(points))
+
     def test_robot_adjacent_refinement_splits_without_deleting_points(self):
         points=np.asarray([[-.05,0,0],[.05,0,0]])
         primitive={"primitive_id":"bridge","semantic":"UNKNOWN_OCCUPIED",

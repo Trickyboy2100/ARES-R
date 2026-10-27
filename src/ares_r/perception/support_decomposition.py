@@ -202,7 +202,8 @@ def decompose_support_objects(points_body_m, old_boxes, profile=DecompositionPro
                                    "observed_bounds_m": [low.tolist(), high.tolist()]})
             else:
                 primitives.extend(_tile_component(component, profile,
-                                                  "PROTRUDING_OBSTACLE", source))
+                                                  "PROTRUDING_OBSTACLE", source,
+                                                  minimum_points=1))
     # Remaining observed structure/unknown occupancy is split rather than
     # expanded to a connected-component-wide solid box.
     structure=(~labelled)&(assignment>=0)
