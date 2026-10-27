@@ -400,8 +400,9 @@ def main(progress=None):
     if success:
         segments=[]
         for segment_index,part in enumerate(result):
-            plan=part.get_interpolated_plan();raw=plan.position.detach().cpu().numpy().reshape(-1,6)
-            order=list(plan.joint_names);row=raw[:,[order.index(x) for x in ARM_NAMES]]
+            plan=part.get_interpolated_plan()
+            from ares_r.motion.planner_joint_mapping import extract_arm_joint_positions
+            row=extract_arm_joint_positions(plan.position.detach().cpu().numpy(),plan.joint_names)
             segments.append(row if segment_index==0 else row[1:])
         q=np.concatenate(segments);points=q.tolist();T=np.asarray(request["T_body_model"])
         tcp=np.asarray([(T@fk(row))[:3,3] for row in q]);tcp_body=tcp.tolist()
