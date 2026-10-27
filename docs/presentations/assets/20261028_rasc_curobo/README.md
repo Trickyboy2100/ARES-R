@@ -1,5 +1,7 @@
 # RASC / cuRobo 技术汇报研发证据
 
+新增：[点云可读性V2试版](clarity_v2/index.html)（9张，独立于原68张；含显示剖切与薄层对照）。
+
 先打开 **[离线素材总览 index.html](index.html)**；独立子图可直接下载，**没有制作最终PPT**。
 
 本包含 **68张独立PNG**、**44张SVG**、六阶段16:9合集、CSV/JSON指标、源码与复现工具。所有原始点云/未经授权媒体留在本地私有目录。逐图来源见ASSET_MANIFEST.json，状态与缺口见STATUS.md。
