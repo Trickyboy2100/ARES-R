@@ -1,0 +1,11 @@
+# 实际界面与技能框架
+
+6张界面均使用仓库原HTML/JS，由Playwright将全部请求拦截并用本地API fixture响应；不启动生产server、CanonicalBackend或设备自动发现。浏览器外部请求不允许；QA pageerror=0。界面没有补画按钮。
+
+主界面点云来自10/10 FROZEN_REPLAY显示，Task Studio状态来自真实TaskStudio + ReplayCapabilityProvider注入OFFLINE_INJECTED_PLANNER_FAILURE，属于OFFLINE_SYNTHETIC，不能证明GPU技能执行或实机任务。Stop记录为真实replay runner stop调用，不是物理急停。
+
+workbench是实际源码内的无运动入口页面，展示历史Golden恢复与模型尺寸对比。模型解释器的默认示例为示意尺寸，不是新传感测量。界面截屏单独加外部caption注明状态，保持原屏内容。
+
+四套小框图对应skills/registry/runtime、world/scene_snapshot、canonical_backend、roundtrip状态机等实际文件。源码图不代表全部通用技能都已现场commissioned。task_parameterization_matrix只列配置变更与已知状态，不填写泛化成功率。
+
+8–12秒后续安全展示分镜：0–2s加载离线冻结scene；2–4s打开Skill Palette；4–6s选move_pregrasp查看depends/resource locks；6–8s查看注入失败日志和run_id；8–10s工作台导入已保存attachment；10–12s旋转三视图。所有按钮只在离线fixture中演示，不输出机器人动作。
