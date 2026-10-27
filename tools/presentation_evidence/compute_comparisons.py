@@ -9,8 +9,8 @@ from ares_r.motion.independent_path_validation import validate_dense_world
 from ares_r.manipulation.observed_contact_geometry import _bounded_cloud
 
 def main():
- p=argparse.ArgumentParser();p.add_argument('--records',type=Path,required=True);p.add_argument('--assets',type=Path,required=True);p.add_argument('--private',type=Path,required=True);p.add_argument('--robot-yaml',type=Path,required=True);p.add_argument('--urdf',type=Path,required=True);p.add_argument('--gpu',action='store_true');p.add_argument('--gpu-only',action='store_true');p.add_argument('--reuse-completed',action='store_true');a=p.parse_args();d=a.private;d.mkdir(exist_ok=True,parents=True)
- source=a.records/'transit10.10/transit_plan/planner_request.json';request=load(source);original_plan=load(source.with_name('planning.json'));request['robot_yaml']=str(a.robot_yaml.resolve());request['robot_yaml_urdf']=str(a.urdf.resolve());request['collision_model']['asset_root']=str(a.urdf.parent.resolve())
+ p=argparse.ArgumentParser();p.add_argument('--records',type=Path,required=True);p.add_argument('--grasp-oct21',action='store_true');p.add_argument('--assets',type=Path,required=True);p.add_argument('--private',type=Path,required=True);p.add_argument('--robot-yaml',type=Path,required=True);p.add_argument('--urdf',type=Path,required=True);p.add_argument('--gpu',action='store_true');p.add_argument('--gpu-only',action='store_true');p.add_argument('--reuse-completed',action='store_true');a=p.parse_args();d=a.private;d.mkdir(exist_ok=True,parents=True)
+ source=(a.records/'refined55-stability/single25_1x4_graph/0.request.json') if a.grasp_oct21 else (a.records/'transit10.10/transit_plan/planner_request.json');request=load(source);original_plan=load(source.with_name('0.planning.json' if a.grasp_oct21 else 'planning.json'));request['robot_yaml']=str(a.robot_yaml.resolve());request['robot_yaml_urdf']=str(a.urdf.resolve());request['collision_model']['asset_root']=str(a.urdf.parent.resolve())
  # Only relocation of pinned model inputs; verify URDF against the requested source asset.
  original_urdf_hash=request['collision_model']['asset_sha256'].get(a.urdf.name);assert original_urdf_hash==sha(a.urdf),(original_urdf_hash,sha(a.urdf))
  request['planning_only']=True;request['execution_allowed']=False
@@ -51,11 +51,16 @@ def main():
    scene.pop('digest',None);scene['digest']=hashlib.sha256(json.dumps(scene,sort_keys=True,separators=(',',':')).encode()).hexdigest()
    r.update(compiled_scene=scene,scene_snapshot_id=scene['scene_snapshot_id'],scene_digest=scene['digest'],independent_distance_backend='NATIVE_CPU_V1',benchmark_runs=1,warmup_policy='NONE',solver_policy=dict(mode='FAST_SINGLE_PASS_V1',initial_iters=50,max_goal_candidates=1,distance_backend='NATIVE_CPU_V1'))
    r['planning_parameters'].update(num_trajopt_seeds=2,num_ik_seeds=4,use_cuda_graph=True);r['goal_candidates_rad']=[r['goal_rad']];r['goal_candidate_metadata']=(r.get('goal_candidate_metadata') or [])[:1]
+   # Rebuilt representation IDs cannot inherit an old target-contact exemption.
+   # Strict A/B keeps all observed obstacles in BOTH worlds.
+   if a.grasp_oct21:r['motion_constraints']=dict(r['motion_constraints'],ignore_cuboid_ids=[]);r['manipulation_contact_scope']=None
    pre={}
    for endpoint in ['start','goal']:
     v=validate_dense_world([r[endpoint+'_rad'],r[endpoint+'_rad']],r,subdivisions=2);pre[endpoint]={k:v[k] for k in ['collision_free','min_clearance_m','limiting_object_id','limiting_robot_component_id']}
    save(d/(name+'_request.json'),r);row=dict(representation=name,endpoints=pre,source_request_sha256=sha(source),request_sha256=sha(d/(name+'_request.json')),same_q0_qgoal=True,safety_constraints_digest=digest({k:r.get(k) for k in ['start_rad','goal_rad','T_link6_tcp','collision_model','execution_tool_envelope','attached_object_collision','motion_constraints','planning_parameters','solver_policy']}),gpu_attempted=a.gpu)
-   if a.gpu:
+   if a.grasp_oct21 and not all(v['collision_free'] for v in pre.values()):
+    row.update(gpu_attempted=False,supervisor_ok=False,result='BLOCKED_ENDPOINT_COLLISION',contact_exemptions='NONE_IN_BOTH_AB_WORLDS',interpretation='Representation ablation cannot establish contact-stage permission; no GPU solve for invalid endpoints.')
+   elif a.gpu:
     cached_plan=load(d/(name+'_planning.json')) if a.reuse_completed and (d/(name+'_planning.json')).exists() else None
     if cached_plan:
      assert cached_plan['scene_digest']==r['scene_digest'] and cached_plan['start_rad']==r['start_rad'] and cached_plan['runtime_motion_goal']==r.get('runtime_motion_goal') and np.allclose(cached_plan['goal_rad'],r['goal_rad'],atol=1e-4,rtol=0)
@@ -64,6 +69,6 @@ def main():
     else:
      at=time.monotonic();reply=service.plan(dict(job_id=uuid.uuid4().hex,request=str((d/(name+'_request.json')).resolve()),output=str((d/(name+'_planning.json')).resolve()),log=str((d/(name+'_gpu.log')).resolve()),deadline_monotonic=at+180));row['request_elapsed_s']=time.monotonic()-at;plan=load(d/(name+'_planning.json')) if (d/(name+'_planning.json')).exists() else {}
     row['supervisor_ok']=reply.get('ok');row['supervisor_error']=reply.get('error');row['result']=plan.get('observed_result');row['timing_s']=plan.get('timing_s');row['independent_validation']=plan.get('independent_dense_validation');row['effective_config']=plan.get('effective_solver_config');row['gpu_peak']=plan.get('gpu_memory_bytes');print('GPU',name,row,flush=True)
-   rows.append(row);save(a.assets/'runlogs/compare_planning.json',dict(source_kind='FROZEN_REPLAY',experiment_id='OCT10_UNIFORM7_SAME_SOURCE_AB',source_scene='SCENE_133c1fca71484bd2abea0cb3e0b6af8d',source_request_sha256=sha(source),urdf_sha256=sha(a.urdf),runtime_reconstruction='Pinned ARES YAML relocated; worker overwrites collision spheres using saved request; six arm cspace entries unchanged, nonplanning finger locked at zero, link6 tool frame. Exact site runtime YAML absent; not site recommissioning.',padding_m=.007,iterations=50,trajopt_seeds=2,ik_seeds=4,rows=rows,interpretation_limit='Negative results retained. Same captured payload/tool retained. No obstacle removal/limit relaxation for success.'))
+   rows.append(row);save(a.assets/'runlogs/compare_planning.json',dict(source_kind='FROZEN_REPLAY',experiment_id='OCT21_GRASP_UNIFORM7_SAME_SOURCE_AB' if a.grasp_oct21 else 'OCT10_UNIFORM7_SAME_SOURCE_AB',source_scene='SCENE_d9f27c83fc0949f1a709bd0c3e843b4a' if a.grasp_oct21 else 'SCENE_133c1fca71484bd2abea0cb3e0b6af8d',source_request_sha256=sha(source),urdf_sha256=sha(a.urdf),runtime_reconstruction='Pinned ARES YAML relocated; worker overwrites collision spheres using saved request; six arm cspace entries unchanged, nonplanning finger locked at zero, link6 tool frame. Exact site runtime YAML absent; not site recommissioning.',padding_m=.007,iterations=50,trajopt_seeds=2,ik_seeds=4,rows=rows,interpretation_limit='Negative results retained. Same captured payload/tool retained. No obstacle removal/limit relaxation for success.'))
  finally:service.reap()
 if __name__=='__main__':main()
