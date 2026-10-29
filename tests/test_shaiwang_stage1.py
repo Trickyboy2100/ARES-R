@@ -3,7 +3,7 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import Mock,patch
 from ares_r.manipulation.task_contract import TASK_ID,load_contract,task_config,check_epoch,check_task_start
-from ares_r.manipulation.task_contract import TASK_SOURCES,bind_task,verify_task
+from ares_r.manipulation.task_contract import TASK_SOURCES,bind_task,verify_task,center_goal,check_center
 from ares_r.motion.controller_read_lease import controller_read_lease
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -15,6 +15,17 @@ class ShaiwangContractTests(unittest.TestCase):
         before=copy.deepcopy(original);result=task_config(original,self.task)
         self.assertEqual(original,before);self.assertEqual(result['epic']['task_profiles']['right_pick']['object_id'],6)
         self.assertEqual(result['epic']['task_profiles']['right_pick']['command'],'320,2,6,1,1,0')
+    def test_global_center_and_compensation_are_readonly(self):
+        import numpy as np
+        params=ROOT/'demos/right_arm_grasp_place_roundtrip_v1/parameters.json'
+        poses=ROOT/'config/named_poses.json';before=(params.read_bytes(),poses.read_bytes())
+        goal=center_goal(ROOT);t=np.eye(4);t[:3,3]=goal['position_m'];t[:3,:3]=goal['explicit_rotation']
+        telemetry={'arms':{'right':{'T_body_tcp':t.tolist()}},'errors':{}}
+        self.assertTrue(check_center(ROOT,telemetry,self.task)['passed'])
+        self.assertAlmostEqual(goal['position_m'][0],.3583093030168863)
+        self.assertEqual((params.read_bytes(),poses.read_bytes()),before)
+        t[2,3]-=.032;telemetry['arms']['right']['T_body_tcp']=t.tolist()
+        with self.assertRaisesRegex(ValueError,'START_NOT_GLOBAL_CENTER'):check_center(ROOT,telemetry,self.task)
     def test_yesterday_measured_start_difference_passes_new_task_only(self):
         q=[0]*6;q[3]=math.radians(.022619)
         self.assertLess(check_task_start(q,[0]*6,self.task)['max_joint_difference_deg'],.1)

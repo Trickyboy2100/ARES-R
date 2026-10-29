@@ -29,8 +29,9 @@ PYTHONPATH=src .venv/bin/python scripts/run_shaiwang_stage1.py --prepare
 PYTHONPATH=src .venv/bin/python scripts/run_shaiwang_stage1.py --preflight --prepared <刚生成的目录>
 ```
 
-5700必须已启动，筛网处于原夹具中，ID6可见；右臂起始center需现场确认。本脚本的末段严格原路返回起点，不会擅自改成另一套named center。
-若初始不在选定center，先另行规划/确认回center，不把自动“回初始姿态”误称为到达全局Cartesian center。
+5700必须已启动，筛网处于原夹具中，ID6可见。2026-10-29已选择全局named center（不是昨日偏离约32mm的起点）；已有−10°补偿只读带入，不改全局定义。
+先运行 `scripts/plan_shaiwang_center.py`，仅规划并展示回center，不执行。获得单独授权、到位之后再prepare本阶段。
+准备和执行前均核对实际起点与全局center；末段严格原路返回这一已确认center，不把任意起点误称为center。
 
 只有取得新一次现场监督授权后，执行：
 

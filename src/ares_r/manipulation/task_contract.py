@@ -6,6 +6,7 @@ TASK_ID='right_arm_shaiwang_pick_reset_v1'
 TASK_SOURCES=('scripts/run_task_pick_reset_timing.py','scripts/run_shaiwang_stage1.py',
     'src/ares_r/manipulation/task_contract.py','src/ares_r/motion/controller_read_lease.py',
     'src/ares_r/manipulation/task_live.py',
+    'config/named_poses.json',
     'src/ares_r/motion/tcp_orientation.py','demos/'+TASK_ID+'/capture_epoch.py',
     'demos/'+TASK_ID+'/prepare_bundle.py','demos/'+TASK_ID+'/native_sender.cpp',
     'demos/'+TASK_ID+'/native_sender.build.json')
@@ -23,11 +24,35 @@ def inspect_offsets(root):
         operations_revision=operations.get('revision'),old_dryer_slots=(operations.get('dryer') or {}).get('slots',{}),
         new_machine_offsets_commissioned=False,old_machine_offsets_used_in_stage1=False)
 
+def center_goal(root):
+    import numpy as np
+    from ares_r.perception.robot_collision import transform_xyz_rpy
+    from .task_tcp_offset import apply_task_pose,demo_local_rotation
+    root=Path(root)
+    pose=json.loads((root/'config/named_poses.json').read_text())['poses']['center']['arms']['right']['body_tcp_target_m_rad']
+    parameters=json.loads((root/'demos/right_arm_grasp_place_roundtrip_v1/parameters.json').read_text())
+    xyz,rotation=apply_task_pose(pose[:3],transform_xyz_rpy([0]*3,pose[3:])[:3,:3],parameters.get('task_tcp_offset_m_rad',[0]*6))
+    rotation=demo_local_rotation(rotation,parameters)
+    return dict(position_m=np.asarray(xyz).tolist(),explicit_rotation=rotation.tolist(),
+        source='config/named_poses.json:poses.center.arms.right.body_tcp_target_m_rad',
+        nominal_pose_m_rad=pose,offsets_read_only=inspect_offsets(root))
+
+def check_center(root,telemetry,task):
+    import numpy as np
+    goal=center_goal(root);arm=telemetry.get('arms',{}).get('right')
+    if not arm or telemetry.get('errors'):raise ValueError('trusted robot state required for center admission')
+    actual=np.asarray(arm['T_body_tcp']);position=float(np.linalg.norm(actual[:3,3]-goal['position_m']))
+    angle=float(np.degrees(np.arccos(np.clip((np.trace(actual[:3,:3].T@np.asarray(goal['explicit_rotation']))-1)/2,-1,1))))
+    if position>task['center_position_tolerance_m'] or angle>task['center_orientation_tolerance_deg']:
+        raise ValueError('START_NOT_GLOBAL_CENTER: position %.3fmm / orientation %.3fdeg; plan center first'%(position*1000,angle))
+    return dict(passed=True,position_error_m=position,orientation_error_deg=angle,goal=goal)
+
 def load_contract(root):
     path=Path(root)/'demos'/TASK_ID/'params.json'
     value=json.loads(path.read_text())
     if value.get('demo_id')!=TASK_ID or value.get('base_motion_allowed') is not False or value.get('place_phase_enabled') is not False:
         raise ValueError('stage1 task identity/scope changed')
+    if value.get('center_reference_policy')!='GLOBAL_NAMED_CENTER':raise ValueError('global center contract required')
     ids=[value[k] for k in ('epic_space_id','epic_object_id','epic_camera_id')]
     if value.get('epic_profile')!='right_pick' or value.get('epic_command')!='320,%d,%d,%d,1,0'%tuple(ids):
         raise ValueError('Epic task command/profile identifiers disagree')

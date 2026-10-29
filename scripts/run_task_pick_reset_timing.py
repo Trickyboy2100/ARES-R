@@ -78,6 +78,8 @@ def main():
     if not a.return_only and not 0<=time.time()-live.pick_observation['captured_at_unix']<=300:
         raise RuntimeError('fresh stationary experiment candidate required within300s')
     begin=live.telemetry();save(out/'before.json',begin)
+    from ares_r.manipulation.task_contract import check_center
+    save(out/'global-center-admission.json',check_center(ROOT,begin,task))
     from ares_r.motion.arrival_contract import check_start
     check_start(begin['arms']['right']['joints_rad'],paths['lower230'][0] if a.return_only else paths['pregrasp'][0])
     initial_left=(load(prepared/'execution/before.json')['arms']['left'] if a.return_only else begin['arms']['left']);rows=[]

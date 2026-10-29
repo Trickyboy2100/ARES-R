@@ -5,7 +5,7 @@ from urllib.request import Request,urlopen
 
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'src'))
-from ares_r.manipulation.task_contract import TASK_ID,load_contract,bind_task,verify_task,task_sender,inspect_offsets
+from ares_r.manipulation.task_contract import TASK_ID,load_contract,bind_task,verify_task,task_sender,inspect_offsets,check_center
 AUTH='RIGHT SHAIWANG STAGE1 PICK RESET'
 
 def request(path,body=None):
@@ -28,6 +28,7 @@ def main():
         if base not in prepared.parents:raise ValueError('candidate outside task directory')
     elif a.preflight:raise ValueError('--preflight requires --prepared')
     else:
+        check_center(ROOT,request('/api/operations/telemetry',{}),task)
         prepared=base/('run_'+str(time.time_ns()));prepared.parent.mkdir(parents=True,exist_ok=True)
         env=dict(os.environ,PYTHONPATH=str(ROOT/'src'),ARES_R_ACTIVE_MANIPULATION_TASK=TASK_ID,
             ARES_R_LEVEL_TOLERANCE_DEG=str(task['level_gate_tolerance_deg']),

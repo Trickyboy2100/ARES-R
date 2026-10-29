@@ -15,8 +15,8 @@
 | 六段Native离线校验 | 通过；诊断副本不可执行 |
 | SDK读批次/Native互斥与被动监控 | 已实现；占用探针返回409且不进入SDK |
 | 当前Python与C++只读状态 | 正常，右臂工具1，队列空、已到位，Servo未激活 |
-| 当前场景fresh观测 | 未通过：5700 Connection refused |
-| 本任务center语义 | 待确认，见下文 |
+| center入口fresh环境/ID6诊断 | 5700启动后通过；非抓取epoch，抓取需回center后重采 |
+| 本任务center语义 | 已明确选择全局named center；尚未执行回位 |
 | 首次真实运动授权 | 尚未请求；未执行任何运动 |
 | 新Golden | 尚未commission，仍为候选 |
 
@@ -115,13 +115,25 @@ PID manifest原先与实际服务不符，已依据UID/cwd/argv/port核对并保
 1.23秒内失败，原始error=`[Errno 111] Connection refused`，并未形成新的SceneSnapshot，不是cuRobo超时。
 
 另外，当前右臂TCP约BODY `[0.3448,-0.0741,0.9991]m`，是同事昨天返回的起点；全局named center为 `[0.3583,-0.0800,1.0278]m`，差约32mm。
-本任务末段严格原路回起点。是否把当前起点作为本任务center快照，仍待确认；没有擅自移动到全局center或改写命名位姿。
+最初center选择待确认；后续已明确选择全局named center，不采用当前起点。没有改写命名位姿或自动回位。
+
+### 后续确认与center入口规划
+
+5700已启动。ID6独立诊断成功，2.639秒，当前检测BODY约 `[0.669316,+0.074697,1.031276]m`，与昨日坐标不同。该诊断不作为center目标，也不假称与center环境扫描形成原子的抓取epoch。
+center目标从named_poses读取，位置 `[0.358309303,-0.080000000,1.027835601]m`；零BODY偏置和已有TCP_LOCAL_Z −10°仅用于本任务目标，不修改全局。
+CURRENT→center已通过现有SceneAwareMotion+fresh点云+cuRobo规划，Native包可执行。位置变化约32mm，姿态变化约4.33°。
+计划ID `PLAN_240774de4b0b44208c1368897c859237`，轨迹哈希 `sha256:ed6455e6037e1f248b6ff4a3ee34c14532e285b78a2bcbd8a983571bb069c2b1`。
+请求耗时16.349秒，规划worker约6.040秒；Native计算时长1.44秒、19采样，跟踪预测0.399°；未执行。
+网页共享场景已有41个TCP轨迹点、9586个显示点云点。候选会正常过期，不能把本次预览当成永久执行许可。
+证据：`worklog/evidence/shaiwang-center/plan_1793251616988833454/`。
+新任务在prepare与执行前均核对全局center，末段再原路返回同一center；下一步先获得单独回center授权，再fresh准备前半程，不自动抓取。
 
 ## 验证与下一步
 
-- 现场最终全量无运动测试855项，OK，1项跳过，11.759秒；结果为tests-final-v3.log。Mac新增17项单测通过。
+- 第一阶段全量无运动测试855项，OK，1项跳过，11.759秒；结果为tests-final-v3.log。
+- 全局center入口补充后，现场全量无运动测试856项，OK，1项跳过，11.688秒；结果为tests-global-center.log。Mac任务专项18项单测通过。
 - 原Golden九个固定输入按哈希核对；offset/config不改。
 - 本轮没有发送机械臂、夹爪或底盘运动命令，未执行新Demo。
 - 代码仍为独立候选分支，不push、不替换golden。
 
-下一步：启动5700、摆好ID6筛网、确认本任务center → fresh prepare和原始结果检查 → 请求新一次现场监督运动授权 → 一次性执行完整前半程并记录故障/耗时 → 全部通过后再进入新专机识别/偏置/站位阶段。
+下一步：确认并执行已预览的回全局center动作 → fresh prepare和原始结果检查 → 请求新一次现场监督抓取授权 → 一次性执行完整前半程并记录故障/耗时 → 全部通过后再进入新专机识别/偏置/站位阶段。
