@@ -130,6 +130,12 @@ CURRENT→center已通过现有SceneAwareMotion+fresh点云+cuRobo规划，Nativ
 
 ## 验证与下一步
 
+### 接触检查点微调成功（未修改偏置配置）
+
+后续仅授权当前位置后撤BODY X−3mm、左移Y+2mm、朝前端下俯1°。普通free-space fresh扫描把当前目标接触区判INVALID_START_COLLISION，未执行；因此使用已完成开40%检查点的stationary task-contact上下文，创建独立≤6mm/≤2°的PICK_CONTACT_ADJUST检查，并保留所有Link/non-target/self/controller检查。旧contact/escape最短25mm策略不变，普通motion API不开放此模式。
+`scripts/run_shaiwang_contact_adjust.py`检查双臂状态/工具未变化、底盘IDLE且log/queue未变化、夹爪open40，连续IK与dense target-only contact验证后Native执行。原接触scene明确作为同站静止上下文记录，没有伪称新fresh scene，也未删除障碍。
+成功目录 `worklog/evidence/shaiwang-contact-adjust/1793257790266658012/`。Native规划时长2.32秒，实测BODY位移 `[−2.996706,+1.993906,−0.038313]mm`，终点 `[0.688003776,−0.216602252,1.024967751]m`，到位及servo disable确认。没有闭爪、抬升或底盘指令；未把这次微调累计写入task偏置，等待人工确认。新增短距离策略单测同时验证旧最小长度约束不变及臂体碰撞仍拒绝，5tests通过。
+
 ### V2双偏置及闭爪前检查实机完成
 
 按新授权，保留原−10°TCP_LOCAL_Z补偿，另加BODY +Z逆时针4°右臂Demo姿态修正；独立的检测位置偏置为BODY `[+5,0,−7]mm`，每次检测后叠加，raw检测数据不变。center位置不应用检测平移，只应用Demo姿态补偿；不修改controller tool、原Golden参数或左臂。

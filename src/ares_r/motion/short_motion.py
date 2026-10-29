@@ -57,8 +57,20 @@ def _validate_short_motion(points,request,*,segment,observation_id,direction,cen
             links.append({'geometry_id':name,'center_body_m':(T[:3,:3]@np.asarray(box['center_m'])+T[:3,3]).tolist(),
                 'rotation_body':T[:3,:3].tolist(),'half_extents_m':box['half_extents_m']})
         samples.append({'joints_rad':row.tolist(),'tcp_position_body_m':ik.fk(row)[:3,3].tolist(),'arm_links':links})
+    policy_stage='PICK_CONTACT_ESCAPE'
+    if request.get('contact_inspection_adjustment'):
+        import os
+        from scipy.spatial.transform import Rotation
+        if segment!='contact' or os.environ.get('ARES_R_ACTIVE_MANIPULATION_TASK')!='right_arm_shaiwang_pick_reset_v1':
+            raise RuntimeError('CONTACT_ADJUSTMENT_TASK_SCOPE_REQUIRED')
+        poses=[ik.fk(row) for row in dense]
+        if max(np.linalg.norm(t[:3,3]-poses[0][:3,3]) for t in poses)>.006:
+            raise RuntimeError('CONTACT_ADJUSTMENT_EXCEEDS6MM')
+        if max(np.linalg.norm(Rotation.from_matrix(poses[0][:3,:3].T@t[:3,:3]).as_rotvec()) for t in poses)>np.deg2rad(2):
+            raise RuntimeError('CONTACT_ADJUSTMENT_EXCEEDS2DEG')
+        policy_stage='PICK_CONTACT_ADJUST'
     bypass=validate_bypass_segment(samples,world,ContactBypassPolicy.for_manipulation_skill(
-        'PICK_CONTACT_ESCAPE',observation_id,central_exclusion=central_exclusion),
+        policy_stage,observation_id,central_exclusion=central_exclusion),
         expected_direction_body=direction,joint_lower=ik.lower,joint_upper=ik.upper,expire_at_end=segment=='lift',check_cancelled=check_cancelled)
     # CONTACT_BYPASS does not inspect the active tool. Independently keep its
     # collision geometry hard against every NON-target world object.

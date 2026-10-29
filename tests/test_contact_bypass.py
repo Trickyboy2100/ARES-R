@@ -37,6 +37,18 @@ class ContactBypassTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,"generic free-space"):
             request.validate()
 
+    def test_contact_adjustment_has_separate_short_distance_contract(self):
+        rows=self.samples()
+        for row,x in zip(rows,(0.,.0015,.003)):row['tcp_position_body_m'][0]=x
+        kwargs=dict(expected_direction_body=(1,0,0),joint_lower=[-1]*6,joint_upper=[1]*6)
+        world={'wall':box('wall',(.4,.4,.4))}
+        policy=ContactBypassPolicy.for_manipulation_skill('PICK_CONTACT_ADJUST','OBS1')
+        self.assertTrue(validate_bypass_segment(rows,world,policy,**kwargs)['valid'])
+        with self.assertRaisesRegex(RuntimeError,'outside reviewed'):
+            validate_bypass_segment(rows,world,ContactBypassPolicy.for_manipulation_skill('PICK_APPROACH','OBS1'),**kwargs)
+        with self.assertRaisesRegex(RuntimeError,'arm link'):
+            validate_bypass_segment(rows,{'wall':rows[0]['arm_links'][0]},policy,**kwargs)
+
 
 if __name__=="__main__":unittest.main()
 

@@ -13,7 +13,7 @@ import numpy as np
 
 
 _STAGES = {"PICK_CONTACT_ESCAPE", "PICK_APPROACH", "PICK_INITIAL_LIFT",
-           "PLACE_DESCENT", "PLACE_RETREAT"}
+           "PLACE_DESCENT", "PLACE_RETREAT", "PICK_CONTACT_ADJUST"}
 
 
 def _digest(value):
@@ -46,7 +46,7 @@ class ContactBypassPolicy:
               "active_tool_world_collision":False,"arm_link_world_collision":True,
               "inactive_arm_collision":True,"self_collision":True,
               "central_exclusion":bool(central_exclusion),"bounded_cartesian_only":True,
-              "automatic_expiry":True,"maximum_segment_m":.101}
+              "automatic_expiry":True,"maximum_segment_m":.006 if stage=='PICK_CONTACT_ADJUST' else .101}
         return cls(revision=_digest(core),**core)
 
     def as_dict(self):return asdict(self)
@@ -111,7 +111,8 @@ def validate_bypass_segment(samples: Sequence[Mapping[str, object]],
             for b in range(a+2,len(links)):
                 if _geometry_overlap(links[a],links[b]):
                     raise RuntimeError("non-adjacent arm self collision")
-    if prior<.025 or prior>policy.maximum_segment_m+.003:
+    minimum=.0001 if policy.stage=='PICK_CONTACT_ADJUST' else .025
+    if prior<minimum or prior>policy.maximum_segment_m+.003:
         raise RuntimeError("bypass segment length is outside reviewed contact/escape bounds")
     return {"valid":True,"policy_id":policy.policy_id,"policy_revision":policy.revision,
             "stage":policy.stage,"samples":len(samples),"segment_length_m":prior,
