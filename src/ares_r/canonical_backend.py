@@ -82,11 +82,17 @@ class CanonicalBackend:
     def start_pick_reset_timing(self,body):
         self.roundtrip.check_physical_access(body)
         return_only=body.get('return_only') is True
-        if body.get('authorization')!=('RIGHT PICK RESET RETURN' if return_only else 'RIGHT PICK RESET TIMING') or body.get('onsite_observer_confirmed') is not True:
+        task_id=body.get('task_demo_id')
+        if task_id is not None:
+            from .manipulation.task_contract import TASK_ID,verify_task,task_sender
+            if task_id!=TASK_ID or return_only:raise ValueError('unsupported task or recovery request')
+        expected_auth=('RIGHT SHAIWANG STAGE1 PICK RESET' if task_id else ('RIGHT PICK RESET RETURN' if return_only else 'RIGHT PICK RESET TIMING'))
+        if body.get('authorization')!=expected_auth or body.get('onsite_observer_confirmed') is not True:
             raise PermissionError('explicit supervised stationary pick/reset authorization required')
         root=Path(self.root).resolve();prepared=Path(body['prepared']).resolve()
         if root/'worklog/evidence' not in prepared.parents or not (prepared/'native-manifest.json').is_file():
             raise ValueError('prepared native evidence under canonical root required')
+        if task_id:verify_task(prepared,root);task_sender(root)
         output=prepared/('return-execution' if return_only else 'execution')
         stop=prepared/('timing-return-stop.request' if return_only else 'timing-stop.request')
         if output.exists() or stop.exists():raise ValueError('candidate already used or stopped')
@@ -98,12 +104,14 @@ class CanonicalBackend:
         with self._physical_guard:
             if self._base_running or self._physical_process is not None:raise RuntimeError('another physical operation active')
             log=prepared/('timing-return-runner.log' if return_only else 'timing-runner.log');stream=log.open('x')
-            argv=[sys.executable,str(root/'scripts/run_pick_reset_timing.py'),'--prepared',str(prepared),'--output',str(output),'--authorization',body['authorization'],'--onsite-observer-confirmed']
+            runner='run_task_pick_reset_timing.py' if task_id else 'run_pick_reset_timing.py'
+            runner_auth='RIGHT PICK RESET TIMING' if task_id else body['authorization']
+            argv=[sys.executable,str(root/'scripts'/runner),'--prepared',str(prepared),'--output',str(output),'--authorization',runner_auth,'--onsite-observer-confirmed']
             if return_only:argv.append('--return-only')
             try:self._physical_process=subprocess.Popen(argv,cwd=root,stdout=stream,stderr=subprocess.STDOUT,env=dict(os.environ,PYTHONPATH=str(root/'src')))
             except BaseException:stream.close();raise
             self._physical_stream=stream;self._physical_abort_path=stop
-            self._physical_state=dict(state='RUNNING',mode='PICK_RESET_TIMING',pid=self._physical_process.pid,log=str(log),study_output=str(output),started_at_unix=time.time())
+            self._physical_state=dict(state='RUNNING',mode='PICK_RESET_TIMING',task_demo_id=task_id,pid=self._physical_process.pid,log=str(log),study_output=str(output),started_at_unix=time.time())
             return dict(self._physical_state)
 
     def _command_ledger(self):
@@ -280,6 +288,16 @@ class CanonicalBackend:
     def task_status(self):
         from .manipulation.roundtrip_job import canonical_status
         return canonical_status(self.root) or self.dispatcher.task_status()
+    def robot_telemetry(self):
+        from .motion.controller_read_lease import controller_read_lease
+        # Explicit read only; page loads consume the last cache, never login.
+        with controller_read_lease():
+            result=self.dispatcher.robot_telemetry()
+            self._robot_cache=result
+            return result
+    def scene_scan(self,*args,**kwargs):
+        from .motion.controller_read_lease import controller_read_lease
+        with controller_read_lease():return self.dispatcher.scene_scan(*args,**kwargs)
     def _console(self):
         if not hasattr(self,'_demo_console'):
             from .demos.console import DemoConsole
@@ -324,7 +342,8 @@ class CanonicalBackend:
             "scheme_validate","scheme_preview","scheme_save","task_list","task_show",
             "task_prepare","task_replay","task_status","task_stop","dispatch"}
         if method not in allowed:raise ValueError("backend method not exposed: %s"%method)
-        target=self.system_info if method=="system_info" else getattr(self.dispatcher,method)
+        target=(self.robot_telemetry if method=='robot_telemetry' else self.scene_scan if method=='scene_scan'
+                else self.system_info if method=="system_info" else getattr(self.dispatcher,method))
         return target(*list(args),**dict(kwargs or {}))
 
 

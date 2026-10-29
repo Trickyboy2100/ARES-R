@@ -48,8 +48,10 @@ class ConsoleMonitor:
         external_busy=(getattr(backend,'_base_running',False) or getattr(backend,'_physical_process',None) is not None
                        or backend.roundtrip._running(backend.roundtrip._meta()))
         if not self.console.active() and not external_busy:
-            try:self.telemetry=self.console.backend.dispatcher.robot_telemetry()
-            except Exception as exc:return {'error':str(exc)}
+            # Monitoring is passive. The former automatic idle SDK polling
+            # interfered with standalone tmp runners not known to this backend.
+            cached=getattr(backend,'_robot_cache',None)
+            if isinstance(cached,dict):self.telemetry=copy.deepcopy(cached)
         result=copy.deepcopy(self.telemetry) if self.telemetry else {'arms':{},'errors':{'state':'尚无真实反馈'}}
         if prepared:
             files=[]

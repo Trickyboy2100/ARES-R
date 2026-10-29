@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "demo_id": "right_arm_shaiwang_pick_reset_v1",
+  "name": "筛网ID6 · 抓取/抬升/原位放回/center · 新取放任务阶段1",
+  "version": "0.1.0",
+  "category": "MANIPULATION_CANDIDATE",
+  "commissioning_state": "AWAITING_SUPERVISED_STAGE1",
+  "description": "完整流程将沿用第二个Golden，阶段1复用branch流水线。当前禁止底盘和新专机放置阶段，不宣称Golden。",
+  "freshness_policy": {"scene": "FRESH_EVERY_RUN", "profile": "ID6_THROUGH_ALL_CONFIRMATIONS"},
+  "execution": {
+    "entrypoint": "scripts/run_shaiwang_stage1.py",
+    "prepare_command": ".venv/bin/python scripts/run_shaiwang_stage1.py --prepare",
+    "run_command": ".venv/bin/python scripts/run_shaiwang_stage1.py --execute --authorization 'RIGHT SHAIWANG STAGE1 PICK RESET' --onsite-observer-confirmed",
+    "stop_command": ".venv/bin/python scripts/run_shaiwang_stage1.py --stop",
+    "authorization_phrase": "RIGHT SHAIWANG STAGE1 PICK RESET"
+  }
+}

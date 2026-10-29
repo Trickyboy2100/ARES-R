@@ -7,6 +7,7 @@ geometric contract, not a substitute for whole-arm collision validation.
 """
 
 import math
+import os
 
 import numpy as np
 
@@ -51,6 +52,12 @@ def validate_level_path(fk_body_tcp, joints, *, subdivisions=4,
                         tolerance_deg=MAX_ORIENTATION_ERROR_DEG,
                         final_yaw_rad=None):
     """Validate horizontal TCP axes while deliberately allowing BODY yaw."""
+    # Task-scoped policy: never let an unrelated shell variable widen a golden
+    # demo's explicitly supplied tolerance (the 2026-10-28 global override did).
+    if os.environ.get('ARES_R_ACTIVE_MANIPULATION_TASK')=='right_arm_shaiwang_pick_reset_v1':
+        candidate=float(os.environ.get('ARES_R_LEVEL_TOLERANCE_DEG',tolerance_deg))
+        if not math.isfinite(candidate) or not 0<candidate<=4.5:raise ValueError('invalid task level tolerance')
+        tolerance_deg=candidate
     rows = np.asarray(joints, dtype=float)
     if rows.ndim != 2 or rows.shape[1] != 6 or len(rows) < 2 or not np.isfinite(rows).all():
         raise ValueError("finite six-joint path with at least two samples required")
