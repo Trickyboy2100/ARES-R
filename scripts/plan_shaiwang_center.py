@@ -25,7 +25,7 @@ def main():
     detection_data=dict(success=detection.success,raw_response=detection.raw_response,error=detection.error,
         meta=detection.meta,diagnostic_only=True,used_as_center_target=False,elapsed_s=time.monotonic()-started)
     (out/'id6-diagnostic.json').write_text(json.dumps(detection_data,indent=2)+'\n')
-    if not detection.success:raise RuntimeError('ID6 diagnostic failed: '+str(detection.error))
+    # Diagnostic only: a named-center move does not depend on a pick target.
     payload=dict(arm='right',position_m=goal['position_m'],orientation='TERMINAL_EXPLICIT',
         explicit_rotation=goal['explicit_rotation'],speed_profile='right_scene_aware_0_20',
         scene_policy='FORCE_RESCAN',planning_mode='FAST',environment_avoidance='ON',

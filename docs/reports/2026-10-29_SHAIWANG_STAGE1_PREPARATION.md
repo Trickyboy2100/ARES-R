@@ -130,6 +130,80 @@ CURRENT→center已通过现有SceneAwareMotion+fresh点云+cuRobo规划，Nativ
 
 ## 验证与下一步
 
+### 修复后完整实机前半程成功
+
+任务 `right_arm_shaiwang_pick_reset_v1`，成功目录 `worklog/evidence/demo-runs/right_arm_shaiwang_pick_reset_v1/run_1793256176366037010/`。结果PICK_LIFT_REPLACE_RESET_COMPLETE，backend SUCCEEDED，exit0。fresh准备38.594秒；预打包四段约4.265秒；从runner启动至完整回center共138.433秒（不含本轮之前的修复、失败及center恢复）。约181.3秒为本次成功fresh准备+初始打包+执行累计，不能忽略前面失败修复另耗时。
+
+|实机阶段|实测墙钟秒|
+|---|---:|
+|夹爪状态|0.112|
+|开40%|1.260|
+|center→pregrasp|33.879|
+|并行下一段Native等待|0.006|
+|接近抓取|9.711|
+|闭爪|0.408|
+|抬升前验证|2.005|
+|连续抬升230mm|16.933|
+|抬升后并行readback+场景验证|8.884|
+|原路下降230mm|16.938|
+|松爪|1.260|
+|退回预抓取|9.716|
+|回全局center|33.883|
+
+六段均target_reached=true、servo_disabled code0；最大tracking依次0.6867/0.1768/0.5284/0.5290/0.1810/0.6852°。抬升后验证GRASP_CONFIRMED，所有时间戳/夹爪稳定/持物/抬升到位/场景证据gate通过，夹爪延迟readback74。终态全局center位置误差2.056mm、姿态误差0.00438°，检查通过。底盘和左臂未执行运动，旧偏置只读。
+并行机制已实际生效：抬升/下降Native在预抓取执行时准备，NEXT_NATIVE_READY残余等待仅0.006秒；但扫描17.29秒、预抓取规划请求9.10秒，以及六段各约2.7秒外围开销仍可优化，不宣称已达到最快。
+Mac原始执行日志备份目录 `/Users/andyee/Documents/ChatGPT/local/site-private-20261029-shaiwang/success-run-1793256176366037010/`。此成功只覆盖新对象前半程，未验证新专机放置、导航或完整取放，未自动标记为新的Golden main。
+
+### 重启后首次实机调试与sender到位误判修复
+
+机器重启后8775/8776未启动，已只核对隔离目录进程和端口，将旧services.json/planner.sock改名保全后重新启动隔离服务；原生产目录未修改。
+重启后center读数位置差3.852mm，先fresh规划回center；首次controller errcode4128769在0运动采样前拒绝，未清错；后续只读errcode0后fresh规划重试成功。
+实机尝试目录 `worklog/evidence/demo-runs/right_arm_shaiwang_pick_reset_v1/run_1793255910755731832/`：fresh准备38.570秒，通过全部几何；夹爪开40%成功；预抓取389采样实际执行到终点，但settling误报tool/user changed，未继续contact或夹取。
+根因是任务专用native_sender.cpp settling使用read(robot)（tool_data默认false），随后却比较未填充的final.tool零值与实际工具偏移。已修为read(robot,true)，保留tool/user/offset一致性检查。工具实际仍tool1/user0、errcode0，不是实际换工具。原Golden二进制没有替换。
+修复sender源码SHA256 `34316035ab38fe31a542aa3c9ab008d8d76cb8965e72c4e4a71de7add29e8a48`，二进制SHA256 `768fe69243010f07669b207d7403e5a6d58e585b6aad6366dd91d0090163b506`；本机专项18tests通过。
+未持物状态fresh cuRobo回center成功，Native31.568秒、max tracking0.3234°、servo disable确认；证据 `worklog/evidence/operations-execution/1793256140488680143/`。随后按本次授权重新fresh准备完整前半程。
+
+### 后续fresh扫描成功：完整前半程planning-only通过
+
+本次目录 `worklog/evidence/demo-runs/right_arm_shaiwang_pick_reset_v1/run_1793254374769374631/`。
+ID6 fresh epoch、接触IK、cuRobo预抓取、连续230mm抬升与反向下降、退回预抓取、原路center全部几何通过。六段Native原文件离线validator全部通过，未连接控制器执行；补齐Native后旧四段binding另存为task-binding-before-complete-native.json，新binding验证通过。
+
+|准备阶段|实测秒|
+|---|---:|
+|夹爪只读预检|0.034|
+|persistent planner初始化检查（与观测并行）|0.437|
+|fresh观测事务（双臂状态、ID6、点云与场景）|17.131|
+|接触几何/IK预检|2.704|
+|−10°补偿核对|0.041|
+|cuRobo请求整体|9.275|
+|构建抓取包|0.338|
+|230mm与反向几何验证|9.072|
+|几何准备总墙钟|38.597|
+|全部六段Native打包累计|12.994|
+
+cuRobo worker复用persistent runtime，无重复full warmup solve；world update 0.238秒，planner调用6.751秒，报告solve5.855秒，独立dense validation0.982秒。当前这次求解仍超过此前2秒目标，不将“使用快速实现”误报为“低于2秒”。全部串行准备计算约51.59秒，不含本次人工查阅/命令间隔。
+
+BODY XYZ（m）：center `[0.358309,-0.080000,1.027835]` → pregrasp `[0.629967,-0.220821,1.031881]` → grasp `[0.684968,-0.220733,1.031981]` → lifted `[0.684968,-0.220733,1.261981]`。回程严格反向，−10°补偿保留。
+Native计算运动时长：预抓取31.12秒、接触6.96秒、抬升14.08秒、下降14.08秒、退回6.96秒、center31.12秒，合计104.32秒；不包含夹爪、验证、SDK与流程等待，不是实机cycle time。实际速度峰值自由段约0.10rad/s、接触约0.048rad/s，未改速度参数。
+证据：timings.json、planning-summary.json、native-validation-current.json、native-manifest.json、epoch/manipulation_observation.json、pregrasp/planning.json。状态为PLANNING_ONLY_PASS，未执行抓取、夹爪、抬升或reset；实机仍需单独授权及执行时fresh admission。
+
+### 全局center实机到位后的当前站位复测
+
+右臂单独回全局center成功，执行证据 `worklog/evidence/operations-execution/1793253013399242234/`；Native 1.972秒、19样本、最大tracking 0.1831°、servo disable确认。独立只读到位核验位置误差2.058mm、姿态误差0.00138°。
+
+随后仅prepare两次，未执行抓取/抬升/reset。两次命令均为 `320,2,6,1,1,0`，未取得当前有效抓取目标，故未进入接触IK、cuRobo正式求解或Native打包。
+
+|阶段|首次（秒）|重试（秒）|
+|---|---:|---:|
+|夹爪只读预检|0.022|0.064|
+|规划器initialize-only，与观测并行|13.232|0.442|
+|观测尝试，含双臂前置只读状态与ID6|3.423|3.411|
+|prepare总墙钟|13.256|3.477|
+
+首轮Epic原始响应 `000,3020`，未检测出结果；不是规划超时或碰撞拒绝。完整点云SceneSnapshot不提交，不能用昨天目标代替当前目标。重试不重复full warmup solve，initialize-only返回正常。
+证据目录分别为 `worklog/evidence/demo-runs/right_arm_shaiwang_pick_reset_v1/run_1793253824453459785/` 和 `run_1793253886948617996/`。
+当前结论为CURRENT_SCENE_PICK_RESET_NOT_YET_VERIFIED，需先恢复ID6当前目标识别。旧冻结数据的103.68秒仅是历史几何运动估算，不能作为本次成功结果。
+
 - 第一阶段全量无运动测试855项，OK，1项跳过，11.759秒；结果为tests-final-v3.log。
 - 全局center入口补充后，现场全量无运动测试856项，OK，1项跳过，11.688秒；结果为tests-global-center.log。Mac任务专项18项单测通过。
 - 原Golden九个固定输入按哈希核对；offset/config不改。
