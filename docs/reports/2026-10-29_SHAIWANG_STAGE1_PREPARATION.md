@@ -130,6 +130,13 @@ CURRENT→center已通过现有SceneAwareMotion+fresh点云+cuRobo规划，Nativ
 
 ## 验证与下一步
 
+### 正式SIFT Golden branch 1.0.0保全
+
+按操作员“前半程golden”验收，新增正式ID `right_arm_sift_pick_lift_replace_reset_v1`，显示别名 `demo-3-branch-sift-graspreset`，Golden为验证类型、BRANCH为任务关系，属于SIFT_COMPLETE_PICK_PLACE家族。未将新专机place或AMR导航宣称完成。原三个Golden别名保留。
+目录含demo.json、README、source_parameters.json、station.json、evidence.json、native_assets.json、kinematic_assets.json、pinned_inputs.json。冻结V4偏置、SIFT-BLC-GRSP SLAM站位、成功六段hash、scene/pointcloud/package hash、URDF/SDK/Native版本和37项核心源码/配置hash。运行产物和原始点云仍在worklog/private，不塞入Demo定义。成功快照与旧轨迹不能跨运行直接执行。
+正式入口 `scripts/run_sift_pick_reset_demo.py`，校验冻结内容后薄委托已经实测的run_shaiwang_stage1；没有复制算法或改旧Golden脚本。WebUI /demo-console新增独立卡片，ART共用DemoRegistry，console使用sift_pick_reset独立adapter；启动归属token传递有完全Mock网络测试，页面/选择/服务重启不运动。底层执行ID为right_arm_shaiwang_pick_reset_v1，正式别名与该历史ID映射在定义中明确保留。
+现场只读asset校验成功，全量861tests、11.590秒，OK（1skip），日志tests-sift-golden.log。新增WebUI adapter仅做无运动集成测试，未再次点击实机启动；本轮无机器人动作、不push。
+
 ### V4永久偏置完整前半程复测成功
 
 操作员认可抓取姿态后授权松爪、回退、立即完整运行。先使用同一接触上下文退回55mm；通用free-space在该点仍判INVALID_START_COLLISION，未执行center。随后按已授权退回再退40mm（总95mm），接触validator通过后执行，再fresh scan/cuRobo回center成功（Native31.407秒）。两段退回证据 `worklog/evidence/shaiwang-contact-adjust/1793258855859944819/` 和 `1793258972416151069/`；center证据 `worklog/evidence/operations-execution/1793259036512900318/`。这是本轮人工检查后的起点恢复，不把额外95mm作为常规Demo退回长度；常规Demo仍沿已规划contact反向退回。

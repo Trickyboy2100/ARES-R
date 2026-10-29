@@ -63,6 +63,15 @@ class ShaiwangContractTests(unittest.TestCase):
             path=Path(d)/'demos'/TASK_ID/'params.json';path.parent.mkdir(parents=True)
             value=dict(self.task,base_motion_allowed=True);path.write_text(json.dumps(value))
             with self.assertRaises(ValueError):load_contract(d)
+    def test_console_owner_token_forwarded_only_for_console_child(self):
+        import io,runpy
+        client=runpy.run_path(str(ROOT/'scripts/run_shaiwang_stage1.py'))
+        for token in ('','owned-console-token'):
+            send=Mock(return_value=io.BytesIO(b'{}'))
+            with patch.dict(os.environ,{'ARES_R_DEMO_CONSOLE_TOKEN':token}),patch.dict(client['request'].__globals__,{'urlopen':send}):
+                client['request']('/api/operations/pick-reset-timing/start',{'prepared':'candidate'})
+                body=json.loads(send.call_args.args[0].data)
+            self.assertEqual(body.get('demo_console_token'),token or None)
     def test_original_golden_motion_sources_not_changed(self):
         pinned=json.loads((ROOT/'demos/right_arm_pick_lift_replace_reset_v1/pinned_inputs.json').read_text())['sha256']
         for path,expected in pinned.items():

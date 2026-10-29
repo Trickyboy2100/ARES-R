@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "demo_id": "right_arm_sift_pick_lift_replace_reset_v1",
+  "name": "SIFT筛网 · Golden前半程分支 · 抓取抬升原位放回复位",
+  "version": "1.0.0",
+  "category": "manipulation",
+  "demo_type": "GOLDEN",
+  "commissioning_state": "COMMISSIONED_FIXED_FIXTURE_SIFT_ID6_V4_2026_10_29",
+  "description": "SIFT完整取放任务的已验证前半程branch：fresh ID6→cuRobo预抓取→接近闭爪→连续230mm抬升→并行验证→原路放回→松爪→回center。固定站位，无底盘转场或新专机放置。",
+  "relationship": {
+    "role": "BRANCH",
+    "parent_task_family": "SIFT_COMPLETE_PICK_PLACE",
+    "parent_full_task_commissioned": false,
+    "workflow_reference": "right_arm_grasp_place_roundtrip_v1",
+    "acceleration_reference": "right_arm_pick_lift_replace_reset_v1",
+    "implementation_demo_id": "right_arm_shaiwang_pick_reset_v1"
+  },
+  "scope": {
+    "active_arm": "right",
+    "inactive_arm": "HOLD_CURRENT",
+    "base": "STATIONARY",
+    "station_id": "SIFT-BLC-GRSP",
+    "navigation_to_station_commissioned": false,
+    "place_included": "ORIGINAL_FIXTURE_REPLACE_ONLY",
+    "requires_initial_center": true,
+    "arbitrary_scene_commissioned": false
+  },
+  "parameters": {
+    "source_snapshot": "demos/right_arm_sift_pick_lift_replace_reset_v1/source_parameters.json",
+    "station_snapshot": "demos/right_arm_sift_pick_lift_replace_reset_v1/station.json",
+    "pinned_inputs": "demos/right_arm_sift_pick_lift_replace_reset_v1/pinned_inputs.json",
+    "epic_command": "320,2,6,1,1,0",
+    "target_offset_body_m": [0.002, 0.002, -0.007],
+    "body_yaw_compensation_deg": 2,
+    "forward_pitch_down_deg": 1,
+    "legacy_tcp_local_z_compensation_deg": -10,
+    "lift_body_z_m": 0.23,
+    "gripper_raw": {"pregrasp": 400, "close": 0, "release": 400}
+  },
+  "freshness_policy": {
+    "observation": "FRESH_ID6_AND_PIXELPRO_EVERY_RUN",
+    "robot_state": "FRESH_BEFORE_EACH_SEGMENT",
+    "scene": "FRESH_PER_STATIONARY_CYCLE",
+    "trajectory": "NEW_EACH_RUN_EXACT_REVERSE_WITHIN_SAME_CYCLE_ONLY"
+  },
+  "execution": {
+    "entrypoint": "scripts/run_sift_pick_reset_demo.py",
+    "backend_entrypoint": "scripts/run_task_pick_reset_timing.py",
+    "prepare_command": "PYTHONPATH=src .venv/bin/python scripts/run_sift_pick_reset_demo.py --prepare",
+    "run_command": "PYTHONPATH=src .venv/bin/python scripts/run_sift_pick_reset_demo.py --execute --authorization 'RIGHT SHAIWANG STAGE1 PICK RESET' --onsite-observer-confirmed",
+    "stop_command": "PYTHONPATH=src .venv/bin/python scripts/run_sift_pick_reset_demo.py --stop",
+    "authorization_phrase": "RIGHT SHAIWANG STAGE1 PICK RESET",
+    "webui_console_alias": "demo-3-branch-sift-graspreset",
+    "webui_console_url": "/demo-console",
+    "canonical_start_api": "/api/demo-console/start",
+    "canonical_stop_api": "/api/operations/stop",
+    "auto_start": false
+  },
+  "commissioning_evidence": "demos/right_arm_sift_pick_lift_replace_reset_v1/evidence.json"
+}

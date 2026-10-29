@@ -148,6 +148,18 @@ class DemoConsole:
                         break
                     time.sleep(.3)
                 self.update(result=read(prepared/'execution/result.json'))
+            elif strategy=='sift_pick_reset':
+                self.event('SIFT_FRESH_PREPARE_AND_EXECUTE','START')
+                self.update(state='RUNNING')
+                self.command([sys.executable,'scripts/run_sift_pick_reset_demo.py','--execute',
+                    '--authorization','RIGHT SHAIWANG STAGE1 PICK RESET','--onsite-observer-confirmed'],'execute')
+                result=self.backend.physical_status()
+                prepared=Path(result.get('study_output','')).parent
+                proof=read(prepared/'execution/result.json',{})
+                if (result.get('state')!='SUCCEEDED' or result.get('task_demo_id')!='right_arm_shaiwang_pick_reset_v1'
+                    or proof.get('result')!='PICK_LIFT_REPLACE_RESET_COMPLETE' or proof.get('reset_complete') is not True):
+                    raise RuntimeError('sift complete pick/reset proof missing: '+str(result))
+                self.update(prepared=str(prepared),execution=result,result=proof)
             elif strategy=='first_pick':
                 self.event('LEGACY_FIRST_PICK_PREPARE','START')
                 self.command([sys.executable,'scripts/run_first_pick_demo.py','--prepare'],'prepare')
@@ -200,6 +212,11 @@ class DemoConsole:
 
     def status(self):
         with self.lock:value=copy.deepcopy(self.job)
+        if value.get('strategy')=='sift_pick_reset' and value.get('state')=='RUNNING':
+            physical=self.backend.physical_status()
+            if physical.get('task_demo_id')=='right_arm_shaiwang_pick_reset_v1' and physical.get('study_output'):
+                value['prepared']=str(Path(physical['study_output']).parent)
+                value['execution']=physical
         value['running']=self.active();value['elapsed_s']=max(0,(value.get('completed_at_unix') or time.time())-value.get('started_at_unix',time.time()))
         prepared=Path(value['prepared']) if value.get('prepared') else None
         value['preparation']=read(prepared/'timings.json') if prepared else None

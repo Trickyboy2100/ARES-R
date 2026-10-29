@@ -10,6 +10,8 @@ AUTH='RIGHT SHAIWANG STAGE1 PICK RESET'
 
 def request(path,body=None):
     base=os.environ.get('ARES_R_ROUNDTRIP_API_URL','http://127.0.0.1:8775')
+    if body is not None and os.environ.get('ARES_R_DEMO_CONSOLE_TOKEN'):
+        body=dict(body,demo_console_token=os.environ['ARES_R_DEMO_CONSOLE_TOKEN'])
     req=Request(base+path,data=None if body is None else json.dumps(body).encode(),headers={'Content-Type':'application/json'})
     with urlopen(req,timeout=25) as stream:return json.load(stream)
 

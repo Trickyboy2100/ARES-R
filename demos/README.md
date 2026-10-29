@@ -15,4 +15,6 @@ demos/<demo_id>/
 
 ART 与 WebUI 共用 `ares_r.demos.DemoRegistry`，因此选择状态、版本和执行入口一致。
 
+2026-10-29新增Golden branch `demo-3-branch-sift-graspreset`，正式ID `right_arm_sift_pick_lift_replace_reset_v1`，1.0.0。筛网ID6、V4永久偏置、SIFT-BLC-GRSP站位与141.27秒完整前半程成功证据已冻结；属于未来SIFT完整取放的branch，尚不包含新专机place或AMR转场。
+
 2026-10-23 新增正式 `right_arm_pick_lift_replace_reset_v1`（1.0.0）：固定夹具下右臂抓取、连续230mm抬升、原路放回并回center，已完成热态及planner冷态无中断验收。范围不含底盘转场、六泊位或整机断电启动；详情及运行/停止命令见该目录README。原 `right_arm_epic_pick_lift_v1` golden不变。

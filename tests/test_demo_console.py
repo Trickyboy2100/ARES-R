@@ -27,11 +27,12 @@ class ConsoleTests(unittest.TestCase):
     def body(self,alias='demo-2-branch-grasprptspdup'):
         return dict(alias=alias,authorization='RUN '+alias,onsite_observer_confirmed=True,
                     prepared_environment_confirmed=True,request_id='one-click')
-    def test_catalog_three_aliases_not_three_golden_ids(self):
+    def test_catalog_preserves_three_original_goldens_and_adds_sift(self):
         values=self.console.catalog()['demos']
-        self.assertEqual(len(values),3)
+        self.assertEqual(len(values),4)
         self.assertEqual({v['demo_type'] for v in values},{'GOLDEN'})
         self.assertEqual(values[-1]['demo_id'],'right_arm_pick_lift_replace_reset_v1')
+        self.assertEqual(values[0]['alias'],'demo-3-branch-sift-graspreset')
     def test_creation_does_not_start_threads_or_motion(self):
         self.assertIsNone(self.console.thread);self.assertFalse(self.console.active())
         self.backend.operations_stop.assert_not_called()
@@ -135,6 +136,36 @@ class ConsoleTests(unittest.TestCase):
         self.assertEqual(command.call_count,2)
         self.assertIn('prepare_pick_reset_bundle.py',str(command.call_args_list[0]))
         self.backend.start_pick_reset_timing.assert_called_once()
+
+    def test_sift_adapter_delegates_verified_client_and_requires_full_cycle_proof(self):
+        definition=self.prepare_fake_job('sift_pick_reset')
+        prepared=self.root/'sift-run';(prepared/'execution').mkdir(parents=True)
+        result=dict(result='PICK_LIFT_REPLACE_RESET_COMPLETE',reset_complete=True)
+        (prepared/'execution/result.json').write_text(json.dumps(result))
+        self.backend.physical_status.return_value=dict(state='SUCCEEDED',task_demo_id='right_arm_shaiwang_pick_reset_v1',study_output=str(prepared/'execution'))
+        with patch.object(self.console,'resources'),patch.object(self.console,'command') as command:
+            self.console._run(definition)
+        self.assertEqual(self.console.job['state'],'SUCCEEDED')
+        self.assertEqual(command.call_count,1)
+        self.assertIn('scripts/run_sift_pick_reset_demo.py',command.call_args.args[0])
+        self.assertEqual(self.console.job['prepared'],str(prepared))
+
+    def test_sift_golden_freeze_and_station_are_verified_without_motion(self):
+        import runpy,shutil
+        helper=runpy.run_path(str(ROOT/'scripts/run_sift_pick_reset_demo.py'))
+        self.assertTrue(helper['verify_pinned_inputs'](ROOT)['verified'])
+        definition=ROOT/'demos/right_arm_sift_pick_lift_replace_reset_v1'
+        golden=self.root/'demos/right_arm_sift_pick_lift_replace_reset_v1'
+        shutil.copytree(definition,golden)
+        pins=json.loads((definition/'pinned_inputs.json').read_text())['sha256']
+        for name in pins:
+            dst=self.root/name;dst.parent.mkdir(parents=True,exist_ok=True);dst.write_bytes((ROOT/name).read_bytes())
+        station=self.root/'config/manipulation_stations.json';station.parent.mkdir(exist_ok=True)
+        station.write_bytes((ROOT/'config/manipulation_stations.json').read_bytes())
+        helper['verify_pinned_inputs'](self.root)
+        data=json.loads(station.read_text());data['stations']['SIFT-BLC-GRSP']['slam_pose']['x_m']+=.1
+        station.write_text(json.dumps(data))
+        with self.assertRaisesRegex(RuntimeError,'registration changed'):helper['verify_pinned_inputs'](self.root)
 
     def test_first_pick_adapter_uses_untouched_legacy_script(self):
         definition=self.prepare_fake_job('first_pick');(self.root/'logs').mkdir()
