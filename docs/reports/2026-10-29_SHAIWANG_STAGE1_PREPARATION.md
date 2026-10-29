@@ -130,6 +130,11 @@ CURRENT→center已通过现有SceneAwareMotion+fresh点云+cuRobo规划，Nativ
 
 ## 验证与下一步
 
+### V4：累计右旋2°，闭爪后原地保持
+
+按操作员明确要求，在V3当前位置TCP中心再绕BODY Z右旋1°（相对最初+4°修正累计右旋2°），成功目录 `worklog/evidence/shaiwang-contact-adjust/1793258531623731961/`。Native规划1.92秒，实际位移 `[+0.003446,−0.041938,+0.005858]mm`，target_reached/servo disable确认。之后仅执行右夹爪close raw0，延迟读回73，fault0；原始命令与状态存同目录close-command.json、close-delayed-readback.json、gripper-hold-status.json、hold-telemetry.json。没有抬升、底盘运动或回center。
+V4永久参数只把Demo body_yaw_correction_deg从+3°改为+2°；目标平移 `[+2,+2,−7]mm`、下俯1°、旧local-Z −10°保持。按“没有提出问题则保存”的明确要求落盘，并保留full_pick_reset_with_v4_offsets_pending；整轮新偏置实机复测仍待执行，不宣称已完成。当前夹爪闭合持物于原抓取检查点，等待人工核对，任何回center/松爪/抬升均需后续指令。
+
 ### V3永久偏置与TCP中心右旋1°完成
 
 操作员已明确认可当前抓取位置，并要求TCP中心yaw右旋1°、完成后保存永久偏置。本轮仅执行原地yaw微调，成功目录 `worklog/evidence/shaiwang-contact-adjust/1793258240721578616/`，Native规划时长1.84秒，实际TCP位移 `[+0.014857,−0.043880,+0.049008]mm`（模长约0.0674mm），servo disable及target_reached确认，未闭爪。微调基于上一已完成微调的after.json检查点，双臂/工具/底盘history绑定保持。
