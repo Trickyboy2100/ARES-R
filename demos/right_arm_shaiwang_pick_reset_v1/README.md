@@ -14,7 +14,10 @@
 ## 新对象与偏置
 
 2026-10-29明确确认ID6为筛网，并暂时沿用旧持物模型 `DEMO_EXPOSED160_WIDTH100_REAR20_RETAINED_V2`。此为暂用模型，不宣称筛网尺寸已新测量。
-全任务BODY六维偏置 `[0,0,0,0,0,0]` 与已有TCP_LOCAL_Z的−10°补偿从原参数只读引用，写入每个候选的绑定证据；不修改controller tool。
+已有TCP_LOCAL_Z的−10°补偿从原参数只读引用，不修改controller tool。
+本任务V2追加两类独立偏置：`R_command = R_BODY_Z(+4°) × R_detected × R_TCP_Z(−10°)`；每次fresh检测目标位置加BODY `[+0.005,0,−0.007]m`。+4°为修正俯视顺时针偏差的逆时针补偿，与旧−10°作用轴不同，不将两者相加。检测原始报文保持原样，目标偏置不改变center位置，姿态补偿贯穿本任务右臂目标；不改变其他Golden或左臂。
+`inspection_stop_before_close=true`时执行仅到CONTACT_HOLD_BEFORE_CLOSE：夹爪40%开度保持、不闭爪、不抬升、不自动退回；用于人工核对。确认后必须明确切回完整流程模式并fresh准备，不能把该检查点当完整Demo成功。
+站位 `SIFT-BLC-GRSP` 已追加到 `config/manipulation_stations.json`，原站位保留；SLAM记录是观测值而非高精度导航验收。
 旧烘干机下层中间泊位偏置 `[0.315,-0.238,0.060,0,0,0]` 存储坐标系为DETECTION，状态CANDIDATE；其余五槽尚无偏置。旧偏置不等同于新专机偏置，本阶段不用。
 
 ## 准备和联调

@@ -5,7 +5,7 @@ from pathlib import Path
 TASK_ID='right_arm_shaiwang_pick_reset_v1'
 TASK_SOURCES=('scripts/run_task_pick_reset_timing.py','scripts/run_shaiwang_stage1.py',
     'src/ares_r/manipulation/task_contract.py','src/ares_r/motion/controller_read_lease.py',
-    'src/ares_r/manipulation/task_live.py',
+    'src/ares_r/manipulation/task_live.py','src/ares_r/manipulation/task_tcp_offset.py',
     'config/named_poses.json',
     'src/ares_r/motion/tcp_orientation.py','demos/'+TASK_ID+'/capture_epoch.py',
     'demos/'+TASK_ID+'/prepare_bundle.py','demos/'+TASK_ID+'/native_sender.cpp',
@@ -32,6 +32,8 @@ def center_goal(root):
     pose=json.loads((root/'config/named_poses.json').read_text())['poses']['center']['arms']['right']['body_tcp_target_m_rad']
     parameters=json.loads((root/'demos/right_arm_grasp_place_roundtrip_v1/parameters.json').read_text())
     xyz,rotation=apply_task_pose(pose[:3],transform_xyz_rpy([0]*3,pose[3:])[:3,:3],parameters.get('task_tcp_offset_m_rad',[0]*6))
+    parameters=copy.deepcopy(parameters)
+    parameters['demo_tcp_orientation_compensation'].update(load_contract(root).get('demo_tcp_orientation_compensation_override') or {})
     rotation=demo_local_rotation(rotation,parameters)
     return dict(position_m=np.asarray(xyz).tolist(),explicit_rotation=rotation.tolist(),
         source='config/named_poses.json:poses.center.arms.right.body_tcp_target_m_rad',
@@ -60,8 +62,19 @@ def load_contract(root):
     if not 0<float(value['native_start_tolerance_deg'])<=.1:raise ValueError('native start tolerance out of task bounds')
     if not 0<float(value['level_gate_tolerance_deg'])<=4.5:raise ValueError('level tolerance out of task bounds')
     if value.get('payload_policy')!='DEMO_EXPOSED160_WIDTH100_REAR20_RETAINED_V2':raise ValueError('payload policy requires review')
-    if any(value.get(k) is not None for k in ('task_tcp_offset_m_rad_override','demo_tcp_orientation_compensation_override')):
-        raise ValueError('offsets are read-only in this stage')
+    from .task_tcp_offset import validate_offset
+    offset=value.get('task_tcp_offset_m_rad_override')
+    if offset is not None:
+        offset=validate_offset(offset)
+        if value.get('task_tcp_offset_frame')!='BODY' or any(offset[3:]) or max(abs(v) for v in offset[:3])>.02:
+            raise ValueError('task target correction must be BODY translation within20mm')
+    comp=value.get('demo_tcp_orientation_compensation_override') or {}
+    if set(comp)-{'body_yaw_correction_deg','body_yaw_scope'} or (comp and comp.get('body_yaw_scope')!=TASK_ID):
+        raise ValueError('task orientation override scope invalid')
+    yaw=comp.get('body_yaw_correction_deg',0)
+    if isinstance(yaw,bool) or not isinstance(yaw,(int,float)) or not math.isfinite(yaw) or abs(yaw)>10:
+        raise ValueError('invalid task yaw correction')
+    if not isinstance(value.get('inspection_stop_before_close',False),bool):raise ValueError('inspection flag must be boolean')
     return value
 
 def task_config(config,contract):

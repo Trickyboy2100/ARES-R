@@ -26,6 +26,22 @@ class ShaiwangContractTests(unittest.TestCase):
         self.assertEqual((params.read_bytes(),poses.read_bytes()),before)
         t[2,3]-=.032;telemetry['arms']['right']['T_body_tcp']=t.tolist()
         with self.assertRaisesRegex(ValueError,'START_NOT_GLOBAL_CENTER'):check_center(ROOT,telemetry,self.task)
+    def test_separate_body_target_translation_and_demo_yaw_roundtrip(self):
+        import numpy as np
+        from scipy.spatial.transform import Rotation
+        from ares_r.manipulation.task_tcp_offset import apply_task_pose,demo_local_rotation
+        raw=Rotation.from_euler('xyz',[.4,-.3,1.2]).as_matrix();xyz=[.6,-.2,1.0]
+        params=json.loads((ROOT/'demos/right_arm_grasp_place_roundtrip_v1/parameters.json').read_text())
+        comp=dict(params['demo_tcp_orientation_compensation']);comp.update(self.task['demo_tcp_orientation_compensation_override'])
+        p,r=apply_task_pose(xyz,raw,self.task['task_tcp_offset_m_rad_override'])
+        self.assertTrue(np.allclose(p,[.605,-.2,.993]));self.assertTrue(np.allclose(r,raw))
+        adjusted=demo_local_rotation(r,{'demo_tcp_orientation_compensation':comp})
+        expected=Rotation.from_euler('z',4,degrees=True).as_matrix()@raw@Rotation.from_euler('z',-10,degrees=True).as_matrix()
+        self.assertTrue(np.allclose(adjusted,expected))
+        self.assertTrue(np.allclose(demo_local_rotation(adjusted,{'demo_tcp_orientation_compensation':comp},inverse=True),raw))
+        center=center_goal(ROOT)
+        self.assertAlmostEqual(center['position_m'][2],1.0278356006116391)
+        self.assertNotEqual(self.task['task_tcp_offset_m_rad_override'][:3],center['position_m'])
     def test_yesterday_measured_start_difference_passes_new_task_only(self):
         q=[0]*6;q[3]=math.radians(.022619)
         self.assertLess(check_task_start(q,[0]*6,self.task)['max_joint_difference_deg'],.1)

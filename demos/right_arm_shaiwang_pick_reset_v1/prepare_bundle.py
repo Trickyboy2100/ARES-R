@@ -175,6 +175,8 @@ def verify_compensation():
             or abs(float(comp.get('angle_deg', 0.0)) - want_angle) > 1e-9:
         raise RuntimeError('TCP 末端偏置缺失/不符（期望 %.1f° TCP_LOCAL_Z）：%s'
                            % (want_angle, json.dumps(comp, ensure_ascii=False)))
+    if comp != expected or r.get('task_tcp_offset_m_rad')!=effective_demo_inputs()[1]:
+        raise RuntimeError('task yaw/target offset differs from selected task parameters')
     save(O / 'compensation-proof.json', dict(planned=comp, expected=expected))
 
 

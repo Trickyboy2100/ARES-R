@@ -130,6 +130,15 @@ CURRENT→center已通过现有SceneAwareMotion+fresh点云+cuRobo规划，Nativ
 
 ## 验证与下一步
 
+### V2双偏置及闭爪前检查实机完成
+
+按新授权，保留原−10°TCP_LOCAL_Z补偿，另加BODY +Z逆时针4°右臂Demo姿态修正；独立的检测位置偏置为BODY `[+5,0,−7]mm`，每次检测后叠加，raw检测数据不变。center位置不应用检测平移，只应用Demo姿态补偿；不修改controller tool、原Golden参数或左臂。
+当前站位追加为SIFT-BLC-GRSP，config/manipulation_stations.json保留原站位。map379，SLAM x0.202325m/y0.753431m/yaw−4.83633°，confidence原值31.86；仅记录观测不宣称高精度导航commissioning。注册证据 worklog/evidence/station-registration/1793257129635709127/，没有发送底盘运动。
+4°center姿态校正成功（Native3.010秒），之后fresh扫描规划并执行至CONTACT_HOLD_BEFORE_CLOSE。任务检查模式通过params的inspection_stop_before_close=true绑定，当前不允许自动闭爪或抬升。
+本次目录 `worklog/evidence/demo-runs/right_arm_shaiwang_pick_reset_v1/run_1793257202644547034/`，准备39.114秒，预打包约4.356秒，动作/检查编排49.331秒。结果CONTACT_INSPECTION_BEFORE_CLOSE、backend SUCCEEDED。事件只含夹爪状态、开40%、PREGRASP、CONTACT；无CLOSE/LIFT/LOWER/RELEASE事件，gripper_close_command_sent=false，六段任务未继续。
+raw目标XYZ `[0.685875405,-0.219920655,1.032246550]m`，偏置后 `[0.690875405,-0.219920655,1.025246550]m`；最终只读实际TCP `[0.691005215,-0.218598217,1.024987464]m`。停下后夹爪独立readback399（40%命令400），fault0。等待人工核对，不自动继续。
+新增偏置组合单测验证BODY平移不会随目标姿态旋转，BODY yaw与原local-Z补偿组合及逆变换正确；专项19tests通过。现场Python全量857tests、11.613秒，OK（1skip），日志tests-offset-inspection.log。本机全量869tests有6项环境错误（Linux /proc缺失2项、sandbox socket bind被拒4项，2skip），未将其表述为本机全测通过；没有改这些无关旧测试。
+
 ### 修复后完整实机前半程成功
 
 任务 `right_arm_shaiwang_pick_reset_v1`，成功目录 `worklog/evidence/demo-runs/right_arm_shaiwang_pick_reset_v1/run_1793256176366037010/`。结果PICK_LIFT_REPLACE_RESET_COMPLETE，backend SUCCEEDED，exit0。fresh准备38.594秒；预打包四段约4.265秒；从runner启动至完整回center共138.433秒（不含本轮之前的修复、失败及center恢复）。约181.3秒为本次成功fresh准备+初始打包+执行累计，不能忽略前面失败修复另耗时。

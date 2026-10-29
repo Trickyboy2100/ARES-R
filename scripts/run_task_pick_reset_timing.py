@@ -208,11 +208,20 @@ def main():
         if gap>.003 or angle>3:raise RuntimeError('fresh task target changed; reprepare before motion')
         for item in manifest['segments']:
             live.command([params['contact_sender'],'validate-supervised-path',prepared/'native'/(item['segment']+'.native.txt')],out/(item['segment']+'.prevalidate.log'),20)
-        start_native_preparation()
+        if not task.get('inspection_stop_before_close',False):start_native_preparation()
         measured('GRIPPER40',lambda:live.gripper(params['gripper_pregrasp_raw']))
         measured('PREGRASP',lambda:segment('pregrasp'))
-        measured('NEXT_NATIVE_READY',await_native_preparation)
+        if not task.get('inspection_stop_before_close',False):measured('NEXT_NATIVE_READY',await_native_preparation)
         measured('CONTACT',lambda:segment('contact'))
+        if task.get('inspection_stop_before_close',False):
+            state.update(state='COMPLETED',stage='CONTACT_HOLD_BEFORE_CLOSE',holding_verified=False,
+                         elapsed_s=time.monotonic()-start)
+            save(out/'status.json',state)
+            save(out/'result.json',dict(result='CONTACT_INSPECTION_BEFORE_CLOSE',
+                target_reached=True,reset_complete=False,gripper_close_command_sent=False,
+                gripper_command_raw=params['gripper_pregrasp_raw'],elapsed_s=time.monotonic()-start,
+                stages=rows,final=live.telemetry()))
+            return
         measured('CLOSE',lambda:live.gripper(params['gripper_closed_raw']))
         measured('VERIFY_BEFORE_LIFT',live.verify_grasp)
         measured('LIFT230',lambda:segment('lift230'));measured('VERIFY_AFTER_LIFT_PARALLEL',verify_after_lift);state['holding_verified']=True

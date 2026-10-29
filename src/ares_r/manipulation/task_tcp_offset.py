@@ -35,7 +35,14 @@ def demo_local_rotation(rotation, parameters, *, inverse=False):
         raise ValueError('invalid demo local orientation compensation')
     from scipy.spatial.transform import Rotation
     correction=Rotation.from_euler('z',(-1 if inverse else 1)*angle,degrees=True).as_matrix()
-    return np.asarray(rotation,dtype=float)@correction
+    yaw=value.get('body_yaw_correction_deg',0.0)
+    if (isinstance(yaw,bool) or not isinstance(yaw,(int,float)) or not math.isfinite(yaw) or abs(yaw)>10):
+        raise ValueError('invalid task BODY yaw correction')
+    if yaw and value.get('body_yaw_scope')!='right_arm_shaiwang_pick_reset_v1':
+        raise ValueError('task BODY yaw scope required')
+    body=Rotation.from_euler('z',(-1 if inverse else 1)*yaw,degrees=True).as_matrix()
+    result=np.asarray(rotation,dtype=float)@correction
+    return body@result
 
 def validate_body_descent(points,fk,distance_m,*,tolerance_m=.003):
     rows=np.asarray(points,dtype=float)
