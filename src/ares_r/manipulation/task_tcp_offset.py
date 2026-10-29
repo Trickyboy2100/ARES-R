@@ -38,11 +38,22 @@ def demo_local_rotation(rotation, parameters, *, inverse=False):
     yaw=value.get('body_yaw_correction_deg',0.0)
     if (isinstance(yaw,bool) or not isinstance(yaw,(int,float)) or not math.isfinite(yaw) or abs(yaw)>10):
         raise ValueError('invalid task BODY yaw correction')
-    if yaw and value.get('body_yaw_scope')!='right_arm_shaiwang_pick_reset_v1':
+    pitch=value.get('forward_pitch_down_deg',0.0)
+    if isinstance(pitch,bool) or not isinstance(pitch,(int,float)) or not math.isfinite(pitch) or abs(pitch)>2:
+        raise ValueError('invalid task forward pitch correction')
+    if (yaw or pitch) and value.get('body_yaw_scope')!='right_arm_shaiwang_pick_reset_v1':
         raise ValueError('task BODY yaw scope required')
     body=Rotation.from_euler('z',(-1 if inverse else 1)*yaw,degrees=True).as_matrix()
-    result=np.asarray(rotation,dtype=float)@correction
-    return body@result
+    def pitch_rotation(r,degrees):
+        axis=np.cross([0.,0.,1.],r[:,2]);norm=np.linalg.norm(axis)
+        if norm<1e-8:raise ValueError('forward pitch needs nonvertical TCP forward axis')
+        return Rotation.from_rotvec(axis/norm*np.deg2rad(degrees)).as_matrix()
+    if inverse:
+        result=np.asarray(rotation,dtype=float).copy()
+        if pitch:result=pitch_rotation(result,-pitch)@result
+        return body@result@correction
+    result=body@np.asarray(rotation,dtype=float)@correction
+    return pitch_rotation(result,pitch)@result if pitch else result
 
 def validate_body_descent(points,fk,distance_m,*,tolerance_m=.003):
     rows=np.asarray(points,dtype=float)

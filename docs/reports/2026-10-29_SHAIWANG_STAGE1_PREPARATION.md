@@ -130,6 +130,13 @@ CURRENT→center已通过现有SceneAwareMotion+fresh点云+cuRobo规划，Nativ
 
 ## 验证与下一步
 
+### V3永久偏置与TCP中心右旋1°完成
+
+操作员已明确认可当前抓取位置，并要求TCP中心yaw右旋1°、完成后保存永久偏置。本轮仅执行原地yaw微调，成功目录 `worklog/evidence/shaiwang-contact-adjust/1793258240721578616/`，Native规划时长1.84秒，实际TCP位移 `[+0.014857,−0.043880,+0.049008]mm`（模长约0.0674mm），servo disable及target_reached确认，未闭爪。微调基于上一已完成微调的after.json检查点，双臂/工具/底盘history绑定保持。
+params.json升级V3：检测目标BODY位移累计 `[+2,+2,−7]mm`；Demo姿态维持旧local-Z −10°，BODY yaw累计逆时针3°，并对当前TCP前向施加下俯1°。将平移归入每次检测目标偏置，yaw/pitch归入Demo全程右臂姿态补偿；controller tool及原Golden参数不变。逆补偿按相反次序移除pitch/yaw/local-Z，单测检查任意姿态下正逆一致与BODY平移不随检测轴旋转。
+inspection_stop_before_close切回false，为下一次完整前半程预备，但本轮没有启动抓取、回center或回程。标注CONTACT_OFFSETS_APPROVED_FULL_RECHECK_PENDING，不冒称V3整轮已经实机验收。站位SIFT-BLC-GRSP不变。
+现场全量858tests，11.548秒，OK（1skip）；日志tests-permanent-offset-v3.log。重载空闲隔离后端只用于加载新配置，未自动开始任何运动。
+
 ### 接触检查点微调成功（未修改偏置配置）
 
 后续仅授权当前位置后撤BODY X−3mm、左移Y+2mm、朝前端下俯1°。普通free-space fresh扫描把当前目标接触区判INVALID_START_COLLISION，未执行；因此使用已完成开40%检查点的stationary task-contact上下文，创建独立≤6mm/≤2°的PICK_CONTACT_ADJUST检查，并保留所有Link/non-target/self/controller检查。旧contact/escape最短25mm策略不变，普通motion API不开放此模式。

@@ -16,11 +16,15 @@ from ares_r.motion.native_demo import native_environment
 
 ROOT=Path(__file__).resolve().parents[1]
 AUTH='RIGHT CONTACT BACK3 LEFT2 PITCHDOWN1'
+YAW_AUTH='RIGHT CONTACT YAW CLOCKWISE1'
 
 def main():
     a=argparse.ArgumentParser();a.add_argument('--prepared',type=Path,required=True)
-    a.add_argument('--execute',action='store_true');a.add_argument('--authorization');args=a.parse_args()
-    if args.execute and args.authorization!=AUTH:raise PermissionError('scoped adjustment authorization required')
+    a.add_argument('--execute',action='store_true');a.add_argument('--authorization')
+    a.add_argument('--adjustment',choices=('back-left-pitch','yaw-right'),default='back-left-pitch')
+    a.add_argument('--checkpoint',type=Path);args=a.parse_args()
+    if args.execute and args.authorization!=(YAW_AUTH if args.adjustment=='yaw-right' else AUTH):
+        raise PermissionError('scoped adjustment authorization required')
     p=args.prepared.resolve()
     if ROOT/'worklog/evidence/demo-runs/right_arm_shaiwang_pick_reset_v1' not in p.parents:
         raise ValueError('task inspection evidence required')
@@ -33,6 +37,14 @@ def main():
     state=c.robot_telemetry();arm=state['arms']['right']
     if state.get('errors') or state['base']['state']['current']['state']!='IDLE':raise RuntimeError('trusted stationary state required')
     prior=previous['final']
+    if args.checkpoint:
+        checkpoint=args.checkpoint.resolve()
+        if ROOT/'worklog/evidence/shaiwang-contact-adjust' not in checkpoint.parents:
+            raise ValueError('task contact adjustment checkpoint required')
+        if load(checkpoint/'result.json').get('success') is not True or Path(load(checkpoint/'request.json')['source_inspection']).resolve()!=p:
+            raise ValueError('completed adjustment from same inspection required')
+        prior=load(checkpoint/'after.json')
+    if args.adjustment=='yaw-right' and not args.checkpoint:raise ValueError('accepted pitch/position checkpoint required')
     for side in ('left','right'):
         if max(abs(x-y) for x,y in zip(state['arms'][side]['joints_rad'],prior['arms'][side]['joints_rad']))>math.radians(.1):
             raise RuntimeError('inspection arm state changed')
@@ -49,16 +61,20 @@ def main():
     os.environ['ARES_R_ACTIVE_MANIPULATION_TASK']='right_arm_shaiwang_pick_reset_v1'
     os.environ['ARES_R_LEVEL_TOLERANCE_DEG']=str(load_contract(ROOT)['level_gate_tolerance_deg'])
     ik=RuntimeGoalIK(request['robot_yaml_urdf'],request['T_body_model'],request['T_link6_tcp'])
-    q=arm['joints_rad'];start=ik.fk(q);delta=np.array([-.003,.002,0.])
-    forward=start[:3,2];axis=np.cross([0.,0.,1.],forward);axis/=np.linalg.norm(axis)
-    end_rotation=Rotation.from_rotvec(axis*np.deg2rad(1)).as_matrix()@start[:3,:3]
+    q=arm['joints_rad'];start=ik.fk(q)
+    if args.adjustment=='yaw-right':
+        delta=np.zeros(3);axis=np.array([0.,0.,1.]);angle_deg=-1.
+    else:
+        delta=np.array([-.003,.002,0.]);forward=start[:3,2]
+        axis=np.cross([0.,0.,1.],forward);axis/=np.linalg.norm(axis);angle_deg=1.
+    end_rotation=Rotation.from_rotvec(axis*np.deg2rad(angle_deg)).as_matrix()@start[:3,:3]
     rotations=Slerp([0,1],Rotation.from_matrix([start[:3,:3],end_rotation]))
     points=[q]
     for u in np.linspace(0,1,17)[1:]:
         solved=ik.solve(start[:3,3]+u*delta,rotations(u).as_matrix(),points[-1],position_tolerance_m=.0002,orientation_tolerance_deg=.1)
         points.append(list(solved.joints_rad))
     if max(abs(x-y) for row in points for x,y in zip(row,q))>math.radians(3):raise RuntimeError('micro joint excursion exceeds3deg')
-    direction=delta/np.linalg.norm(delta)
+    direction=delta/np.linalg.norm(delta) if np.linalg.norm(delta)>0 else np.array([1.,0.,0.])
     def validate(rows):return validate_short_motion(rows,request,segment='contact',
         observation_id=load(p/'package/first_pick_execution_package.json')['observation_id'],direction=direction,
         central_exclusion=request['motion_constraints'].get('central_exclusion',False))
@@ -69,7 +85,7 @@ def main():
         speed_ceiling_rad_s=.03,accel_ceiling_rad_s2=.1,tracking_stop_threshold_deg=1.5,
         max_excursion_rad=math.radians(3),retiming_policy='VERIFIED_SHORT_V1',geometry_validator=validate)
     path=out/'adjust.native.txt';path.write_text(text);save('audit.json',audit)
-    save('request.json',dict(delta_body_m=delta.tolist(),pitch_down_deg=1,axis_body=axis.tolist(),
+    save('request.json',dict(delta_body_m=delta.tolist(),adjustment=args.adjustment,rotation_deg=angle_deg,axis_body=axis.tolist(),
         source_inspection=str(p),source_snapshot=request['scene_snapshot_id'],world_policy='SAME_HELD_STATIONARY_CONTACT_CONTEXT',
         source_data_modified=False,persistent_offsets_modified=False))
     sender=task_sender(ROOT);check=subprocess.run([str(sender),'validate-supervised-path',str(path)],env=native_environment(),capture_output=True,text=True,check=True)

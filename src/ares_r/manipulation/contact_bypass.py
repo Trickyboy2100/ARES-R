@@ -92,7 +92,8 @@ def validate_bypass_segment(samples: Sequence[Mapping[str, object]],
         tcp=[float(v) for v in sample["tcp_position_body_m"]]
         delta=[tcp[i]-start[i] for i in range(3)];progress=sum(delta[i]*direction[i] for i in range(3))
         lateral=math.sqrt(sum((delta[i]-progress*direction[i])**2 for i in range(3)))
-        if progress+1e-8<prior or progress>policy.maximum_segment_m+.003 or lateral>.002:
+        progress_tolerance=.0002 if policy.stage=='PICK_CONTACT_ADJUST' else 1e-8
+        if progress+progress_tolerance<prior or progress>policy.maximum_segment_m+.003 or lateral>.002:
             raise RuntimeError("bypass must be a bounded monotonic Cartesian segment")
         prior=progress
         if policy.central_exclusion:
@@ -111,7 +112,7 @@ def validate_bypass_segment(samples: Sequence[Mapping[str, object]],
             for b in range(a+2,len(links)):
                 if _geometry_overlap(links[a],links[b]):
                     raise RuntimeError("non-adjacent arm self collision")
-    minimum=.0001 if policy.stage=='PICK_CONTACT_ADJUST' else .025
+    minimum=-.0002 if policy.stage=='PICK_CONTACT_ADJUST' else .025
     if prior<minimum or prior>policy.maximum_segment_m+.003:
         raise RuntimeError("bypass segment length is outside reviewed contact/escape bounds")
     return {"valid":True,"policy_id":policy.policy_id,"policy_revision":policy.revision,

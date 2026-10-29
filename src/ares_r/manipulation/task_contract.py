@@ -69,11 +69,14 @@ def load_contract(root):
         if value.get('task_tcp_offset_frame')!='BODY' or any(offset[3:]) or max(abs(v) for v in offset[:3])>.02:
             raise ValueError('task target correction must be BODY translation within20mm')
     comp=value.get('demo_tcp_orientation_compensation_override') or {}
-    if set(comp)-{'body_yaw_correction_deg','body_yaw_scope'} or (comp and comp.get('body_yaw_scope')!=TASK_ID):
+    if set(comp)-{'body_yaw_correction_deg','body_yaw_scope','forward_pitch_down_deg'} or (comp and comp.get('body_yaw_scope')!=TASK_ID):
         raise ValueError('task orientation override scope invalid')
     yaw=comp.get('body_yaw_correction_deg',0)
     if isinstance(yaw,bool) or not isinstance(yaw,(int,float)) or not math.isfinite(yaw) or abs(yaw)>10:
         raise ValueError('invalid task yaw correction')
+    pitch=comp.get('forward_pitch_down_deg',0)
+    if isinstance(pitch,bool) or not isinstance(pitch,(int,float)) or not math.isfinite(pitch) or abs(pitch)>2:
+        raise ValueError('invalid task pitch correction')
     if not isinstance(value.get('inspection_stop_before_close',False),bool):raise ValueError('inspection flag must be boolean')
     return value
 

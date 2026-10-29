@@ -15,8 +15,9 @@
 
 2026-10-29明确确认ID6为筛网，并暂时沿用旧持物模型 `DEMO_EXPOSED160_WIDTH100_REAR20_RETAINED_V2`。此为暂用模型，不宣称筛网尺寸已新测量。
 已有TCP_LOCAL_Z的−10°补偿从原参数只读引用，不修改controller tool。
-本任务V2追加两类独立偏置：`R_command = R_BODY_Z(+4°) × R_detected × R_TCP_Z(−10°)`；每次fresh检测目标位置加BODY `[+0.005,0,−0.007]m`。+4°为修正俯视顺时针偏差的逆时针补偿，与旧−10°作用轴不同，不将两者相加。检测原始报文保持原样，目标偏置不改变center位置，姿态补偿贯穿本任务右臂目标；不改变其他Golden或左臂。
+本任务V3永久保存两类独立偏置：每次fresh检测位置加BODY `[+0.002,+0.002,−0.007]m`（原+5mm X叠加后撤3mm和左移2mm）；姿态先 `R_BODY_Z(+3°) × R_detected × R_TCP_Z(−10°)`，再围绕TCP中心、沿当前朝前端下俯1°。+3°来自原逆时针4°后右旋1°，不与local-Z的−10°混加。下俯绕BODY水平侧向轴，不导致TCP绕其他点公转。检测原始报文保持原样，目标平移不改变center位置，姿态补偿贯穿本任务右臂目标；不改变其他Golden或左臂。配置永久生效只针对本Demo，不写controller tool。
 `inspection_stop_before_close=true`时执行仅到CONTACT_HOLD_BEFORE_CLOSE：夹爪40%开度保持、不闭爪、不抬升、不自动退回；用于人工核对。确认后必须明确切回完整流程模式并fresh准备，不能把该检查点当完整Demo成功。
+当前已按人工认可切回 `inspection_stop_before_close=false`，下一轮是完整pick/lift/replace/reset；V3新偏置的整轮实机复测尚待下一次授权执行。当前机器仍停在开爪检查点，不自动回center或重新抓取。
 站位 `SIFT-BLC-GRSP` 已追加到 `config/manipulation_stations.json`，原站位保留；SLAM记录是观测值而非高精度导航验收。
 旧烘干机下层中间泊位偏置 `[0.315,-0.238,0.060,0,0,0]` 存储坐标系为DETECTION，状态CANDIDATE；其余五槽尚无偏置。旧偏置不等同于新专机偏置，本阶段不用。
 

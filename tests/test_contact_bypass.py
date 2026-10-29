@@ -44,6 +44,8 @@ class ContactBypassTests(unittest.TestCase):
         world={'wall':box('wall',(.4,.4,.4))}
         policy=ContactBypassPolicy.for_manipulation_skill('PICK_CONTACT_ADJUST','OBS1')
         self.assertTrue(validate_bypass_segment(rows,world,policy,**kwargs)['valid'])
+        for row in rows:row['tcp_position_body_m'][0]=0.
+        self.assertTrue(validate_bypass_segment(rows,world,policy,**kwargs)['valid'])
         with self.assertRaisesRegex(RuntimeError,'outside reviewed'):
             validate_bypass_segment(rows,world,ContactBypassPolicy.for_manipulation_skill('PICK_APPROACH','OBS1'),**kwargs)
         with self.assertRaisesRegex(RuntimeError,'arm link'):

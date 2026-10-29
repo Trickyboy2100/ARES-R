@@ -34,9 +34,11 @@ class ShaiwangContractTests(unittest.TestCase):
         params=json.loads((ROOT/'demos/right_arm_grasp_place_roundtrip_v1/parameters.json').read_text())
         comp=dict(params['demo_tcp_orientation_compensation']);comp.update(self.task['demo_tcp_orientation_compensation_override'])
         p,r=apply_task_pose(xyz,raw,self.task['task_tcp_offset_m_rad_override'])
-        self.assertTrue(np.allclose(p,[.605,-.2,.993]));self.assertTrue(np.allclose(r,raw))
+        self.assertTrue(np.allclose(p,np.asarray(xyz)+self.task['task_tcp_offset_m_rad_override'][:3]));self.assertTrue(np.allclose(r,raw))
         adjusted=demo_local_rotation(r,{'demo_tcp_orientation_compensation':comp})
-        expected=Rotation.from_euler('z',4,degrees=True).as_matrix()@raw@Rotation.from_euler('z',-10,degrees=True).as_matrix()
+        expected=Rotation.from_euler('z',comp['body_yaw_correction_deg'],degrees=True).as_matrix()@raw@Rotation.from_euler('z',-10,degrees=True).as_matrix()
+        axis=np.cross([0.,0.,1.],expected[:,2]);axis/=np.linalg.norm(axis)
+        expected=Rotation.from_rotvec(axis*np.deg2rad(comp['forward_pitch_down_deg'])).as_matrix()@expected
         self.assertTrue(np.allclose(adjusted,expected))
         self.assertTrue(np.allclose(demo_local_rotation(adjusted,{'demo_tcp_orientation_compensation':comp},inverse=True),raw))
         center=center_goal(ROOT)
