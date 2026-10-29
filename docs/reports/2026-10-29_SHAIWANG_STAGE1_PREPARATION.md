@@ -130,6 +130,28 @@ CURRENT→center已通过现有SceneAwareMotion+fresh点云+cuRobo规划，Nativ
 
 ## 验证与下一步
 
+### V4永久偏置完整前半程复测成功
+
+操作员认可抓取姿态后授权松爪、回退、立即完整运行。先使用同一接触上下文退回55mm；通用free-space在该点仍判INVALID_START_COLLISION，未执行center。随后按已授权退回再退40mm（总95mm），接触validator通过后执行，再fresh scan/cuRobo回center成功（Native31.407秒）。两段退回证据 `worklog/evidence/shaiwang-contact-adjust/1793258855859944819/` 和 `1793258972416151069/`；center证据 `worklog/evidence/operations-execution/1793259036512900318/`。这是本轮人工检查后的起点恢复，不把额外95mm作为常规Demo退回长度；常规Demo仍沿已规划contact反向退回。
+之后完整自动V4前半程成功：目录 `worklog/evidence/demo-runs/right_arm_shaiwang_pick_reset_v1/run_1793259072432485426/`，PICK_LIFT_REPLACE_RESET_COMPLETE、backend SUCCEEDED/exit0，执行141.268秒。fresh准备38.953秒、初始四段Native打包4.436秒，成功这一轮扫描准备至完成累计约184.66秒（不含前述检查点恢复/额外退回及center）。使用参数 `[+2,+2,−7]mm`、BODY yaw+2°、pitch down1°和旧local-Z−10°，未改变速度或底盘。
+
+|V4实机阶段|墙钟秒|
+|---|---:|
+|夹爪预检/开40%|0.111 / 1.261|
+|预抓取|34.785|
+|并行下一段准备残余等待|0.006|
+|接近抓取|10.124|
+|闭爪/抬升前验证|0.408 / 2.005|
+|连续230mm抬升|17.034|
+|抬升后并行验证|8.986|
+|原路下降230mm|17.041|
+|松爪|1.260|
+|退回预抓取|10.117|
+|回center|34.774|
+
+六段均target_reached及servo_disabled code0；max tracking分别0.3669/0.1942/0.4863/0.2663/0.2194/0.2313°。POST_LIFT的时戳/夹爪稳定/持物/抬升到位/scene evidence gates全部通过。终态center位置误差2.058mm、姿态误差0.00488°。原目标已放回，夹爪松开，底盘未动。
+参数commissioning_state仅更新为STAGE1_V4_PICK_LIFT_REPLACE_RESET_VERIFIED并绑定成功证据。新专机place和AMR转场仍未验证，未宣布完整新Golden main完成，未push。
+
 ### V4：累计右旋2°，闭爪后原地保持
 
 按操作员明确要求，在V3当前位置TCP中心再绕BODY Z右旋1°（相对最初+4°修正累计右旋2°），成功目录 `worklog/evidence/shaiwang-contact-adjust/1793258531623731961/`。Native规划1.92秒，实际位移 `[+0.003446,−0.041938,+0.005858]mm`，target_reached/servo disable确认。之后仅执行右夹爪close raw0，延迟读回73，fault0；原始命令与状态存同目录close-command.json、close-delayed-readback.json、gripper-hold-status.json、hold-telemetry.json。没有抬升、底盘运动或回center。

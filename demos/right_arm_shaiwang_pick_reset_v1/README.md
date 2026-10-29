@@ -17,7 +17,7 @@
 已有TCP_LOCAL_Z的−10°补偿从原参数只读引用，不修改controller tool。
 本任务V4永久保存两类独立偏置：每次fresh检测位置加BODY `[+0.002,+0.002,−0.007]m`（原+5mm X叠加后撤3mm和左移2mm）；姿态先 `R_BODY_Z(+2°) × R_detected × R_TCP_Z(−10°)`，再围绕TCP中心、沿当前朝前端下俯1°。+2°来自原逆时针4°后累计右旋2°，不与local-Z的−10°混加。下俯绕BODY水平侧向轴，不导致TCP绕其他点公转。检测原始报文保持原样，目标平移不改变center位置，姿态补偿贯穿本任务右臂目标；不改变其他Golden或左臂。配置永久生效只针对本Demo，不写controller tool。
 `inspection_stop_before_close=true`时执行仅到CONTACT_HOLD_BEFORE_CLOSE：夹爪40%开度保持、不闭爪、不抬升、不自动退回；用于人工核对。确认后必须明确切回完整流程模式并fresh准备，不能把该检查点当完整Demo成功。
-当前已按人工认可切回 `inspection_stop_before_close=false`，下一轮是完整pick/lift/replace/reset；V4新偏置的整轮实机复测尚待下一次授权执行。第二次右旋1°后已按授权闭爪，当前停在原抓取位置，等待人工核对，不自动抬升、回center或重新抓取。
+当前 `inspection_stop_before_close=false`；V4永久偏置完整pick/lift/replace/reset已实机成功，证据 `worklog/evidence/demo-runs/right_arm_shaiwang_pick_reset_v1/run_1793259072432485426/`，脚本执行141.268秒。终态松爪、回center、Servo关闭，底盘未动。此验收仅覆盖阶段1前半程，不包含新专机place/导航，不将完整新Golden main冒称为已经验收。
 站位 `SIFT-BLC-GRSP` 已追加到 `config/manipulation_stations.json`，原站位保留；SLAM记录是观测值而非高精度导航验收。
 旧烘干机下层中间泊位偏置 `[0.315,-0.238,0.060,0,0,0]` 存储坐标系为DETECTION，状态CANDIDATE；其余五槽尚无偏置。旧偏置不等同于新专机偏置，本阶段不用。
 
