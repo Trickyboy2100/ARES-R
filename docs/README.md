@@ -1,5 +1,7 @@
 # ARES-R 文档入口
 
+- [甲方nodeapp参考工程与ROS封装对接说明](integration/2026-11-12_CLIENT_NODEAPP_ROS_INTEGRATION_REFERENCE.md)：任务动作、旧ROS服务桥和ARES-R Action的关系。
+
 - [常用操作与离线开发cheatsheet](CHEATSHEET_OFFLINE.md)：ROS回center、状态、取消、环境与离线测试。
 - [现场代码与本地差异、归档清单](reports/2026-11-12_OFFLINE_HANDOFF.md)：哪些内容已保存、哪些仍缺。
 - [ROS1节点使用说明](../ros1/ares_r_demo_bridge/README.md)：运行参数、反馈、结果与模拟测试。
