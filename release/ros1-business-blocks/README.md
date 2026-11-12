@@ -26,3 +26,9 @@ python3 -m unittest discover -s release/ros1-business-blocks/tests -q
 本机Parallels Ubuntu22.04中三个ROS包catkin构建通过：新Action MD5 `7b4edfbf807f9526b57393193f680fd1`；两个旧ABI保持不变。新5项、原Demo01 7项真实ROS通信测试通过，均为合成后端。原始日志在`evidence/`。
 
 默认节点继续拒绝物理Start。`~offline_replay=true`仅供测试，不是开启硬件执行的开关。测试用临时payload session不用于跨ROS任务生产交接；持久会话在Python runner层单独测试。ROS节点尚未对接canonical，也未具备生产级幂等/重启恢复，禁止作为客户运动交付包。
+
+## canonical适配与持久ROS增量
+
+`blocks/canonical.py`直接复用已存在的SIFT HOLD执行器和Place函数，原文件保持不变；提供工具ID缺参兼容及真实结果字段核验。`verify_canonical_imports.py`已在VM通过真实模块导入检查。源SHA在`CANONICAL_BINDINGS.json`。
+
+OFFLINE ROS节点现已支持持久请求/终态缓存及跨Goal payload session；`ros_session_transport.py`实测4项通过（包括节点重启、重复请求不重复释放）。状态路径用`~offline_state_dir`指定。合成模式还需进程环境`ARES_R_OFFLINE_REPLAY=1`，仅ROS参数不能开启。此前关于“临时会话/ROS幂等尚未实现”的记录由此增量取代；**生产canonical适配和新鲜持物绑定仍未发布**。

@@ -12,6 +12,7 @@ class ReplayJobs:
     def __init__(self, path):
         self.db=sqlite3.connect(str(path))
         self.db.execute('CREATE TABLE IF NOT EXISTS jobs (request TEXT PRIMARY KEY, fingerprint TEXT, run_id TEXT UNIQUE, state TEXT)')
+        self.db.execute('CREATE TABLE IF NOT EXISTS results (run_id TEXT PRIMARY KEY, body TEXT)')
         self.db.commit()
     def start(self, goal):
         if not goal.get('request_id'):
@@ -30,12 +31,13 @@ class ReplayJobs:
             self.db.commit();return dict(run_id=run,state='RUNNING',new_job=True)
         except BaseException:
             self.db.rollback();raise
-    def finish(self, run_id, state):
-        if state not in ('SUCCEEDED','FAULT','UNCERTAIN'):
+    def finish(self, run_id, state, result=None):
+        if state not in ('SUCCEEDED','FAULT','UNCERTAIN','STOPPED'):
             raise ValueError('INVALID_TERMINAL_STATE')
         with self.db:
             row=self.db.execute('SELECT state FROM jobs WHERE run_id=?',(run_id,)).fetchone()
             if not row or row[0]!='RUNNING':raise ValueError('JOB_NOT_RUNNING')
+            if result is not None:self.db.execute('INSERT OR REPLACE INTO results VALUES (?,?)',(run_id,json.dumps(result)))
             self.db.execute('UPDATE jobs SET state=? WHERE run_id=?',(state,run_id))
     def cancel(self, run_id, *, stop_confirmed=False):
         with self.db:
@@ -45,4 +47,9 @@ class ReplayJobs:
             state='STOPPED' if stop_confirmed else 'STOPPING'
             self.db.execute('UPDATE jobs SET state=? WHERE run_id=?',(state,run_id))
         return state
+    def result(self, run_id):
+        row=self.db.execute('SELECT body FROM results WHERE run_id=?',(run_id,)).fetchone()
+        return json.loads(row[0]) if row else None
+    def recover_restart(self):
+        with self.db:self.db.execute("UPDATE jobs SET state='UNCERTAIN' WHERE state IN ('RUNNING','STOPPING')")
     def close(self):self.db.close()

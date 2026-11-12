@@ -11,7 +11,7 @@ rows=json.loads((ROOT/'block_registry.json').read_text())['blocks']
 row=next(r for r in rows if r['id']=='P01')
 def goal(req='test',revision=None):
     return RunBlockGoal(request_id=req,block_id=row['block_id'],expected_profile_revision=revision or row['profile_revision'],onsite_observer_confirmed=True,prepared_environment_confirmed=True)
-def launch(*args):return subprocess.Popen([sys.executable,str(node),'_repository:='+str(REPO),*args])
+def launch(*args):return subprocess.Popen([sys.executable,str(node),'_repository:='+str(REPO),*args],env=dict(os.environ,ARES_R_OFFLINE_REPLAY='1'))
 def client():
     c=actionlib.SimpleActionClient('/ares_r/run_block',RunBlockAction)
     assert c.wait_for_server(rospy.Duration(10));return c
