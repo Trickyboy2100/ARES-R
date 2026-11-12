@@ -10,3 +10,7 @@
 - [分臂姿态注册表](../config/arm_pose_registry.json)：right/center兼容旧center；轴对正姿态快照。
 
 历史内容按原目录保留：`docs/reports/`报告，`docs/work_orders/`工作单，`docs/architecture/`架构，`docs/decisions/`决策，`docs/roadmaps/`路线。最新现场接口文档位于独立快照的`docs/`，不要把历史分支说明直接视为现场当前状态。
+
+- [功能块01 CenterRestore API](integration/2026-11-12_CENTER_RESTORE_API_CONTRACT.md)
+- [双腿实机验收与交接报告](reports/2026-11-12_ONSITE_CENTER_RESTORE_AND_HANDOFF.md)
+- [ROS离场资产索引](integration/2026-11-12_ROS1_DELIVERY_ASSET_INDEX.md)
