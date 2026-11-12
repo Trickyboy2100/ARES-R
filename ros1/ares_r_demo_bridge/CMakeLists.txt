@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.0.2)
+project(ares_r_demo_bridge)
+find_package(catkin REQUIRED COMPONENTS actionlib actionlib_msgs rospy std_msgs message_generation)
+add_action_files(FILES ReturnCenter.action)
+generate_messages(DEPENDENCIES actionlib_msgs std_msgs)
+catkin_package(CATKIN_DEPENDS actionlib actionlib_msgs rospy std_msgs message_runtime)
+catkin_install_python(PROGRAMS scripts/return_center_node.py scripts/return_center_client.py DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+install(DIRECTORY launch DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
