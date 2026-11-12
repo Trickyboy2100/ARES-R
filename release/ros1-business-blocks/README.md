@@ -18,3 +18,11 @@ python3 -m unittest discover -s release/ros1-business-blocks/tests -q
 新工位无偏置时显示 `PROFILE_NOT_BOUND`，不会借用其他工位的参数。归档核验覆盖整包字节SHA及tar可读性；第二份受控备份尚未核实。
 
 下一项实施：在既有canonical执行器中增加受控的Pick-HOLD结束边界，随后接入新Action；不能直接调用现有完整pick-reset脚本，它会自动把物体放回。未实现真实执行适配器、payload session持久化和实机验收之前，不开放Start。
+
+## 2026-11-13增量
+
+`blocks/runner.py`提供注入式Pick/Place阶段编排及SQLite持物会话。它目前只接受明确的OFFLINE适配器，不包含物理SDK调用。不要将其状态机测试结果当成新工位验收。
+
+本机Parallels Ubuntu22.04中三个ROS包catkin构建通过：新Action MD5 `7b4edfbf807f9526b57393193f680fd1`；两个旧ABI保持不变。新5项、原Demo01 7项真实ROS通信测试通过，均为合成后端。原始日志在`evidence/`。
+
+默认节点继续拒绝物理Start。`~offline_replay=true`仅供测试，不是开启硬件执行的开关。测试用临时payload session不用于跨ROS任务生产交接；持久会话在Python runner层单独测试。ROS节点尚未对接canonical，也未具备生产级幂等/重启恢复，禁止作为客户运动交付包。
