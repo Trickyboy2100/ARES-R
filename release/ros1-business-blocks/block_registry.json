@@ -1,0 +1,611 @@
+{
+  "schema_version": 1,
+  "blocks": [
+    {
+      "id": "U01",
+      "block_id": "utility.center_restore.right.v1",
+      "kind": "utility",
+      "acceptance": "ACCEPTED_SCOPE_LIMITED",
+      "physical_start_enabled": false,
+      "base_motion_allowed": false,
+      "optional": false,
+      "profile_revision": "NOT_BOUND",
+      "profile_sha256": null,
+      "existing_action": "/ares_r/center_restore",
+      "runblock_delegation_enabled": false,
+      "reason": "Use existing accepted Action; no new dispatch alias"
+    },
+    {
+      "id": "P01",
+      "block_id": "pick.scale.sieve.v1",
+      "kind": "pick",
+      "acceptance": "REACCEPT_REQUIRED",
+      "physical_start_enabled": false,
+      "base_motion_allowed": false,
+      "optional": false,
+      "profile_source": "release/site-source-20261112/demos/right_arm_sift_pick_lift_replace_reset_v1/source_parameters.json",
+      "profile_revision": "SHAIWANG_STAGE1_ID6_20261106_V12_EXTRA_ALLOWED_CONTACT_PROTRUSION",
+      "profile_sha256": "0775f9bcc3700b5f05312e5c40fa5472cab5c0c45a9c5c6e4fc0476264fddc1c",
+      "required_tool_id": null,
+      "required_site_max_velocity_rad_s": null,
+      "reason": "Offline contract only; canonical execution adapter and current-profile physical acceptance required",
+      "P0_current_archive_match": true
+    },
+    {
+      "id": "P02",
+      "block_id": "pick.scale.tray.v1",
+      "kind": "pick",
+      "acceptance": "REACCEPT_REQUIRED",
+      "physical_start_enabled": false,
+      "base_motion_allowed": false,
+      "optional": false,
+      "profile_source": "release/site-source-20261112/demos/right_arm_pick_lift_replace_reset_v1/source_parameters.json",
+      "profile_revision": "RIGHT_GRASP_PLACE_ROUNDTRIP_2026_11_09_V23_SITE020_NOCOMP_TOOL3_QSEEDS4_ANCHOR_ROLLED_BACK_SKIPFAST",
+      "profile_sha256": "8baa66f958bceaa4d06c039a2df9fb6739587b5a583cd260fb41e61ea2ce7e2f",
+      "required_tool_id": null,
+      "required_site_max_velocity_rad_s": null,
+      "reason": "Offline contract only; canonical execution adapter and current-profile physical acceptance required",
+      "P0_current_archive_match": true
+    },
+    {
+      "id": "P03",
+      "block_id": "pick.dmp.sieve.v1",
+      "kind": "pick",
+      "acceptance": "PLAN_ONLY",
+      "physical_start_enabled": false,
+      "base_motion_allowed": false,
+      "optional": false,
+      "profile_revision": "NOT_BOUND",
+      "profile_sha256": null,
+      "reason": "Offline contract only; canonical execution adapter and current-profile physical acceptance required"
+    },
+    {
+      "id": "P04",
+      "block_id": "pick.dmp.tray.v1",
+      "kind": "pick",
+      "acceptance": "PLAN_ONLY",
+      "physical_start_enabled": false,
+      "base_motion_allowed": false,
+      "optional": false,
+      "profile_revision": "NOT_BOUND",
+      "profile_sha256": null,
+      "reason": "Offline contract only; canonical execution adapter and current-profile physical acceptance required"
+    },
+    {
+      "id": "P05",
+      "block_id": "pick.dryer.tray.v1",
+      "kind": "pick",
+      "acceptance": "PLAN_ONLY",
+      "physical_start_enabled": false,
+      "base_motion_allowed": false,
+      "optional": false,
+      "profile_revision": "NOT_BOUND",
+      "profile_sha256": null,
+      "reason": "Offline contract only; canonical execution adapter and current-profile physical acceptance required"
+    },
+    {
+      "id": "L01",
+      "block_id": "place.dmp.sieve.v1",
+      "kind": "place",
+      "acceptance": "CANDIDATE",
+      "physical_start_enabled": false,
+      "base_motion_allowed": false,
+      "optional": false,
+      "profile_source": "release/site-source-20261112/demos/right_arm_dmp_place_v1/parameters.json",
+      "profile_revision": "DMP_PLACE_2026_11_09_V9",
+      "profile_sha256": "f29fd87828b3b90c452fa56950992dc51b16659031e6113fe72fcc4e5f27769e",
+      "required_tool_id": 3,
+      "required_site_max_velocity_rad_s": 0.2,
+      "effective_place": {
+        "enabled": true,
+        "epic_profile": "right_pick",
+        "epic_space_id": 2,
+        "epic_grasp_config_id": 2,
+        "epic_camera_id": 1,
+        "preplace_offset_body_m": [
+          -0.023,
+          -0.41,
+          0.1
+        ],
+        "preplace_offset_note": "相对 5700 检测返回点：x−23 mm、y−410 mm、z+100 mm（2026-11-09 操作员把 x 由 −25 → −23、y 由 −408 → −410；y 历史上由 −445 → −415 → −408）；放置点 = 预放置点 − descent（z 方向），所以 place 的 x/y 与预放置点相同。单次实验可用 --preplace-offset 覆盖",
+        "preplace_offset_history": [
+          {
+            "revision": "DMP_PLACE_2026_11_02_V1",
+            "offset_body_m": [
+              -0.02,
+              -0.445,
+              0.1
+            ]
+          },
+          {
+            "revision": "DMP_PLACE_2026_11_06_V3",
+            "offset_body_m": [
+              -0.02,
+              -0.415,
+              0.1
+            ],
+            "changed_by": "operator 2026-11-06"
+          },
+          {
+            "revision": "DMP_PLACE_2026_11_06_V4",
+            "offset_body_m": [
+              -0.02,
+              -0.408,
+              0.1
+            ],
+            "changed_by": "operator 2026-11-06（预放置点现场核对后微调 y +7 mm）"
+          },
+          {
+            "revision": "DMP_PLACE_2026_11_09_V8",
+            "offset_body_m": [
+              -0.025,
+              -0.408,
+              0.1
+            ],
+            "changed_by": "operator 2026-11-09（x 由 −20 → −25 mm）"
+          },
+          {
+            "revision": "DMP_PLACE_2026_11_09_V9",
+            "offset_body_m": [
+              -0.023,
+              -0.41,
+              0.1
+            ],
+            "changed_by": "operator 2026-11-09（x → −23 mm、y → −410 mm）"
+          }
+        ],
+        "descent_m": 0.06,
+        "descent_note": "2026-11-09 现场要求改回 0.060（经过：0.065 实机过深触发碰撞 983092 → 0.060 → 当晚试 0.070 → 回到 0.060）。place = preplace − descent，下降量直接决定放置深度；BODY −Z，控制器原生 MoveL，执行后用 TCP 实测位移 ±3 mm 复核",
+        "descent_mode": "CONTROLLER_LINEAR_MOVE",
+        "descent_mode_note": "2026-11-09 现场要求：预放置到位后直接像 JAKA App 里一样沿竖直方向 jog 下去（控制器原生 linear_move/MoveL），**不经过 cuRobo**。因此下降段不再被观测体素碰撞（INVALID_GOAL_COLLISION）或水平门挡住；仍保留：控制器 errcode/保护停/碰撞/限位守卫、tool_id=3、站点速度上限预检、逐 50 ms 轮询（出碰撞立即 motion_abort）、位移与横向偏差复核。改回规划式下降设 CUROBO_PLAN。注意：cuRobo 当时报落点比观测支撑面深 7.9 mm，MoveL 会真实压到该位置，控制器碰撞保护可能触发。",
+        "descent_speed_mm_s": 10.0,
+        "descent_speed_note": "控制器 MoveL 的 TCP 速度（mm/s）；60 mm 约 6 s。范围 1..50",
+        "skip_preplace_within_tolerance_m": 0.005,
+        "skip_preplace_note": "当前 TCP 已在预放置点 ±5 mm 内时不再重规划/重跑预放置段，直接从当前位姿规划下降段（避开目标窗口里的腕部自观测残影）",
+        "goal_collision_waiver": {
+          "enabled": false,
+          "max_penetration_mm": 10.0,
+          "allowed_prefixes": [
+            "observed_support_",
+            "observed_remaining_structure_"
+          ],
+          "operator_approved": "2026-11-09 曾按现场判断开启，但当日实机结果否定了这个前提",
+          "disabled_reason": "2026-11-09 实机：豁免后 cuRobo 规划出一条横向偏移 263 mm、中途低于目标 8 mm 的绕行路径，执行时控制器报 983092 碰撞并锁存保护停（TCP 已到 [686.0,-454.2,1193.9] mm）。说明那些体素不是完全误检。默认关闭，= 保持 fail-closed；若确需开启，必须同时满足下降垂直硬门限（见 platform.descent_*）。",
+          "note": "只豁免**实际穿透落点**的对象（从 INVALID_GOAL_COLLISION 表自动提取），以 ignore_cuboid_ids 下发；前缀不在白名单或深度超上限则整次不豁免（fail-closed）。每次豁免写 goal-collision-waiver-<label>.json。"
+        },
+        "start_collision_waiver": {
+          "enabled": true,
+          "max_penetration_mm": 5.0,
+          "allowed_prefixes": [
+            "observed_remaining_observed_unknown_occupied_"
+          ],
+          "operator_approved": "2026-11-09 现场选择：起点被单个观测体素穿透 3.1 mm，现场确认该体素为误检",
+          "note": "仅针对 INVALID_START_COLLISION（起点自检）。只豁免实际穿透且前缀在白名单、深度 ≤ 5 mm 的对象，以 ignore_cuboid_ids 从碰撞世界排除后重规划同一段；任一对象越界则整次不豁免（fail-closed）。每次豁免写 start-collision-waiver-<label>.json，指标写 start-collision-<label>.json。注意：该对象被整体排除后，路径也可能从该处经过 —— 只对确认过的误检体素开启。"
+        },
+        "release_raw": 400,
+        "release_readback_tolerance_raw": 60,
+        "post_release_retreat": {
+          "enabled": true,
+          "axis_body": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "distance_m": 0.04,
+          "speed_mm_s": 10.0,
+          "source": "demo-3 right_arm_sift_pick_lift_replace_reset_v1 的 retreat 段（validated_reverse_of contact）；用 FK 从其 native 轨迹实测：contact 末 [668.37,-196.08,1026.81] mm → retreat 末 [613.38,-196.17,1026.71] mm，即 BODY x −54.99 mm、y/z ≈ 0",
+          "distance_note": "2026-11-09 实测：本 Demo 的预放置点几何下，x−55 mm 会把 j3 从 −112.09° 推到 −128.38°，越过站点软限位下限 −125°（hard −130° 再内缩 5°），此后任何回 center 轨迹都会被原生打包拒绝。IK 实算：x−55→−128.3（违规）、x−40→−124.0（OK）、x−30→−121.1、x−20→−118.1、z+40→−114.5。因此取 40 mm（demo-3 的方向不变，距离受本站位关节空间限制）；若仍越限，controller_body_move 会沿同方向自动缩短行程并记录 clamped_mm。",
+          "note": "2026-11-09 加入：松爪后先沿 BODY x− 退出 55 mm，再从脱离位姿规划回 center。当天直接规划 center 时工具卡在槽里斜向抽出，控制器报 983092 碰撞并锁存保护停。"
+        },
+        "attach_payload_collision": false,
+        "keep_detected_yaw": false,
+        "yaw_target_deg": null,
+        "yaw_target_note": "null=保持当前 TCP yaw；若给数值则修正到该 BODY yaw",
+        "authorization": "RIGHT SCENE_AWARE SUPERVISED"
+      },
+      "reason": "Offline contract only; canonical execution adapter and current-profile physical acceptance required",
+      "P0_current_archive_match": true
+    },
+    {
+      "id": "L02",
+      "block_id": "place.dmp.tray.v1",
+      "kind": "place",
+      "acceptance": "CANDIDATE",
+      "physical_start_enabled": false,
+      "base_motion_allowed": false,
+      "optional": false,
+      "profile_source": "release/site-source-20261112/demos/right_arm_liaopan_dmp_place_v1/parameters.json",
+      "profile_revision": "LIAOPAN_DMP_PLACE_2026_11_11_V7_Y5_Z20_D20",
+      "profile_sha256": "97e878c18af3c334e228221c61eb259e4037243bcecbcfb4e6e6380e5e8f2aa6",
+      "required_tool_id": 3,
+      "required_site_max_velocity_rad_s": 0.2,
+      "effective_place": {
+        "enabled": true,
+        "epic_profile": "right_pick",
+        "epic_space_id": 2,
+        "epic_grasp_config_id": 2,
+        "epic_camera_id": 1,
+        "plan_direct_to_place": false,
+        "plan_direct_to_place_note": "false = 两段式（预放置点 + 下降），与 demo-5 同构；true 的直放模式保留在代码里可用（place = detection + offset、无下降段），供以后重测",
+        "preplace_offset_body_m": [
+          0.0,
+          0.005,
+          0.02
+        ],
+        "preplace_offset_note": "2026-11-11 现场：预放置点 = 5700 检测返回点 **BODY y+5 mm、z+20 mm**（x 不偏移），yaw 固定 0；放置点 = 预放置点正下方 **20 mm**（= 检测点 y+5 mm / z 0 mm），不再强制等于检测点。直放模式（plan_direct_to_place=true）下这个偏移会直接作用在落点上",
+        "preplace_offset_history": [
+          {
+            "revision": "LIAOPAN_DMP_PLACE_2026_11_09_V1",
+            "offset_body_m": [
+              0.0,
+              0.0,
+              0.06
+            ],
+            "changed_by": "operator 2026-11-09（预放置点在检测返回点 z+60 mm）"
+          },
+          {
+            "revision": "LIAOPAN_DMP_PLACE_2026_11_09_V2_DIRECT",
+            "offset_body_m": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "changed_by": "operator 2026-11-09（取消预放置点，直接规划到放置点=检测点）"
+          },
+          {
+            "revision": "LIAOPAN_DMP_PLACE_2026_11_09_V3_PREPLACE20_WAIVER",
+            "offset_body_m": [
+              0.0,
+              0.0,
+              0.02
+            ],
+            "changed_by": "operator 2026-11-09（预放置点定在检测点上方 20 mm，再下降 20 mm 到检测点）"
+          },
+          {
+            "revision": "LIAOPAN_DMP_PLACE_2026_11_09_V4_FP_VOXELS",
+            "offset_body_m": [
+              0.0,
+              0.0,
+              0.02
+            ],
+            "changed_by": "误检体素整族排除（几何未变）"
+          },
+          {
+            "revision": "LIAOPAN_DMP_PLACE_2026_11_09_V6_Y5_YAW0_D10",
+            "offset_body_m": [
+              0.0,
+              0.005,
+              0.0
+            ],
+            "changed_by": "operator 2026-11-09（下降量 20 → 10 mm，放置点 = 预放置点下方 10 mm）"
+          },
+          {
+            "revision": "LIAOPAN_DMP_PLACE_2026_11_11_V7_Y5_Z20_D20",
+            "offset_body_m": [
+              0.0,
+              0.005,
+              0.02
+            ],
+            "changed_by": "operator 2026-11-11（预放置点 z+20 mm，下降 20 mm 到放置点）"
+          }
+        ],
+        "descent_m": 0.02,
+        "descent_note": "2026-11-11 现场：放置点 = 预放置点正下方 **20 mm**（= 检测点 y+5 mm / z 0 mm，与检测点无关）。BODY −Z，控制器原生 MoveL（不经过 cuRobo，不受观测体素碰撞检查影响），执行后用 TCP 实测位移 ±3 mm 复核",
+        "descent_mode": "CONTROLLER_LINEAR_MOVE",
+        "descent_mode_note": "2026-11-09 现场：预放置到位后像 JAKA App 里一样沿竖直方向 jog 下去（控制器原生 linear_move/MoveL），不经过 cuRobo。因此下降段不会被 INVALID_GOAL_COLLISION 或水平门挡住；仍保留：控制器 errcode/保护停/碰撞/限位守卫、tool_id=3、站点速度上限预检、逐 50 ms 轮询（出碰撞立即 motion_abort）、位移与横向偏差复核。注意：MoveL 会真实压到该位置，控制器碰撞保护可能触发（锁存后需示教器清除）。",
+        "descent_speed_mm_s": 10.0,
+        "descent_speed_note": "控制器 MoveL 的 TCP 速度（mm/s）；20 mm 约 2 s。范围 1..50",
+        "skip_preplace_within_tolerance_m": 0.005,
+        "skip_preplace_note": "当前 TCP 已在预放置点 ±5 mm 内时不再重规划/重跑预放置段，直接从当前位姿规划下降段",
+        "false_positive_voxels": {
+          "enabled": true,
+          "allowed_prefixes": [
+            "observed_support_00_component_",
+            "observed_support_01_support_surface",
+            "observed_remaining_observed_unknown_occupied_"
+          ],
+          "operator_approved": "2026-11-09 现场确认：这几个家族的观测体素为误检（鬼影），允许整族不从碰撞世界参与判定",
+          "why_family_not_offenders": "2026-11-09 实测：只豁免「落点穿透的那几个」不够——鬼影簇每次扫描重新编号，落点穿透的是 component_01，而限住路径的是同族 component_02（净空 1.3 mm）→ cuRobo 绕 244 mm、末端倒倒 17° → 被 5° 水平门限拒；另一次 component_01 → 2.4° 直通。所以按前缀整族排除才能真正稳。",
+          "safety": "名字只从**当次真实规划请求的净空表**里取（不是猜），worker 对未知名字 fail-closed；不在白名单的对象仍然算障碍。仍保留 5° 水平硬门限与同因早停。",
+          "evidence": "01-dmp-place/false-positive-voxels-preplace.json（被排除的对象名 + 前缀策略）"
+        },
+        "goal_collision_waiver": {
+          "enabled": true,
+          "max_penetration_mm": 20.0,
+          "allowed_prefixes": [
+            "observed_support_00_component_",
+            "observed_support_01_support_surface",
+            "observed_remaining_observed_unknown_occupied_"
+          ],
+          "prefix_note": "前缀写到**不带编号**的位置：body 相机每次扫描会把同一处体素重新编号（2026-11-09 实测：support_00 的凸起在两次扫描间从 component_01 变成 component_00，occupied 从 _101 变 _104），所以不能带 component 编号/尾号，否则下一帧豁免就失效（fail-closed 整次拒）。",
+          "operator_approved": "2026-11-09 现场确认：预放置点（检测点上方 20 mm）处穿透的这几个观测体素为误检，同意豁免",
+          "approval_context": {
+            "measured_penetration_mm": 16.8,
+            "objects": {
+              "observed_support_00_component_00/01_protruding": -16.8,
+              "observed_support_01_support_surface_000": -6.3,
+              "observed_remaining_observed_unknown_occupied_<N>": -2.3
+            },
+            "measured_from": "2026-11-09 干跑与实机失败证据 tmp/11.9/demo6-z20-dry、tmp/11.9/demo6-v3-dry、worklog/evidence/demo-runs/right_arm_liaopan_dmp_place_v1/run_1794215092851725227 的 *-goal-collision.json",
+            "why": "检测点作为落点时 cuRobo 报 INVALID_GOAL_COLLISION；抬高 20 mm 后穿透 16.8 mm 仍全在那个凸起体素上，现场判定为误检（非真实结构）"
+          },
+          "note": "只豁免**实际穿透目标位姿**的对象（从 INVALID_GOAL_COLLISION 表自动提取），以 ignore_cuboid_ids 下发；前缀不在白名单或深度超上限（20 mm）则整次不豁免（fail-closed，保持默认拒绝）。每次豁免写 goal-collision-waiver-<label>.json。白名单只覆盖现场确认过的这三个对象（含 support_surface 的编号后缀），不要扩展成整个 observed_support_。风险提示：2026-11-09 曾开过更宽的豁免（observed_support_/observed_remaining_structure_）导致 cuRobo 绕行并在实机撞到结构（983092 保护停）——所以本 Demo 仍保留 5° 水平硬门限与同因早停。",
+          "disabled_reason": null
+        },
+        "start_collision_waiver": {
+          "enabled": true,
+          "max_penetration_mm": 5.0,
+          "allowed_prefixes": [
+            "observed_remaining_observed_unknown_occupied_"
+          ],
+          "operator_approved": "2026-11-09 现场选择：起点被单个观测体素穿透 3.1 mm，现场确认该体素为误检",
+          "note": "仅针对 INVALID_START_COLLISION（起点自检）。只豁免实际穿透且前缀在白名单、深度 ≤ 5 mm 的对象，以 ignore_cuboid_ids 从碰撞世界排除后重规划同一段；任一对象越界则整次不豁免（fail-closed）。每次豁免写 start-collision-waiver-<label>.json，指标写 start-collision-<label>.json。注意：该对象被整体排除后，路径也可能从该处经过 —— 只对确认过的误检体素开启。"
+        },
+        "release_raw": 400,
+        "release_readback_tolerance_raw": 60,
+        "post_release_retreat": {
+          "enabled": true,
+          "axis_body": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "distance_m": 0.04,
+          "source": "demo-3 right_arm_sift_pick_lift_replace_reset_v1 的 retreat 段（validated_reverse_of contact）；用 FK 从其 native 轨迹实测：contact 末 [668.37,-196.08,1026.81] mm → retreat 末 [613.38,-196.17,1026.71] mm，即 BODY x −54.99 mm、y/z ≈ 0",
+          "distance_note": "沿用 demo-5 的 40 mm：demo-5 的预放置点几何下 x−55 mm 会把 j3 推到 −128.38°，越过站点软限位下限 −125°（hard −130° 再内缩 5°）。料盘专机的预放置点更高（检测点 z+60 mm），实际关节余量需现场复核；若仍越限，controller_body_move 会沿同方向自动缩短行程并记录 clamped_mm。",
+          "note": "2026-11-09 demo-5 加入：松爪后先沿 BODY x− 退出（demo-3 方向），再从脱离位姿规划回 center。当天直接规划 center 时工具卡在槽里斜向抽出，控制器报 983092 碰撞并锁存保护停。"
+        },
+        "attach_payload_collision": false,
+        "keep_detected_yaw": false,
+        "yaw_target_deg": 0.0,
+        "yaw_target_note": "2026-11-09 现场要求：末端 yaw 必须为 0（BODY yaw = 0，水平）；由 validate_level_path 的 final_yaw_rad 硬校验。以前为 null（= 保持当前 TCP yaw ≈ −3.4°）",
+        "authorization": "RIGHT SCENE_AWARE SUPERVISED"
+      },
+      "reason": "Offline contract only; canonical execution adapter and current-profile physical acceptance required",
+      "P0_current_archive_match": true
+    },
+    {
+      "id": "L03",
+      "block_id": "place.dryer.tray.v1",
+      "kind": "place",
+      "acceptance": "CANDIDATE",
+      "physical_start_enabled": false,
+      "base_motion_allowed": false,
+      "optional": false,
+      "profile_source": "release/site-source-20261112/demos/right_arm_liaopan_hongganxiang_place/parameters.json",
+      "profile_revision": "LIAOPAN_HONGGANXIANG_PLACE_2026_11_11_V4_BERTH_Y273_Z70_MANIFOLD",
+      "profile_sha256": "27ed554de56d080d1d3024150b55f1ec9fe56724023d8818911d345f4801606a",
+      "required_tool_id": 3,
+      "required_site_max_velocity_rad_s": 0.2,
+      "effective_place": {
+        "enabled": true,
+        "epic_profile": "right_place_rightmost",
+        "epic_profile_note": "ID3 对应 config/system.json 里已 commission 的放置 profile（command 320,2,3,1,1,0、approach_axis=BODY_-Z）；不用 right_pick 再改 object_id 的写法，避免拿错匹配参数",
+        "epic_space_id": 2,
+        "epic_grasp_config_id": 3,
+        "epic_camera_id": 1,
+        "plan_direct_to_place": false,
+        "plan_direct_to_place_note": "false = 两段式（预放置点 → 控制器 MoveL 下降到泊位）；本 Demo 必须保留下降段，因为放置点就是泊位本身（预放置点在其上方 30 mm）",
+        "hard_level_manifold": {
+          "ik_samples": 25
+        },
+        "hard_level_manifold_note": "2026-11-11 现场要求：规划器必须全程保持水平，而不是只看终点。开这一项后放置腿的请求从 TERMINAL_EXPLICIT（只约束终点）改成 EXPLICIT + hard_level_manifold：显式水平姿态沿整条路径参与优化，worker 还会从起点到目标沿水平流形生成连续 IK 种子（build_level_manifold_seeds）作为唯一 goal 候选。实测背景：2026-11-11 同一目标 4 次规划全部被事后 5° 门限拒（13.0/7.9/7.6/12.2°），其中 QUALITY 单次 43–84 s，全程不上 motion 却烧了 240 s。关掉（删除本键）即回退到 demo-5/6 的 TERMINAL_EXPLICIT 行为。",
+        "hard_level_manifold_safety": "该项不替代独立校验：plan 完成后仍用 validate_level_path（5° 硬门限、yaw 0）逐点复核，失败照样拒绝；它只是让规划器一开始就沿水平流形求解，避免白烧算力。",
+        "berth_reference": {
+          "slot_id": "lower_middle",
+          "slot_label": "烘干箱 下层中间泊位",
+          "slot_calibration_state": "CANDIDATE",
+          "slot_state_file": "worklog/runtime/operations/state.json",
+          "slot_registry_revision_observed": 21,
+          "slot_registry_revision_note": "CANDIDATE 偏置可能被现场重新标定；每次开工前核对注册表 revision 与 offset_m_rad，若变化必须重算 preplace_offset_body_m 并更新本文件，代码运行时不会自动读取注册表",
+          "offset_frame": "DETECTION",
+          "offset_axes_revision": "BODY_DETECTION_AXES_2026_10_16_V1",
+          "offset_input_frame": "DETECTION",
+          "offset_detection_m_rad": [
+            0.315,
+            -0.273,
+            0.07,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "offset_detection_source": "控制台「烘干箱泊位注册表」lower_middle · CANDIDATE（2026-11-11 15:20 现场改动 Y 与 Z；内部按检测坐标系保存）",
+          "offset_body_m": [
+            0.07,
+            -0.315,
+            0.273
+          ],
+          "conversion_formula": "BODY = [det_Z, -det_X, -det_Y]；R_BODY_DETECTION = [[0,0,1],[-1,0,0],[0,-1,0]]（控制台一键切换 BODY 用的是同一换算）。注意：检测 Y 更负 = BODY 更高；检测 Z 变大 = BODY 更靠前，不是变高",
+          "place_point_body_from_detection_m": [
+            0.07,
+            -0.315,
+            0.273
+          ],
+          "preplace_above_place_m": 0.03,
+          "place_is_berth": true,
+          "reachability_check": {
+            "why": "2026-11-11 旧值 [0.315,-0.238,0.060]（BODY [60,-315,238] mm）下，30 mm 下降被 IK 裁到 24 mm，24 mm 解落在 j3≈0 的肘奇异面（雅可比 σ_min=0.0001、条件数 13600），控制器 linear_move 接受命令但不运动",
+            "checked_at": "2026-11-11 15:22 离线复算（本次运行的 URDF/Tool/起点）",
+            "place_ik": {
+              "joints_deg": [
+                -219.6,
+                -75.4,
+                -26.8,
+                -208.7,
+                -71.4,
+                -48.9
+              ],
+              "position_error_mm": 0.0,
+              "jacobian_sigma_min": 0.0383
+            },
+            "preplace_ik": {
+              "joints_deg": [
+                -216.2,
+                -66.9,
+                -43.7,
+                -205.8,
+                -77.4,
+                -55.8
+              ],
+              "position_error_mm": 0.001,
+              "jacobian_sigma_min": 0.0619
+            },
+            "conclusion": "新值下 place z=942.4 mm、preplace z=972.4 mm（以 2026-11-11 15:06 检测 [617.3,207.2,669.4] 为参考），yaw 0 的 place/preplace IK 均精确可解，下降 30 mm 的 j3 从 −43.7° 到 −26.8°，不穿奇异面；仍保留 controller_body_move 的软限位裁剪与 5° 水平复核",
+            "note": "检测点每次会漂移 ±1 mm，以上数值仅供开工核对；实机仍以当次 preplace-offset.json / descend.direct-move.json 为准"
+          },
+          "measured_cross_check": {
+            "revision": "LIAOPAN_HONGGANXIANG_PLACE_2026_11_11_V1_BERTH_LOWER_MIDDLE_D30（旧值 [0.315,-0.238,0.060]）",
+            "method": "用历史 ID3 检测原始响应（rpy≈89.9/179.6/46.2 deg，检测坐标系≈标称 BODY_DETECTION）复算 lower_middle 的 BODY 增量",
+            "samples_body_mm": [
+              [
+                66.72,
+                -315.33,
+                235.77
+              ],
+              [
+                67.0,
+                -314.34,
+                237.01
+              ],
+              [
+                64.04,
+                -315.53,
+                236.24
+              ]
+            ],
+            "conclusion": "旧值换算 [60,-315,238] mm；x 有 +4~7 mm 的检测姿态倾斜残差。2026-11-11 现场把检测 Y 从 −0.238 改为 −0.273（+35 mm 高）、检测 Z 从 0.060 改为 0.070（+10 mm 前），本文件已按 BODY [70,-315,273] mm 重算"
+          }
+        },
+        "preplace_offset_body_m": [
+          0.07,
+          -0.315,
+          0.303
+        ],
+        "preplace_offset_note": "2026-11-11 现场：放置点 = 控制台泊位 lower_middle（CANDIDATE，注册表 revision 21）= 5700 ID3 检测返回点 + 检测坐标系偏置 [0.315,-0.273,0.070] m，换算到 BODY = +[70,-315,273] mm；预放置点 = 放置点正上方 **30 mm**（BODY +Z），因此预放置点相对检测返回点的 BODY 偏置 = [0.070,-0.315,0.303] m。末端 yaw 固定 0°（新高度下 yaw 0 已足够，不需要改 yaw）",
+        "preplace_offset_history": [
+          {
+            "revision": "LIAOPAN_HONGGANXIANG_PLACE_2026_11_11_V1_BERTH_LOWER_MIDDLE_D30",
+            "offset_body_m": [
+              0.06,
+              -0.315,
+              0.268
+            ],
+            "changed_by": "operator 2026-11-11（泊位 lower_middle · CANDIDATE 作为放置点，预放置点在其上方 30 mm）"
+          },
+          {
+            "revision": "LIAOPAN_HONGGANXIANG_PLACE_2026_11_11_V3_BERTH_Y273_Z70",
+            "offset_body_m": [
+              0.07,
+              -0.315,
+              0.303
+            ],
+            "changed_by": "operator 2026-11-11 15:20 在控制台把 lower_middle 检测 Y −0.238→−0.273、Z 0.060→0.070（BODY +35 mm 高 / +10 mm 前）；旧值下降到 24 mm 即遇肘奇异，控制器 MoveL 不执行"
+          }
+        ],
+        "descent_m": 0.03,
+        "descent_note": "2026-11-11 现场：放置点 = 预放置点正下方 **30 mm**（= 泊位参考点）。BODY −Z，控制器原生 MoveL（不经过 cuRobo，不受观测体素碰撞检查影响），执行后用 TCP 实测位移 ±3 mm 复核",
+        "descent_mode": "CONTROLLER_LINEAR_MOVE",
+        "descent_mode_note": "沿用 demo-6：预放置到位后像 JAKA App 里一样沿竖直方向 jog 下去（控制器原生 linear_move/MoveL），不经过 cuRobo。因此下降段不会被 INVALID_GOAL_COLLISION 或水平门挡住；仍保留：控制器 errcode/保护停/碰撞/限位守卫、tool_id=3、站点速度上限预检、逐 50 ms 轮询（出碰撞立即 motion_abort）、位移与横向偏差复核。注意：MoveL 会真实压到该位置，控制器碰撞保护可能触发（锁存后需示教器清除）。",
+        "descent_speed_mm_s": 10.0,
+        "descent_speed_note": "控制器 MoveL 的 TCP 速度（mm/s）；30 mm 约 3 s。范围 1..50",
+        "skip_preplace_within_tolerance_m": 0.005,
+        "skip_preplace_note": "当前 TCP 已在预放置点 ±5 mm 内时不再重规划/重跑预放置段，直接从当前位姿规划下降段",
+        "false_positive_voxels": {
+          "enabled": true,
+          "inherited_from": "right_arm_liaopan_dmp_place_v1",
+          "site_reconfirmation_required": true,
+          "site_reconfirmation_note": "这组前缀是 demo-6（DMP 专机台面）现场确认过的鬼影家族；换成烘干箱泊位后位置不同，首次实机前必须按当次扫描重新确认，若新场景的同名前缀对应真实结构，应把本项关闭或收窄（其余对象仍 fail-closed）。**2026-11-11 现场已确认：本次看到的限制体素不是误检（操作员看错），因此不预先排除任何家族**。",
+          "allowed_prefixes": [
+            "observed_support_00_component_",
+            "observed_support_01_support_surface",
+            "observed_remaining_observed_unknown_occupied_"
+          ],
+          "operator_approved": "2026-11-09 现场确认（demo-6 场景）：这几个家族的观测体素为误检（鬼影），允许在 INVALID_GOAL_COLLISION 时按当次净空表的真实名字排除；本 Demo 沿用，烘干箱泊位需现场复核",
+          "why_family_not_offenders": "2026-11-09 实测：只豁免「落点穿透的那几个」不够——鬼影簇每次扫描重新编号，落点穿透的是 component_01，而限住路径的是同族 component_02（净空 1.3 mm）→ cuRobo 绕 244 mm、末端倒倒 17° → 被 5° 水平门限拒；另一次 component_01 → 2.4° 直通。所以按前缀整族排除才能真正稳。",
+          "safety": "名字只从**当次真实规划请求的净空表**里取（不是猜），worker 对未知名字 fail-closed；不在白名单的对象仍然算障碍。**有意不在规划前预先移除**：只有真出现 INVALID_GOAL_COLLISION 时才排除，避免把真实障碍提前删掉。仍保留 5° 水平硬门限与同因早停。",
+          "evidence": "01-dmp-place/false-positive-voxels-preplace.json（被排除的对象名 + 前缀策略）"
+        },
+        "goal_collision_waiver": {
+          "enabled": true,
+          "max_penetration_mm": 20.0,
+          "inherited_from": "right_arm_liaopan_dmp_place_v1",
+          "site_reconfirmation_required": true,
+          "site_reconfirmation_note": "demo-6 的批准对象是 DMP 落点处的凸起体素；烘干箱泊位的穿透对象不同，首次实机前必须先看 goal-collision 表，按现场确认结果决定是否保留本豁免（前缀不在白名单或深度超限时本来就整次拒绝）",
+          "allowed_prefixes": [
+            "observed_support_00_component_",
+            "observed_support_01_support_surface",
+            "observed_remaining_observed_unknown_occupied_"
+          ],
+          "prefix_note": "前缀写到**不带编号**的位置：body 相机每次扫描会把同一处体素重新编号（2026-11-09 实测：support_00 的凸起在两次扫描间从 component_01 变成 component_00，occupied 从 _101 变 _104），所以不能带 component 编号/尾号，否则下一帧豁免就失效（fail-closed 整次拒）。",
+          "operator_approved": "2026-11-09 现场确认（demo-6 场景）：预放置点处穿透的这几个观测体素为误检，同意豁免；本 Demo 沿用，烘干箱泊位需现场重新确认",
+          "approval_context": {
+            "measured_penetration_mm": 16.8,
+            "objects": {
+              "observed_support_00_component_00/01_protruding": -16.8,
+              "observed_support_01_support_surface_000": -6.3,
+              "observed_remaining_observed_unknown_occupied_<N>": -2.3
+            },
+            "measured_from": "demo-6 证据：tmp/11.9/demo6-z20-dry、tmp/11.9/demo6-v3-dry、worklog/evidence/demo-runs/right_arm_liaopan_dmp_place_v1/run_1794215092851725227 的 *-goal-collision.json",
+            "why": "demo-6 检测点作为落点时 cuRobo 报 INVALID_GOAL_COLLISION；抬高 20 mm 后穿透 16.8 mm 仍全在那个凸起体素上，现场判定为误检（非真实结构）"
+          },
+          "note": "只豁免**实际穿透目标位姿**的对象（从 INVALID_GOAL_COLLISION 表自动提取），以 ignore_cuboid_ids 下发；前缀不在白名单或深度超上限（20 mm）则整次不豁免（fail-closed，保持默认拒绝）。每次豁免写 goal-collision-waiver-<label>.json。白名单只覆盖白名单里的家族，不要扩展成整个 observed_support_。风险提示：2026-11-09 曾开过更宽的豁免（observed_support_/observed_remaining_structure_）导致 cuRobo 绕行并在实机撞到结构（983092 保护停）——所以本 Demo 仍保留 5° 水平硬门限与同因早停。",
+          "disabled_reason": null
+        },
+        "start_collision_waiver": {
+          "enabled": true,
+          "max_penetration_mm": 5.0,
+          "allowed_prefixes": [
+            "observed_remaining_observed_unknown_occupied_"
+          ],
+          "operator_approved": "2026-11-09 现场选择（demo-6）：起点被单个观测体素穿透 3.1 mm，现场确认该体素为误检；本 Demo 沿用，需现场复核",
+          "note": "仅针对 INVALID_START_COLLISION（起点自检）。只豁免实际穿透且前缀在白名单、深度 ≤ 5 mm 的对象，以 ignore_cuboid_ids 从碰撞世界排除后重规划同一段；任一对象越界则整次不豁免（fail-closed）。每次豁免写 start-collision-waiver-<label>.json，指标写 start-collision-<label>.json。注意：该对象被整体排除后，路径也可能从该处经过 —— 只对确认过的误检体素开启。"
+        },
+        "release_raw": 400,
+        "release_readback_tolerance_raw": 60,
+        "post_release_retreat": {
+          "enabled": true,
+          "axis_body": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "distance_m": 0.04,
+          "source": "沿用 demo-6 / demo-5（demo-3 right_arm_sift_pick_lift_replace_reset_v1 的 retreat 段，validated_reverse_of contact）",
+          "distance_note": "沿用 demo-6 的 40 mm。烘干箱泊位在 BODY y 方向离机器人更远（检测点 y-315 mm）、且 x 只偏 +60 mm，x− 后退方向的关节余量必须在首次干跑/分段实机时复核；若越软限位，controller_body_move 会沿同方向自动缩短行程并记录 clamped_mm。",
+          "note": "松爪后先沿 BODY x− 退出，再从脱离位姿规划回 center。demo-5/6 实测：直接规划 center 时工具卡在槽里斜向抽出，控制器报 983092 碰撞并锁存保护停。"
+        },
+        "attach_payload_collision": false,
+        "keep_detected_yaw": false,
+        "yaw_target_deg": 0.0,
+        "yaw_target_note": "沿用 demo-6：末端 yaw 必须为 0（BODY yaw = 0，水平）；由 validate_level_path 的 final_yaw_rad 硬校验。历史 ID3 放置同样是 LEVEL_YAW_TARGET yaw 0。",
+        "authorization": "RIGHT SCENE_AWARE SUPERVISED"
+      },
+      "reason": "Offline contract only; canonical execution adapter and current-profile physical acceptance required",
+      "P0_current_archive_match": true
+    },
+    {
+      "id": "L04",
+      "block_id": "place.scale.sieve.v1",
+      "kind": "place",
+      "acceptance": "DISABLED_REQUIREMENT_PENDING",
+      "physical_start_enabled": false,
+      "base_motion_allowed": false,
+      "optional": true,
+      "profile_revision": "NOT_BOUND",
+      "profile_sha256": null,
+      "reason": "Offline contract only; canonical execution adapter and current-profile physical acceptance required"
+    },
+    {
+      "id": "L05",
+      "block_id": "place.scale.tray.v1",
+      "kind": "place",
+      "acceptance": "DISABLED_REQUIREMENT_PENDING",
+      "physical_start_enabled": false,
+      "base_motion_allowed": false,
+      "optional": true,
+      "profile_revision": "NOT_BOUND",
+      "profile_sha256": null,
+      "reason": "Offline contract only; canonical execution adapter and current-profile physical acceptance required"
+    }
+  ]
+}

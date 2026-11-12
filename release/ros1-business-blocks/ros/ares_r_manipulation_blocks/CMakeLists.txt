@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.0.2)
+project(ares_r_manipulation_blocks)
+find_package(catkin REQUIRED COMPONENTS actionlib actionlib_msgs message_generation rospy)
+add_action_files(FILES RunBlock.action)
+generate_messages(DEPENDENCIES actionlib_msgs)
+catkin_package(CATKIN_DEPENDS actionlib actionlib_msgs message_runtime rospy)
+catkin_install_python(PROGRAMS scripts/run_block_node.py DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
