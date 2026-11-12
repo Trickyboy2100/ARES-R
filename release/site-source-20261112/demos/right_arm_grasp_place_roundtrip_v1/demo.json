@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "demo_id": "right_arm_grasp_place_roundtrip_v1",
+  "name": "右臂取料—230mm抬升—泊位放置—底盘往返",
+  "version": "0.2.0-review",
+  "category": "manipulation",
+  "description": "fresh ID1取料、水平抬升230mm、三段转场、fresh ID3+下层中间偏置+40mm释放；不收臂，原路返回。每段最多3次规划：FAST4s→QUALITY→QUALITY。待全链现场验收。",
+  "commissioning_state": "IMPLEMENTED_PENDING_REVIEW_AND_FULL_CYCLE_COMMISSIONING",
+  "freshness_policy": {"observation": "FRESH_EVERY_STATION", "robot_state": "FRESH_BEFORE_EACH_EXECUTION", "trajectory": "NEVER_REUSE_AFTER_MOTION", "scene": "INVALIDATE_ON_BASE_OR_ARM_MOVEMENT"},
+  "execution": {
+    "entrypoint": "scripts/run_grasp_place_roundtrip.py",
+    "prepare_command": "python3 scripts/run_grasp_place_roundtrip.py --prepare",
+    "run_command": "python3 scripts/run_grasp_place_roundtrip.py --execute --authorization 'RIGHT GRASP PLACE ROUNDTRIP' --onsite-observer-confirmed",
+    "stop_command": "python3 scripts/run_grasp_place_roundtrip.py --stop",
+    "authorization_phrase": "RIGHT GRASP PLACE ROUNDTRIP",
+    "requires_art_tty": true,
+    "webui_execution_allowed": false
+  },
+  "parameters": {"file": "demos/right_arm_grasp_place_roundtrip_v1/parameters.json"}
+}

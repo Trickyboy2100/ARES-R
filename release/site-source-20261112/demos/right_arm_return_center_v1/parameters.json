@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "demo_id": "right_arm_return_center_v1",
+  "parameters_revision": "RETURN_CENTER_2026_11_06_V1",
+  "arm": "right",
+  "inactive_arm_policy": "HOLD_CURRENT",
+  "goal_contract": "ares_r.manipulation.task_contract.center_goal",
+  "goal_source": "config/named_poses.json:poses.center.arms.right.body_tcp_target_m_rad",
+  "required_site_max_velocity_rad_s": 0.2,
+  "speed_profile": "right_scene_aware_0_20",
+  "scene_policy": "FORCE_RESCAN",
+  "environment_avoidance": "ON",
+  "planning_modes": ["FAST", "QUALITY"],
+  "planning_rounds": 2,
+  "fast_deadline_s": 15.0,
+  "planning_deadline_source": "config/system.json:curobo.timeout_s",
+  "already_at_center_tolerance": {
+    "position_m": 0.003,
+    "orientation_deg": 3.0,
+    "note": "at or inside this tolerance the demo reports ALREADY_AT_CENTER and sends nothing"
+  },
+  "arrival_tolerance": {
+    "position_m": 0.003,
+    "orientation_deg": 3.0,
+    "note": "same contract check_center enforces for the named center"
+  },
+  "max_start_joint_gap_rad": 0.02,
+  "ik_seeds_rad": [
+    [-4.1196, -0.0124, -1.5085, -2.3876, 1.2141, 3.5746],
+    [-4.189898, 0.002825, -1.491076, 0.713551, -1.313154, 0.469005]
+  ],
+  "ik_seed_note": "Control tries the CURRENT joints first; these two are the physical center branches seen with controller tool tcp3 (2026-11-04) and with the earlier tool 1. Seeds never widen the goal, they only steer IK branch selection.",
+  "authorization_phrase": "RIGHT RETURN CENTER",
+  "motion_api_authorization": "RIGHT SCENE_AWARE SUPERVISED",
+  "motion_api_authorization_note": "canonical_backend validates /api/operations/execute against exactly this phrase; the operator-facing phrase above is what the demo itself requires on the command line.",
+  "never_clear_controller_errors": true,
+  "on_start_collision": "REFUSE_AND_REPORT_PENETRATING_OBJECTS",
+  "on_excursion_cap": "REFUSE_AND_REPORT_PER_JOINT_TRAVEL",
+  "native_max_excursion_deg": 150.0,
+  "notes": [
+    "Goal is a BODY TCP pose; the controller tool (tool_id/tcp) is read live per run and recorded, never hardcoded.",
+    "Every run plans fresh (FORCE_RESCAN) and dispatches within the 300 s plan window; old plans are never reused.",
+    "Site ceiling is asserted from config/jaka_mini2_motion.site.json; if it is not the required 0.2 the demo refuses instead of silently running slower."
+  ]
+}

@@ -1,0 +1,154 @@
+#!/usr/bin/env python3
+"""P3.2 cuRobo-only planning on an already frozen fresh BODY scene.
+
+No robot/base/gripper movement adapters are imported.  Cartesian samples are
+used solely to classify the swept straight reference corridor, never as a
+trajectory.  The actual point-to-point trajectory always comes from cuRobo.
+"""
+
+import argparse
+import json
+import os
+from pathlib import Path
+import sys
+
+import numpy as np
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+from ares_r.cli import load_config
+from ares_r.motion.curobo import CUROBO_COMMIT
+from ares_r.motion.curobo_params import planning_profile
+from ares_r.motion.se3 import pose_mm_rad_to_matrix
+from ares_r.motion.execution_tool_envelope import build_execution_tool_envelope
+from ares_r.motion.planner_service_client import plan as persistent_plan
+from ares_r.motion.tcp_orientation import HORIZONTAL_FORWARD_R_BODY, MAX_ORIENTATION_ERROR_DEG
+from search_p32_ab import build_solver
+
+
+def load(path):
+    return json.loads(Path(path).read_text())
+
+
+def main():
+    p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument("scene_dir", type=Path)
+    p.add_argument("--audit", type=Path, required=True)
+    p.add_argument("--search", type=Path, required=True)
+    p.add_argument("--candidate", type=int, default=0)
+    p.add_argument("--direction", choices=("A_to_B", "B_to_A", "CURRENT_to_A"), required=True)
+    p.add_argument("--policy", choices=("DIRECT", "BLOCK"), required=True)
+    p.add_argument("--execution-tool-envelope", action="store_true",
+                   help="P3.3 conservative link6 gripper plus controller-TCP envelope")
+    p.add_argument("--collision-activation-distance-m", type=float,
+                   help="planning-only cuRobo optimizer obstacle activation distance")
+    p.add_argument("--num-ik-seeds", type=int)
+    p.add_argument("--num-trajopt-seeds", type=int)
+    p.add_argument("--use-cuda-graph", action=argparse.BooleanOptionalAction, default=None)
+    p.add_argument("--output", type=Path, required=True)
+    a = p.parse_args()
+    if a.output.exists():
+        raise ValueError("refusing to overwrite planning artifact")
+    a.output.mkdir(parents=True)
+    config = load_config(str(ROOT / "config/system.json"))
+    scene = load(a.scene_dir / "compiled_scene.json")
+    report = load(a.scene_dir / "scene_report.json")
+    audit = load(a.audit)
+    candidate = load(a.search)["candidates"][a.candidate]
+    source, destination = (("A", "B") if a.direction == "A_to_B" else
+                           ("B", "A") if a.direction == "B_to_A" else ("CURRENT", "A"))
+    goal = candidate[destination+"_joints_rad"]
+    start = (audit["diagnostics"]["joint_position_rad"] if source == "CURRENT" else
+             candidate[source+"_joints_rad"])
+    goal_xyz = candidate[destination+"_xyz_m"]
+    tool = audit["diagnostics"]["tool_data"]["pose_mm_rad"]
+    solver = build_solver(audit, load(ROOT / "config/robot_collision_model.json"),
+                          load(ROOT / "config/robot_world.json"))
+    start_xyz = (solver.fk(start)[:3, 3].tolist() if source == "CURRENT" else
+                 candidate[source+"_xyz_m"])
+    orientation = np.asarray(candidate["orientation_matrix"])
+    if not np.allclose(orientation, HORIZONTAL_FORWARD_R_BODY, atol=1e-8):
+        raise ValueError("A/B TCP orientation must point BODY +X with horizontal fingers")
+    if source == "CURRENT" and a.policy != "DIRECT":
+        raise ValueError("current-to-A reposition must be a direct cuRobo request")
+    ab = None
+    if source != "CURRENT" and a.policy != "BLOCK":
+        reference, errors = solver.straight(start_xyz, goal_xyz, orientation, start, samples=61)
+        if float(np.max(np.abs(reference[-1]-goal))) > .12:
+            raise ValueError("reference IK branch differs from goal")
+        ab = {"motion_policy": "CUROBO_ONLY_FOR_EVERY_POINT_TO_POINT_LEG",
+              "TOOL_TCP_PHYSICAL_SEMANTICS_UNRESOLVED": "YES",
+              "reference_chord_joints_rad": reference.tolist(),
+              "reference_ik_errors": errors,
+              "planner_mode": "CUROBO_DIRECT", "explicit_waypoints": []}
+    parameters = planning_profile(config)
+    deployment=load(ROOT/"config/ab_demo_deployment_profile.json")["planner"]
+    parameters["num_ik_seeds"]=deployment["num_ik_seeds"]
+    parameters["num_trajopt_seeds"]=deployment["num_trajopt_seeds"]
+    parameters["use_cuda_graph"]=deployment["use_cuda_graph"]
+    if a.num_ik_seeds is not None:
+        parameters["num_ik_seeds"] = a.num_ik_seeds
+    if a.num_trajopt_seeds is not None:
+        parameters["num_trajopt_seeds"] = a.num_trajopt_seeds
+    if a.use_cuda_graph is not None:
+        parameters["use_cuda_graph"] = a.use_cuda_graph
+    if not 1 <= parameters["num_ik_seeds"] <= 32 or not 1 <= parameters["num_trajopt_seeds"] <= 32:
+        raise ValueError("seed counts must be between 1 and 32")
+    if a.collision_activation_distance_m is not None:
+        if not .005 <= a.collision_activation_distance_m <= .08:
+            raise ValueError("activation distance must be between 5 and 80 mm")
+        parameters["optimizer_collision_activation_distance"] = a.collision_activation_distance_m
+    collision_model=load(config["robot_collision"]["model"])
+    envelope=(build_execution_tool_envelope(collision_model,tool,
+                observed_demo_only=source!="CURRENT")
+              if a.execution_tool_envelope else None)
+    request = {"schema_version": 2, "planning_only": True, "execution_allowed": False,
+        "TOOL_TCP_PHYSICAL_SEMANTICS_UNRESOLVED": "YES",
+        "point_to_point_policy": {"motion_policy": "CUROBO_ONLY_FOR_EVERY_POINT_TO_POINT_LEG",
+            "planner_mode": "CUROBO_DIRECT", "explicit_waypoints": []},
+        "mode": report["mode"], "compiled_scene": scene,
+        "scene_snapshot_id": scene["scene_snapshot_id"], "scene_digest": scene["digest"],
+        "start_rad": start, "goal_rad": goal, "active_arm": "right",
+        "T_body_model": report["T_body_model"],
+        "T_link6_tcp": pose_mm_rad_to_matrix(tool),
+        "geometry_revision": report["geometry_revision"],
+        "inactive_arm_revision": report["inactive_arm_revision"],
+        "collision_model": collision_model,
+        "robot_yaml_urdf": str(Path(collision_model["asset_root"]) / collision_model["urdf"]),
+        "execution_tool_envelope":envelope,"controller_tool_pose_mm_rad":tool,
+        "robot_yaml": config["curobo"]["robot_yaml"], "expected_commit": CUROBO_COMMIT,
+        "planning_parameters": parameters, "benchmark_runs": 1,
+        "ab_demo": ab,
+        "orientation_lock": ({"policy": "BODY_FORWARD_HORIZONTAL_V1",
+            "target_R_body_tcp": HORIZONTAL_FORWARD_R_BODY.tolist(),
+            "max_error_deg": MAX_ORIENTATION_ERROR_DEG,
+            "non_terminal_orientation_cost": True} if source != "CURRENT" else None)}
+    (a.output / "planner_request.json").write_text(json.dumps(request, indent=2)+"\n")
+    metadata = {"P31_PUSHED_AND_ALIGNED": True,
+        "TOOL_TCP_PHYSICAL_SEMANTICS_UNRESOLVED": "YES",
+        "READY_FOR_FIRST_SUPERVISED_CLEAR_EXECUTION": "NO",
+        "execution_allowed": False, "source_scene": str(a.scene_dir.resolve()),
+        "snapshot_id": scene["scene_snapshot_id"], "direction": a.direction,
+        "policy": a.policy, "start_endpoint": source, "goal_endpoint": destination,
+        "start_body_xyz_m": start_xyz, "goal_body_xyz_m": goal_xyz,
+        "candidate_index": a.candidate, "reference_corridor_only": True,
+        "execution_tool_envelope_revision":envelope["revision"] if envelope else None,
+        "optimizer_collision_activation_distance_m": parameters["optimizer_collision_activation_distance"],
+        "ab_contract": candidate, "explicit_waypoints": [],
+        "orientation_lock": request["orientation_lock"]}
+    (a.output / "ab_plan_contract.json").write_text(json.dumps(metadata, indent=2)+"\n")
+    persistent_plan(config["curobo"]["python"], ROOT,
+                    a.output/"planner_request.json", a.output/"planning.json",
+                    a.output/"planner.log", float(config["curobo"]["timeout_s"]))
+    if not (a.output/"planning.json").exists():
+        raise RuntimeError(f"planning contract failed; inspect {a.output/'planner.log'}")
+    result = load(a.output/"planning.json")
+    print(json.dumps({"direction": a.direction, "policy": a.policy,
+        "classification": result.get("ab_demo", {}).get("corridor", {}).get("classification"),
+        "result": result["observed_result"], "clearance": result["clearance_m"],
+        "arc_m": result.get("ab_demo", {}).get("arc_height_above_endpoints_m"),
+        "planning_s": result["timing_s"]["planning_samples"]}, indent=2))
+
+
+if __name__ == "__main__":
+    main()

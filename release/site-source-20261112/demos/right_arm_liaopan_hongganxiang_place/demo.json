@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "demo_id": "right_arm_liaopan_hongganxiang_place",
+  "name": "料盘放置烘干箱专机：预放置(泊位上方30mm,yaw0) → 下降30mm到lower_middle泊位 → 回center",
+  "version": "1.2.1",
+  "category": "manipulation",
+  "demo_type": "CANDIDATE",
+  "strategy": "dmp_place",
+  "commissioning_state": "CANDIDATE_UNVERIFIED_LIAOPAN_HONGGANXIANG_PLACE_CENTER",
+  "description": "demo-6 的参数级拷贝：起点就是烘干箱（hongganxiang）放置站位（底盘全程不动，无转场、无抓取段）：5700 抓取配置 ID3（right_place_rightmost，320,2,3,1,1,0）检测 → 放置点 = 控制台六泊位注册表 lower_middle · CANDIDATE（2026-11-11 revision 21：检测坐标系偏置 [0.315,-0.273,0.070] m → BODY +[70,-315,273] mm）→ 预放置点 = 放置点上方 30 mm（BODY +Z，末端 yaw=0）→ cuRobo 规划（显式姿态 + 全程水平流形种子、硬水平 5° + FAST/QUALITY 多轮；误检鬼影体素**在碰撞后**按家族整族排除）→ 控制器原生 MoveL 下降 30 mm 到泊位 → 松爪回读确认 → 沿 BODY x− 后退 → 回全局 center 并按 3 mm / 3° 复核。夹持物为料盘。开工前强制自检：站点速度上限必须 0.2 rad/s、控制器 TCP 必须 tool_id=3。",
+  "relationship": {
+    "role": "COPY",
+    "parent_task_family": "SIFT_COMPLETE_PICK_PLACE",
+    "copied_from_demo": "right_arm_liaopan_dmp_place_v1",
+    "copied_from_revision": "LIAOPAN_DMP_PLACE_2026_11_11_V7_Y5_Z20_D20",
+    "extracted_stages": ["dmp_place", "return_center"],
+    "differences_from_source": [
+      "epic 检测配置 ID2 → ID3（epic_profile=right_place_rightmost、command=320,2,3,1,1,0）",
+      "放置点 = 控制台泊位注册表 lower_middle · CANDIDATE：检测坐标系偏置 [0.315,-0.273,0.070] m → BODY 偏置 [0.070,-0.315,0.273] m（源版本放置点 = 检测点 + [0,0.005,0] m）",
+      "preplace_offset_body_m = [0.070,-0.315,0.303] m（放置点 + BODY z 30 mm；源版本 [0.0,0.005,0.02] m）",
+      "descent_m = 0.030 m（源版本 0.020 m）",
+      "hard_level_manifold 开启：放置腿请求 EXPLICIT + 水平流形种子，规划器全程保持水平（源版本 TERMINAL_EXPLICIT，只约束终点）",
+      "start_station = PLACE_STATION（烘干箱放置站；源版本 DMP），仍不发任何底盘指令"
+    ],
+    "place_reference": "LIAOPAN_HONGGANXIANG_PLACE_2026_11_11_V4_BERTH_Y273_Z70_MANIFOLD",
+    "place_contact_reference": "right_arm_liaopan_dmp_place_v1"
+  },
+  "scope": {
+    "active_arm": "right",
+    "inactive_arm": "HOLD_CURRENT",
+    "base": "STATIONARY_AT_HONGGANXIANG_PLACE_STATION",
+    "station_id": "PLACE_STATION",
+    "requires_initial_center": false,
+    "requires_payload_in_hand": true,
+    "payload": "LIAOPAN",
+    "arbitrary_scene_commissioned": false
+  },
+  "parameters": {
+    "demo_parameters": "demos/right_arm_liaopan_hongganxiang_place/parameters.json",
+    "stations_config": "config/manipulation_stations.json"
+  },
+  "freshness_policy": {
+    "observation": "FRESH_EPIC_DETECTION_PER_RUN",
+    "robot_state": "FRESH_BEFORE_EACH_STAGE",
+    "scene": "FRESH_PER_STAGE",
+    "base_pose": "NOT_MOVED_DEMO_SENDS_NO_BASE_COMMAND",
+    "trajectory": "NEW_EACH_RUN_NEVER_REUSED_ACROSS_RUNS"
+  },
+  "execution": {
+    "entrypoint": "scripts/run_dmp_place_demo.py",
+    "demo_id_argument": "right_arm_liaopan_hongganxiang_place",
+    "entrypoint_note": "与 demo-5 / demo-6 共用同一个脚本；本 Demo 用 --demo-id 选择自己的 parameters.json 与证据目录（demo.json 里不对参数做任何差异，一切差异都在 parameters.json）",
+    "prepare_command": "PYTHONPATH=src .venv/bin/python scripts/run_dmp_place_demo.py --demo-id right_arm_liaopan_hongganxiang_place --stage all",
+    "run_command": "PYTHONPATH=src .venv/bin/python scripts/run_dmp_place_demo.py --demo-id right_arm_liaopan_hongganxiang_place --stage all --execute --authorization 'RIGHT DMP PLACE' --onsite-observer-confirmed",
+    "stop_command": "PYTHONPATH=src .venv/bin/python scripts/run_dmp_place_demo.py --stop",
+    "authorization_phrase": "RIGHT DMP PLACE",
+    "authorization_phrase_note": "沿用 demo-6：控制台 dmp_place 策略对同一条子进程命令固定传 RIGHT DMP PLACE",
+    "motion_api_authorization": "RIGHT SCENE_AWARE SUPERVISED",
+    "motion_api_authorization_note": "`/api/operations/execute` is validated by canonical_backend against exactly RIGHT SCENE_AWARE SUPERVISED; the operator-facing phrase above only guards this CLI.",
+    "stage_selector": ["all", "place", "place_center", "center"],
+    "webui_console_alias": "demo-2-liaopan-placeto-hongganxiang",
+    "webui_console_url": "/demo-console",
+    "canonical_start_api": "/api/demo-console/start",
+    "canonical_stop_api": "/api/operations/stop",
+    "auto_start": false
+  },
+  "safety": {
+    "require_authorization_phrase": true,
+    "require_onsite_observer_confirmed": true,
+    "one_shot_per_output_directory": true,
+    "never_clear_controller_errors": true,
+    "abort_on_protective_stop": true,
+    "verify_goal_collision_before_dispatch": true,
+    "assert_level_tolerance_deg": 5.0,
+    "assert_vertical_descent_gate": false,
+    "assert_site_speed_ceiling_rad_s": 0.2,
+    "assert_controller_tool_id": 3
+  },
+  "commissioning_evidence": "demos/right_arm_liaopan_hongganxiang_place/README.md"
+}

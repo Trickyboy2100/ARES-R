@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "sha256": {
+    "scripts/run_pick_reset_timing.py": "a865c405ceceb0c94a3d532ad70f5cd770ce54c81789ac9bdd88c10f2aef7b20",
+    "scripts/package_pick_reset_timing.py": "f7b50e0a721f797e422047ab5b979fe7c56a7d7c7463c6c60bb173ff013ac41c",
+    "scripts/studies/20261022-pick-reset/prepare_pick_reset_bundle.py": "a4346c380ee5f113c83484e4d65c880ac60a01d7b443a81c3e73c7ef85d35f78",
+    "src/ares_r/manipulation/pick_reset_pipeline.py": "a55e87081366b632f9b09e1ab2f1ab109454f67a7e5ed3cc6257e7a3903ab965",
+    "config/system.json": "9b5dab37c938e0883cecaf025c09d75d2e2280bb085d092219996a9646e0dc03",
+    "config/robot_world.json": "47c6b36d4e3e28eb4d651a5cef1bb4e09740d24e7d218ae08cf4f5636e5eac45",
+    "config/jaka_mini2_motion.site.json": "ded470719498c82677500c8d8696a4442d58b4d4f0f6ae772b2c8fc99194ca49",
+    "config/tray_to_groove_v2.json": "c683185b3488aafffd85a49fdd98cc0775552069ef66a99a940efead31e054e4",
+    "config/scene_aware_motion.json": "a32e60dfdb88adb5f589bafdad11a3028103b5423bcbbfdcc7ed6600ff907743",
+    "demos/right_arm_pick_lift_replace_reset_v1/source_parameters.json": "8baa66f958bceaa4d06c039a2df9fb6739587b5a583cd260fb41e61ea2ce7e2f"
+  },
+  "policy": "CORE_INPUTS_FROZEN_FOR_GOLDEN_1_0_0",
+  "repin": {
+    "at": "2026-11-09, operator decision B from the demo console",
+    "reason": "demo2 parameters moved to the tcp3 / no-TCP-bias / 0.2 rad/s site / QUALITY-4-seeds contract (V18..V23); the formal demo compares its frozen source_parameters.json against the live demo2 parameters and refused with \"formal demo parameters differ; explicit new-version review required\"",
+    "previous_source_parameters": "worklog/evidence/demo2-branch-repin-20261109/source_parameters_before_V17.json",
+    "previous_revision": "RIGHT_GRASP_PLACE_ROUNDTRIP_2026_10_19_V17_ROUTE810_ANCHORED_FIXTURE",
+    "new_revision": "RIGHT_GRASP_PLACE_ROUNDTRIP_2026_11_09_V23_SITE020_NOCOMP_TOOL3_QSEEDS4_ANCHOR_ROLLED_BACK_SKIPFAST",
+    "file_hashes_unchanged": true,
+    "acceptance_note": "the 2026-10-23 physical acceptance (tool_id=2, -10 deg TCP_LOCAL_Z compensation, legacy pregrasp planning) predates this contract; the branch demo must be physically re-accepted under tool_id=3 / no compensation before its result is cited"
+  },
+  "repin_notes": [
+    {
+      "at": "2026-11-09",
+      "file": "scripts/run_pick_reset_timing.py",
+      "previous_sha256": "c3bf657c0cbdb62ef0e9f5971c3094186b94422e93213dfb4062f27c21da8a17",
+      "new_sha256": "cb9ff2edd14744eccadcebdeea456477679713d16fe86a7a1f4e1eacf39d89c1",
+      "why": "removed the hard-coded controller tool_id==1 and added the fail-closed preflight demanded by the operator for this demo: (1) config/jaka_mini2_motion.site.json max_velocity_rad_s must be exactly 0.2 rad/s, (2) task_tcp_offset_m_rad all zero and demo_tcp_orientation_compensation disabled, (3) the controller right-arm tool must equal the tool id frozen in the native manifest/header (tcp3 = 3, never 1). Evidence: site-ceiling.json / zero-bias.json / tool-binding.json / preflight.json written before any motion; PREFLIGHT_FAILED otherwise. Verified by tests/test_pick_reset_site_tool_preflight.py."
+    },
+    {
+      "at": "2026-11-09",
+      "file": "scripts/studies/20261022-pick-reset/prepare_pick_reset_bundle.py",
+      "previous_sha256": "d7a28c0836bc829f9e8f5336f46939ee598d77cc23c5b6a8fd20ddfbbd197f92",
+      "new_sha256": "a4346c380ee5f113c83484e4d65c880ac60a01d7b443a81c3e73c7ef85d35f78",
+      "why": "pass contact_extra_allowed_object_ids / contact_extra_allowed_protrusion_waivers from parameters.json into prepare_authorized_first_pick.py (defaults stay empty, so behaviour is unchanged when a demo does not declare a waiver)."
+    },
+    {
+      "at": "2026-11-09",
+      "file": "demos/right_arm_pick_lift_replace_reset_v1/source_parameters.json",
+      "previous_sha256": "4a7fddabdbb040796203069c867a2ecec9b2ac5906da87944ec2fcbd278d59d9",
+      "new_sha256": "76b7d83b6c01616efb77fbb45236b5e00e0d77f14d6fc5bc0f9f81e228f430a5",
+      "why": "added contact_extra_allowed_protrusion_waivers for the two measured support-surface specks (body centres [0.6622,-0.2765,0.905] 25 pts and [0.6623,-0.2354,0.9049] 19 pts, radius 10 mm, max_point_count 30). Run console_d58281e176894dada28a0847b7614645 failed at PREPARE with CONTACT_TOOL_NON_TARGET_WORLD_COLLISION: ..._protruding_obstacle_008 after the bias was cleared / tcp3 adopted; offline replay shows 0.59 mm and 0.13 mm overlap of the 7 mm-inflated AABB by the 35-40% opening gripper finger base only (gripped readback is raw 36-37). Same class of waiver the operator approved for demo3 (option C, 2026-11-06). Verified offline with the real validate_path: FAIL -> PASS, prefix min clearance 5.36 mm. LIVE parameters.json mirrors this snapshot byte-for-byte."
+    },
+    {
+      "at": "2026-11-09",
+      "file": "demos/right_arm_pick_lift_replace_reset_v1/source_parameters.json",
+      "previous_sha256": "76b7d83b6c01616efb77fbb45236b5e00e0d77f14d6fc5bc0f9f81e228f430a5",
+      "new_sha256": "49adf801a75cdedd6b776855102e02deaf5bc11089106e9b713a197529275f6f",
+      "why": "gripper_delayed_readback_s [0.25,0.75,1.5] -> [1.2,2.0,3.0]. Run console_b90314bcfb8e42879c5ea9fa07de5df1 passed preflight/pregrasp/contact/close and then stopped at VERIFY_BEFORE_LIFT with GRIPPER_STABLE=false: the delayed samples read 104 -> 39 -> 39 raw, i.e. the first sample was taken while the Inspire fingers were still closing (spread 65 > maximum_readback_spread_raw 20; GRIPPER_HOLD was already true). Only the sampling instants change - the 20 raw spread / 20 raw hold thresholds and every gate stay untouched - and the window matches demo3's physically proven [1.2,2.0,3.0] on the same gripper."
+    },
+    {
+      "at": "2026-11-09",
+      "file": "scripts/package_pick_reset_timing.py",
+      "previous_sha256": "c81219fc1cdacd45e6d68496aaab3714141e341430d4bc1f64e7dcd92bb9eae3",
+      "new_sha256": "f7b50e0a721f797e422047ab5b979fe7c56a7d7c7463c6c60bb173ff013ac41c",
+      "why": "new optional --settle-tail N: repeats the final commanded pose for N cycles (0.08 s each) after every packaged segment and rebinds sample_count/duration/native_path_sha256/native_file_sha256 . The file header's sample count MUST be rewritten too - leaving it alone made the sender loader report 'trailing data' in run console_ce7de8367c1145fd8974bd1a152b2b2f (that run never moved). Default 0 keeps demo3 byte-identical; only the demo2 entry points (console, run_pick_reset_demo.py, run_pick_reset_timing.py spawn) pass native_settle_tail_samples."
+    },
+    {
+      "at": "2026-11-09",
+      "file": "scripts/run_pick_reset_timing.py",
+      "previous_sha256": "cb9ff2edd14744eccadcebdeea456477679713d16fe86a7a1f4e1eacf39d89c1",
+      "new_sha256": "875c71c96e420b5537078798cddeaffb58aa033ba18fb54a86e023db12974b65",
+      "why": "the background native packager call now forwards --settle-tail from parameters.json:native_settle_tail_samples (10) so lift230/lower230 get the same stationary tail as the initially packaged segments."
+    },
+    {
+      "at": "2026-11-09",
+      "file": "scripts/run_pick_reset_timing.py",
+      "previous_sha256": "875c71c96e420b5537078798cddeaffb58aa033ba18fb54a86e023db12974b65",
+      "new_sha256": "5f90cdceb2e8807853c1fa095694f59437c007bbc8eadcdfb1b942fa99982dd6",
+      "why": "the per-segment native prevalidate loop now runs through measured('PREVALIDATE_<SEGMENT>') so status.json/events.json name the real phase. Before this, a prevalidate failure (e.g. the 16:15 'trailing data') was reported under the last finished stage GRIPPER_RUNTIME_PREFLIGHT, which read as 'stuck at the gripper check'."
+    },
+    {
+      "at": "2026-11-09",
+      "file": "scripts/run_pick_reset_timing.py",
+      "previous_sha256": "5f90cdceb2e8807853c1fa095694f59437c007bbc8eadcdfb1b942fa99982dd6",
+      "new_sha256": "985ce6c4b20c5a8292bfc3d24714279bf977fec4b920c4fafa5735eb6d44219f",
+      "why": "transient handling so a single read hiccup no longer kills a whole run: (1) read_telemetry() retries ONLY read-only failures (telemetry transport / base-window freshness) 4x0.75 s; (2) a segment that fails before any dispatch restarts once from a fresh read; (3) a native sender fault with ZERO samples, a confirmed Servo cleanup, a clean controller and joints within 0.02 rad of the path start gets exactly one re-dispatch of the same file (demo0/demo5 rule). Motion gates, preflight and history checks are untouched."
+    },
+    {
+      "at": "2026-11-09",
+      "file": "demos/right_arm_pick_lift_replace_reset_v1/source_parameters.json",
+      "previous_sha256": "49adf801a75cdedd6b776855102e02deaf5bc11089106e9b713a197529275f6f",
+      "new_sha256": "8baa66f958bceaa4d06c039a2df9fb6739587b5a583cd260fb41e61ea2ce7e2f",
+      "why": "added native_settle_tail_samples 10 (+note). Run console_109d62b7b1bf4034858d643596aeecb8 completed the full 230 mm lift and then the installed sender threw 'final feedback mismatch': disassembly of jaka_right_supervised_path_v6_pick shows one feedback read after the last sample that must be within 0.05 deg of the goal; at 0.2 rad/s the cubic profile still carried 0.42 deg/s at its last sample and the servo lagged 0.217 deg (contact 0.028 deg, legacy-resampled pregrasp ends with a stationary tail and lagged 0.005 deg)."
+    }
+  ]
+}

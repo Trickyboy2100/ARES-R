@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "demo_id": "right_arm_return_center_v1",
+  "name": "右臂任意位姿 · cuRobo 规划回全局 center",
+  "version": "1.0.0",
+  "category": "utility",
+  "demo_type": "UTILITY",
+  "strategy": "return_center",
+  "commissioning_state": "PHYSICALLY_ACCEPTED_20261106_ARBITRARY_POSE_448MM",
+  "description": "把右臂从任意静止位姿用 cuRobo 规划送回全局 named center（center_goal），站点速度上限固定 0.2。每轮都强制新扫描、新规划、当次派发；到位后按 center 合同（3 mm / 3°) 复核。起点已与夹具干涉时（INVALID_START_COLLISION）拒绝并打印穿透对象，不做任何运动。",
+  "scope": {
+    "active_arm": "right",
+    "inactive_arm": "HOLD_CURRENT",
+    "base": "STATIONARY",
+    "requires_initial_center": false,
+    "arbitrary_start_pose": true,
+    "payload_in_hand": "NOT_MODELLED_OPERATOR_MUST_ENSURE_EMPTY_OR_CLEAR_PATH"
+  },
+  "parameters": {
+    "file": "demos/right_arm_return_center_v1/parameters.json"
+  },
+  "freshness_policy": {
+    "observation": "FRESH_SCAN_PER_PLAN_FORCE_RESCAN",
+    "robot_state": "FRESH_BEFORE_PLAN_AND_BEFORE_DISPATCH",
+    "trajectory": "NEW_EACH_RUN_NEVER_REUSED"
+  },
+  "execution": {
+    "entrypoint": "scripts/run_return_center_demo.py",
+    "prepare_command": "PYTHONPATH=src .venv/bin/python scripts/run_return_center_demo.py --prepare",
+    "run_command": "PYTHONPATH=src .venv/bin/python scripts/run_return_center_demo.py --execute --authorization 'RIGHT RETURN CENTER' --onsite-observer-confirmed",
+    "stop_command": "PYTHONPATH=src .venv/bin/python scripts/run_return_center_demo.py --stop",
+    "authorization_phrase": "RIGHT RETURN CENTER",
+    "motion_api_authorization": "RIGHT SCENE_AWARE SUPERVISED",
+    "motion_api_authorization_note": "`/api/operations/execute` is validated by canonical_backend against exactly RIGHT SCENE_AWARE SUPERVISED; the operator-facing phrase above guards the CLI instead.",
+    "webui_console_alias": "demo-0-return-center",
+    "webui_console_url": "/demo-console",
+    "canonical_start_api": "/api/demo-console/start",
+    "canonical_stop_api": "/api/operations/stop",
+    "auto_start": false
+  },
+  "safety": {
+    "require_authorization_phrase": true,
+    "require_onsite_observer_confirmed": true,
+    "one_shot_per_output_directory": true,
+    "never_clear_controller_errors": true,
+    "assert_site_speed_ceiling": 0.2,
+    "refuse_on_start_collision": true
+  },
+  "commissioning_evidence": "demos/right_arm_return_center_v1/README.md",
+  "acceptance_evidence": {
+    "date": "2026-11-06",
+    "start_tcp_body_m": [0.580925, 0.080858, 1.382197],
+    "start_error_mm": 448.337,
+    "start_error_deg": 149.101,
+    "planning_mode": "FAST",
+    "plan_elapsed_s": 17.453,
+    "native_duration_s": 20.48,
+    "native_samples": 257,
+    "peak_joint_speed_rad_s": 0.19985,
+    "tracking_max_deg": 0.621,
+    "tracking_budget_deg": 1.48,
+    "arrival_position_mm": 2.051,
+    "arrival_orientation_deg": 0.0024,
+    "run_dir": "worklog/evidence/demo-runs/right_arm_return_center_v1/run_1793933139415727195",
+    "note": "first dispatch faulted at the controller safety gate (errcode=4128769, zero samples, no motion); one fresh re-plan + one re-dispatch after confirming errcode=0 and unchanged joints succeeded"
+  }
+}

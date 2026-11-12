@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "demo_id": "right_arm_sift_dmp_roundtrip_v1",
+  "name": "SIFT筛网 · 抓取抬升 → 底盘转场 → DMP专机放置 → 回center",
+  "version": "0.1.0",
+  "category": "manipulation",
+  "demo_type": "CANDIDATE",
+  "commissioning_state": "CANDIDATE_UNVERIFIED_NO_PHYSICAL_FULL_CYCLE",
+  "description": "完整跨站取放链：SIFT站 5700 ID6 识别→cuRobo预抓取→闭爪→连续抬升230mm并保持→底盘从SIFT抓取站先旋转后平移到DMP专机抓取站→5700 抓取配置ID2 检测→按偏移得到预放置点→规划到预放置点→下降60mm到放置点→松爪放置筛网→回到全局center。抓取抬升段完全复用demo3链路，放置段复用2026-11-02的DMP放置实现。",
+  "relationship": {
+    "role": "EXTENSION",
+    "parent_task_family": "SIFT_COMPLETE_PICK_PLACE",
+    "pick_lift_source_demo": "right_arm_sift_pick_lift_replace_reset_v1",
+    "pick_lift_implementation_demo": "right_arm_shaiwang_pick_reset_v1",
+    "place_reference": "DMP_PLACE_2026_11_02",
+    "place_contact_reference": "right_arm_grasp_place_roundtrip_v1"
+  },
+  "scope": {
+    "active_arm": "right",
+    "inactive_arm": "HOLD_CURRENT",
+    "base": "MOVES_WITHIN_THIS_DEMO",
+    "from_station_id": "SIFT-BLC-GRSP",
+    "to_station_id": "DMP",
+    "stations_mutable_by_operator": true,
+    "requires_initial_center": true,
+    "arbitrary_scene_commissioned": false
+  },
+  "parameters": {
+    "demo_parameters": "demos/right_arm_sift_dmp_roundtrip_v1/parameters.json",
+    "stations_config": "config/manipulation_stations.json",
+    "pick_lift_parameters": "demos/right_arm_shaiwang_pick_reset_v1/params.json"
+  },
+  "freshness_policy": {
+    "observation": "FRESH_EPIC_DETECTION_PER_STATION_PER_RUN",
+    "robot_state": "FRESH_BEFORE_EACH_SEGMENT",
+    "scene": "FRESH_PER_STAGE_TRANSITION",
+    "trajectory": "NEW_EACH_RUN_NEVER_REUSED_ACROSS_RUNS"
+  },
+  "execution": {
+    "entrypoint": "scripts/run_sift_dmp_roundtrip.py",
+    "dry_run_command": "PYTHONPATH=src .venv/bin/python scripts/run_sift_dmp_roundtrip.py --output worklog/evidence/demo-runs/right_arm_sift_dmp_roundtrip_v1/<run> --stage all",
+    "run_command": "PYTHONPATH=src .venv/bin/python scripts/run_sift_dmp_roundtrip.py --output worklog/evidence/demo-runs/right_arm_sift_dmp_roundtrip_v1/<run> --stage all --execute --onsite-observer-confirmed",
+    "stage_selector": ["all", "pick", "transit", "place", "center"],
+    "webui_console_alias": "demo-4-main-siftgrasp-dmpplace",
+    "auto_start": false
+  },
+  "commissioning_evidence": "demos/right_arm_sift_dmp_roundtrip_v1/README.md"
+}

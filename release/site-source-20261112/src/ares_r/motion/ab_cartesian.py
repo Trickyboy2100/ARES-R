@@ -1,0 +1,111 @@
+"""Planning-only fixed-orientation IK and reference-corridor primitives.
+
+The solver deliberately does not contain a hardware adapter.  Collision
+The sampled Cartesian chord is only a collision-classification reference.
+Every P3.2 point-to-point trajectory is planned by cuRobo; IK samples are
+never treated as ServoJ trajectories.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+import math
+from pathlib import Path
+import xml.etree.ElementTree as ET
+
+import numpy as np
+
+from ares_r.perception.robot_collision import transform_xyz_rpy
+
+
+@dataclass(frozen=True)
+class IKResult:
+    joints_rad: tuple[float, ...]
+    position_error_m: float
+    orientation_error_rad: float
+
+
+class CartesianIK:
+    def __init__(self, urdf: str | Path, body_model, link6_tcp):
+        root = ET.parse(urdf).getroot()
+        self.origins = []
+        limits = []
+        for index in range(1, 7):
+            joint = root.find(f"joint[@name='joint{index}']")
+            if joint is None or joint.find("axis").get("xyz") != "0 0 1":
+                raise ValueError("unexpected six-axis URDF")
+            origin = joint.find("origin")
+            self.origins.append(transform_xyz_rpy(
+                [float(value) for value in origin.get("xyz").split()],
+                [float(value) for value in origin.get("rpy").split()]))
+            limit = joint.find("limit")
+            limits.append((float(limit.get("lower")), float(limit.get("upper"))))
+        self.lower = np.array([row[0] + .02 for row in limits])
+        self.upper = np.array([row[1] - .02 for row in limits])
+        self.body_model = np.asarray(body_model, dtype=float)
+        self.link6_tcp = np.asarray(link6_tcp, dtype=float)
+        if self.body_model.shape != (4, 4) or self.link6_tcp.shape != (4, 4):
+            raise ValueError("two full SE3 transforms required")
+
+    def fk(self, joints):
+        result = self.body_model.copy()
+        for origin, angle in zip(self.origins, joints):
+            result = result @ origin @ transform_xyz_rpy([0, 0, 0], [0, 0, float(angle)])
+        return result @ self.link6_tcp
+
+    def solve(self, xyz, orientation, seed, *, max_nfev=90):
+        from scipy.optimize import least_squares
+        from scipy.spatial.transform import Rotation
+        xyz = np.asarray(xyz, dtype=float)
+        orientation = np.asarray(orientation, dtype=float)
+        seed = np.asarray(seed, dtype=float)
+        if xyz.shape != (3,) or orientation.shape != (3, 3) or seed.shape != (6,):
+            raise ValueError("invalid pose or seed shape")
+        if not np.isfinite(xyz).all() or not np.isfinite(orientation).all():
+            raise ValueError("non-finite pose")
+        seed = np.clip(seed, self.lower + 1e-5, self.upper - 1e-5)
+
+        def residual(q):
+            pose = self.fk(q)
+            rot = Rotation.from_matrix(orientation.T @ pose[:3, :3]).as_rotvec()
+            return np.r_[pose[:3, 3] - xyz, .18 * rot, .0005 * (q - seed)]
+
+        answer = least_squares(residual, seed, bounds=(self.lower, self.upper),
+                               max_nfev=max_nfev, xtol=1e-8, ftol=1e-8, gtol=1e-8)
+        pose = self.fk(answer.x)
+        position_error = float(np.linalg.norm(pose[:3, 3] - xyz))
+        orientation_error = float(np.linalg.norm(
+            Rotation.from_matrix(orientation.T @ pose[:3, :3]).as_rotvec()))
+        if position_error > .0015 or orientation_error > math.radians(.6):
+            raise ValueError(f"IK residual too large: {position_error:.4f} m, {orientation_error:.4f} rad")
+        return IKResult(tuple(float(x) for x in answer.x), position_error, orientation_error)
+
+    def straight(self, start_xyz, end_xyz, orientation, seed, *, samples=81,
+                 max_joint_step_rad=.15):
+        if samples < 3:
+            raise ValueError("dense Cartesian samples required")
+        start = np.asarray(start_xyz, dtype=float)
+        end = np.asarray(end_xyz, dtype=float)
+        if np.linalg.norm(end - start) < .05:
+            raise ValueError("A/B must be distinct")
+        rows = []
+        current = np.asarray(seed, dtype=float)
+        worst_position = worst_orientation = 0.0
+        for t in np.linspace(0, 1, samples):
+            target = start + t * (end - start)
+            solution = self.solve(target, orientation, current)
+            candidate = np.asarray(solution.joints_rad)
+            if rows and float(np.max(np.abs(candidate - current))) > max_joint_step_rad:
+                raise ValueError("IK branch discontinuity")
+            rows.append(candidate)
+            current = candidate
+            worst_position = max(worst_position, solution.position_error_m)
+            worst_orientation = max(worst_orientation, solution.orientation_error_rad)
+        return np.asarray(rows), {"max_ik_position_error_m": worst_position,
+                                  "max_ik_orientation_error_rad": worst_orientation}
+
+def max_chord_deviation(points):
+    points = np.asarray(points, dtype=float)
+    chord = points[-1] - points[0]
+    fractions = ((points - points[0]) @ chord) / (chord @ chord)
+    return float(np.max(np.linalg.norm(points - (points[0] + fractions[:, None]*chord), axis=1)))

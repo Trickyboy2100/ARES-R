@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "revision": "SHAIWANG_STAGE1_ID6_20261106_V12_EXTRA_ALLOWED_CONTACT_PROTRUSION",
+  "demo_id": "right_arm_shaiwang_pick_reset_v1",
+  "base_demo": "right_arm_pick_lift_replace_reset_v1",
+  "future_full_workflow": "right_arm_grasp_place_roundtrip_v1",
+  "epic_profile": "right_pick",
+  "epic_command": "320,2,6,1,1,0",
+  "epic_space_id": 2,
+  "epic_object_id": 6,
+  "epic_camera_id": 1,
+  "active_arm": "right",
+  "inactive_arm": "HOLD_CURRENT",
+  "base_motion_allowed": false,
+  "return_mode": "LOWER230_RELEASE_RETREAT_CENTER",
+  "center_reference_policy": "GLOBAL_NAMED_CENTER",
+  "center_position_tolerance_m": 0.003,
+  "center_orientation_tolerance_deg": 3.0,
+  "payload_policy": "DEMO_EXPOSED160_WIDTH100_REAR20_RETAINED_V2",
+  "payload_reuse_authorized": "2026-10-29 operator confirmed ID6 is shaiwang and temporarily reuses previous payload model",
+  "level_gate_tolerance_deg": 4.5,
+  "level_policy_source": "2026-10-28 ID6 task-specific policy; not applied to other demos",
+  "gripper_delayed_readback_s_override": [
+    1.2,
+    2.0,
+    3.0
+  ],
+  "gripper_delayed_readback_s_override_note": "2026-10-30 operator-approved: the shared [0.25,0.75,1.5] window sampled before the Inspire fingers settled (158->113->113, spread 45 > 20). Only the sampling times change; maximum_readback_spread_raw=20 and minimum_hold_above_closed_raw=20 stay as in config/tray_to_groove_v2.json. Applied at runtime by scripts/run_sift_lift_hold.py; native-manifest parameters and task binding stay byte-identical. 2026-11-04: raised to [1.2,2.0,3.0] because 0.6 s still sampled mid-travel (198/119/114 -> spread 84 > 20, while the last two differed by 5).",
+  "native_start_tolerance_deg": 0.1,
+  "native_start_policy": "TASK_MODE_ONLY; no joint jump; original mode remains 0.02deg; controller and tracking checks unchanged",
+  "template_plan": "worklog/evidence/2026-09-24-p3-8b/planning/move_pregrasp_50mm_terminal_orientation_170938",
+  "task_tcp_offset_m_rad_override": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "task_tcp_offset_frame": "BODY",
+  "demo_tcp_orientation_compensation_override": {
+    "body_yaw_correction_deg": 0.0,
+    "body_yaw_scope": "right_arm_shaiwang_pick_reset_v1",
+    "forward_pitch_down_deg": 0.0,
+    "angle_deg": 0.0
+  },
+  "inspection_stop_before_close": false,
+  "offset_persistence": "PERMANENT_TASK_PARAMETERS_CONTROLLER_TOOL_UNCHANGED",
+  "offset_validation": {
+    "operator_contact_position_approved": true,
+    "position_adjustment_evidence": "worklog/evidence/shaiwang-contact-adjust/1793257790266658012",
+    "yaw_adjustment_evidence": "worklog/evidence/shaiwang-contact-adjust/1793258531623731961",
+    "cumulative_clockwise_adjustment_deg": 2.0,
+    "saved_by_operator_request_after_second_yaw_and_close": true,
+    "full_pick_reset_with_v4_offsets_pending": false,
+    "full_pick_reset_v4_evidence": "worklog/evidence/demo-runs/right_arm_shaiwang_pick_reset_v1/run_1793259072432485426",
+    "full_pick_reset_v4_execution_s": 141.26828846399985
+  },
+  "place_phase_enabled": false,
+  "tcp_local_z_cancellation": "2026-10-30 operator request: all demo orientation compensation cancelled for demo3 only (TCP_LOCAL_Z angle_deg 0.0, BODY yaw 0.0, forward pitch 0.0); target translation offsets at that time were [+2,+2,-7]mm (changed 2026-11-04, see offset_revision_note); not physically re-verified",
+  "offset_revision_note": "2026-11-04 operator request (fourth revision, V11): target translation offsets set to ZERO in BODY frame; the operator also redefined the controller right-arm tool to tcp3 (telemetry tool_id 3), so the TCP itself now carries the geometry that was previously compensated by the offset. History: [+2,+2,-7] -> [+2,-10,-5] -> [+2,-15,0] -> [+8,-20,+2] -> [0,0,0]. Orientation compensation remains fully cancelled; no physical verification of this revision yet. Grasp readback delays remain [1.2,2.0,3.0] s.",
+  "contact_extra_allowed_object_ids": [],
+  "contact_extra_allowed_note": "2026-11-06 operator-approved waiver (option C). After the controller right-arm tool was redefined (tcp3 pose -5.049/-29.898/167.789 mm: 25.1 mm in Y and 16.6 mm in Z away from the pose every October run used) the 230 mm lift grazed a measured protrusion by 0.44 mm (contact segment 0.36 mm) and the run fail-closed with CONTACT_TOOL_NON_TARGET_WORLD_COLLISION. That cuboid is built from only 6-8 measured points (13x22x8 mm + 7 mm inflation) and sits 8-10 mm from the grasp TCP, so it stays below the >=30 point bar of the CONTACT_OBSERVED_OCCUPANCY_V2 measured-protrusion refinement and remains a solid hard box. The operator chose to explicitly allow contact with it rather than relax the refinement gate. Scope: only the matched primitive is appended to motion_constraints.ignore_cuboid_ids (the same mechanism the detected target already uses); every other object stays hard. The waiver is anchored by body-frame centre because support_decomposition renumbers primitives on every scan (the same speck was ..._014 at 11:42 and ..._015 at 11:53, 2.1 mm apart); contact_extra_allowed_object_ids stays empty for exactly that reason.",
+  "commissioning_state": "STAGE1_V12_EXTRA_ALLOWED_CONTACT_PROTRUSION_CANDIDATE_UNVERIFIED",
+  "contact_extra_allowed_protrusion_waivers": [
+    {
+      "center_body_m": [
+        0.6916,
+        -0.2239,
+        1.0295
+      ],
+      "radius_m": 0.015,
+      "max_point_count": 30,
+      "semantic": "PROTRUDING_OBSTACLE",
+      "note": "operator-approved contact waiver, 2026-11-06"
+    }
+  ]
+}

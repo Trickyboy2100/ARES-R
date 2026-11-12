@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "demos": [
+    {
+      "alias": "demo-0-return-center",
+      "demo_id": "right_arm_return_center_v1",
+      "demo_type": "UTILITY",
+      "validation_level": "PHYSICALLY_ACCEPTED_20261106_FAST_448MM",
+      "title": "右臂任意位姿 · cuRobo 规划回全局 center",
+      "strategy": "return_center",
+      "preparation": "右臂处于任意静止位姿、底盘静止、工作区（含手臂自身路径）净空；控制器无错误码/保护停；`config/jaka_mini2_motion.site.json` 的速度上限为 0.2。",
+      "verification_note": "每轮强制新扫描 + 新规划，当次派发；起点与夹具干涉（INVALID_START_COLLISION）时拒绝并打印穿透对象，不运动。到位后按 center 合同 3 mm / 3° 复核并写 result.json + last-run.json。",
+      "result": "AT_CENTER 2.051 mm / 0.0024 deg, 20.48 s native, 257 samples, peak 0.19985 rad/s, tracking max 0.621 deg"
+    },
+    {
+      "alias": "demo-4-main-siftgrasp-dmpplace",
+      "demo_id": "right_arm_sift_dmp_roundtrip_v1",
+      "demo_type": "CANDIDATE",
+      "validation_level": "CANDIDATE_UNVERIFIED_NO_PHYSICAL_FULL_CYCLE",
+      "title": "SIFT筛网 · 抓取→抬升230mm→底盘转场→DMP专机放置→回center",
+      "strategy": "sift_dmp_roundtrip",
+      "preparation": "底盘在SIFT-BLC-GRSP已验收站位，筛网在原夹具中且5700 ID6可识别；DMP站位已在config/manipulation_stations.json登记且5700抓取配置ID2可检测；两站之间通道净空、现场监督与急停可用。抓取抬升段复用demo3链路；底盘转场先旋转后平移；放置段按检测返回点+y/x/z偏移得到预放置点，下降60mm后松爪。",
+      "verification_note": "2026-11-02 新编排，抓取抬升与DMP放置各自已有实机证据，但四段组合尚未完成端到端实机闭环；站位坐标可由操作员随时重新登记后重跑。",
+      "result": "PENDING_FULL_CYCLE"
+    },
+    {
+      "alias": "demo-5-main-dmpplace",
+      "demo_id": "right_arm_dmp_place_v1",
+      "demo_type": "CANDIDATE",
+      "validation_level": "CANDIDATE_UNVERIFIED_PLACE_CENTER",
+      "title": "DMP站：专机放置（下降60mm松爪） → 回center",
+      "strategy": "dmp_place",
+      "preparation": "底盘已在DMP抓取站并静止（本Demo不移动底盘、不做转场），右臂已持住筛网（demo-4的抓取完成，或其它链路完成），左臂静止；5700抓取配置ID2可检测到放置目标；站点速度上限0.2rad/s、控制器TCP为tool_id=3、无错误码/保护停，现场监督与急停可用。",
+      "verification_note": "从demo-4抽出dmp_place（含下降60mm）与return_center两段独立成Demo，逻辑与原两段一致；起点为DMP站，无转场段。开工前强制校验站点速度上限(0.2)与控制器TCP(tool_id=3)，不满足即不运动。下降段另需通过垂直性硬门限（横向≤20mm、中途不得低于目标2mm以上）。组合尚未实机闭环。",
+      "result": "PENDING_FULL_CYCLE"
+    },
+    {
+      "alias": "demo-6-liaopan-placetoDMP",
+      "demo_id": "right_arm_liaopan_dmp_place_v1",
+      "demo_type": "CANDIDATE",
+      "validation_level": "CANDIDATE_UNVERIFIED_LIAOPAN_PLACE_CENTER",
+      "title": "料盘放置除尘收料专机：预放置(检测点y+5mm, yaw0) → 下降10mm → 回center",
+      "strategy": "dmp_place",
+      "preparation": "demo-5 的料盘专机拷贝。底盘已在DMP抓取站并静止（本Demo不移动底盘、不做转场），右臂已持住料盘，左臂静止；5700抓取配置ID2可检测到放置目标；站点速度上限0.2rad/s、控制器TCP为tool_id=3、无错误码/保护停，现场监督与急停可用。预放置点 = 检测点上方 20 mm，然后控制器 MoveL 下降 20 mm 到检测点；落点穿透的已确认误检体素（现场已批准）按白名单豁免。",
+      "verification_note": "与 demo-5 共用同一脚本（scripts/run_dmp_place_demo.py，用 --demo-id 切换参数与证据目录）。2026-11-09 现场定：预放置点 = 检测返回点 **y+5mm**（x/z 不偏移）、末端 **yaw=0**，再控制器 MoveL 下降 **10mm** 到放置点（预放置点下方 10mm，与检测点无关）；现场确认的鬼影体素按前缀整族不参与碰撞判定（未知名字仍 fail-closed）。最近一次干跑：首次 FAST 出图（solve 2.14 秒 / wall 4.77 秒），路径 0.165m、直距比 1.02、水平 1.16°，末端 yaw 0.001°。到预放置点的实机段已验收（2026-11-09 旧几何：7.0 秒 / 82 采样 / 误差 1.31mm）；当前几何尚未实机。",
+      "result": "PENDING_FULL_CYCLE"
+    },
+    {
+      "alias": "demo-2-liaopan-placeto-hongganxiang",
+      "demo_id": "right_arm_liaopan_hongganxiang_place",
+      "demo_type": "CANDIDATE",
+      "validation_level": "CANDIDATE_UNVERIFIED_LIAOPAN_HONGGANXIANG_PLACE_CENTER",
+      "title": "料盘放置烘干箱专机：预放置(泊位上方30mm, yaw0) → 下降30mm到lower_middle泊位 → 回center",
+      "strategy": "dmp_place",
+      "preparation": "demo-6 的参数级拷贝（共用 scripts/run_dmp_place_demo.py，用 --demo-id 切换参数与证据目录）。底盘已停在烘干箱放置站位（PLACE_STATION）并静止（本Demo不移动底盘、不做转场），右臂已持住料盘，左臂静止；5700 抓取配置 **ID3**（right_place_rightmost，320,2,3,1,1,0）可检测到泊位参考点，目标泊位 lower_middle 已清空确认；站点速度上限0.2rad/s、控制器TCP为tool_id=3、无错误码/保护停，现场监督与急停可用。放置点 = 控制台泊位注册表 lower_middle · CANDIDATE（revision 21：检测坐标系偏置 [0.315,-0.273,0.070]m → BODY +[70,-315,273]mm），预放置点在其上方 30mm（BODY +Z，相对检测点 [0.070,-0.315,0.303]m），再控制器 MoveL 下降 30mm。",
+      "verification_note": "参数级拷贝：除 ID3 检测配置、泊位几何（lower_middle CANDIDATE，revision 21）与 30mm 下降量外，链路/开工自检/回 center/授权短语与 demo-6 相同。BODY 换算 [det_Z,-det_X,-det_Y]=[0.070,-0.315,0.273]m（预放置 [0.070,-0.315,0.303]m）。误检体素策略沿用 demo-6 的碰撞后整族排除；2026-11-11 曾把 observed_support_01_component_01_protruding_obstacle_051 当成误检并加规划前预排除，后经现场更正为看错、不是误检，该家族与 ignore_cuboid_prefixes 机制已回退。放置腿改为 EXPLICIT + hard_level_manifold（水平流形 IK 种子 + 显式姿态全程参与优化），仍保留 5° 事后硬校验。旧偏置 [60,-315,238]mm 下降 30mm 被裁到 24mm 并落在 j3≈0 肘奇异面（σ_min 0.0001），控制器 linear_move 不执行；现场已把检测 Y 改到 −0.273（BODY +35mm 高）、Z 改到 0.070（+10mm 前），新值 place/preplace 在 yaw 0 下 IK 精确可解（j3 −26.8°/−43.7°）。当前尚无新版本干跑/实机证据。",
+      "result": "PENDING_FULL_CYCLE"
+    },
+    {
+      "alias": "demo-3-branch-sift-graspreset",
+      "demo_id": "right_arm_sift_pick_lift_replace_reset_v1",
+      "demo_type": "GOLDEN",
+      "validation_level": "VERIFIED_CONTINUOUS_SIFT_ID6_V4_2026_10_29",
+      "title": "SIFT筛网 · 抓取→抬升230mm→原位放回→center",
+      "strategy": "sift_pick_reset",
+      "preparation": "底盘在SIFT-BLC-GRSP已验收站位，筛网在原夹具中，5700 ID6可识别；右臂从带本Demo补偿的全局center开始，原夹具可原位放回。现场监督和物理急停可用。此Demo不移动底盘、不执行新专机放置。",
+      "verification_note": "V4永久偏置完整实机闭环成功，执行141.27秒，扫描规划及打包另约43.39秒；抓取位置经人工核对。底盘SLAM和参数已冻结；原始轨迹不跨运行复用。",
+      "result": "PICK_LIFT_REPLACE_RESET_COMPLETE"
+    },
+    {
+      "alias": "demo-1-main-grasphold",
+      "demo_id": "right_arm_epic_pick_lift_v1",
+      "demo_type": "GOLDEN",
+      "validation_level": "VERIFIED_HOLD",
+      "title": "识别抓取 → 抬升100mm → 保持",
+      "strategy": "first_pick",
+      "preparation": "料盘在抓取夹具中，头部相机可通过5700 ID1识别目标；底盘和双臂静止，右臂工作区净空。结束时保持持物，不自动放回。",
+      "verification_note": "历史实机抓取保持成功；旧golden原代码保留，不等同于最新流水线提速版。",
+      "result": "HOLD_AFTER_100MM_LIFT"
+    },
+    {
+      "alias": "demo-2-main-graspplace",
+      "demo_id": "right_arm_grasp_place_roundtrip_v1",
+      "demo_type": "GOLDEN",
+      "validation_level": "HISTORICAL_SUCCESS_WITH_RECOVERY",
+      "title": "取料 → 底盘转场 → 泊位放置 → 返回",
+      "strategy": "roundtrip",
+      "preparation": "底盘处于已登记GRASP站，ID1可见取料盘；PLACE站ID3可见、目标泊位为空，路线已核对；下层中间泊位偏置沿用注册表原值（本Demo只读不改）；完整底盘扫掠、持物和释放区域净空。开工前强制校验：`config/jaka_mini2_motion.site.json` 速度上限=0.2rad/s、控制器右臂TCP为tool_id=3（tcp3）、TCP任务偏置全零（仅取消原-10° TCP姿态偏置，泊位偏置保持不变）；不满足即不运动。此版不适用于任意站位。",
+      "verification_note": "完整取放曾在修正后接续完成；不是已证明无人干预连续成功的版本。2026-11-09 按操作员要求改为站点0.2rad/s、只清除TCP偏置（泊位偏置不可修改）、tcp3，三项在开工前fail-closed校验并写入 site-ceiling.json / tool-binding.json / zero-bias.json；取消姿态偏置后的抓取/水平度需现场重新确认。启动会按现有全链执行器尝试，失败停止，不自动续跑。",
+      "result": "RETURNED_GRASP"
+    },
+    {
+      "alias": "demo-2-branch-grasprptspdup",
+      "demo_id": "right_arm_pick_lift_replace_reset_v1",
+      "demo_type": "GOLDEN",
+      "validation_level": "CANDIDATE_20261109_SITE020_ZERO_TCP_BIAS_TOOL3_UNVERIFIED",
+      "title": "抓取 → 抬升230mm → 原位放回 → 回center · 提速版",
+      "strategy": "pick_reset",
+      "preparation": "保持当前已验收站位，或确保头部相机视野中5700 ID1能识别同一夹具内料盘；右臂从当前静止姿态开始（已验收默认center），夹具原位可放回，工作区净空。开工前强制校验三项（不满足即不运动）：`config/jaka_mini2_motion.site.json` 速度上限=0.2rad/s、TCP任务偏置全零且姿态补偿关闭、控制器右臂tool_id=3（tcp3）。",
+      "verification_note": "2026-11-09 按操作员要求固定为站点0.2rad/s、无TCP偏置、tcp3；三项在运动前fail-closed校验并写入 site-ceiling.json / zero-bias.json / tool-binding.json / preflight.json。2026-10-23 的134.54秒/144.13秒实机验收属于旧契约（tool_id=2、-10°偏置、约0.10rad/s），此版本须现场重新验收抓取与水平度。",
+      "result": "PENDING_REACCEPTANCE_SITE020_ZERO_BIAS_TCP3"
+    }
+  ]
+}

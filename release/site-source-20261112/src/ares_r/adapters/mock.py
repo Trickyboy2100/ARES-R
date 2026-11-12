@@ -1,0 +1,144 @@
+"""Deterministic mock devices. These never contact hardware."""
+
+import time
+import uuid
+from typing import Optional
+from ..interfaces import Arm, Gripper, MobileBase, Perception
+from ..models import DetectionResult, DeviceState, Pose
+
+
+class DisabledDevice:
+    """An unconnected device; never impersonates a live or simulated device."""
+
+    def __init__(self, name):
+        self.name = name
+
+    def state(self):
+        return DeviceState(False, False, "DISABLED: %s excluded from connection scope" % self.name)
+
+    def close(self):
+        pass
+
+    def __getattr__(self, name):
+        raise RuntimeError("%s is disabled; operation %s is unavailable" % (self.name, name))
+
+
+class MockPerception(Perception):
+    def __init__(self) -> None:
+        self._connected = True
+
+    def detect_pick(self) -> DetectionResult:
+        time.sleep(0.2)
+        return DetectionResult(True, str(uuid.uuid4()), "pick", pose=Pose("left_arm_base", 0.42, -0.18, 0.21, 3.14159, 0.0, -0.78), confidence=0.98, raw_response="mock")
+
+    def detect_place(self, dock_id: int) -> DetectionResult:
+        time.sleep(0.2)
+        return DetectionResult(True, str(uuid.uuid4()), "place", pose=Pose("left_arm_base", 0.35, -0.25 + 0.04 * dock_id, 0.18, 3.14159, 0.0, -0.78), confidence=0.97, raw_response="mock")
+
+    def state(self) -> DeviceState:
+        return DeviceState(self._connected, True, "mock camera")
+
+    def probe(self) -> DeviceState:
+        return self.state()
+
+
+class MockArm(Arm):
+    def __init__(self, name: str) -> None:
+        self.name = name
+        self.pose_name = "park"
+        self.stopped = False
+
+    def _check(self) -> None:
+        if self.stopped:
+            raise RuntimeError("%s arm is stopped; reset is required" % self.name)
+
+    def move_to_pose(self, pose: Pose) -> None:
+        self._check(); time.sleep(0.15); self.pose_name = "pose:%s" % pose.frame_id
+
+    def move_linear_tool(self, distance_m: float) -> None:
+        self._check(); time.sleep(0.1)
+
+    def move_named(self, name: str) -> None:
+        self._check(); time.sleep(0.15); self.pose_name = name
+
+    def stop(self) -> None:
+        self.stopped = True
+
+    def reset(self) -> None:
+        self.stopped = False
+
+    def state(self) -> DeviceState:
+        return DeviceState(True, not self.stopped, "%s; %s" % (self.name, self.pose_name))
+
+
+class MockGripper(Gripper):
+    def __init__(self) -> None:
+        self.closed = False
+        self.stopped = False
+        self._position = 1000
+
+    def move_to(self, position: int) -> None:
+        if self.stopped: raise RuntimeError("gripper is stopped")
+        if position < 0 or position > 1000: raise ValueError("position must be between 0 and 1000")
+        time.sleep(0.1); self._position = position; self.closed = position == 0
+
+    def position(self) -> int:
+        return self._position
+
+    def open(self) -> None:
+        if self.stopped: raise RuntimeError("gripper is stopped")
+        self.move_to(1000); self.closed = False
+
+    def close(self) -> None:
+        if self.stopped: raise RuntimeError("gripper is stopped")
+        self.move_to(0); self.closed = True
+
+    def has_object(self) -> bool:
+        return self.closed
+
+    def stop(self) -> None:
+        self.stopped = True
+
+    def reset(self) -> None:
+        self.stopped = False
+
+    def state(self) -> DeviceState:
+        return DeviceState(True, not self.stopped, "MOCK only; simulated_position=%d" % self._position)
+
+
+class MockBase(MobileBase):
+    def __init__(self) -> None:
+        self._station: Optional[str] = None
+        self.stopped = False
+
+    def navigate(self, station: str) -> None:
+        if self.stopped: raise RuntimeError("base is stopped")
+        time.sleep(0.25); self._station = station
+
+    def stop(self) -> None:
+        self.stopped = True
+
+    def reset(self) -> None:
+        self.stopped = False
+
+    def station(self) -> Optional[str]:
+        return self._station
+
+    def state(self) -> DeviceState:
+        return DeviceState(True, not self.stopped, self._station or "unknown station")
+
+
+class UnavailableBase(MobileBase):
+    """Explicit placeholder that cannot be mistaken for physical base control."""
+
+    def navigate(self, station: str) -> None:
+        raise RuntimeError("physical base adapter is not implemented")
+
+    def stop(self) -> None:
+        return
+
+    def station(self) -> Optional[str]:
+        return None
+
+    def state(self) -> DeviceState:
+        return DeviceState(False, False, "physical base adapter not implemented")

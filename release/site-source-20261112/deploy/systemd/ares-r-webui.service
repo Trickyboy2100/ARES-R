@@ -1,0 +1,17 @@
+[Unit]
+Description=ARES-R WebUI client
+Wants=network-online.target ares-r-backend.service
+After=network-online.target ares-r-backend.service
+
+[Service]
+Type=simple
+WorkingDirectory=%h/ARES-R
+Environment=PYTHONPATH=%h/ARES-R/src
+Environment=ARES_R_BACKEND_URL=http://127.0.0.1:8766
+ExecStartPre=/usr/bin/curl --fail --retry 20 --retry-delay 1 http://127.0.0.1:8766/health
+ExecStart=%h/anaconda3/envs/dope/bin/python scripts/run_scene_aware_webui.py --host 0.0.0.0 --port 8765
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,152 @@
+"""Local pre/post scene delta plus delayed gripper-readback grasp evidence."""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import math
+import time
+from typing import Callable, Mapping, Sequence
+
+
+def _local_voxels(points, center, radius_m, voxel_m):
+    center=tuple(float(v) for v in center)
+    result=set()
+    for point in points:
+        row=tuple(float(v) for v in point)
+        if len(row)!=3 or not all(math.isfinite(v) for v in row):
+            continue
+        if math.sqrt(sum((a-b)**2 for a,b in zip(row,center))) <= radius_m:
+            result.add(tuple(math.floor((row[i]-center[i])/voxel_m) for i in range(3)))
+    return result
+
+
+def unexpected_added_fraction(scene_delta: Mapping[str, object]) -> float:
+    """Added occupancy that is NOT explained by the vacated payload volume.
+
+    Lifting a basket-like payload uncovers the support surface underneath it: the
+    newly visible points sit *inside* the volume the payload used to occupy, so
+    counting them as "unexpected added occupancy" rejects a perfectly good grasp
+    (2026-11-06: removed 823 voxels of sieve, added 339 voxels of revealed tray
+    floor at z 0.93-0.97 -> added_fraction 0.553 > 0.5 -> FAIL).  Occupancy that
+    appears outside the vacated volume (arm intrusion, foreign object) is still
+    counted, and older deltas without the refined fields fall back unchanged.
+    """
+    if "unexpected_added_fraction" in scene_delta:
+        return float(scene_delta["unexpected_added_fraction"])
+    return float(scene_delta["added_fraction"])
+
+
+def local_tcp_scene_delta(before_points: Sequence[Sequence[float]],
+                          after_points: Sequence[Sequence[float]],
+                          tcp_center_body_m: Sequence[float], *,
+                          radius_m: float=.15, voxel_m: float=.005) -> dict:
+    """Compare observed occupancy only inside a bounded BODY sphere."""
+    if not .10 <= float(radius_m) <= .20:
+        raise ValueError("local TCP delta radius must be 10..20 cm")
+    if not .002 <= float(voxel_m) <= .02:
+        raise ValueError("invalid local delta voxel size")
+    before=_local_voxels(before_points,tcp_center_body_m,radius_m,voxel_m)
+    after=_local_voxels(after_points,tcp_center_body_m,radius_m,voxel_m)
+    removed=before-after;added=after-before;shared=before&after
+    revealed=set()
+    if removed:
+        low=[min(v[i] for v in removed) for i in range(3)]
+        high=[max(v[i] for v in removed) for i in range(3)]
+        revealed={v for v in added if all(low[i]<=v[i]<=high[i] for i in range(3))}
+    unexpected=added-revealed
+    core={"schema_version":1,"frame":"BODY","tcp_center_body_m":list(tcp_center_body_m),
+          "radius_m":float(radius_m),"voxel_m":float(voxel_m),
+          "before_voxels":len(before),"after_voxels":len(after),
+          "removed_voxels":len(removed),"added_voxels":len(added),
+          "shared_voxels":len(shared),
+          "revealed_voxels":len(revealed),
+          "unexpected_added_voxels":len(unexpected),
+          "removed_fraction":len(removed)/max(1,len(before)),
+          "added_fraction":len(added)/max(1,len(after)),
+          "unexpected_added_fraction":len(unexpected)/max(1,len(after))}
+    core["revision"]="sha256:"+hashlib.sha256(json.dumps(
+        core,sort_keys=True,separators=(",",":")).encode()).hexdigest()
+    return core
+
+
+def delayed_gripper_readback(read_position: Callable[[], int], delays_s,
+                             *, sleep: Callable[[float], None]=time.sleep,
+                             clock: Callable[[], float]=time.time) -> list:
+    previous=0.0;result=[]
+    for delay in (float(value) for value in delays_s):
+        if delay < previous or delay < 0:
+            raise ValueError("readback delays must be nonnegative and ordered")
+        sleep(delay-previous)
+        position=read_position()
+        if type(position) is not int or not 0 <= position <= 1000:
+            raise RuntimeError("gripper readback outside 0..1000")
+        result.append({"delay_s":delay,"captured_at_unix":clock(),"position_raw":position})
+        previous=delay
+    if len(result)<2:
+        raise ValueError("at least two delayed gripper readbacks required")
+    return result
+
+
+def classify_scene_delta(scene_delta: Mapping[str, object], parameters: Mapping[str, object]):
+    cfg=parameters["grasp_verification"]
+    before=int(scene_delta["before_voxels"]);after=int(scene_delta["after_voxels"])
+    if before == 0 or after == 0:
+        return "UNKNOWN"
+    expected=(int(scene_delta["removed_voxels"])>=int(cfg["minimum_removed_voxels"])
+              and float(scene_delta["removed_fraction"])>=float(cfg["minimum_removed_fraction"]))
+    unexpected=unexpected_added_fraction(scene_delta)>float(cfg["maximum_unexpected_added_fraction"])
+    if unexpected:
+        return "CHANGED_UNEXPECTED"
+    return "CHANGED_EXPECTED" if expected else "PASS"
+
+
+def verify_grasp_v1(scene_delta: Mapping[str, object], readbacks,
+                    parameters: Mapping[str, object]) -> dict:
+    cfg=parameters["grasp_verification"];positions=[int(row["position_raw"]) for row in readbacks]
+    classification=classify_scene_delta(scene_delta,parameters)
+    scene_pass=classification == "CHANGED_EXPECTED"
+    stable=max(positions)-min(positions)<=int(cfg["maximum_readback_spread_raw"])
+    closed=int(parameters["gripper"]["raw_closed"])
+    hold=min(positions)>closed+int(cfg["minimum_hold_above_closed_raw"])
+    gates={"LOCAL_SCENE_OBJECT_REMOVED":scene_pass,"GRIPPER_DELAYED_READBACK_STABLE":stable,
+           "GRIPPER_NOT_FULLY_CLOSED":hold}
+    return {"schema_version":1,"verifier_revision":parameters["revision"]+":grasp-v1",
+            "result":"PASS" if all(gates.values()) else "FAIL","gates":gates,
+            "scene_delta_result":classification,
+            "local_scene_delta_revision":scene_delta["revision"],"readbacks":list(readbacks),
+            "rule":"scene delta AND delayed stable non-closed gripper; neither signal passes alone"}
+
+
+def verify_grasp_phase(scene_delta,readbacks,parameters,*,phase,initial_lift_arrived=False,
+                       lift_displacement_m=0.,payload_followed_points=0,now=None,expected_lift_m=.100):
+    """Close establishes a candidate; only controlled lift plus evidence confirms."""
+    if phase not in ('HOLD_CANDIDATE','POST_LIFT'):raise ValueError('unknown grasp phase')
+    if not any(math.isclose(expected_lift_m,v) for v in (.100,.230)):
+        raise ValueError('reviewed verification lift must be100mm or230mm')
+    cfg=parameters['grasp_verification'];rows=list(readbacks);now=time.time() if now is None else now
+    positions=[row.get('position_raw') for row in rows]
+    stamps=[row.get('captured_at_unix') for row in rows]
+    timestamps=(len(rows)>=2 and all(isinstance(v,(int,float)) and math.isfinite(v) for v in stamps)
+        and all(b>a for a,b in zip(stamps,stamps[1:])) and now-stamps[-1]<=5 and now>=stamps[-1])
+    genuine=(all(type(v) is int and 0<=v<=1000 for v in positions) and timestamps)
+    stable=genuine and max(positions)-min(positions)<=cfg['maximum_readback_spread_raw']
+    hold=genuine and min(positions)>parameters['gripper']['raw_closed']+cfg['minimum_hold_above_closed_raw']
+    gates={'SAMPLE_TIMESTAMPS_VALID':bool(timestamps),'GRIPPER_STABLE':bool(stable),'GRIPPER_HOLD':bool(hold)}
+    before=int(scene_delta['before_voxels']);removed=(before>0 and scene_delta['removed_voxels']>=cfg['minimum_removed_voxels']
+        and scene_delta['removed_fraction']>=cfg['minimum_removed_fraction'])
+    if phase=='HOLD_CANDIDATE':
+        gates['SOURCE_TARGET_OBSERVED']=before>0
+        state='HOLD_CANDIDATE' if all(gates.values()) else 'VERIFICATION_AMBIGUOUS'
+    else:
+        gates['INITIAL_LIFT_ARRIVED']=bool(initial_lift_arrived and abs(lift_displacement_m-expected_lift_m)<=.005+1e-9)
+        expected=removed and unexpected_added_fraction(scene_delta)<=cfg['maximum_unexpected_added_fraction']
+        gates['LIFT_SCENE_EVIDENCE']=bool(expected or payload_followed_points>=cfg['minimum_removed_voxels'])
+        state='GRASP_CONFIRMED' if all(gates.values()) else 'VERIFICATION_AMBIGUOUS'
+    return {'schema_version':2,'phase':phase,'state':state,'result':'PASS' if all(gates.values()) else 'FAIL',
+        'gates':gates,'readbacks':rows,'local_scene_delta_revision':scene_delta['revision'],
+        'scene_delta_result':classify_scene_delta(scene_delta,parameters),
+        'lift_displacement_m':lift_displacement_m,'payload_followed_points':payload_followed_points,
+        'added_fraction':scene_delta.get('added_fraction'),
+        'revealed_voxels':scene_delta.get('revealed_voxels'),
+        'unexpected_added_fraction':scene_delta.get('unexpected_added_fraction')}

@@ -1,0 +1,165 @@
+{
+  "schema_version": 1,
+  "demo_id": "right_arm_liaopan_dmp_place_v1",
+  "revision": "LIAOPAN_DMP_PLACE_2026_11_11_V7_Y5_Z20_D20",
+  "commissioning_state": "CANDIDATE_UNVERIFIED_PLACE_CENTER",
+  "active_arm": "right",
+  "inactive_arm": "HOLD_CURRENT",
+  "extracted_from_demo_id": "right_arm_dmp_place_v1",
+  "extracted_from_revision": "DMP_PLACE_2026_11_09_V9",
+  "extracted_stages": ["dmp_place", "return_center"],
+  "start_station": "DMP",
+  "base_policy": "STATIONARY_WHOLE_DEMO_NO_BASE_COMMAND",
+  "authorization_phrase": "RIGHT DMP PLACE",
+  "motion_api_authorization": "RIGHT SCENE_AWARE SUPERVISED",
+  "motion_api_authorization_note": "canonical_backend validates /api/operations/execute against exactly this phrase; the operator-facing phrase above is what this demo itself requires on the command line.",
+  "required_site_max_velocity_rad_s": 0.2,
+  "required_site_max_velocity_note": "config/jaka_mini2_motion.site.json 的 max_velocity_rad_s 必须正好是 0.2；高于它拒绝（不允许比验收值更快），低于它同样拒绝（会静默降速）",
+  "required_tool_id": 3,
+  "required_tool_id_note": "控制器右臂 TCP 必须为 tcp3（tool_id=3，2026-11-04 起）；实际值每次运行从 /api/operations/telemetry 实时读取并写入 tool-binding.json，不一致直接拒绝且不运动",
+  "preconditions": {
+    "base": "底盘已停在 DMP 抓取站并静止；本 Demo 不发任何底盘指令（不需要转场）",
+    "payload": "右臂已持住料盘（除尘收料专机的料盘，由本 Demo 之前的链路完成抓取/抬升）；下降与松爪前保持夹持",
+    "station": "5700 抓取配置 ID2 可检测到放置目标（arena 位置由当次扫描决定，不依赖 SLAM 位姿）",
+    "operator": "现场监督与物理急停可用；控制器 errcode / 保护停已清零",
+    "note": "代码只记录夹爪回读（gripper-before-place.json），不判定是否真持有物体"
+  },
+  "platform": {
+    "motion_speed_profile": "right_scene_aware_0_20",
+    "planning_modes": ["FAST", "QUALITY", "QUALITY"],
+    "planning_rounds": 3,
+    "planning_deadline_source": "config/system.json:curobo.timeout_s",
+    "level_tolerance_deg": 5.0,
+    "level_tolerance_note": "沿用 demo-5 的 5.0°（60 mm 下降段实测最大水平误差 4.684°）；末端 yaw 仍必须与目标一致（validate_level_path final_yaw_rad）。上限 12°，overrides 可单次收紧/放宽",
+    "level_tolerance_history": [
+      {"value_deg": 4.5, "until": "2026-11-09", "reason": "任务合同初始上限"},
+      {"value_deg": 5.0, "since": "2026-11-09", "reason": "下降段 4.684° 被 4.5° 门拒，现场允许 5.0°"}
+    ],
+    "environment_avoidance": "ON",
+    "arrival_tolerance_m": 0.005,
+    "descent_tolerance_m": 0.003,
+    "descent_axis_gate_enabled": false,
+    "descent_axis_gate_note": "沿用 demo-5：2026-11-09 现场要求取消垂直下降硬门限（只保留指标记录 + WARNING，不再阻断派发）。注意：2026-11-09 当日曾经此门限拦住过一条横向 263 mm、撞到结构的绕行路径，重新开启前先看现场几何",
+    "descent_lateral_tolerance_mm": 20.0,
+    "descent_lateral_note": "下降段 TCP 横向（BODY x/y）偏离起点的上限；硬门限关闭时只记录/WARNING",
+    "descent_min_z_above_goal_mm": -2.0,
+    "descent_min_z_note": "路径中途最低 z 相对目标 z 的下限（负值=允许略低）；硬门限关闭时只记录/WARNING",
+    "scene_policy_place": "AUTO_FRESH",
+    "scene_policy_center": "FORCE_RESCAN"
+  },
+  "stages": {
+    "dmp_place": {
+      "enabled": true,
+      "epic_profile": "right_pick",
+      "epic_space_id": 2,
+      "epic_grasp_config_id": 2,
+      "epic_camera_id": 1,
+      "plan_direct_to_place": false,
+      "plan_direct_to_place_note": "false = 两段式（预放置点 + 下降），与 demo-5 同构；true 的直放模式保留在代码里可用（place = detection + offset、无下降段），供以后重测",
+      "preplace_offset_body_m": [0.0, 0.005, 0.02],
+      "preplace_offset_note": "2026-11-11 现场：预放置点 = 5700 检测返回点 **BODY y+5 mm、z+20 mm**（x 不偏移），yaw 固定 0；放置点 = 预放置点正下方 **20 mm**（= 检测点 y+5 mm / z 0 mm），不再强制等于检测点。直放模式（plan_direct_to_place=true）下这个偏移会直接作用在落点上",
+      "preplace_offset_history": [
+        {"revision": "LIAOPAN_DMP_PLACE_2026_11_09_V1", "offset_body_m": [0.0, 0.0, 0.06], "changed_by": "operator 2026-11-09（预放置点在检测返回点 z+60 mm）"},
+        {"revision": "LIAOPAN_DMP_PLACE_2026_11_09_V2_DIRECT", "offset_body_m": [0.0, 0.0, 0.0], "changed_by": "operator 2026-11-09（取消预放置点，直接规划到放置点=检测点）"},
+        {"revision": "LIAOPAN_DMP_PLACE_2026_11_09_V3_PREPLACE20_WAIVER", "offset_body_m": [0.0, 0.0, 0.02], "changed_by": "operator 2026-11-09（预放置点定在检测点上方 20 mm，再下降 20 mm 到检测点）"},
+        {"revision": "LIAOPAN_DMP_PLACE_2026_11_09_V4_FP_VOXELS", "offset_body_m": [0.0, 0.0, 0.02], "changed_by": "误检体素整族排除（几何未变）"},
+        {"revision": "LIAOPAN_DMP_PLACE_2026_11_09_V6_Y5_YAW0_D10", "offset_body_m": [0.0, 0.005, 0.0], "changed_by": "operator 2026-11-09（下降量 20 → 10 mm，放置点 = 预放置点下方 10 mm）"},
+        {"revision": "LIAOPAN_DMP_PLACE_2026_11_11_V7_Y5_Z20_D20", "offset_body_m": [0.0, 0.005, 0.02], "changed_by": "operator 2026-11-11（预放置点 z+20 mm，下降 20 mm 到放置点）"}
+      ],
+      "descent_m": 0.02,
+      "descent_note": "2026-11-11 现场：放置点 = 预放置点正下方 **20 mm**（= 检测点 y+5 mm / z 0 mm，与检测点无关）。BODY −Z，控制器原生 MoveL（不经过 cuRobo，不受观测体素碰撞检查影响），执行后用 TCP 实测位移 ±3 mm 复核",
+      "descent_mode": "CONTROLLER_LINEAR_MOVE",
+      "descent_mode_note": "2026-11-09 现场：预放置到位后像 JAKA App 里一样沿竖直方向 jog 下去（控制器原生 linear_move/MoveL），不经过 cuRobo。因此下降段不会被 INVALID_GOAL_COLLISION 或水平门挡住；仍保留：控制器 errcode/保护停/碰撞/限位守卫、tool_id=3、站点速度上限预检、逐 50 ms 轮询（出碰撞立即 motion_abort）、位移与横向偏差复核。注意：MoveL 会真实压到该位置，控制器碰撞保护可能触发（锁存后需示教器清除）。",
+      "descent_speed_mm_s": 10.0,
+      "descent_speed_note": "控制器 MoveL 的 TCP 速度（mm/s）；20 mm 约 2 s。范围 1..50",
+      "skip_preplace_within_tolerance_m": 0.005,
+      "skip_preplace_note": "当前 TCP 已在预放置点 ±5 mm 内时不再重规划/重跑预放置段，直接从当前位姿规划下降段",
+      "false_positive_voxels": {
+        "enabled": true,
+        "allowed_prefixes": [
+          "observed_support_00_component_",
+          "observed_support_01_support_surface",
+          "observed_remaining_observed_unknown_occupied_"
+        ],
+        "operator_approved": "2026-11-09 现场确认：这几个家族的观测体素为误检（鬼影），允许整族不从碰撞世界参与判定",
+        "why_family_not_offenders": "2026-11-09 实测：只豁免「落点穿透的那几个」不够——鬼影簇每次扫描重新编号，落点穿透的是 component_01，而限住路径的是同族 component_02（净空 1.3 mm）→ cuRobo 绕 244 mm、末端倒倒 17° → 被 5° 水平门限拒；另一次 component_01 → 2.4° 直通。所以按前缀整族排除才能真正稳。",
+        "safety": "名字只从**当次真实规划请求的净空表**里取（不是猜），worker 对未知名字 fail-closed；不在白名单的对象仍然算障碍。仍保留 5° 水平硬门限与同因早停。",
+        "evidence": "01-dmp-place/false-positive-voxels-preplace.json（被排除的对象名 + 前缀策略）"
+      },
+      "goal_collision_waiver": {
+        "enabled": true,
+        "max_penetration_mm": 20.0,
+        "allowed_prefixes": [
+          "observed_support_00_component_",
+          "observed_support_01_support_surface",
+          "observed_remaining_observed_unknown_occupied_"
+        ],
+        "prefix_note": "前缀写到**不带编号**的位置：body 相机每次扫描会把同一处体素重新编号（2026-11-09 实测：support_00 的凸起在两次扫描间从 component_01 变成 component_00，occupied 从 _101 变 _104），所以不能带 component 编号/尾号，否则下一帧豁免就失效（fail-closed 整次拒）。",
+        "operator_approved": "2026-11-09 现场确认：预放置点（检测点上方 20 mm）处穿透的这几个观测体素为误检，同意豁免",
+        "approval_context": {
+          "measured_penetration_mm": 16.8,
+          "objects": {
+            "observed_support_00_component_00/01_protruding": -16.8,
+            "observed_support_01_support_surface_000": -6.3,
+            "observed_remaining_observed_unknown_occupied_<N>": -2.3
+          },
+          "measured_from": "2026-11-09 干跑与实机失败证据 tmp/11.9/demo6-z20-dry、tmp/11.9/demo6-v3-dry、worklog/evidence/demo-runs/right_arm_liaopan_dmp_place_v1/run_1794215092851725227 的 *-goal-collision.json",
+          "why": "检测点作为落点时 cuRobo 报 INVALID_GOAL_COLLISION；抬高 20 mm 后穿透 16.8 mm 仍全在那个凸起体素上，现场判定为误检（非真实结构）"
+        },
+        "note": "只豁免**实际穿透目标位姿**的对象（从 INVALID_GOAL_COLLISION 表自动提取），以 ignore_cuboid_ids 下发；前缀不在白名单或深度超上限（20 mm）则整次不豁免（fail-closed，保持默认拒绝）。每次豁免写 goal-collision-waiver-<label>.json。白名单只覆盖现场确认过的这三个对象（含 support_surface 的编号后缀），不要扩展成整个 observed_support_。风险提示：2026-11-09 曾开过更宽的豁免（observed_support_/observed_remaining_structure_）导致 cuRobo 绕行并在实机撞到结构（983092 保护停）——所以本 Demo 仍保留 5° 水平硬门限与同因早停。",
+        "disabled_reason": null
+      },
+      "start_collision_waiver": {
+        "enabled": true,
+        "max_penetration_mm": 5.0,
+        "allowed_prefixes": ["observed_remaining_observed_unknown_occupied_"],
+        "operator_approved": "2026-11-09 现场选择：起点被单个观测体素穿透 3.1 mm，现场确认该体素为误检",
+        "note": "仅针对 INVALID_START_COLLISION（起点自检）。只豁免实际穿透且前缀在白名单、深度 ≤ 5 mm 的对象，以 ignore_cuboid_ids 从碰撞世界排除后重规划同一段；任一对象越界则整次不豁免（fail-closed）。每次豁免写 start-collision-waiver-<label>.json，指标写 start-collision-<label>.json。注意：该对象被整体排除后，路径也可能从该处经过 —— 只对确认过的误检体素开启。"
+      },
+      "release_raw": 400,
+      "release_readback_tolerance_raw": 60,
+      "post_release_retreat": {
+        "enabled": true,
+        "axis_body": [-1.0, 0.0, 0.0],
+        "distance_m": 0.04,
+        "source": "demo-3 right_arm_sift_pick_lift_replace_reset_v1 的 retreat 段（validated_reverse_of contact）；用 FK 从其 native 轨迹实测：contact 末 [668.37,-196.08,1026.81] mm → retreat 末 [613.38,-196.17,1026.71] mm，即 BODY x −54.99 mm、y/z ≈ 0",
+        "distance_note": "沿用 demo-5 的 40 mm：demo-5 的预放置点几何下 x−55 mm 会把 j3 推到 −128.38°，越过站点软限位下限 −125°（hard −130° 再内缩 5°）。料盘专机的预放置点更高（检测点 z+60 mm），实际关节余量需现场复核；若仍越限，controller_body_move 会沿同方向自动缩短行程并记录 clamped_mm。",
+        "note": "2026-11-09 demo-5 加入：松爪后先沿 BODY x− 退出（demo-3 方向），再从脱离位姿规划回 center。当天直接规划 center 时工具卡在槽里斜向抽出，控制器报 983092 碰撞并锁存保护停。"
+      },
+      "attach_payload_collision": false,
+      "keep_detected_yaw": false,
+      "yaw_target_deg": 0.0,
+      "yaw_target_note": "2026-11-09 现场要求：末端 yaw 必须为 0（BODY yaw = 0，水平）；由 validate_level_path 的 final_yaw_rad 硬校验。以前为 null（= 保持当前 TCP yaw ≈ −3.4°）",
+      "authorization": "RIGHT SCENE_AWARE SUPERVISED"
+    },
+    "return_center": {
+      "enabled": true,
+      "goal_contract": "ares_r.manipulation.task_contract.center_goal",
+      "goal_source": "config/named_poses.json:poses.center.arms.right.body_tcp_target_m_rad",
+      "arrival_tolerance": {
+        "position_m": 0.003,
+        "orientation_deg": 3.0,
+        "note": "check_center 合同"
+      },
+      "authorization": "RIGHT SCENE_AWARE SUPERVISED"
+    }
+  },
+  "safety": {
+    "require_authorization_phrase": true,
+    "require_onsite_observer_confirmed": true,
+    "one_shot_per_output_directory": true,
+    "never_clear_controller_errors": true,
+    "abort_on_protective_stop": true,
+    "verify_goal_collision_before_dispatch": true
+  },
+  "notes": [
+    "本 Demo 是 demo-5（right_arm_dmp_place_v1）的料盘专机拷贝：起点同样是 DMP 抓取站，不含抓取段、不含底盘转场，全程不发 /api/operations/base-move。",
+    "与 demo-5 的差异：① 预放置点 = **检测返回点 BODY y+5 mm、z+20 mm**（x 不偏移）、末端 **yaw = 0**；② 放置点 = 预放置点正下方 **20 mm**（与检测点无关）；③ 夹持物为料盘（不是筛网）；④ 落点体素豁免开启，白名单只含现场确认过的误检对象。",
+    "料盘的抓取+抬升请用之前的链路完成，本 Demo 从「已在 DMP 站且已持料盘」开始。",
+    "开工自检在每次运行的最前面：站点速度上限必须为 0.2 rad/s（site-ceiling.json）、控制器 TCP 必须为 tool_id=3（tool-binding.json），任一不符即拒绝且不运动。",
+    "预放置点 = 5700 检测返回点 + preplace_offset_body_m；实际用到的坐标、偏移量、当前 TCP 到预放置点的位移都会写入 01-dmp-place/preplace-offset.json。",
+    "落点豁免：预放置位姿被三个观测体素穿透（最大 16.8 mm），2026-11-09 现场确认是误检后才开启；穿透对象、深度与批准记录写在 01-dmp-place/goal-collision-waiver-preplace.json。任何不在白名单的对象都会让整次豁免失效（fail-closed）。",
+    "每段规划都要求 base_pose_revision 不变，否则目标作废；检测点会随批次漂移，预放置点按当次检测结果计算。",
+    "已知控制器瞬态 errcode=4128769（servo 激活前 0 采样、无运动、关节未变）本 Demo 内置与 demo-0/demo-5 同款的单次自动重试。"
+  ]
+}

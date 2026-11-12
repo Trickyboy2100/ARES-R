@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "demo_id": "right_arm_sift_dmp_roundtrip_v1",
+  "revision": "SIFT_DMP_ROUNDTRIP_2026_11_02_V1",
+  "commissioning_state": "CANDIDATE_UNVERIFIED_NO_PHYSICAL_FULL_CYCLE",
+  "active_arm": "right",
+  "inactive_arm": "HOLD_CURRENT",
+  "platform": {
+    "motion_speed_profile": "right_scene_aware_0_20",
+    "planning_modes": ["FAST", "QUALITY", "QUALITY"],
+    "planning_rounds": 3,
+    "planning_deadline_source": "config/system.json:curobo.timeout_s",
+    "level_tolerance_deg": 4.5,
+    "level_tolerance_note": "任务合同上限 4.5°；末端 yaw 必须与目标一致（validate_level_path final_yaw_rad）",
+    "environment_avoidance": "ON",
+    "arrival_tolerance_m": 0.005,
+    "descent_tolerance_m": 0.003,
+    "scene_policy_transit": "AUTO_FRESH",
+    "scene_policy_center": "FORCE_RESCAN",
+    "base_stability": {
+      "samples": 8,
+      "interval_s": 0.5,
+      "max_span_m": 0.040,
+      "max_span_yaw_deg": 1.0,
+      "min_confidence": 35,
+      "note": "SLAM 漂移防护：起步前必须满足；否则 BASE_LOCALIZATION_UNSTABLE 并拒绝运动。每段后复检，仅告警"
+    }
+  },
+  "stages": {
+    "sift_pick_lift230": {
+      "enabled": true,
+      "source_demo_id": "right_arm_shaiwang_pick_reset_v1",
+      "station_id": "SIFT-BLC-GRSP",
+      "lift_body_z_m": 0.23,
+      "prepare_command": ["scripts/prepare_sift_lift_hold.py"],
+      "run_command": ["scripts/run_sift_lift_hold.py"],
+      "authorization": "RIGHT SIFT PICK LIFT230 HOLD",
+      "note": "完全复用 demo3 的抓取+230mm 抬升+保持链路，本 Demo 不重新实现"
+    },
+    "base_transit": {
+      "enabled": true,
+      "from_station": "SIFT-BLC-GRSP",
+      "to_station": "DMP",
+      "stations_config": "config/manipulation_stations.json",
+      "order": ["ROTATE", "TRANSLATE"],
+      "linear_mps": 0.1,
+      "max_translation_leg_m": 0.30,
+      "max_rotation_leg_deg": 45.0,
+      "position_tolerance_m": 0.03,
+      "yaw_tolerance_deg": 1.0,
+      "max_legs": 16,
+      "settle_s": 1.0,
+      "invalidate_scene_before_motion": true,
+      "authorization": "MOVE BASE",
+      "note": "先原地旋转到目标 yaw，再按 BODY 相对方向平移；站位随时可由操作员重新登记"
+    },
+    "dmp_place": {
+      "enabled": true,
+      "epic_profile": "right_pick",
+      "epic_space_id": 2,
+      "epic_grasp_config_id": 2,
+      "epic_camera_id": 1,
+      "preplace_offset_body_m": [-0.020, -0.445, 0.100],
+      "preplace_offset_note": "相对 5700 检测返回点：x−20 mm、y−445 mm、z+100 mm",
+      "descent_m": 0.060,
+      "release_raw": 400,
+      "release_readback_tolerance_raw": 60,
+      "attach_payload_collision": false,
+      "keep_detected_yaw": false,
+      "yaw_target_deg": null,
+      "yaw_target_note": "null=保持当前 TCP yaw；若给数值则修正到该 BODY yaw",
+      "authorization": "RIGHT SCENE_AWARE SUPERVISED"
+    },
+    "return_center": {
+      "enabled": true,
+      "authorization": "RIGHT SCENE_AWARE SUPERVISED"
+    }
+  },
+  "safety": {
+    "require_authorization_phrase_per_stage": true,
+    "require_onsite_observer_confirmed": true,
+    "one_shot_per_output_directory": true,
+    "never_clear_controller_errors": true,
+    "abort_on_protective_stop": true,
+    "verify_goal_collision_before_dispatch": true
+  }
+}

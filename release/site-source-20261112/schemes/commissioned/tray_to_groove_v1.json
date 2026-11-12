@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "scheme_id": "tray_to_groove_v1",
+  "version": "1.0.0-p39",
+  "lifecycle": "REPLAY_VERIFIED",
+  "description": "Data-driven unchanged-speed Tray to Groove reference Scheme",
+  "nodes": [
+    {"id":"pickup_base","skill":"navigate.registered_relative","parameters":{"station":"PICK_BASE_POSE_V1","speed_profile":"CURRENT_COMMISSIONED"},"depends_on":[],"prepare_after":[],"timeout_s":120,"on_failure":"STOP","resources":["BASE"]},
+    {"id":"pick_scene","skill":"observe.capture_scene","parameters":{"profile":"right_pick","station":"PICK_BASE_POSE_V1"},"depends_on":["pickup_base"],"prepare_after":["pickup_base"],"timeout_s":30,"on_failure":"RETRY_OBSERVATION","resources":["CAMERA_5000","SCENE_EPOCH"]},
+    {"id":"pick_detect","skill":"observe.detect_resource","parameters":{"profile":"right_pick","resource_id":"tray_material"},"depends_on":["pickup_base"],"prepare_after":["pickup_base"],"timeout_s":30,"on_failure":"RETRY_OBSERVATION","resources":["CAMERA_5700","SCENE_EPOCH"]},
+    {"id":"move_pregrasp","skill":"manipulation.move_free","parameters":{"target":"$pick_detect.artifact_id","planner_policy":"FAST_FALLBACK"},"depends_on":["pick_scene","pick_detect"],"prepare_after":["pick_scene","pick_detect"],"timeout_s":180,"on_failure":"STOP_REPLAN","resources":["GPU_PLANNER","ARM_RIGHT"]},
+    {"id":"authorize_pregrasp","skill":"execution.authorize","parameters":{"policy":"UNCHANGED_SPEED_SUPERVISED"},"depends_on":["move_pregrasp"],"prepare_after":["move_pregrasp"],"timeout_s":30,"on_failure":"STOP","resources":[]},
+    {"id":"execute_pregrasp","skill":"execution.execute_trajectory","parameters":{"trajectory_binding":"$move_pregrasp.trajectory_hash"},"depends_on":["authorize_pregrasp"],"prepare_after":["move_pregrasp"],"timeout_s":180,"on_failure":"STOP","resources":["ARM_RIGHT"]},
+    {"id":"contact_approach","skill":"manipulation.approach","parameters":{"standoff_m":0.05,"policy":"CONTACT_BYPASS_V1"},"depends_on":["execute_pregrasp"],"prepare_after":["pick_detect"],"timeout_s":120,"on_failure":"STOP","resources":["GPU_PLANNER","ARM_RIGHT"]},
+    {"id":"grasp","skill":"manipulation.grasp","parameters":{"opening_percent":40,"verification":"READBACK_PLUS_SCENE_FALLBACK"},"depends_on":["contact_approach"],"prepare_after":["execute_pregrasp"],"timeout_s":60,"on_failure":"STOP_VERIFY","resources":["GRIPPER_RIGHT","ARM_RIGHT"]},
+    {"id":"initial_lift","skill":"manipulation.lift","parameters":{"distance_m":0.1},"depends_on":["grasp"],"prepare_after":["execute_pregrasp"],"timeout_s":180,"on_failure":"STOP_REPLAN","resources":["GPU_PLANNER","ARM_RIGHT"]},
+    {"id":"visibility_clear","skill":"manipulation.move_free","parameters":{"target":"VISIBILITY_CLEAR","planner_policy":"FAST_FALLBACK"},"depends_on":["initial_lift"],"prepare_after":["grasp"],"timeout_s":180,"on_failure":"STOP_REPLAN","resources":["GPU_PLANNER","ARM_RIGHT"]},
+    {"id":"place_base","skill":"navigate.registered_relative","parameters":{"station":"PLACE_BASE_POSE_V1","speed_profile":"CURRENT_COMMISSIONED"},"depends_on":["visibility_clear"],"prepare_after":["initial_lift"],"timeout_s":120,"on_failure":"STOP","resources":["BASE"]},
+    {"id":"place_scene","skill":"observe.capture_scene","parameters":{"profile":"right_place_rightmost","station":"PLACE_BASE_POSE_V1"},"depends_on":["place_base"],"prepare_after":["place_base"],"timeout_s":30,"on_failure":"RETRY_OBSERVATION","resources":["CAMERA_5000","SCENE_EPOCH"]},
+    {"id":"place_detect","skill":"observe.detect_resource","parameters":{"profile":"right_place_rightmost","resource_id":"groove_rightmost"},"depends_on":["place_base"],"prepare_after":["place_base"],"timeout_s":30,"on_failure":"RETRY_OBSERVATION","resources":["CAMERA_5700","SCENE_EPOCH"]},
+    {"id":"move_preplace","skill":"manipulation.move_above_place","parameters":{"target":"$place_detect.artifact_id","height_m":0.05},"depends_on":["place_scene","place_detect"],"prepare_after":["place_scene","place_detect"],"timeout_s":180,"on_failure":"STOP_REPLAN","resources":["GPU_PLANNER","ARM_RIGHT"]},
+    {"id":"place_descend","skill":"manipulation.approach","parameters":{"standoff_m":0.005,"policy":"CONTACT_BYPASS_V1_PLACE"},"depends_on":["move_preplace"],"prepare_after":["place_detect"],"timeout_s":120,"on_failure":"STOP_AT_PREPLACE","resources":["GPU_PLANNER","ARM_RIGHT"]},
+    {"id":"release","skill":"manipulation.release","parameters":{"opening_percent":20},"depends_on":["place_descend"],"prepare_after":["move_preplace"],"timeout_s":60,"on_failure":"STOP_VERIFY","resources":["GRIPPER_RIGHT","ARM_RIGHT"]},
+    {"id":"retreat","skill":"manipulation.retreat","parameters":{"distance_m":0.06},"depends_on":["release"],"prepare_after":["place_descend"],"timeout_s":120,"on_failure":"STOP","resources":["GPU_PLANNER","ARM_RIGHT"]},
+    {"id":"verify_result","skill":"observe.verify_predicate","parameters":{"predicate":"OBJECT_LOCATED_IN_RIGHTMOST_GROOVE","method":"5700_OR_SCENE"},"depends_on":["retreat"],"prepare_after":["release"],"timeout_s":30,"on_failure":"HOLD_FOR_REVIEW","resources":["SCENE_EPOCH"]}
+  ]
+}

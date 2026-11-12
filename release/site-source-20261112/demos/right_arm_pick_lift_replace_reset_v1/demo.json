@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "demo_id": "right_arm_pick_lift_replace_reset_v1",
+  "name": "右臂原位抓取—230mm抬升—放回复位 · 正式版",
+  "version": "1.1.0",
+  "category": "manipulation",
+  "description": "当前固定夹具场景：fresh ID1/Pixel Pro、cuRobo预抓取、接近闭爪、连续230mm抬升、滚动新鲜反馈验证、原路放回释放并回初始center；下一段Native准备与当前段执行重叠。2026-11-09 起按操作员要求固定为站点0.2 rad/s上限、TCP任务偏置全零、控制器工具tool_id=3（tcp3）。",
+  "commissioning_state": "CANDIDATE_20261109_SITE020_ZERO_TCP_BIAS_TOOL3_UNVERIFIED",
+  "contract_change_20261109": {
+    "source": "operator request: this demo runs at the 0.2 rad/s site ceiling, with no TCP bias, on controller tool 3 (tcp3)",
+    "site_velocity": "config/jaka_mini2_motion.site.json max_velocity_rad_s must be exactly 0.2 rad/s",
+    "bias": "task_tcp_offset_m_rad all zero AND demo_tcp_orientation_compensation.enabled=false; the 泊位 offset is read-only and unchanged",
+    "tool": "controller right-arm tool id 3; the native header carries the frozen controller tool id, never 1",
+    "enforced": "run_pick_reset_timing.py preflight BEFORE any motion writes site-ceiling.json / zero-bias.json / tool-binding.json / preflight.json and raises PREFLIGHT_FAILED without dispatching a backend STOP",
+    "acceptance_note": "the 2026-10-23 physical acceptance (tool_id=2, TCP_LOCAL_Z -10deg, 0.10 rad/s) predates this contract; the grasp and the level contract must be re-confirmed on site before this version is cited"
+  },
+  "contact_waiver_20261109": {
+    "why": "run console_d58281e176894dada28a0847b7614645 failed at PREPARE with CONTACT_TOOL_NON_TARGET_WORLD_COLLISION: observed_support_02_component_00_protruding_obstacle_008 after the TCP bias was cleared and the tool became tcp3 (the grasp pose moved ~25 mm in Y / ~17 mm in Z)",
+    "measured": "offline replay (tmp/11.9/diagnose_lift_collision.py): the 35-40% opening gripper finger base (4C2_Link1) overlaps the 7 mm-inflated AABBs of two measured support specks by 0.59 mm (25 pts, centre [0.6622,-0.2765,0.905]) and 0.13 mm (19 pts, centre [0.6623,-0.2354,0.9049]), only in the first 5 dense samples; the real gripped readback is raw 36-37 (~4%) where nothing overlaps",
+    "mechanism": "parameters.json:contact_extra_allowed_protrusion_waivers -> prepare_authorized_first_pick.py --contact-extra-allowed-protrusion-waivers -> the matched primitives only are added to manipulation_contact_scope.target_object_ids / motion_constraints.ignore_cuboid_ids; everything else stays hard. Anchored by body centre because support_decomposition renumbers primitives per scan",
+    "precedent": "same operator-approved option C waiver used by demo3 on 2026-11-06 (0.44 mm measured protrusion)",
+    "verification": "offline with the real continuous_demo_lift.validate_path on the frozen run: FAIL -> PASS, prefix min clearance 5.36 mm (tmp/11.9/verify_protrusion_waiver.py); NOT physically re-verified",
+    "if_absent_from_a_scan": "the waiver simply does not match and the collision gate fails closed again (no silent relaxation)"
+  },
+  "scope": {
+    "active_arm": "right",
+    "inactive_arm": "HOLD_CURRENT",
+    "base": "STATIONARY",
+    "station_transfer": false,
+    "place_included": "REPLACE_ORIGINAL_FIXTURE_ONLY",
+    "requires_initial_center": true,
+    "arbitrary_scene_commissioned": false,
+    "cold_start_scope": "RC1_PLANNER_PROCESS_CUDA_RUNTIME_ONLY_CAMERA_SERVICE_UNCHANGED"
+  },
+  "freshness_policy": {
+    "observation": "FRESH_EVERY_RUN",
+    "robot_state": "FRESH_BEFORE_EACH_SEGMENT_AND_ARRIVAL",
+    "scene": "FRESH_PER_STATIONARY_CYCLE",
+    "trajectory": "NEW_EACH_RUN_EXACT_REVERSE_WITHIN_SAME_CYCLE_ONLY",
+    "gripper_readback": "ROLLING_GENUINE_WINDOW_UNCHANGED_5S_VALIDATOR"
+  },
+  "stages": [
+    "FRESH_RIGHT_PICK_OBSERVATION",
+    "FULL_CHAIN_GEOMETRY_AND_IK_CHECK",
+    "INITIAL_NATIVE_PACKAGE",
+    "START_NEXT_NATIVE_PREPARATION",
+    "GRIPPER_40",
+    "CUROBO_PREGRASP",
+    "AWAIT_AND_VERIFY_NEXT_NATIVE",
+    "CONTACT_55MM",
+    "CLOSE",
+    "VERIFY_HOLD_CANDIDATE",
+    "CONTINUOUS_BODY_Z_LIFT_230MM",
+    "ROLLING_READBACK_AND_SCENE_VERIFY",
+    "REVERSE_LOWER_230MM",
+    "FIXTURE_ARRIVAL_CHECK",
+    "RELEASE",
+    "REVERSE_RETREAT",
+    "REVERSE_TO_INITIAL_CENTER"
+  ],
+  "hard_gates": [
+    "ACTIVE_AND_INACTIVE_ARM_STATE_TOOL_MATCH",
+    "SITE_VELOCITY_CEILING_0_2_RAD_S",
+    "ZERO_TASK_TCP_OFFSET_AND_COMPENSATION_DISABLED",
+    "CONTROLLER_TOOL_ID_3_TCP3",
+    "FRESH_TARGET_CONFIRMATION",
+    "FRESH_CONTINUOUS_BASE_IDLE_WINDOW",
+    "FULL_CHAIN_GEOMETRY_PROOF",
+    "EXACT_NATIVE_HASH_BINDING",
+    "NATIVE_LIMITS_TRACKING_DEADLINE_ESTOP",
+    "GENUINE_GRASP_VERIFICATION",
+    "FIXTURE_ARRIVAL_BEFORE_RELEASE"
+  ],
+  "execution": {
+    "entrypoint": "scripts/run_pick_reset_demo.py",
+    "backend_entrypoint": "scripts/run_pick_reset_timing.py",
+    "prepare_command": ".venv/bin/python scripts/run_pick_reset_demo.py --prepare",
+    "run_command": ".venv/bin/python scripts/run_pick_reset_demo.py --execute --authorization 'RIGHT PICK RESET TIMING' --onsite-observer-confirmed",
+    "stop_command": ".venv/bin/python scripts/run_pick_reset_demo.py --stop",
+    "authorization_phrase": "RIGHT PICK RESET TIMING",
+    "requires_art_tty": false,
+    "webui_execution_allowed": false,
+    "canonical_start_api": "/api/operations/pick-reset-timing/start",
+    "canonical_stop_api": "/api/operations/stop"
+  },
+  "parameters": {
+    "source_snapshot": "demos/right_arm_pick_lift_replace_reset_v1/source_parameters.json",
+    "pinned_inputs": "demos/right_arm_pick_lift_replace_reset_v1/pinned_inputs.json",
+    "pregrasp_distance_m": 0.055,
+    "lift_body_z_m": 0.23,
+    "gripper_raw": {
+      "pregrasp": 400,
+      "close": 0,
+      "release": 400
+    },
+    "site_velocity_contract": "0.2 rad/s site ceiling; runtime preflight asserts config/jaka_mini2_motion.site.json is exactly 0.2 before any motion (site-ceiling.json)",
+    "motion_speed_ceiling_rad_s": "0.2 (site ceiling); contact approach stays 0.05",
+    "demo_compensation": "NONE: task_tcp_offset_m_rad all zero and demo_tcp_orientation_compensation.enabled=false (zero-bias.json); old TCP_LOCAL_Z -10deg is retired",
+    "tool_contract": "required_tool_id=3 (tcp3); native header uses the frozen controller tool id from the package/epoch observation, never 1 (tool-binding.json)",
+    "source_snapshot_contains_unused_place_fields": true
+  },
+  "commissioning_evidence": "demos/right_arm_pick_lift_replace_reset_v1/evidence.json",
+  "golden_fallback": "right_arm_epic_pick_lift_v1"
+}

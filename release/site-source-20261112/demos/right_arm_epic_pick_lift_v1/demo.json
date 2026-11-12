@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "demo_id": "right_arm_epic_pick_lift_v1",
+  "name": "右臂 Epic 识别抓取并抬升",
+  "version": "1.0.0",
+  "category": "manipulation",
+  "description": "Pixel Pro + Epic 5700 生成 fresh scene，cuRobo 到预抓取，受控接触、夹持验证并抬升 100 mm 后 HOLD。",
+  "commissioning_state": "COMMISSIONED_ONCE_2026_09_24",
+  "scope": {
+    "active_arm": "right",
+    "inactive_arm": "HOLD_CURRENT",
+    "base": "STATIONARY",
+    "place_included": false
+  },
+  "freshness_policy": {
+    "observation": "FRESH_EVERY_RUN",
+    "robot_state": "FRESH_BEFORE_PLAN_AND_EACH_SEGMENT",
+    "scene_snapshot": "FRESH_EVERY_RUN",
+    "trajectory": "NEVER_REUSE",
+    "native_package": "REFRESH_BEFORE_EXECUTION"
+  },
+  "stages": [
+    "FRESH_ATOMIC_RIGHT_PICK_OBSERVATION",
+    "CUROBO_MOVE_TO_50MM_PREGRASP",
+    "GRIPPER_TO_40_PERCENT",
+    "CONTACT_BYPASS_V1_APPROACH",
+    "CLOSE_GRIPPER",
+    "DELAYED_READBACK_AND_15CM_LOCAL_SCENE_DELTA",
+    "IF_VERIFIED_BODY_Z_LIFT_100MM",
+    "EXPIRE_CONTACT_BYPASS_V1",
+    "ACTIVATE_COARSE_ATTACHED_OBJECT",
+    "HOLD_STOP"
+  ],
+  "hard_gates": [
+    "RIGHT_ARM_CONTROLLER_HEALTHY",
+    "LEFT_ARM_HOLD_CURRENT",
+    "BASE_STATIONARY",
+    "FRESH_SCENE_BOUND",
+    "ARM_LINK_HARD_COLLISION_VALID",
+    "CENTRAL_EXCLUSION_VALID",
+    "JOINT_LIMITS_VALID",
+    "TRACKING_WITHIN_PROFILE",
+    "GRASP_VERIFICATION_PASS_BEFORE_LIFT"
+  ],
+  "execution": {
+    "entrypoint": "scripts/run_first_pick_demo.py",
+    "prepare_command": "python3 scripts/run_first_pick_demo.py --prepare",
+    "run_command": "python3 scripts/run_first_pick_demo.py --execute --authorization 'RIGHT FIRST PICK SUPERVISED' --onsite-observer-confirmed",
+    "stop_command": "demo stop",
+    "authorization_phrase": "RIGHT FIRST PICK SUPERVISED",
+    "requires_art_tty": true,
+    "webui_execution_allowed": false
+  },
+  "parameters": {
+    "task_parameters": "config/tray_to_groove_v2.json",
+    "pregrasp_distance_m": 0.05,
+    "pregrasp_opening_percent": 40,
+    "lift_body_z_m": 0.1,
+    "local_scene_delta_radius_m": 0.15,
+    "contact_policy": "CONTACT_BYPASS_V1"
+  },
+  "commissioning_evidence": "demos/right_arm_epic_pick_lift_v1/evidence.json"
+}
