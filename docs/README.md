@@ -14,3 +14,5 @@
 - [功能块01 CenterRestore API](integration/2026-11-12_CENTER_RESTORE_API_CONTRACT.md)
 - [双腿实机验收与交接报告](reports/2026-11-12_ONSITE_CENTER_RESTORE_AND_HANDOFF.md)
 - [ROS离场资产索引](integration/2026-11-12_ROS1_DELIVERY_ASSET_INDEX.md)
+
+- [ROS Demo 01极简使用说明](integration/ROS_DEMO_01_QUICKSTART.md)：扫描→center→扫描→右前高位。
