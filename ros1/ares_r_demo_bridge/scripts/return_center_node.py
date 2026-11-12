@@ -3,6 +3,7 @@
 import json
 import time
 import uuid
+from pathlib import Path
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError
 import rospy
@@ -30,14 +31,37 @@ class Bridge:
         except HTTPError as exc:
             raise RuntimeError('HTTP_%s: %s' % (exc.code, exc.read().decode(errors='replace')[-1200:]))
 
-    def finish(self, code, message, run_id='', success=False, canceled=False):
-        result = ReturnCenterResult(success, code, message, run_id)
+    def finish(self, code, message, run_id='', success=False, canceled=False, details=None):
+        details = details or {}
+        arrival = details.get('arrival') or {}
+        result = ReturnCenterResult(success=success, code=code, message=message, run_id=run_id,
+                    arm='right', pose_id='right/center', outcome=arrival.get('outcome', code),
+                    details_json=json.dumps(details, ensure_ascii=False, default=str))
         if success:
             self.server.set_succeeded(result)
         elif canceled:
             self.server.set_preempted(result)
         else:
             self.server.set_aborted(result)
+
+    def details(self, status):
+        # This bridge is deployed on the same host as RC1; bind results to this console run.
+        root = Path('/home/yikun/ARES-R-RC1-20261019/worklog/evidence/demo-console').resolve()
+        folder = Path(status.get('output') or '/nonexistent').resolve()
+        if folder.parent != root or folder.name != status.get('run_id'):
+            return {'result_details_available': False}
+        try:
+            lines = (folder / 'execute.log').read_text(errors='replace').splitlines()
+            for line in reversed(lines):
+                try:
+                    value = json.loads(line)
+                except ValueError:
+                    continue
+                if isinstance(value, dict) and value.get('demo_id') == 'right_arm_return_center_v1' and value.get('result'):
+                    return value
+        except OSError:
+            pass
+        return {'result_details_available': False, 'backend_error': status.get('error')}
 
     def execute(self, goal):
         run_id = ''
@@ -72,7 +96,8 @@ class Bridge:
                 self.server.publish_feedback(ReturnCenterFeedback(state, status.get('stage', ''), run_id, elapsed))
                 if state in ('SUCCEEDED', 'FAULT', 'STOPPED', 'RECOVERY_REQUIRED'):
                     self.finish(state, str(status.get('error') or state), run_id,
-                                success=state == 'SUCCEEDED', canceled=cancel_sent and state == 'STOPPED')
+                                success=state == 'SUCCEEDED', canceled=cancel_sent and state == 'STOPPED',
+                                details=self.details(status))
                     return
                 if self.server.is_preempt_requested() or elapsed > self.deadline:
                     if not cancel_sent:

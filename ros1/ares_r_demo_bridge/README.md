@@ -1,4 +1,4 @@
-# ARES-R ROS1 回center节点 v0.1.0
+# ARES-R ROS1 回center节点 v0.2.0
 
 ## 功能与边界
 
@@ -117,3 +117,9 @@ HTTP地址可在launch传入：`base_url:=http://127.0.0.1:8775`。本接口无�
 模拟测试脚本：`scripts/test_bridge_offline.py`。仅使用本机模拟HTTP后端；运行前停掉同一master上的实际桥接节点，避免同名Action冲突。
 
 暂不推送GitHub；Golden Demo和原入口保持原样。
+
+## v0.2实机回归（2026-11-12）
+
+从right/front_right_high_axes_aligned经ROS回right/center已返回SUCCEEDED / ARRIVED_CONFIRMED。误差2.051mm / 0.00294°；3次新鲜到位读数通过，Servo退出确认。详见docs/reports/2026-11-12_OFFLINE_HANDOFF.md。
+
+Result新增arm、pose_id、outcome、details_json。details_json包含actual_body_tcp、controller_status、position_mm、orientation_deg、confirmation_duration_s和native执行结果。Action消息MD5已变化，所有客户端需重新编译/source v0.2，不能继续使用旧生成消息。

@@ -33,3 +33,7 @@ g++ -std=c++11 native/jaka_right_scene_aware_status_v1.cpp \
 ROS catkin编译通过；真实ROS通信+模拟后端5/5通过（缺确认、占用、成功、失败、取消）；native相关离线回归19/19通过；初始化修复后3次snapshot通过。SETTLING修复编译通过、19项回归通过，但修复后的完整实机运动尚未重跑。
 
 ROS测试使用隔离master127.0.0.1:11321，无开机自动运动。本提交不含token、原始点云或照片。
+
+## 后续v0.2回归已闭环
+
+2026-11-12T13:55:45+0800，从轴对正右前高位经ROS到center正式返回SUCCEEDED，ARRIVED_CONFIRMED，三次新鲜到位回读全部通过。位置2.05056mm、姿态0.002935°，Servo退出确认。原首次FAULT证据保留；本次为修复后的独立新运行，详见2026-11-12_OFFLINE_HANDOFF.md。
