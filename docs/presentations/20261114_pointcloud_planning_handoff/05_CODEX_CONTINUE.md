@@ -1,3 +1,7 @@
+> **重要更新（2026-11-14）**：本文件是第一次接手指令；请改为从 [11_V2_CODEX_BUILD_WORK_ORDER.md](11_V2_CODEX_BUILD_WORK_ORDER.md) 开始，逐页以[09_V2_SLIDE_CONTRACT_14_PLUS_2.md](09_V2_SLIDE_CONTRACT_14_PLUS_2.md)为准，证据以[12_V2_PROVENANCE_AND_QA_GATES.md](12_V2_PROVENANCE_AND_QA_GATES.md)为准。下文保留历史信息，发生冲突时使用V2。
+
+---
+
 # Codex接手任务：在原模板下完成16页研发过程汇报
 
 Source: reconstructed

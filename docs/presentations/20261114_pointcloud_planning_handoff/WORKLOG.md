@@ -23,3 +23,14 @@ Source: reconstructed
 ## 验证口径
 
 远端提交应以GitHub commit/ref回读为准；文件存在/文字回读不等同PPT视觉检查。原始参考PPT、旧PPTX/PDF及中间联系表未传入本交接目录，详见06状态JSON。
+
+
+## 2026-11-14 深化一轮（本次实际执行）
+
+- 通过已安装的GitHub连接确认交接分支头b51fba18及原有15文件；复核主仓库关键源码、9/21 cleanup_benchmark、9/21支撑误碰撞报告、9/21 current-base、9/22 P3.2、9/23 D1、9/24 P3.7、9/28延迟审计以及图集 README/INPUT_INDEX。
+- 写入08_V2_NARRATIVE_AND_WORKPACKAGES.md：验收需求转译为WP-A～G、按模块研发而非虚构历史、三条最有力的问题归因链。
+- 写入09_V2_SLIDE_CONTRACT_14_PLUS_2.md：16页逐页图文/数据组/备注/禁说条款。
+- 写入10_V2_MATERIAL_AND_LOCAL_PPT_LOCATOR.md：精确PPT文件名、Mac路径未知说明、本地限定搜索命令、仓库现有独立图与原媒体提取说明。
+- 写入11_V2_CODEX_BUILD_WORK_ORDER.md：本地Codex能直接执行的原模板继承、源媒体整理、重排、两轮渲染与证据门禁。
+- 写入12_V2_PROVENANCE_AND_QA_GATES.md：不同日期/场景的统计严格隔离，补正历史32→235与GRASP 19→405混用、独立self-collision边界、9/22 planning-only与9/23/24 physical执行的差异。
+- 未读取到三份原始PPT二进制，未证实Mac绝对路径；未运行repo脚本/新实验/设备；未生成最终PPTX。原06状态保持缺件，不作虚构更新。

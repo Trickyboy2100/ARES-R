@@ -1,52 +1,45 @@
-# 点云场景重建与机械臂规划：PPT阶段成果与接手包
+# ARES-R 点云场景重建与机械臂规划：验收工作量PPT接手包
 
-状态：**文字交接包已保存；原始PPTX/PDF二进制尚未转存；新模板精排成稿未完成。**
+**当前状态：已完成第二轮内容深化并推送；原始参考PPTX二进制仍未在本分支；尚未制成符合原模板的最终PPTX。** 本仓库为public，原始现场/专有材料需审查后上传。
 
-Source: reconstructed
+## Codex立即开始（2026-11-14 V2，优先级高于旧文稿）
 
-本目录承接2026-11-13讨论及用户随后提出的入库要求。用途是让后续Codex/制作人员继续完成既定14页正文＋2页补证附页，不重新讨论提纲，不将旧的不合格视觉稿当成最终成果。
+1. [11_V2_CODEX_BUILD_WORK_ORDER.md](11_V2_CODEX_BUILD_WORK_ORDER.md) —— 可直接执行的制作任务、模板纪律、证据检查、输出要求。
+2. [09_V2_SLIDE_CONTRACT_14_PLUS_2.md](09_V2_SLIDE_CONTRACT_14_PLUS_2.md) —— **14页正文＋2页补证**逐页制作合同，具体哪张图、哪个实验、哪些数字、讲什么以及不能说什么。
+3. [12_V2_PROVENANCE_AND_QA_GATES.md](12_V2_PROVENANCE_AND_QA_GATES.md) —— **13组实验数据严格分离**；防止9/21 CLEAR、10/10 CAMERA、10/21 GRASP等互相嫁接。
+4. [10_V2_MATERIAL_AND_LOCAL_PPT_LOCATOR.md](10_V2_MATERIAL_AND_LOCAL_PPT_LOCATOR.md) —— 原始PPT精确文件名（Mac绝对路径当前未知）、macOS精确搜索命令、repo图集与旧周报可用素材、原媒体提取要求。
+5. [08_V2_NARRATIVE_AND_WORKPACKAGES.md](08_V2_NARRATIVE_AND_WORKPACKAGES.md) —— 录音需求的研发工作量表达、7个项目工作包、三条真实故障/修复证据线。
 
-## 立即从这里开始
+**一句话要求**：围绕“发现问题—参数/模型/接口对照—代码与数据处理改动—可核查的复测—可交付的研发能力”，而不是复述DBSCAN或cuRobo基础算法原理，也不编造调参/训练/实机成功结果。
 
-1. 阅读[已确认要求与设计决策](01_DECISIONS_AND_REQUIREMENTS.md)。
-2. 阅读[旧半成品16页文字恢复](02_DRAFT_14_PLUS_2.md)：页序、标题、数据和逐页讲述备注来自已有半成品，不是重新拟定大纲。
-3. 阅读[证据账本及本轮新增核查](03_EVIDENCE_LEDGER.md)。旧稿存在数据集命名和独立自碰核验表述问题，不能未经核对继续用。
-4. 按[素材地图](04_ASSET_MAP.md)和[Codex接手任务](05_CODEX_CONTINUE.md)继续工作。
-5. 对照[原文件转存状态](06_SOURCE_TRANSFER_STATUS.json)补齐原PPT文件；不要把“文本已保存”解释为“原PPT已上传”。
+## 已在分支内的既有文件（可读，但遇冲突以V2为准）
 
-## 保留的既定方向
+- [01_DECISIONS_AND_REQUIREMENTS.md](01_DECISIONS_AND_REQUIREMENTS.md)：原模板、字体、证据纪律。
+- [02_DRAFT_14_PLUS_2.md](02_DRAFT_14_PLUS_2.md)：旧16页文字/演讲备注恢复（**内容半成品，视觉不合格**；存在后续修正项）。
+- [03_EVIDENCE_LEDGER.md](03_EVIDENCE_LEDGER.md)：第一次证据梳理与问题核查。
+- [04_ASSET_MAP.md](04_ASSET_MAP.md)：第一次仓库资产索引。
+- [05_CODEX_CONTINUE.md](05_CODEX_CONTINUE.md)：第一次接手指令；**已由11_V2_CODEX_BUILD_WORK_ORDER.md更新**。
+- [06_SOURCE_TRANSFER_STATUS.json](06_SOURCE_TRANSFER_STATUS.json)：原始二进制转存状态（仍为缺失），不可把文字摘录说成原件。
+- [07_RECORDING_REQUIREMENTS.md](07_RECORDING_REQUIREMENTS.md)：14分57秒沟通录音中与制作有关的摘要与时间定位。
+- [references/](references/)：原验收模板/方法PPT/大PPT的**文字**恢复，非二进制。
+- [tools/](tools/)：旧归档/校验工具源码，**尚未在本轮故障容器执行**。
+- [WORKLOG.md](WORKLOG.md)：真实交接过程、未执行范围和追加提交记录。
 
-汇报主题是**点云场景建模和机械臂规划调试的研发过程与实际工作量**。主线为“发现问题—对照或诊断—具体研发修改—复测结果”。没有失败历史的模块，按“功能需求—接口/约束实现—验证证据”讲，不编造失败、训练、成功率或历史调参过程。
+## 仓库已经有的公开图集
 
-正文14页；第15页为DBSCAN参数矩阵，第16页为支撑分层×局部细分消融。两页均**尚未执行**。
+- [RASC/cuRobo图集](../assets/20261028_rasc_curobo/README.md)
+- [GRASP V3](../assets/20261028_rasc_curobo/grasp_v3/README.md)
+- [清晰局部剖切V2](../assets/20261028_rasc_curobo/clarity_v2/README.md)
 
-## 模板与素材
+素材清晰度优先级：**原周报/PPT高清原图 > repo可追溯独立局部图 > 对原数据重绘的原生可编辑图 > 清晰标注的机制示意**。不要把不清楚的Codex合成图堆到最终PPT。
 
-必须直接继承《生料和水泥的水分细度检验操作目标识别与控制算法研发内部验收20261030V0.95 - 机械臂.pptx》的原始母版、主题、固定组件和比例，不再以“参考风格重绘”替代。
+## 当前缺件和实情
 
-中文以黑体、英文/数字以Arial为主；宋体/Times New Roman为辅；公式单独处理。主要素材来自两份20261028 PPT与仓库原始图集，尤其要检查大PPT末尾图片页，不得因提取不到正文就当作空白。
+1. 未知Mac实际绝对路径的原参考PPT：`生料和水泥的水分细度检验操作目标识别与控制算法研发内部验收20261030V0.95 - 机械臂.pptx`、`20261028-水分细度目标识别与场景自适应规划控制-2.pptx`、`20261028-水分细度目标识别与场景自适应规划控制.pptx`；另有旧14＋2视觉半成品PPTX。具体见10。
+2. 补证第15页DBSCAN ε×m扫值和第16页支撑层×局部细分消融**尚未执行**。只有完成新实验、归档数据才能变成实测结果。
+3. 本次文档更新没有运行相机、GPU求解、JAKA运动、ROS业务软件或任何新实验；不能将整理工作当成研发实验完成。
+4. 资料分支从冻结证据基点`8da63a6caf4d7d9ac17dc226362e43c77a6f21d5`衍生。不改生产代码、不覆盖main、不涉及另一研究分支。
 
-## 已在当前分支内的原有素材
+## 新版PPT完成门槛
 
-本交接分支基于冻结证据提交 `8da63a6caf4d7d9ac17dc226362e43c77a6f21d5`，已继承下列仓库资产，并非本轮重新上传：
-
-- [RASC/cuRobo总图集](../assets/20261028_rasc_curobo/README.md)
-- [真实GRASP V3](../assets/20261028_rasc_curobo/grasp_v3/README.md)
-- [点云可读性V2](../assets/20261028_rasc_curobo/clarity_v2/README.md)
-- [原图集任务书](../2026-10-28_CODEX_RASC_VISUAL_EVIDENCE_WORK_ORDER.md)
-
-这是一条资料交接分支，不改机器人生产代码，不覆盖main，也不合并ROS业务工作分支。
-
-## 明确未完成
-
-- 当前工具的Python/容器最小检查持续返回ClientError，无法读原PPT二进制、拆文件或上传原始图片。
-- GitHub写入通道可用，因此本轮保存的是恢复文字、决策说明、证据与素材索引、补证方案及转存工具。
-- 旧PPTX和PDF在会话中曾被交付，但已被用户否定模板和素材；本轮只恢复其可读文字，未再次验证二进制、页面渲染或版式。
-- 正确原模板下的精排PPTX、逐页预览和完整视觉验收**尚未完成**。
-- 原始录音转写不全文公开入库，只保留与制作有关的需求摘要与时间定位，见[录音需求说明](07_RECORDING_REQUIREMENTS.md)。本仓库为public。
-
-## 本轮验证范围
-
-已通过GitHub接口读取冻结证据目录、两份资产README及协作约定；已通过文件读取通道恢复旧16页正文/讲者备注。未运行机器人、规划实验、GPU计算或现场设备。未运行本目录新增的文件转存工具；它们必须先通过自测再用于正式归档。
-
-最终PPT是否完成，只能以实际文件、校验和、逐页渲染检查及讲者备注检查为准，不以本交接包替代交付。
+真实模板继承；所有14＋2页有讲者备注；每个实验图和统计具有源与数据组；两页未执行实验明确隔离；真实大PPT最后媒体逐页解包；两轮完整渲染检查；最终PPTX可打开；提交来源清单和QA日志。**不以交接文档替代PPT交付。**
