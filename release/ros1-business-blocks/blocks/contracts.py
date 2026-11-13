@@ -66,3 +66,14 @@ def replay(plan, evidence, *, cancelled_at=None):
                 payload_state='HELD_CONFIRMED' if pick else 'RELEASED_CONFIRMED',
                 payload_session_id=evidence[-1].get('payload_session_id', ''),
                 transport_handoff_ready=False, physical_motion=False, events=results)
+
+
+def site_profile_path(row):
+    if row.get('site_profile_source'):
+        return row['site_profile_source']
+    return row['profile_source'].split('release/site-source-20261112/', 1)[1]
+
+
+def payload_object_type(row):
+    return row.get('object_type', 'sieve' if row['block_id'] in
+                   ('place.dmp.sieve.v1', 'place.scale.sieve.v1') else 'tray')

@@ -12,11 +12,11 @@ import sys
 
 ROOT=Path(__file__).resolve().parents[1]
 
-def load_pinned(site, relative):
+def load_pinned(site, relative, *, expected_sha256=None):
     pins=json.loads((ROOT/'CANONICAL_BINDINGS.json').read_text())
-    if relative not in pins:raise ValueError('UNPINNED_CANONICAL_SOURCE')
+    if relative not in pins and not expected_sha256:raise ValueError('UNPINNED_CANONICAL_SOURCE')
     path=Path(site)/relative
-    if hashlib.sha256(path.read_bytes()).hexdigest()!=pins[relative]:
+    if hashlib.sha256(path.read_bytes()).hexdigest()!=(expected_sha256 or pins[relative]):
         raise ValueError('CANONICAL_SOURCE_REVISION_CHANGED:'+relative)
     spec=importlib.util.spec_from_file_location('ares_business_'+path.stem,path)
     module=importlib.util.module_from_spec(spec)

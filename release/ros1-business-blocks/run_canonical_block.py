@@ -3,7 +3,7 @@
 import argparse,json,sys,os
 from pathlib import Path
 from blocks.canonical import load_pinned,bind_hold_tool,verify_pick_result,verify_place_result,commissioning_admission
-from blocks.contracts import resolve
+from blocks.contracts import resolve, site_profile_path, payload_object_type
 from blocks.runner import PayloadSessions
 
 def run(args):
@@ -15,7 +15,7 @@ def run(args):
     # requires an explicit accepted revision, not a ROS parameter override.
     site=Path(args.site).resolve();out=Path(args.output).resolve()
     if site/'worklog/evidence' not in out.parents:raise ValueError('OUTPUT_OUTSIDE_CANONICAL_EVIDENCE')
-    params=site/row['profile_source'].split('release/site-source-20261112/',1)[1]
+    params=site/site_profile_path(row)
     import hashlib
     if hashlib.sha256(params.read_bytes()).hexdigest()!=row['profile_sha256']:raise ValueError('PROFILE_CHANGED')
     sessions=PayloadSessions(site/'worklog/runtime/ros-business-payloads.sqlite')
@@ -56,9 +56,9 @@ def run(args):
             if payload['state']!='HELD_CONFIRMED':raise ValueError('PAYLOAD_NOT_HELD')
             from blocks.live_payload import fresh_hold
             from blocks.place_runtime import execute_with_payload
-            existing=load_pinned(site,'scripts/run_dmp_place_demo.py')
+            existing=load_pinned(site,'scripts/run_dmp_place_demo.py', expected_sha256=row.get('canonical_source_sha256'))
             parameters=json.loads(params.read_text())
-            expected_type='sieve' if args.block=='place.dmp.sieve.v1' else 'tray'
+            expected_type=payload_object_type(row)
             result=execute_with_payload(existing,parameters,out,sessions,args.payload_session,
                 validate_payload=lambda:fresh_hold(site,payload,expected_type),return_center=True)
         else:raise PermissionError('CANONICAL_BLOCK_ADAPTER_NOT_RELEASED')

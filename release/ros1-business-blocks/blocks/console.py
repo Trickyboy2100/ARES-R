@@ -8,7 +8,7 @@ import time
 from center_restore.console import CenterRestoreConsole
 from ares_r.demos.registry import _atomic_json
 from ares_r.demos.console import read
-from .contracts import registry
+from .contracts import registry, site_profile_path
 
 PREFIX = 'ros-prepare-'
 RUN_PREFIX = 'ros-run-'
@@ -56,7 +56,7 @@ class BusinessConsole(CenterRestoreConsole):
             raise ValueError('UNKNOWN_PREPARATION_BLOCK')
         if body.get('expected_profile_revision') != profile['profile_revision']:
             raise ValueError('PROFILE_REVISION_MISMATCH')
-        relative = profile['profile_source'].split('release/site-source-20261112/', 1)[1]
+        relative = site_profile_path(profile)
         if hashlib.sha256((self.root / relative).read_bytes()).hexdigest() != profile['profile_sha256']:
             raise ValueError('SITE_PROFILE_CHANGED')
         if alias.startswith(RUN_PREFIX):
@@ -113,7 +113,7 @@ class BusinessConsole(CenterRestoreConsole):
             elif profile['id'] == 'P02':
                 command = [sys.executable, 'scripts/run_pick_reset_demo.py', '--prepare']
             else:
-                parameters = profile['profile_source'].split('release/site-source-20261112/', 1)[1]
+                parameters = site_profile_path(profile)
                 demo_id = json.loads((self.root / parameters).read_text())['demo_id']
                 command = [sys.executable, 'scripts/run_dmp_place_demo.py',
                            '--demo-id', demo_id, '--stage', 'place']

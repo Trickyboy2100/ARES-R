@@ -1,0 +1,29 @@
+--- a/scripts/run_dmp_place_demo.py
++++ b/scripts/run_dmp_place_demo.py
+@@ -241,7 +241,25 @@
+ 
+ 
+ def telemetry():
+-    return api('/api/operations/telemetry', {}, timeout=40)
++    # Only this read-only endpoint may wait for a competing SDK reader/scan.
++    # Motion dispatch, unrelated HTTP failures and SDK errors are never retried.
++    deadline = time.monotonic() + 10.0
++    attempts = 0
++    while True:
++        try:
++            return api('/api/operations/telemetry', {}, timeout=40)
++        except ApiError as error:
++            if (error.code != 409 or
++                    'SDK_READ_DEFERRED_NATIVE_OWNER_ACTIVE' not in error.body):
++                raise
++            remaining = deadline - time.monotonic()
++            if remaining <= 0:
++                raise
++            attempts += 1
++            if attempts == 1:
++                print(json.dumps(dict(stage='TELEMETRY', state='WAITING_FOR_SDK_LEASE',
++                                      retry_budget_s=10.0)), flush=True)
++            time.sleep(min(0.25, remaining))
+ 
+ 
+ def tcp_of(state, arm='right'):

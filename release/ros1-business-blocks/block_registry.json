@@ -618,16 +618,103 @@
       "id": "L04",
       "block_id": "place.scale.sieve.v1",
       "kind": "place",
-      "acceptance": "DISABLED_REQUIREMENT_PENDING",
+      "acceptance": "DEMO_PHYSICAL_PASS_ADAPTER_REPLAY_PASS",
       "physical_start_enabled": false,
       "base_motion_allowed": false,
-      "optional": true,
-      "profile_revision": "NOT_BOUND",
-      "profile_sha256": null,
-      "reason": "Offline contract only; canonical execution adapter and current-profile physical acceptance required",
+      "optional": false,
+      "profile_revision": "SHAIWANG_CHENG_PLACE_2026_11_13_V3_ID8_Z100_D100_CENTER_IKSEED",
+      "profile_sha256": "adc0de0afc1d0e8654fe911476bc38ba708dc7938b67e378d80597340754ecc6",
+      "reason": "Same parameter revision and shared place executor bound; real release/retreat/center evidence replay passed. ROS dispatch remains to be integrated.",
       "display_name": "称上筛网放置",
       "ros_action": "/ares_r/run_block",
-      "packaging_state": "PROFILE_INPUT_REQUIRED"
+      "packaging_state": "CANONICAL_ADAPTER_BOUND_REPLAY_PASS",
+      "profile_source": "release/ros1-business-blocks/site-20261113-L04/parameters.json",
+      "site_profile_source": "demos/right_arm_shaiwang_cheng_place_v1/parameters.json",
+      "object_type": "sieve",
+      "canonical_source_sha256": "29a12bef9090355a0750eb95f3e9fee28ab231478cb5c19fafe7282aa4d918af",
+      "physical_evidence_run_id": "049b636585df431ea42f83975dbabfc6",
+      "effective_place": {
+        "enabled": true,
+        "epic_profile": "right_pick",
+        "epic_profile_note": "沿用 demo-5 的 right_pick 模板；脚本会把 space_id / object_id / camera_id 覆盖成本 Demo 的 2 / 8 / 1，因此实际下发命令是 320,2,8,1,1,0（config/system.json 里不需要新增 profile 条目）",
+        "epic_space_id": 2,
+        "epic_grasp_config_id": 8,
+        "epic_camera_id": 1,
+        "preplace_offset_body_m": [
+          0.0,
+          0.0,
+          0.1
+        ],
+        "preplace_offset_note": "2026-11-13 现场：预放置点 = 5700 ID8 检测返回点 **BODY z+100 mm**（x/y 不偏移）；下降 100 mm 后放置点 = 预放置点正下方 100 mm = **检测返回点本身**。单次实验可用 --preplace-offset 覆盖",
+        "preplace_offset_history": [
+          {
+            "revision": "SHAIWANG_CHENG_PLACE_2026_11_13_V1_ID8_Z60_D60",
+            "offset_body_m": [
+              0.0,
+              0.0,
+              0.06
+            ],
+            "changed_by": "operator 2026-11-13（预放置点在检测返回点正上方 60 mm，下降 60 mm 到检测点）"
+          },
+          {
+            "revision": "SHAIWANG_CHENG_PLACE_2026_11_13_V2_ID8_Z100_D100",
+            "offset_body_m": [
+              0.0,
+              0.0,
+              0.1
+            ],
+            "changed_by": "operator 2026-11-13（预放置点改为检测返回点正上方 100 mm，下降 100 mm 回到检测点）"
+          }
+        ],
+        "descent_m": 0.1,
+        "descent_note": "2026-11-13 现场：放置点 = 预放置点正下方 **100 mm** = 5700 ID8 检测返回点（preplace_offset_body_m 的 x/y 为 0，所以 place_body == detection_body）。BODY −Z，控制器原生 MoveL（不经过 cuRobo，不受观测体素碰撞检查影响），执行后用 TCP 实测位移 ±3 mm 复核；100 mm 行程比 60 mm 长 67%，首次实机建议先用 --stop-after preplace 看预放置点几何",
+        "descent_mode": "CONTROLLER_LINEAR_MOVE",
+        "descent_mode_note": "2026-11-09 现场要求：预放置到位后直接像 JAKA App 里一样沿竖直方向 jog 下去（控制器原生 linear_move/MoveL），**不经过 cuRobo**。因此下降段不再被观测体素碰撞（INVALID_GOAL_COLLISION）或水平门挡住；仍保留：控制器 errcode/保护停/碰撞/限位守卫、tool_id=3、站点速度上限预检、逐 50 ms 轮询（出碰撞立即 motion_abort）、位移与横向偏差复核。改回规划式下降设 CUROBO_PLAN。注意：cuRobo 当时报落点比观测支撑面深 7.9 mm，MoveL 会真实压到该位置，控制器碰撞保护可能触发。",
+        "descent_speed_mm_s": 10.0,
+        "descent_speed_note": "控制器 MoveL 的 TCP 速度（mm/s）；100 mm 约 10 s。范围 1..50",
+        "skip_preplace_within_tolerance_m": 0.005,
+        "skip_preplace_note": "当前 TCP 已在预放置点 ±5 mm 内时不再重规划/重跑预放置段，直接从当前位姿规划下降段（避开目标窗口里的腕部自观测残影）",
+        "goal_collision_waiver": {
+          "enabled": false,
+          "max_penetration_mm": 10.0,
+          "allowed_prefixes": [
+            "observed_support_",
+            "observed_remaining_structure_"
+          ],
+          "operator_approved": "2026-11-09 曾按现场判断开启，但当日实机结果否定了这个前提",
+          "disabled_reason": "2026-11-09 实机：豁免后 cuRobo 规划出一条横向偏移 263 mm、中途低于目标 8 mm 的绕行路径，执行时控制器报 983092 碰撞并锁存保护停（TCP 已到 [686.0,-454.2,1193.9] mm）。说明那些体素不是完全误检。默认关闭，= 保持 fail-closed；若确需开启，必须同时满足下降垂直硬门限（见 platform.descent_*）。",
+          "note": "只豁免**实际穿透落点**的对象（从 INVALID_GOAL_COLLISION 表自动提取），以 ignore_cuboid_ids 下发；前缀不在白名单或深度超上限则整次不豁免（fail-closed）。每次豁免写 goal-collision-waiver-<label>.json。"
+        },
+        "start_collision_waiver": {
+          "enabled": true,
+          "max_penetration_mm": 5.0,
+          "allowed_prefixes": [
+            "observed_remaining_observed_unknown_occupied_"
+          ],
+          "operator_approved": "2026-11-09 现场选择：起点被单个观测体素穿透 3.1 mm，现场确认该体素为误检",
+          "note": "仅针对 INVALID_START_COLLISION（起点自检）。只豁免实际穿透且前缀在白名单、深度 ≤ 5 mm 的对象，以 ignore_cuboid_ids 从碰撞世界排除后重规划同一段；任一对象越界则整次不豁免（fail-closed）。每次豁免写 start-collision-waiver-<label>.json，指标写 start-collision-<label>.json。注意：该对象被整体排除后，路径也可能从该处经过 —— 只对确认过的误检体素开启。"
+        },
+        "release_raw": 400,
+        "release_readback_tolerance_raw": 60,
+        "post_release_retreat": {
+          "enabled": true,
+          "axis_body": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "distance_m": 0.04,
+          "speed_mm_s": 10.0,
+          "source": "demo-3 right_arm_sift_pick_lift_replace_reset_v1 的 retreat 段（validated_reverse_of contact）；用 FK 从其 native 轨迹实测：contact 末 [668.37,-196.08,1026.81] mm → retreat 末 [613.38,-196.17,1026.71] mm，即 BODY x −54.99 mm、y/z ≈ 0",
+          "distance_note": "沿用 demo-5 的 40 mm（demo-3 的 55 mm 在 demo-5 的几何下会把 j3 推到软限位下限之外）。本 Demo 的预放置点比 demo-5 高 100 mm、x/y 不偏移，关节余量不同，首次实机/分段运行需现场复核；若仍越限，controller_body_move 会沿同方向自动缩短行程并记录 clamped_mm。",
+          "note": "2026-11-09 加入：松爪后先沿 BODY x− 退出 55 mm，再从脱离位姿规划回 center。当天直接规划 center 时工具卡在槽里斜向抽出，控制器报 983092 碰撞并锁存保护停。"
+        },
+        "attach_payload_collision": false,
+        "keep_detected_yaw": false,
+        "yaw_target_deg": null,
+        "yaw_target_note": "null=保持当前 TCP yaw；若给数值则修正到该 BODY yaw",
+        "authorization": "RIGHT SCENE_AWARE SUPERVISED"
+      }
     },
     {
       "id": "L05",
