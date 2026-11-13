@@ -1,0 +1,50 @@
+--- a/src/ares_r/motion/native_execution_package.py
++++ b/src/ares_r/motion/native_execution_package.py
+@@ -68,6 +68,33 @@
+         worst = max(worst, float(np.min(distance, axis=1).max()))
+     return worst
+ 
++
++
++def _arc_length_samples(source, dt, speed, accel, baseline, tracking_budget):
++    import numpy as np
++    q = np.asarray(source, dtype=float)
++    arc = np.r_[0., np.cumsum(np.max(np.abs(np.diff(q, axis=0)), axis=1))]
++    keep = np.r_[True, np.diff(arc) > 1e-14]
++    q, arc = q[keep], arc[keep]
++    length = float(arc[-1])
++    if length <= 1e-12:
++        return baseline
++    velocity, acceleration = min(speed), min(accel)
++    ramp = velocity / acceleration
++    minimum = max(2*ramp, length/velocity+ramp)
++    for count in range(max(2, math.ceil(minimum/dt)), len(baseline)-1):
++        duration = count * dt
++        clock = np.arange(count+1)*dt
++        peak = length/(duration-ramp)
++        progress = np.where(clock<ramp, .5*peak/ramp*clock**2,
++            np.where(clock>duration-ramp, length-.5*peak/ramp*(duration-clock)**2,
++                     peak*(clock-.5*ramp)))
++        candidate = np.column_stack([np.interp(progress,arc,q[:,j]) for j in range(6)]).tolist()
++        candidate[0], candidate[-1] = list(source[0]), list(source[-1])
++        if (not native_move_violations(candidate,dt,speed,accel)
++                and predicted_tracking_gate_deg(candidate,dt)<=tracking_budget):
++            return candidate
++    return baseline
+ 
+ def package_native_preview(points, source_dt_s, site_limits, *, tool_id,
+                            controller_tool_pose_mm_rad, captured_at_unix,
+@@ -114,6 +141,13 @@
+             retiming_fallback=str(exc)
+             sampled=local_polyline(source,NATIVE_DT_S,speed,accel,max_duration_s)
+             effective_retimer='LOCAL_EXACT_POLYLINE_V1'
++    elif retiming_policy=='ARC_LENGTH_EXACT_V1':
++        baseline = resample_for_native(source, float(source_dt_s), NATIVE_DT_S,
++                                      speed, accel, max_duration_s=max_duration_s)
++        sampled = _arc_length_samples(source,NATIVE_DT_S,speed,accel,baseline,
++            min(SUPERVISED_TRACKING_BUDGET_DEG,tracking_stop_threshold_deg-.02))
++        effective_retimer = ('ARC_LENGTH_EXACT_V1' if len(sampled)<len(baseline)
++                             else 'LEGACY_GLOBAL_DILATION')
+     elif retiming_policy=='LEGACY':
+         sampled = resample_for_native(source, float(source_dt_s), NATIVE_DT_S,
+                                       speed, accel, max_duration_s=max_duration_s)

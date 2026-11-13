@@ -1,0 +1,10 @@
+--- a/src/ares_r/motion/scene_aware_execution.py
++++ b/src/ares_r/motion/scene_aware_execution.py
+@@ -92,6 +92,7 @@
+             controller_tool_pose_mm_rad=audit["tool_data"]["pose_mm_rad"],
+             captured_at_unix=float(capture["captured_at_unix"]),
+             max_excursion_rad=math.radians(float(site.get("native_max_excursion_deg", 150.0))),
++            retiming_policy=('ARC_LENGTH_EXACT_V1' if (motion.request_label == 'CENTER_RESTORE_SAVED' or motion.request_label.startswith('RETURN_CENTER_') or motion.request_label == 'RETURN_CENTER') else 'LEGACY'),
+             speed_ceiling_rad_s=velocity,
+             accel_ceiling_rad_s2=acceleration,
+             tracking_stop_threshold_deg=float(speed["tracking_stop_threshold_deg"]))
