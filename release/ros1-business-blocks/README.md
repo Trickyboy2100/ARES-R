@@ -1,34 +1,52 @@
-# ROS1 取放功能块：离线准备版
+# ARES-R ROS1 取放功能块
 
-**本目录不是可运动的交付版本。** `/ares_r/run_block` 目前只提供 Action ABI 预览，所有物理 Goal 明确拒绝。已验收的 `/ares_r/center_restore` 保持独立，不迁移、不修改消息。
+统一接口为 `/ares_r/run_block`。封装共登记 11 项能力，包含原姿态往返、5项抓取及5项放置，其中称上两个放置功能为可选项。
 
-- `block_registry.json`：11项业务能力、5份有效参数文件及SHA、验收状态。与11月12日P0私有归档逐文件一致。
-- `blocks/contracts.py`：离线准备及阶段回放。Pick停在持物确认；Place先释放确认、退出，再可选center。
-- `blocks/replay_jobs.py`：离线幂等/取消合同测试，**不是第二个物理任务所有者**。
-- `ros/ares_r_manipulation_blocks`：新的RunBlock Action及明确拒绝运动的节点。尚未catkin编译。
-- `SOURCE_BINDINGS.json`：复用入口版本；`ARCHIVE_VERIFICATION.json`：私有包校验摘要，不包含原始数据。
+| 功能 | 封装状态 |
+|---|---|
+| U01 姿态往返 | 沿用已认可的 `/ares_r/center_restore` |
+| P01 称上筛网抓取 | 原 HOLD 执行器适配，结束于持物确认 |
+| P02 称上料盘抓取 | 加速版原入口增加 HOLD 结束选项，230mm 抬升后保持 |
+| L01/L02/L03 除尘收料机及烘干箱放置 | 复用原 Place 执行器，校验释放、退出和回 center |
+| P03/P04/P05 新工位抓取 | 共用接口已注册，工位参数待绑定 |
+| L04/L05 称上放置 | 参数模板已提供，需求与工位数据待确认 |
 
-在仓库根目录查询和测试：
+新取放块的实机 Start 当前保持未发布状态。候选代码已接入 canonical 任务所有权、持物会话、工具/几何绑定、ROS反馈、取消和结果回报。现场运动验收记录单独登记。
+
+## 主要接口
+
+- `/ares_r/blocks/list` 查询功能、参数版本和验收状态。
+- `/ares_r/blocks/prepare` 提交静止扫描与规划准备任务。
+- `/ares_r/blocks/preparation_status` 根据 run_id 查询准备结果。
+- `/ares_r/run_block` 运行已发布的取放功能，提供阶段反馈及最终结果。
+
+同一 request_id 保持幂等。取消按 run_id 发送到 canonical；实际停止尚未确认时返回 UNCERTAIN。ScanPick 返回 payload_session_id，ScanPlace 用该 session 核对原抓取证据、新鲜夹爪读数、工具定义和持物几何。释放确认后立即记录 RELEASED_CONFIRMED，后续退出失败会保留该状态。
+
+## 代码入口
+
+| 文件 | 功能 |
+|---|---|
+| `block_registry.json` | 11项能力、5份生效参数SHA和验收状态 |
+| `blocks/console.py`、`blocks/backend.py` | canonical 同一任务所有者与精确run_id状态/停止 |
+| `blocks/action_transport.py` | ROS→canonical 调用、反馈、取消及终态核对 |
+| `run_canonical_block.py` | ScanPick/ScanPlace 执行器委派 |
+| `blocks/live_payload.py` | 原SDK只读工具数据、延迟夹爪反馈及原生包绑定 |
+| `blocks/place_runtime.py` | 持物几何进入规划、释放状态持久化、退出后回center |
+| `blocks/tray_hold.py`、`patches/` | SHA锁定的独立料盘HOLD候选补丁 |
+| `profiles/templates/` | 缺失工位参数模板 |
+| `ros/ares_r_manipulation_blocks/` | ROS源码、Action、Service、客户端及launch |
+| `ONSITE_ROS_BASELINE.md` | 已认可的现场ROS自启动链 |
+
+## 部署
+
+候选目录为 `/home/yikun/ARES-R-ROS-BUSINESS-20261113`。后端使用 `run_backend_overlay.py`，`ARES_R_SITE_ROOT` 指向实际RC1运行目录；接口节点使用 `canonical.launch` 并指向该后端。候选版仅在维护窗口进行服务切换。
+
+运动发布记录位于实际运行目录 `config/ros_business_release.json`，与功能块版本、参数SHA和验收证据绑定。未绑定工位参数或未发布的块可查询及进行适用的准备检查。
+
+## 测试
 
 ```bash
-python3 release/ros1-business-blocks/inspect_blocks.py
 python3 -m unittest discover -s release/ros1-business-blocks/tests -q
 ```
 
-新工位无偏置时显示 `PROFILE_NOT_BOUND`，不会借用其他工位的参数。归档核验覆盖整包字节SHA及tar可读性；第二份受控备份尚未核实。
-
-下一项实施：在既有canonical执行器中增加受控的Pick-HOLD结束边界，随后接入新Action；不能直接调用现有完整pick-reset脚本，它会自动把物体放回。未实现真实执行适配器、payload session持久化和实机验收之前，不开放Start。
-
-## 2026-11-13增量
-
-`blocks/runner.py`提供注入式Pick/Place阶段编排及SQLite持物会话。它目前只接受明确的OFFLINE适配器，不包含物理SDK调用。不要将其状态机测试结果当成新工位验收。
-
-本机Parallels Ubuntu22.04中三个ROS包catkin构建通过：新Action MD5 `7b4edfbf807f9526b57393193f680fd1`；两个旧ABI保持不变。新5项、原Demo01 7项真实ROS通信测试通过，均为合成后端。原始日志在`evidence/`。
-
-默认节点继续拒绝物理Start。`~offline_replay=true`仅供测试，不是开启硬件执行的开关。测试用临时payload session不用于跨ROS任务生产交接；持久会话在Python runner层单独测试。ROS节点尚未对接canonical，也未具备生产级幂等/重启恢复，禁止作为客户运动交付包。
-
-## canonical适配与持久ROS增量
-
-`blocks/canonical.py`直接复用已存在的SIFT HOLD执行器和Place函数，原文件保持不变；提供工具ID缺参兼容及真实结果字段核验。`verify_canonical_imports.py`已在VM通过真实模块导入检查。源SHA在`CANONICAL_BINDINGS.json`。
-
-OFFLINE ROS节点现已支持持久请求/终态缓存及跨Goal payload session；`ros_session_transport.py`实测4项通过（包括节点重启、重复请求不重复释放）。状态路径用`~offline_state_dir`指定。合成模式还需进程环境`ARES_R_OFFLINE_REPLAY=1`，仅ROS参数不能开启。此前关于“临时会话/ROS幂等尚未实现”的记录由此增量取代；**生产canonical适配和新鲜持物绑定仍未发布**。
+测试环境需要NumPy。现场Noetic编译及隔离ROS模拟通信已通过，详细结果见 `evidence/`。接口测试使用模拟执行边界，新的实机取放验收尚未进行。

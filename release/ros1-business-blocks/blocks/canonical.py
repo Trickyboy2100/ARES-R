@@ -39,17 +39,21 @@ def bind_hold_tool(runner, helper, tool_id):
     runner.settle_segment=arrival
     return runner
 
-def verify_pick_result(output):
+def verify_pick_result(output, *, expected_result="SIFT_PICK_LIFT230_HOLD"):
     out=Path(output)
     result=json.loads((out/'result.json').read_text())
     status=json.loads((out/'status.json').read_text())
     proof=json.loads((out/'post-lift-verification.json').read_text())
-    if not (result.get('result')=='SIFT_PICK_LIFT230_HOLD' and result.get('holding_verified') is True
+    if not (result.get('result')==expected_result and result.get('holding_verified') is True
             and result.get('target_reached') is True and status.get('state')=='COMPLETED'
             and status.get('holding_verified') is True and proof.get('verification',{}).get('result')=='PASS'):
         raise ValueError('PICK_HOLD_POSTCONDITION_NOT_PROVEN')
     for name in ('pregrasp','contact','lift230'):
-        lines=(out/(name+'.jsonl')).read_text().splitlines()
+        stage = next((row for row in result.get('stages', []) if row.get('stage') == name.upper()), {})
+        log = Path(stage.get('result', {}).get('log', out / (name + '.jsonl'))).resolve()
+        if out.resolve() not in log.parents:
+            raise ValueError('NATIVE_LOG_OUTSIDE_RUN')
+        lines=log.read_text().splitlines()
         records=[json.loads(x) for x in lines if x.startswith('{')]
         if (any(r.get('event') in ('failed','abort') for r in records)
             or not any(r.get('event')=='target_reached' for r in records)

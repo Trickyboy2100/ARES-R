@@ -1,0 +1,39 @@
+--- a/scripts/run_pick_reset_timing.py
++++ b/scripts/run_pick_reset_timing.py
+@@ -5,6 +5,7 @@
+ ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'src'))
+ AUTH='RIGHT PICK RESET TIMING'
+ RETURN_AUTH='RIGHT PICK RESET RETURN'
++HOLD_AUTH='RIGHT TRAY PICK LIFT230 HOLD'
+ 
+ def load(p):return json.loads(Path(p).read_text())
+ def save(p,v):
+@@ -165,10 +166,11 @@
+     return previous
+ 
+ def main():
+-    parser=argparse.ArgumentParser();parser.add_argument('--prepared',type=Path,required=True);parser.add_argument('--output',type=Path,required=True);parser.add_argument('--authorization',required=True);parser.add_argument('--onsite-observer-confirmed',action='store_true');parser.add_argument('--return-only',action='store_true');a=parser.parse_args()
+-    if a.authorization!=(RETURN_AUTH if a.return_only else AUTH) or not a.onsite_observer_confirmed:raise PermissionError('explicit supervised authorization required')
++    parser=argparse.ArgumentParser();parser.add_argument('--prepared',type=Path,required=True);parser.add_argument('--output',type=Path,required=True);parser.add_argument('--authorization',required=True);parser.add_argument('--onsite-observer-confirmed',action='store_true');parser.add_argument('--return-only',action='store_true');parser.add_argument('--hold-after-lift',action='store_true');a=parser.parse_args()
++    if a.return_only and a.hold_after_lift:raise ValueError('return-only and hold-after-lift are mutually exclusive')
++    if a.authorization!=(HOLD_AUTH if a.hold_after_lift else RETURN_AUTH if a.return_only else AUTH) or not a.onsite_observer_confirmed:raise PermissionError('explicit supervised authorization required')
+     os.chdir(ROOT);prepared=a.prepared.resolve();out=a.output.resolve()
+-    if ROOT/'worklog/evidence' not in prepared.parents or out!=prepared/('return-execution' if a.return_only else 'execution'):raise ValueError('isolated evidence directory required')
++    if ROOT/'worklog/evidence' not in prepared.parents or out!=prepared/('hold-execution' if a.hold_after_lift else 'return-execution' if a.return_only else 'execution'):raise ValueError('isolated evidence directory required')
+     if a.return_only:verify_return_checkpoint(prepared)
+     out.mkdir(exist_ok=False);manifest=load(prepared/'native-manifest.json');package=load(prepared/'package/first_pick_execution_package.json');request=load(prepared/'pregrasp/planner_request.json');params=manifest['parameters'];paths=load(prepared/'pick-reset-paths.json')
+     from ares_r.manipulation.first_pick_package import verify_first_pick_package
+@@ -377,6 +379,13 @@
+         measured('CLOSE',lambda:live.gripper(params['gripper_closed_raw']))
+         measured('VERIFY_BEFORE_LIFT',live.verify_grasp)
+         measured('LIFT230',lambda:segment('lift230'));measured('VERIFY_AFTER_LIFT_PARALLEL',verify_after_lift);state['holding_verified']=True
++        if a.hold_after_lift:
++            state.update(state='COMPLETED',stage='HOLD_AFTER_LIFT230',elapsed_s=time.monotonic()-start)
++            save(out/'status.json',state)
++            save(out/'result.json',dict(result='TRAY_PICK_LIFT230_HOLD',target_reached=True,
++                holding_verified=True,reset_complete=False,elapsed_s=time.monotonic()-start,
++                stages=rows,final=last_telemetry))
++            return
+         measured('LOWER230',lambda:segment('lower230'))
+         from ares_r.motion.runtime_goal_ik import RuntimeGoalIK
+         import numpy as np

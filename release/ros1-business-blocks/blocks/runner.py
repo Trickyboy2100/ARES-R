@@ -18,13 +18,22 @@ class PayloadSessions:
         self.db=sqlite3.connect(str(path))
         self.db.execute('CREATE TABLE IF NOT EXISTS payloads (id TEXT PRIMARY KEY, object_type TEXT, tool_revision TEXT, geometry_revision TEXT, evidence TEXT, state TEXT)')
         self.db.commit()
-    def create(self, object_type, tool_revision, geometry_revision, evidence):
+    def create(self, object_type, tool_revision, geometry_revision, evidence, *, state="HELD_CONFIRMED"):
         if not all((object_type, tool_revision, geometry_revision, evidence)):
             raise BlockFault('PAYLOAD_BINDING_INCOMPLETE')
+        if state not in ('HELD_CONFIRMED', 'PICK_IN_PROGRESS'):
+            raise BlockFault('INVALID_INITIAL_PAYLOAD_STATE')
         sid=uuid.uuid4().hex
         with self.db:self.db.execute('INSERT INTO payloads VALUES (?,?,?,?,?,?)',
-             (sid,object_type,tool_revision,geometry_revision,json.dumps(evidence),'HELD_CONFIRMED'))
+             (sid,object_type,tool_revision,geometry_revision,json.dumps(evidence),state))
         return sid
+    def active(self):
+        return self.db.execute("SELECT id,state FROM payloads WHERE state IN ('HELD_CONFIRMED','PICK_IN_PROGRESS','UNCERTAIN')").fetchall()
+    def confirm_pick(self, sid, evidence):
+        with self.db:
+            cur=self.db.execute("UPDATE payloads SET state='HELD_CONFIRMED', evidence=? WHERE id=? AND state='PICK_IN_PROGRESS'",
+                                (json.dumps(evidence),sid))
+            if cur.rowcount!=1:raise BlockFault('PAYLOAD_STATE_CONFLICT')
     def get(self, sid):
         row=self.db.execute('SELECT object_type,tool_revision,geometry_revision,evidence,state FROM payloads WHERE id=?',(sid,)).fetchone()
         if not row:raise BlockFault('PAYLOAD_SESSION_UNKNOWN')

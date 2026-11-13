@@ -30,9 +30,24 @@ class Node:
             store=self.Jobs(self.state_dir/'jobs.sqlite')
             try:store.recover_restart()
             finally:store.close()
+        self.transport=None
+        base=rospy.get_param('~canonical_base_url','')
+        if base and not self.offline:
+            root=rospy.get_param('~contract_root',str(Path(__file__).resolve().parents[3]))
+            sys.path.insert(0,root)
+            from blocks.action_transport import ActionTransport
+            self.transport=ActionTransport(base)
         self.server.start()
     def goal(self,h):
         g=h.get_goal()
+        if not self.offline and self.transport is not None:
+            if not g.request_id or not(g.onsite_observer_confirmed and g.prepared_environment_confirmed):
+                h.set_rejected(RunBlockResult(code='INVALID_OR_UNCONFIRMED_GOAL'));return
+            if not self.lock.acquire(False):
+                h.set_rejected(RunBlockResult(code='BUSY'));return
+            self.owner=h;self.cancelled.clear();h.set_accepted()
+            threading.Thread(target=self.run_canonical,args=(h,g),daemon=True).start()
+            return
         if not self.offline:
             h.set_rejected(RunBlockResult(code='CANONICAL_ADAPTER_NOT_RELEASED',terminal_state='REJECTED_NO_DISPATCH'));return
         if not g.request_id or not(g.onsite_observer_confirmed and g.prepared_environment_confirmed):
@@ -58,6 +73,23 @@ class Node:
             self.lock.release();h.set_rejected(RunBlockResult(code=str(e)));return
         self.owner=h;self.cancelled.clear();h.set_accepted()
         threading.Thread(target=self.run,args=(h,g,job['run_id']),daemon=True).start()
+    def run_canonical(self,h,g):
+        try:
+            goal={k:getattr(g,k) for k in g.__slots__}
+            def feedback(row):
+                h.publish_feedback(RunBlockFeedback(**row))
+            result=self.transport.run(goal,feedback=feedback,
+                cancelled=lambda:self.cancelled.is_set() or rospy.is_shutdown())
+            response=RunBlockResult(success=result['success'],code=result.get('code',''),
+                terminal_state=result['terminal_state'],run_id=result.get('run_id',''),block_id=g.block_id,
+                payload_session_id=result.get('payload_session_id',''),payload_state=result.get('payload_state','UNKNOWN'),
+                evidence_uri=result.get('evidence_uri',''),transport_handoff_ready=False,details_json=json.dumps(result))
+            if result['success']:h.set_succeeded(response)
+            elif result['terminal_state']=='STOPPED':h.set_canceled(response)
+            else:h.set_aborted(response)
+        finally:
+            self.owner=None;self.lock.release()
+
     def cancel(self,h):
         if self.owner and self.owner.get_goal_id().id==h.get_goal_id().id:self.cancelled.set()
     def result_message(self,r,run_id,block_id):
