@@ -1,0 +1,11 @@
+--- before/support_decomposition.py
++++ after/support_decomposition.py
+@@ -54,6 +54,8 @@
+ def detect_support_levels(points, profile=DecompositionProfile()):
+     """Detect horizontal observed support bands without changing calibration."""
+     points = np.asarray(points, dtype=float)
++    if points.size == 0:
++        return []
+     cloud = _cloud(points)
+     import open3d as o3d
+     cloud.estimate_normals(o3d.geometry.KDTreeSearchParamHybrid(radius=.025, max_nn=30))

@@ -1,0 +1,39 @@
+--- before/runner.py
++++ after/runner.py
+@@ -44,6 +44,18 @@
+     save('saved-fk-validation.json',fk_error)
+     if fk_error['position_m']>.003 or fk_error['orientation_deg']>3:raise ValueError('SAVED_POSE_CURRENT_FK_DISAGREEMENT')
+     if tool['tool_id']!=target['tool_id']:raise ValueError('TOOL_REVISION_CHANGED')
++    limits=old.load(root/'config/jaka_mini2_motion.site.json')
++    reference=live['arms']['right']['joints_rad']
++    selected=[]
++    for index,angle in enumerate(target['joints_rad']):
++        low=float(limits['lower_rad'][index])+float(limits['soft_limit_margin_rad'])
++        high=float(limits['upper_rad'][index])-float(limits['soft_limit_margin_rad'])
++        candidates=[angle+2*math.pi*k for k in range(-2,3) if low<=angle+2*math.pi*k<=high]
++        if not candidates:raise ValueError('SAVED_POSE_NO_LIMIT_VALID_EQUIVALENT')
++        selected.append(min(candidates,key=lambda q:abs(q-reference[index])))
++    save('joint-branch-selection.json',dict(original_joints_rad=target['joints_rad'],selected_joints_rad=selected,reference_joints_rad=reference,policy='NEAREST_LIMIT_VALID_2PI_EQUIVALENT'))
++    target=dict(target,joints_rad=selected)
++
+     class Adapter:
+         def event(self,leg,phase):
+             row=dict(stage=leg,phase=phase,at_unix=time.time(),progress='START')
+@@ -89,7 +101,7 @@
+                 payload=dict(arm='right',goal_joints_rad=target['joints_rad'],orientation='FREE',scene_policy='FORCE_RESCAN',speed_profile=params['speed_profile'],planning_mode=mode,environment_avoidance=params['environment_avoidance'],request_label='CENTER_RESTORE_SAVED')
+                 try:
+                     h=old.api('/api/motion/plan',payload,timeout=300)
+-                    attempts.append(dict(mode=mode,plan_id=h.get('plan_id')))
++                    attempts.append(dict(mode=mode,plan_id=h.get('plan_id'),execution_package_error=h.get('execution_package_error'),execution_package_ready=h.get('execution_package_ready')))
+                     if h.get('execution_package_ready'):
+                         artifact=root/h['plan_artifact'];planning=old.load(artifact/'planning.json')
+                         if max(abs(a-b) for a,b in zip(planning['trajectory_points_rad'][-1],target['joints_rad']))>math.radians(.05):raise ValueError('SAVED_JOINT_BRANCH_MISMATCH')
+@@ -97,7 +109,7 @@
+                         return dict(no_motion=False,goal=g,record=dict(handle=h,mode=mode,attempts=attempts))
+                 except old.ApiError as exc:
+                     attempts.append(dict(mode=mode,error=str(exc)))
+-            old.save_json(dest/'planning-attempts.json',attempts);raise RuntimeError('RESTORE_CUROBO_PLAN_FAILED')
++            old.save_json(dest/'planning-attempts.json',attempts);raise RuntimeError('RESTORE_PLAN_OR_PACKAGE_FAILED: '+json.dumps(attempts,ensure_ascii=False))
+         def execute(self,leg,plan,target):
+             dest=out/leg
+             if plan.get('no_motion'):

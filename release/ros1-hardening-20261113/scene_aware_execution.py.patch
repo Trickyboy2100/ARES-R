@@ -1,0 +1,10 @@
+--- before/scene_aware_execution.py
++++ after/scene_aware_execution.py
+@@ -91,6 +91,7 @@
+             tool_id=audit["tool_id"],
+             controller_tool_pose_mm_rad=audit["tool_data"]["pose_mm_rad"],
+             captured_at_unix=float(capture["captured_at_unix"]),
++            max_excursion_rad=math.radians(float(site.get("native_max_excursion_deg", 150.0))),
+             speed_ceiling_rad_s=velocity,
+             accel_ceiling_rad_s2=acceleration,
+             tracking_stop_threshold_deg=float(speed["tracking_stop_threshold_deg"]))
