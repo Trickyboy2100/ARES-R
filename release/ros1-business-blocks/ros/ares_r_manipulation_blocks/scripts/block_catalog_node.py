@@ -6,7 +6,7 @@ import sys
 import rospy
 from ares_r_manipulation_blocks.srv import (
     GetBlocks, GetBlocksResponse, PrepareBlock, PrepareBlockResponse,
-    GetPreparation, GetPreparationResponse)
+    GetPreparation, GetPreparationResponse, ResolveDryerTarget, ResolveDryerTargetResponse)
 
 
 class Node:
@@ -18,11 +18,24 @@ class Node:
         self.registry = registry
         base_url = rospy.get_param('~canonical_base_url', '')
         self.client = PreparationClient(base_url) if base_url else None
+        from blocks.action_transport import ActionTransport
+        self.rpc = ActionTransport(base_url) if base_url else None
         self.services = [
+            rospy.Service('/ares_r/blocks/resolve_dryer_target', ResolveDryerTarget, self.dryer_target),
             rospy.Service('/ares_r/blocks/list', GetBlocks, self.list_blocks),
             rospy.Service('/ares_r/blocks/prepare', PrepareBlock, self.prepare),
             rospy.Service('/ares_r/blocks/preparation_status', GetPreparation, self.status),
         ]
+
+    def dryer_target(self, request):
+        if self.rpc is None:
+            return ResolveDryerTargetResponse(False, 'CANONICAL_BACKEND_NOT_CONFIGURED', '')
+        try:
+            binding = self.rpc.call('business_dryer_target', request.block_id,
+                                    request.observation_epoch, request.base_pose_revision)
+            return ResolveDryerTargetResponse(True, 'TARGET_RESOLVED', json.dumps(binding))
+        except Exception as error:
+            return ResolveDryerTargetResponse(False, 'TARGET_UNAVAILABLE', json.dumps({'error': str(error)}))
 
     def list_blocks(self, request):
         caps = json.loads((self.root / 'CAPABILITIES.json').read_text())

@@ -12,6 +12,11 @@ class BusinessBackend(CanonicalBackend):
         return self._demo_console
 
     def call(self, method, args=(), kwargs=None):
+        if method == 'business_dryer_target':
+            if len(args) != 3 or kwargs:
+                raise ValueError('BLOCK_EPOCH_BASE_REQUIRED')
+            from .dryer_slots import read_target
+            return read_target(self.root, *args)
         if method not in ('business_status', 'business_stop'):
             return super().call(method, args, kwargs)
         if len(args) != 1 or kwargs:

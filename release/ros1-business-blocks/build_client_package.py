@@ -44,9 +44,10 @@ ScanPlace 增加 `--payload-session 持物会话编号`。Ctrl+C 提交取消并
 
 运行需要机器人主机已发布对应功能块。当前新取放功能尚待现场验收；原 Demo01 使用原 CenterRestore 接口。
 '''.encode()
+    files['DRYER_SLOTS.md']=(ROOT/'DRYER_SLOTS.md').read_bytes()
     rows=json.loads((ROOT/'block_registry.json').read_text())['blocks']
     files['BLOCKS.json']=(json.dumps([{k:r.get(k) for k in
-        ('id','block_id','display_name','acceptance','physical_start_enabled','profile_revision')}
+        ('id','block_id','display_name','acceptance','physical_start_enabled','profile_revision','slot_id','family','packaging_state','registry_source','task_config_source')}
         for r in rows],ensure_ascii=False,indent=2)+'\n').encode()
     hashes={name:hashlib.sha256(value).hexdigest() for name,value in files.items()}
     files['MANIFEST.json']=(json.dumps(dict(schema_version=1,package='ares_r_manipulation_blocks',

@@ -18,7 +18,7 @@ class Contracts(unittest.TestCase):
     def evidence(self,plan):
         return [dict(stage=s,verified=True,payload_session_id='synthetic-session') for s in plan['stages']]
     def test_inventory(self):
-        rows=registry();self.assertEqual(len(rows),11)
+        rows=registry();self.assertEqual(len(rows),23)
         self.assertEqual(sum(r['optional'] for r in rows),2)
         self.assertTrue(all(not r['physical_start_enabled'] for r in rows))
     def test_all_five_profiles_hash_checked(self):
