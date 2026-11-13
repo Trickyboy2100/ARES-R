@@ -41,7 +41,7 @@
 
 候选目录为 `/home/yikun/ARES-R-ROS-BUSINESS-20261113`。后端使用 `run_backend_overlay.py`，`ARES_R_SITE_ROOT` 指向实际RC1运行目录；接口节点使用 `canonical.launch` 并指向该后端。候选版仅在维护窗口进行服务切换。
 
-运动发布记录位于实际运行目录 `config/ros_business_release.json`，与功能块版本、参数SHA和验收证据绑定。未绑定工位参数或未发布的块可查询及进行适用的准备检查。
+运动发布记录位于实际运行目录 `config/ros_business_release.json`，与功能块版本、参数SHA和验收证据绑定。未绑定工位参数或未发布的块可查询及进行适用的准备检查。首次现场验收采用显式授权且绑定唯一request_id的测试记录，验收前无需伪造已通过的运行ID；测试授权不会自动将功能块标为已发布。
 
 ## 测试
 

@@ -33,10 +33,19 @@ class BusinessConsole(CenterRestoreConsole):
                 result['demos'].append({
                     'alias': RUN_PREFIX + profile['id'], 'demo_id': profile['block_id'],
                     'strategy': 'business_run', 'physical_motion': True,
-                    'physical_start_enabled': profile['physical_start_enabled'],
+                    'physical_start_enabled': bool(profile['physical_start_enabled'] or self._test_request(profile)),
+                    'supervised_commissioning_request_id': self._test_request(profile),
                     'profile_revision': profile['profile_revision'],
                 })
         return result
+
+    def _test_request(self, profile):
+        if profile.get('physical_start_enabled') is True:
+            return ''
+        approval = read(self.root / 'config/ros_business_release.json', {}).get(profile['block_id'], {})
+        if approval.get('operator_authorized') is True:
+            return approval.get('supervised_commissioning_request_id', '')
+        return ''
 
     def start(self, body):
         alias = str(body.get('alias', ''))
@@ -53,7 +62,7 @@ class BusinessConsole(CenterRestoreConsole):
         if alias.startswith(RUN_PREFIX):
             from .canonical import commissioning_admission
             approvals = read(self.root / 'config/ros_business_release.json', {})
-            commissioning_admission(profile, approvals.get(profile['block_id'], {}))
+            commissioning_admission(profile, approvals.get(profile['block_id'], {}), body.get('request_id'))
             if body.get('target_id_or_slot_id'):
                 raise ValueError('RUNTIME_TARGET_OVERRIDE_NOT_CONFIGURED')
             if profile['kind'] == 'place' and not body.get('payload_session_id'):
@@ -143,7 +152,7 @@ class BusinessConsole(CenterRestoreConsole):
             _atomic_json(output / 'approval.json', approval)
             command = [sys.executable, str(Path(__file__).resolve().parents[1] / 'run_canonical_block.py'),
                        '--site', str(self.root), '--block', profile['block_id'],
-                       '--approval', str(output / 'approval.json')]
+                       '--approval', str(output / 'approval.json'), '--request-id', body['request_id']]
             if profile['kind'] == 'pick':
                 prepare = ([sys.executable, 'scripts/prepare_sift_lift_hold.py'] if profile['id'] == 'P01'
                            else [sys.executable, 'scripts/run_pick_reset_demo.py', '--prepare'])

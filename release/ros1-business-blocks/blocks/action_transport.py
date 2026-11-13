@@ -35,6 +35,9 @@ class ActionTransport:
             if (entry.get('physical_start_enabled') is not True
                     or entry.get('profile_revision') != row['profile_revision']):
                 raise ValueError('BLOCK_NOT_RELEASED')
+            test_request = entry.get('supervised_commissioning_request_id')
+            if test_request and test_request != goal['request_id']:
+                raise ValueError('DIFFERENT_COMMISSIONING_REQUEST')
             if cancelled():
                 return dict(success=False, terminal_state='STOPPED', code='CANCELLED_BEFORE_DISPATCH')
             body = dict(goal, alias=alias, authorization='RUN ' + alias)

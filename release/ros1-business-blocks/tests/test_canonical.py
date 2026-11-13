@@ -57,3 +57,11 @@ class CanonicalTests(unittest.TestCase):
         root=Path(__file__).resolve().parents[2]/'site-source-20261112'
         pins=json.loads((Path(__file__).resolve().parents[1]/'CANONICAL_BINDINGS.json').read_text())
         for name,sha in pins.items():self.assertEqual(hashlib.sha256((root/name).read_bytes()).hexdigest(),sha)
+
+    def test_first_supervised_test_is_scoped_without_fake_acceptance(self):
+        profile={'physical_start_enabled':False,'profile_sha256':'sha'}
+        approval={'profile_sha256':'sha','canonical_adapter_revision':'BUSINESS_BLOCK_ADAPTER_V1',
+                  'operator_authorized':True,'supervised_commissioning_request_id':'test-once'}
+        commissioning_admission(profile,approval,'test-once')
+        with self.assertRaises(PermissionError):commissioning_admission(profile,approval,'another')
+        self.assertFalse(profile['physical_start_enabled'])

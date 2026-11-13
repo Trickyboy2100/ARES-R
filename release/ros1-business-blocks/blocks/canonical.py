@@ -92,13 +92,17 @@ def verify_place_result(output, params, result):
     return dict(terminal_state='RELEASED_RETREATED',payload_state='RELEASED_CONFIRMED',
                 release=release,retreat=check,transport_handoff_ready=False)
 
-def commissioning_admission(profile, approval):
-    # This adapter is additive and cannot inherit acceptance from a Golden alias.
-    if not (profile.get('physical_start_enabled') is True
-            and approval.get('profile_sha256')==profile.get('profile_sha256')
-            and approval.get('canonical_adapter_revision')=='BUSINESS_BLOCK_ADAPTER_V1'
-            and approval.get('physical_acceptance_run_id')):
-        raise PermissionError('BLOCK_NOT_COMMISSIONED')
+def commissioning_admission(profile, approval, request_id=None):
+    bound = (bool(profile.get('profile_sha256'))
+        and approval.get('profile_sha256') == profile['profile_sha256']
+        and approval.get('canonical_adapter_revision') == 'BUSINESS_BLOCK_ADAPTER_V1')
+    published = (profile.get('physical_start_enabled') is True
+                 and bool(approval.get('physical_acceptance_run_id')))
+    supervised = (bool(request_id) and approval.get('operator_authorized') is True
+                  and approval.get('supervised_commissioning_request_id') == request_id)
+    if not (bound and (published or supervised)):
+        raise PermissionError('BLOCK_NOT_COMMISSIONED_OR_TEST_AUTHORIZED')
+
 
 def execute_place(existing, params, output, *, validate_live_payload,
                   return_center=False, event=lambda stage:None):

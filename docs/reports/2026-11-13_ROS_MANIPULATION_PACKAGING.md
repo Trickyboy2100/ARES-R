@@ -13,7 +13,7 @@
 
 ## 验证结果
 
-现场Ubuntu20.04/Noetic构建通过。76项Python测试通过；隔离ROS Master 12431下14项通信测试通过，包括ROS→模拟HTTP canonical调用。Mac另完成原Demo01的17项回归。实际5份现场参数SHA全部匹配。原CenterRestoreAction MD5保持604285c770a2394b3024a6fb532f8380。
+现场Ubuntu20.04/Noetic构建通过。77项Python测试通过；隔离ROS Master 12431下14项通信测试通过，包括ROS→模拟HTTP canonical调用。Mac另完成原Demo01的17项回归。实际5份现场参数SHA全部匹配。原CenterRestoreAction MD5保持604285c770a2394b3024a6fb532f8380。
 
 本轮使用模拟执行边界验证新接口，未扫描、未执行机械臂/夹爪/底盘运动。原ares-ros.service仍active。新节点未挂入生产自启动。
 
@@ -22,3 +22,5 @@
 新取放块尚未取得实机验收记录，physical_start_enabled保持false。先选择P01或P02进行一次静止准备与有监督独立HOLD验收，再以实际持物session验收对应Place。P03/P04/P05及L04/L05需要真实工位配置。新代码已具备统一接口与执行适配，未绑定工位会明确返回PROFILE_NOT_BOUND。
 
 旧源快照、Golden与原ROS接口均保留。此次仅在独立候选目录部署新封装。
+
+首次实机验收使用绑定唯一request_id的显式监督授权记录；无需预先填写虚假的已验收运行ID。当前未创建任何新运动授权。

@@ -10,7 +10,7 @@ def run(args):
     if not os.environ.get('ARES_R_DEMO_CONSOLE_TOKEN'):
         raise PermissionError('CANONICAL_OWNER_REQUIRED')
     row=resolve(args.block);approval=json.loads(Path(args.approval).read_text())
-    commissioning_admission(row,approval)
+    commissioning_admission(row,approval,args.request_id)
     # No block in the shipped registry is physically enabled. Future site release
     # requires an explicit accepted revision, not a ROS parameter override.
     site=Path(args.site).resolve();out=Path(args.output).resolve()
@@ -78,6 +78,7 @@ def run(args):
 
 def main():
     p=argparse.ArgumentParser();p.add_argument('--site',required=True);p.add_argument('--block',required=True)
+    p.add_argument('--request-id',required=True)
     p.add_argument('--output',required=True);p.add_argument('--approval',required=True)
     p.add_argument('--prepared');p.add_argument('--payload-binding');p.add_argument('--payload-session')
     a=p.parse_args();print(json.dumps(run(a)))
