@@ -1,3 +1,26 @@
+# V3重新设计已就绪：先补证据、再重做PPT（2026-11-14）
+
+**这不是旧14＋2页的修补任务。** 已完整复核验收录音、2025/2026给定视觉示例、原60页大稿及其尾部原图、8页机械模板、旧周报、ARES-R历史参数实验与10月现场失败/恢复记录。**新主线改为约12页的真实研发决策过程**。原14＋2页合同已降级，仅作历史资料；不得复刻。
+
+**Codex从这里开始（最高优先级）：**
+
+1. [18_V3_CODEX_EXECUTION_AND_ACCEPTANCE.md](18_V3_CODEX_EXECUTION_AND_ACCEPTANCE.md) — 执行令、材料与图表、离线补证、交付和两轮自审。
+2. [13_V3_RETHINK_FROM_CUSTOMER_RECORDING.md](13_V3_RETHINK_FROM_CUSTOMER_RECORDING.md) — 录音14m57s逐项含义、两份参考例子的证据组织、被否决旧稿问题。
+3. [14_V3_REAL_EVIDENCE_PRIORITY.md](14_V3_REAL_EVIDENCE_PRIORITY.md) — 15个已发生试验/修复证据和明确的验证边界。
+4. [15_V3_REBUILT_STORYBOARD_12_PLUS.md](15_V3_REBUILT_STORYBOARD_12_PLUS.md) — 新12个主讲页＋备选页，逐页真图、真参数、代码位置与备注。
+5. [16_V3_ASSET_AND_REFERENCE_CROSSWALK.md](16_V3_ASSET_AND_REFERENCE_CROSSWALK.md) — **原PPT实际页和shape图像位置**，新增了2025参考28页及2026视觉例子16页，不再漏看。
+6. [17_V3_OFFLINE_REPLAY_AND_EXPERIMENT_PROTOCOL.md](17_V3_OFFLINE_REPLAY_AND_EXPERIMENT_PROTOCOL.md) — DBSCAN ε×m、支撑分解2×2的安全离线试验合同。
+
+**已确认的核心真实验**：P3.4体素5/7.5/10mm；P3.3碰撞激活10/20/30/40mm×各3次（12次全部未通过当时30mm门槛）；P3.4种子8/8→4/4→4/2+CUDA Graph对照和真实ServoJ速度阶梯；10/17完整Demo失败/归因；10/19恢复完成；10/21CPU/GPU分项测时。要从这些“已做过程”展示自研工作，别只画最后成功图。
+
+**仍缺**：DBSCAN ε=12mm/min8历史搜索证据本身、支撑×网格独立消融；如果可访问经过授权的静态点云，Codex应真的离线跑，并以新日期归档；否则不能填成历史结果。
+
+**明确：本V3交付是经过资料复核的重设计与Codex任务合同，尚未制作成新合格PPT。** 主仓库代码、安全/硬件均未修改。
+
+---
+
+## 旧V2交接包（以下为历史，仅作资料溯源）
+
 # ARES-R 点云场景重建与机械臂规划：验收工作量PPT接手包
 
 **当前状态：已完成第二轮内容深化并推送；原始参考PPTX二进制仍未在本分支；尚未制成符合原模板的最终PPTX。** 本仓库为public，原始现场/专有材料需审查后上传。
