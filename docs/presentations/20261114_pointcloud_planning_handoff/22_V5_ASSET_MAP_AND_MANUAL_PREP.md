@@ -122,6 +122,30 @@ docs/presentations/assets/20261028_rasc_curobo/
 
 **10/17失败数字：** 当前公开repo的审计报告主要包含CHAT_TOOL_EVIDENCE和INFERENCE，不等同原始run/event日志。必须在本机授权工作目录搜索原始事件日志；找不到就不把172.0s、257.3s等数字放入PPT正文。不要把V3摘要表当作原始运行记录。
 
+### 2.5 ARES主仓库：机器人模型和仿真背景
+
+主仓库：Trickyboy2100/ARES，默认分支main。它是机器人模型/仿真和早期开发资产来源；本次真实规划与控制结果以ARES-R报告和日志为准。
+
+优先检查：
+- README.md；
+- jaka_ros2/src/jaka_description/urdf/jaka_minicobo.urdf；
+- jaka_ros2/src/jaka_description/urdf/jaka_minicobo_gripper.urdf；
+- jinyu_ros_pkg/nodes/simulation/jaka_minicobo_curobo.yml；
+- isaac_sim/simforge/；
+- isaac_sim/cad_assets/；
+- scenes/、robot/和docs/中的JAKA/夹爪/工作台模型说明。
+
+用途：
+- 说明JAKA MiniCobo/Mini2机器人模型、夹爪模型、关节和工具碰撞模型的工程来源；
+- 必要时提供仿真场景、CAD零件和模型截图；
+- 用于解释早期仿真与模型适配背景。
+
+禁止：
+- 不把SimForge/PhysX仿真循环次数当成真实机械臂实机次数；
+- 不把仿真抓取/FixedJoint结果当成P3.6/P3.7真实执行；
+- 不把ARES仓库里的通用cuRobo配置当作现场最终commissioning配置；
+- 不为了制作PPT修改ARES生产代码、仿真场景或里程碑文件。
+
 ## 3. 原始点云：已经在独立公开数据分支
 
 分支：
