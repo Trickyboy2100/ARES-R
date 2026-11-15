@@ -22,6 +22,15 @@ V5在重新审查甲方11/13录音、10/28讨论、用户上传的16页旧稿/PD
 7. 10/10 CAMERA、9/21 CLEAR、10/21 GRASP V3等数据集必须分开标注；10/21 GRASP严格几何A/B端点碰撞，不能写成严格A/B规划成功。
 8. P3.3是12次planning-only负结果；P3.6/P3.7才是相应的真实实机执行证据。P3.8E是AUDIT_ONLY关键路径审计，不是完整任务周期实测。
 
+## V5制作补充文件
+
+- [逐页文稿与版式合同（10页）](21_V5_PAGE_COPY_AND_LAYOUT.md)
+- [素材地图与最小手动准备清单](22_V5_ASSET_MAP_AND_MANUAL_PREP.md)
+- [DBSCAN补证、数据合同与QA门禁](23_V5_EXPERIMENT_AND_QA.md)
+- [Codex启动提示](24_V5_CODEX_START_PROMPT.md)
+
+以上文件补充20号V5主任务书；若有任何冲突，以20_V5_CUSTOMER_WORKLOAD_REDESIGN_AND_CODEX_ORDER.md为准。
+
 ## 历史文件
 
 - [20_V5_CUSTOMER_WORKLOAD_REDESIGN_AND_CODEX_ORDER.md](20_V5_CUSTOMER_WORKLOAD_REDESIGN_AND_CODEX_ORDER.md)：唯一执行令。
