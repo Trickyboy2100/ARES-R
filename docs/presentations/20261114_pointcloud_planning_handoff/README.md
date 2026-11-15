@@ -1,39 +1,36 @@
-# V4 研发工作量汇报重设计：10页证据链方案（2026-11-15）
+# V5 甲方验收研发工作量汇报重设计（2026-11-16）
 
-**当前唯一有效的执行入口：**
-[19_V4_10_SLIDE_REDESIGN_AND_CODEX_EXECUTION_ORDER.md](19_V4_10_SLIDE_REDESIGN_AND_CODEX_EXECUTION_ORDER.md)
+**当前唯一有效的Codex执行入口：**
 
-本轮已重新核对甲方11/13录音、10/27沟通纪要、10/28两次讨论、用户上传的20261030验收模板、20261028大稿/方法版、2025参考汇报、2026视觉汇报、历史周报、旧16页PPT/备注/来源表/QA，以及ARES-R中真实代码、实验报告、JSON、图片和执行记录。
+[20_V5_CUSTOMER_WORKLOAD_REDESIGN_AND_CODEX_ORDER.md](20_V5_CUSTOMER_WORKLOAD_REDESIGN_AND_CODEX_ORDER.md)
 
-## V4决定
+V5在重新审查甲方11/13录音、10/28讨论、用户上传的16页旧稿/PDF/讲者备注/来源表/指标台账/QA，以及ARES-R代码、实验报告、Golden任务和原始媒体索引后，重新组织为：
 
-- **交付10页正文，不增加封面**；唯一母版为20261030V0.95机械臂验收模板。
-- 只围绕两项工作：点云场景重建与碰撞几何编译（RASC）；cuRobo机械臂规划适配、参数调试、独立核验和JAKA执行控制。
-- 由“技术模块介绍＋最终结果”改为“工程问题→具体研发/参数试验→对照→验证与边界”。
-- V2的14+2页和V3的12页故事板降级为历史资料；制作时必须以19号V4文件为准。
-- DBSCAN ε×min_points实验是甲方明确点名的P0补证。必须先找回授权可用的真实原始点云；找到后执行9组离线对照；找不到则明确记录缺失，绝不从截图恢复点云或编造结果。
-- 不修改生产机器人代码/配置，不连接设备，不执行机械臂、夹爪或AMR运动，不自动SSH，不下载新私有相机数据。
-- 原始PPT二进制、私有点云、现场日志和最终PPTX/PDF保留在本机交付目录；公开仓库只保存经审核的任务书、可公开索引和安全衍生材料。
+- 1页研发总览；
+- 2页点云场景重建；
+- 4页cuRobo适配、轨迹生成、参数调试与部署优化；
+- 3页ARES-R运行时、实机执行、Golden恢复和性能审计。
 
-## 必须遵守的关键证据修正
+## 关键事实修正
 
-1. **10/19不能写成完整自主取放闭环成功。** 10/17记录了多次失败、一次部分抓取/接近和人工干预后的100mm抬升，剩余130mm未执行；10/19有PLACE故障后的分段接续恢复，但不是不间断自主全流程。
-2. 10/19的230mm连续抬升只有规划/执行前验证，没有实际运动，不得写成已实机完成。
-3. S21-CLEAN、S21-SUPPORT/CLEAR7、10/10 CAMERA、10/21 GRASP V3、P3.3、P3.4、P3.6、P3.7等不同日期/不同输入的数据必须分开标注，不能拼成同一A/B。
-4. 9/22 P3.3是同一AVOID A→B场景四档激活距离×3次，12/12未通过当时30mm门槛；这是planning-only负结果，不是硬件运动。
-5. 10/10 CAMERA的32→235、3,747/3,747、体积和减少40.9%，与10/21 GRASP V3的19→405、8,100/8,100、体积和减少68.6%是两组独立数据。
-6. 10/21 GRASP V3严格几何A/B端点碰撞，另一接触豁免world的GPU成功不能写成严格A/B规划成功。
+1. **10/19的230mm连续抬升和1.53m单程转运是真实物理阶段。** 原始全链在PLACE阶段发生故障，修订持物几何后从PLACE检查点接续恢复；不能写成“没有实际抬升”，也不能写成“不中断的无人值守完整循环”。
+2. **10/17的多次失败数据需找到原始run/事件日志后才能使用。** 当前公开repo尚未找到对应原始审计报告，找不到则从PPT正文删除。
+3. **DBSCAN ε×min_points历史敏感性矩阵尚未执行。** 已有S21-CLEAN仅比较前置密度滤波，DBSCAN 12mm/8点固定；有真实原始点云时才补9组离线对照。
+4. cuRobo是成熟求解引擎；项目研发在JAKA/工具/场景/目标IK/种子/求解配置/独立核验/ServoJ与任务恢复适配，不能包装成重新发明cuRobo。
+5. FAST单次求解、普通plan_cspace和图搜索尝试不是同一条路径；PRM不得写成每次规划都会执行。
+6. 独立密集核验覆盖环境和工具几何；独立自碰撞核验未完成。
+7. 10/10 CAMERA、9/21 CLEAR、10/21 GRASP V3等数据集必须分开标注；10/21 GRASP严格几何A/B端点碰撞，不能写成严格A/B规划成功。
+8. P3.3是12次planning-only负结果；P3.6/P3.7才是相应的真实实机执行证据。P3.8E是AUDIT_ONLY关键路径审计，不是完整任务周期实测。
 
-## V4文件与历史参考
+## 历史文件
 
-- **[19_V4_10_SLIDE_REDESIGN_AND_CODEX_EXECUTION_ORDER.md](19_V4_10_SLIDE_REDESIGN_AND_CODEX_EXECUTION_ORDER.md)**：唯一执行令；10页故事板、逐页素材/数据、DBSCAN离线协议、版式、QA和交付。
-- [17_V3_OFFLINE_REPLAY_AND_EXPERIMENT_PROTOCOL.md](17_V3_OFFLINE_REPLAY_AND_EXPERIMENT_PROTOCOL.md)：原始点云定位与9组DBSCAN、支撑分解2×2离线协议；保留其可用技术细节，以19号文件为准。
-- [16_V3_ASSET_AND_REFERENCE_CROSSWALK.md](16_V3_ASSET_AND_REFERENCE_CROSSWALK.md)：原PPT页/shape媒体索引和仓库图集索引。
-- [14_V3_REAL_EVIDENCE_PRIORITY.md](14_V3_REAL_EVIDENCE_PRIORITY.md)：历史证据优先级，须按19号文件中的状态修正使用。
-- [13_V3_RETHINK_FROM_CUSTOMER_RECORDING.md](13_V3_RETHINK_FROM_CUSTOMER_RECORDING.md)、[15_V3_REBUILT_STORYBOARD_12_PLUS.md](15_V3_REBUILT_STORYBOARD_12_PLUS.md)、[18_V3_CODEX_EXECUTION_AND_ACCEPTANCE.md](18_V3_CODEX_EXECUTION_AND_ACCEPTANCE.md)：历史分析/12页建议，不能再直接作为本轮页序。
-- [09_V2_SLIDE_CONTRACT_14_PLUS_2.md](09_V2_SLIDE_CONTRACT_14_PLUS_2.md)、[11_V2_CODEX_BUILD_WORK_ORDER.md](11_V2_CODEX_BUILD_WORK_ORDER.md)：旧14+2方案，已废止。
-- [WORKLOG.md](WORKLOG.md)：本轮重设计文档写入记录与未执行范围。
+- [20_V5_CUSTOMER_WORKLOAD_REDESIGN_AND_CODEX_ORDER.md](20_V5_CUSTOMER_WORKLOAD_REDESIGN_AND_CODEX_ORDER.md)：唯一执行令。
+- [19_V4_10_SLIDE_REDESIGN_AND_CODEX_EXECUTION_ORDER.md](19_V4_10_SLIDE_REDESIGN_AND_CODEX_EXECUTION_ORDER.md)：历史版本，已标记SUPERSEDED；不得执行。
+- [17_V3_OFFLINE_REPLAY_AND_EXPERIMENT_PROTOCOL.md](17_V3_OFFLINE_REPLAY_AND_EXPERIMENT_PROTOCOL.md)：离线补证方案参考。
+- [16_V3_ASSET_AND_REFERENCE_CROSSWALK.md](16_V3_ASSET_AND_REFERENCE_CROSSWALK.md)：历史素材交叉索引。
+- [14_V3_REAL_EVIDENCE_PRIORITY.md](14_V3_REAL_EVIDENCE_PRIORITY.md)：历史证据优先级参考。
+- 原16页PPT、PDF、讲者备注、指标台账、slide_sources和QA文件只作为旧稿审计与数据追溯材料。
 
-## 重要事实
+## 制作边界
 
-V4重设计任务书已经写入repo；**新PPTX/PDF尚未制作**。原始PPT二进制和私有实验数据不因本README或历史媒体索引存在而自动进入GitHub。Codex必须在实际运行机器上定位原件、计算SHA并逐项复核。
+不修改生产机器人代码或配置；不连接设备；不执行机械臂、夹爪或AMR运动；不自动SSH；不下载新私有数据。公开repo只提交经审核的任务书、无敏感索引和安全衍生材料。PPTX/PDF、私有原图、视频、原始点云和运行日志保留在本机交付目录。
