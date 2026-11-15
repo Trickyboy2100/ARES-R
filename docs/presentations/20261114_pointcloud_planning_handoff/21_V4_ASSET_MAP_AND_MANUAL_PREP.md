@@ -126,11 +126,7 @@ worklog/evidence/2026-10-21-grasp-source-data/
 
 1. 20261021-study-clouds.tar.gz  
    大小41,684,942 bytes；SHA256：
-   206e2fdef8886750ca7545ee7e03? 
-~~~
-
-请注意：上面SHA必须从仓库DATA_INDEX.json和SHA256SUMS复制，不得使用此处被截断的占位。正确SHA为：
-206e2fdef8886750ca7545ee9b23596c85a9252a45a949ed54d4cca60e3bbd60
+   206e2fdef8886750ca7545ee9b23596c85a9252a45a949ed54d4cca60e3bbd60
 
 2. 20261021-center-grasp-planner-study.tar.gz  
    大小18,069,187 bytes；SHA256：
@@ -194,7 +190,7 @@ tar -xzf 20261021-center-grasp-planner-study.tar.gz -C unpacked
 mdfind -name "生料和水泥的水分细度检验操作目标识别与控制算法研发内部验收20261030V0.95 - 机械臂"
 mdfind -name "20261028-水分细度目标识别与场景自适应规划控制"
 mdfind -name "20261028-水分细度目标识别与场景自适应规划控制-2"
-mdfind -name "参考用 智能机器人实验员实验员技术开发及应用-阶段汇报-朱翔2025.12.10 copy"
+mdfind -name "参考用 智能机器人实验员技术开发及应用-阶段汇报-朱翔2025.12.10 copy"
 mdfind -name "25下半年考核汇报--生料和水泥的水分细度检验操作目标识别与控制算法研发（视觉）"
 mdfind -name "金隅项目-周进度-20260924"
 mdfind -name "金隅项目-周进度-20261016"
