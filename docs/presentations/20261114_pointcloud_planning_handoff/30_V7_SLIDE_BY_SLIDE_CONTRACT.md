@@ -7,7 +7,7 @@
 - 「补充离线」=新增真实离线实验，只有真实执行成功才展示实验数值；
 - 「回退」=若补证缺数据/失败，使用原有真实代码、日志和现成图件，不造实验；
 - 版面和字号由Codex精雕。建议每页用60%上下的真实图、曲线或代码差异占主视觉，关键句使用原验收模板红色强调。技术原理放备注，不占满正文。
-- 页脚统一：\`数据/实验ID｜日期｜验证等级\`，完整路径及哈希写入notes/source ledger。
+- 页脚统一：`数据/实验ID｜日期｜验证等级`，完整路径及哈希写入notes/source ledger。
 
 # 第一部分｜实测点云场景重建与碰撞几何编译（01–07）
 
@@ -62,15 +62,15 @@
 
 **画面：**
 - 同一10/21输入的4张大主图：原始场景、ROI、自体归属、保留外部点；
-- 若局部机器人点很小，使用\`grasp_v3/details/ownership_before.png\`和\`ownership_removed.png\`放大实际差异；
-- 右下小条“关联工件”：\`robot_owned_filter.py\`、标定/robot snapshot、manifest SHA。
+- 若局部机器人点很小，使用`grasp_v3/details/ownership_before.png`和`ownership_removed.png`放大实际差异；
+- 右下小条“关联工件”：`robot_owned_filter.py`、标定/robot snapshot、manifest SHA。
 - **不应把19→405基元结果再挤在本页作为最大视觉，它留给第07页。**
 
 **讲述顺序：** 输入坐标和单位→同帧双臂状态→哪些点明确属于机器人→哪些点保守保留→通过什么计数/图像核验。
 
 **证据性质：** 10/21冻结离线回放；CAMERA为mm、BODY为m；不把“自体归属过滤”说成神经网络语义分割，不把未知未观测空间当自由空间。
 
-**代码：** \`src/ares_r/perception/robot_owned_filter.py\`；RASC V3 manifest。
+**代码：** `src/ares_r/perception/robot_owned_filter.py`；RASC V3 manifest。
 
 ---
 
@@ -99,7 +99,7 @@
 
 **讲者备注：** 4.039/3.191/2.672s是采集后场景构建时间，不是相机全流程或规划请求时间；该选参结果只适用于P3.4场景和当前几何/代码版本。
 
-**来源：** \`docs/reports/2026-09-23_P3_4_DEPLOYMENT_ACCELERATION_REPORT.md\`、\`worklog/evidence/2026-09-23-p3-4/summary.json\`。
+**来源：** `docs/reports/2026-09-23_P3_4_DEPLOYMENT_ACCELERATION_REPORT.md`、`worklog/evidence/2026-09-23-p3-4/summary.json`。
 
 ---
 
@@ -126,7 +126,7 @@
 
 **必须说清：** 半径18/3与20/4的净化点数、簇数相同，20/4不是所有指标都显著优于18/3；首组可能混有冷启动，不用总耗时误判相对速度。
 
-**工件：** \`worklog/evidence/2026-09-21-p3-production-demo/avoid_final/cleanup/cleanup_benchmark.json\`；\`src/ares_r/perception/residual_cloud.py\`。
+**工件：** `worklog/evidence/2026-09-21-p3-production-demo/avoid_final/cleanup/cleanup_benchmark.json`；`src/ares_r/perception/residual_cloud.py`。
 
 ---
 
@@ -149,13 +149,13 @@
 **视觉必须升级：**
 - 主体为**可编辑3×3参数矩阵**，用真实同帧九张图的小图展示总体类别趋势；
 - 另选两个或三个关键参数（8/12、12/8、16/8等）放大同一ROI，显示同一箱体/支撑边界**保留、丢失、误合并**的真实差异；若没有对应真实结果，不强写误合并；
-- 在图下展示\`cluster_count\`、\`noise_count\`、\`kept_points\`、\`runtime\`四个可核验指标，若来源缺失则明确标“未记录”，不可猜数。
+- 在图下展示`cluster_count`、`noise_count`、`kept_points`、`runtime`四个可核验指标，若来源缺失则明确标“未记录”，不可猜数。
 
 **重要判断：** 16mm/8点保留的点更多，不能只靠点数证明12mm/8点是全局最优；需用结构保持、簇过分裂/过合并、噪声、时间综合解释，若未做则仅称“当前工程配置”而非“最优”。
 
 **讲者备注：** 确认新试验真实执行日期2026-11-16、源点云是10/21、输入SHA、上游固定滤波、代码revision和计时条件。它属于**新增离线补证**，不能追记为9月已完成选参。
 
-**源文件线索：** V6第05页原图与speaker notes所记本机\`output/acceptance_v5/dbscan/results.json\`及9张\`eps*-m*.png\`；若文件不存在，先尝试已有公开10/21源点云归档离线重放，不能凭九格PPT截图生成假结果。
+**源文件线索：** V6第05页原图与speaker notes所记本机`output/acceptance_v5/dbscan/results.json`及9张`eps*-m*.png`；若文件不存在，先尝试已有公开10/21源点云归档离线重放，不能凭九格PPT截图生成假结果。
 
 ---
 
@@ -170,11 +170,11 @@
 **源码确定存在的配置：**
 - 高度分箱5mm，支撑层带宽±10mm；
 - 支撑候选至少120点，水平跨度门槛100mm；
-- 法向\`abs(n_z)>=0.85\`的占比阈值0.45；
+- 法向`abs(n_z)>=0.85`的占比阈值0.45；
 - 高出支撑面25mm识别为凸起候选；
 - 局部连通半径18mm，候选最少10点；
 - 局部网格XY40mm、Z向切片30mm；
-- 未分类已观测点仍进入\`UNKNOWN_OCCUPIED\`，不可凭空释放遮挡空间。
+- 未分类已观测点仍进入`UNKNOWN_OCCUPIED`，不可凭空释放遮挡空间。
 
 **主视觉（至少3个图）：**
 1. 同帧真实点云Z高度直方图，画出候选峰值与选中支撑层；
@@ -182,19 +182,19 @@
 3. 局部放大“分层前整体连通→分层后支撑与凸起分开”的几何。
 
 **建议新增离线实验：**
-- 实验SUP-01：\`support_band_m\` = 5/10/15mm，其余固定；
-- 实验SUP-02：\`protrusion_min_height_m\` = 15/25/35mm，其余固定；
+- 实验SUP-01：`support_band_m` = 5/10/15mm，其余固定；
+- 实验SUP-02：`protrusion_min_height_m` = 15/25/35mm，其余固定；
 - 可选SUP-03：40mm XY/30mm Z为中心，改变XY网格20/40/60mm；
-- 固定源点云、ROI、外参、噪声清洗与工具状态，输出\`support_count、height、normal_fraction、coverage、primitive_count、timing_s、local_gap\`；
+- 固定源点云、ROI、外参、噪声清洗与工具状态，输出`support_count、height、normal_fraction、coverage、primitive_count、timing_s、local_gap`；
 - 一律标注真实补测日期和离线性质。**未执行则不能写“试验表明XX最好”。**
 
 **回退版文稿（补证受阻时）：**
 
 > 已开发高度峰值、局部法向与空间连通性相结合的支撑—凸起几何分解模块，完成历史点云回放与分层结果检查；参数敏感性属于本轮独立补证范围，未能形成可比试验结论。
 
-回退版画面使用repo\`grasp_v3/panels/rasc6/04_support_decomposition_iso_focus.png\`及源码配置和历史处理图，不出现任何未测结果。
+回退版画面使用repo`grasp_v3/panels/rasc6/04_support_decomposition_iso_focus.png`及源码配置和历史处理图，不出现任何未测结果。
 
-**代码：** \`src/ares_r/perception/support_decomposition.py\`：\`DecompositionProfile\`、\`detect_support_levels\`、\`_support_assignment\`、\`_spatial_components\`、\`_tile_component\`、\`decompose_support_objects\`。
+**代码：** `src/ares_r/perception/support_decomposition.py`：`DecompositionProfile`、`detect_support_levels`、`_support_assignment`、`_spatial_components`、`_tile_component`、`decompose_support_objects`。
 
 ---
 
@@ -223,9 +223,9 @@
 - 同一高度/同一原点的剖视截面；
 - 小角落展示S21-ATTR独立故障归因图，不用长箭头造同帧因果。
 
-**真实工程输出：** \`support_decomposition.py\`多语义基元集合(\`SUPPORT_SURFACE/STRUCTURE/PROTRUDING_OBSTACLE/UNKNOWN_OCCUPIED\`)、场景编译JSON和几何点覆盖核验。
+**真实工程输出：** `support_decomposition.py`多语义基元集合(`SUPPORT_SURFACE/STRUCTURE/PROTRUDING_OBSTACLE/UNKNOWN_OCCUPIED`)、场景编译JSON和几何点覆盖核验。
 
-**素材：** \`panels/geometry_ab/old_boxes_zoom.png\`、\`new_primitives_zoom.png\`、\`clarity_v2/section_old_new_pair.png\`、S21-ATTR attribution图。
+**素材：** `panels/geometry_ab/old_boxes_zoom.png`、`new_primitives_zoom.png`、`clarity_v2/section_old_new_pair.png`、S21-ATTR attribution图。
 
 # 第二部分｜cuRobo工业适配、参数试验及实机调试（08–16）
 
@@ -247,7 +247,7 @@
 
 **边界：** P3.2 9/22工具物理语义当时未完全关闭，不能把该轮规划预览说成实机安全认证。
 
-**依据：** \`docs/reports/2026-09-22_P3_2_CUROBO_ONLY_AB_PLANNING_REPORT.md\`、V6第06页embedded media、真实JAKA TCP截图。
+**依据：** `docs/reports/2026-09-22_P3_2_CUROBO_ONLY_AB_PLANNING_REPORT.md`、V6第06页embedded media、真实JAKA TCP截图。
 
 ---
 
@@ -259,17 +259,17 @@
 
 > 建立BODY空间运行时目标到机械臂六轴关节轨迹的适配接口：结合当前关节状态与姿态约束生成候选IK，调用cuRobo轨迹优化，并经过独立环境核验后按实际关节命名映射为JAKA控制序列。
 
-**核心已存回归例：** \`201帧×7关节（含锁定指轴）→按joint_names抽取J1–J6→201帧×6关节\`。
+**核心已存回归例：** `201帧×7关节（含锁定指轴）→按joint_names抽取J1–J6→201帧×6关节`。
 
 **必须补充的真实研发工件：**
 - 左：真实规划GPU/机器人正运动学轨迹；
-- 右上：\`planner_joint_mapping.py\`关键代码10–15行，显示按名称选列而不是按位置固定截取；
-- 右下：\`tests/test_planner_joint_mapping.py\`中至少3类测试：锁定指轴、乱序命名、非法轴/非有限值；展示实际测试通过日志；
-- 页脚：\`MotionGoal\`与\`SceneSnapshot\`数据合同的字段，不能用大段抽象架构图取代修改。
+- 右上：`planner_joint_mapping.py`关键代码10–15行，显示按名称选列而不是按位置固定截取；
+- 右下：`tests/test_planner_joint_mapping.py`中至少3类测试：锁定指轴、乱序命名、非法轴/非有限值；展示实际测试通过日志；
+- 页脚：`MotionGoal`与`SceneSnapshot`数据合同的字段，不能用大段抽象架构图取代修改。
 
 **讲者备注：** 区分cuRobo既有IK/优化与本项目适配接口。源轨迹的201×7是某次输出/回归工况，不应说所有规划总为201点；独立world核验不等于独立self-collision认证。
 
-**源码：** \`src/ares_r/motion/runtime_goal_ik.py\`、\`planner_joint_mapping.py\`、\`independent_path_validation.py\`、对应tests。
+**源码：** `src/ares_r/motion/runtime_goal_ik.py`、`planner_joint_mapping.py`、`independent_path_validation.py`、对应tests。
 
 ---
 
@@ -294,7 +294,7 @@
 
 **边界：** 此轮是**规划级**，不宣称实际机械臂绕箱执行；AVOID +9.63mm模型净空不代表实物已经获准运动。
 
-**依据：** \`docs/reports/2026-09-21_CURRENT_BASE_AB_TCP_EXPERIMENT.md\`、P3.1报告、V6原图与原大PPTslide51高清媒体。
+**依据：** `docs/reports/2026-09-21_CURRENT_BASE_AB_TCP_EXPERIMENT.md`、P3.1报告、V6原图与原大PPTslide51高清媒体。
 
 ---
 
@@ -315,7 +315,7 @@
 | 30mm | 14.787mm | 668mm | 16.0s | 不放行 |
 | 40mm | 14.787mm | 701mm | 21.3s | 不放行 |
 
-**真实限制对象：** \`observed_support_03_component_01_protruding\`。每档三次轨迹哈希相同；固定场景12/12未过30mm门槛、未产生执行候选、未发送实机运动。
+**真实限制对象：** `observed_support_03_component_01_protruding`。每档三次轨迹哈希相同；固定场景12/12未过30mm门槛、未产生执行候选、未发送实机运动。
 
 **主视觉：**
 - 净空与30mm工程门槛图；
@@ -324,7 +324,7 @@
 
 **讲者备注：** 四档代价激活距离不是硬性安全距离；仅完成同一AVOID A→B早停12次，不是60次全部试验；工程结论是识别参数调优失效边界和几何冲突来源。
 
-**依据：** P3.3报告及\`sweep_summary.json\`。
+**依据：** P3.3报告及`sweep_summary.json`。
 
 ---
 
@@ -349,7 +349,7 @@
 
 **讲者备注：** 种子是求解候选初值，不是机械臂实机路径段数；cuRobo提供GPU求解，项目调试其预算、生命周期与输入条件。不同历史基线不是严格同源可比时不使用“精确提高X%”结论。Graph启停差异太小，不宣传Graph为主要提速来源。
 
-**依据：** P3.4报告和\`worklog/evidence/2026-09-23-p3-4/summary.json\`。
+**依据：** P3.4报告和`worklog/evidence/2026-09-23-p3-4/summary.json`。
 
 ---
 
@@ -359,7 +359,7 @@
 
 **上屏主文案：**
 
-> 将CUDA与cuRobo初始化、planner构建及预热改为服务生命周期内一次完成，运行时使用\`update_world\`加载新碰撞世界并执行一次正式求解。分段统计采集、场景构建、规划请求与正式求解，定位重复初始化和核验后处理带来的额外开销。
+> 将CUDA与cuRobo初始化、planner构建及预热改为服务生命周期内一次完成，运行时使用`update_world`加载新碰撞世界并执行一次正式求解。分段统计采集、场景构建、规划请求与正式求解，定位重复初始化和核验后处理带来的额外开销。
 
 **已核实P3.4：**
 - capture+NPY P50 2.873s；
@@ -372,12 +372,12 @@
 
 **主视觉：**
 - 上排“原请求生命周期 vs 常驻planner生命周期”**工程调用时序**，用真实代码/调用顺序提炼，而不是虚构耗时；
-- 下排将已实测\`formal solve\`与\`warm request wall\`放同一对照图（不同栏），标明剩余包含独立核验与后处理；
+- 下排将已实测`formal solve`与`warm request wall`放同一对照图（不同栏），标明剩余包含独立核验与后处理；
 - 角落放仓库实际worker接口/更新记录、相关提交和测试。
 
-**讲者备注：** 常驻化降低重复初始化和无用warm-up，且\`update_world\`仍绑定fresh SceneSnapshot；不自动授权任何运动。不能把5.095s写为扫码到轨迹总耗时，不把存疑的旧/新环境差异掩盖。
+**讲者备注：** 常驻化降低重复初始化和无用warm-up，且`update_world`仍绑定fresh SceneSnapshot；不自动授权任何运动。不能把5.095s写为扫码到轨迹总耗时，不把存疑的旧/新环境差异掩盖。
 
-**依据：** \`docs/reports/2026-09-23_P3_4_DEPLOYMENT_ACCELERATION_REPORT.md\`、\`src/ares_r/motion/production_scene_worker.py\`、\`summary.json\`。
+**依据：** `docs/reports/2026-09-23_P3_4_DEPLOYMENT_ACCELERATION_REPORT.md`、`src/ares_r/motion/production_scene_worker.py`、`summary.json`。
 
 ---
 
@@ -390,22 +390,22 @@
 > 将cuRobo输出映射为JAKA ServoJ原生时间序列，开展五档速度commission，结合关节命令与控制器读回评估到位、误差峰值和异常停止。在受限A/B模式内形成可核验的执行配置。
 
 **真实P3.4右臂A/B demo速度阶梯：**
-\`0.12→0.14→0.16→0.18→0.20 rad/s\`；
+`0.12→0.14→0.16→0.18→0.20 rad/s`；
 - 最终0.20rad/s B→A→B约9.49s；
 - B→A最大关节跟踪误差约0.77°；
 - A→B约1.07°；
 - 两段均到位，ServoJ关闭。
-- **仅\`RIGHT_ARM_AB_DEMO_ONLY\`，不推广为全站安全速度。**
+- **仅`RIGHT_ARM_AB_DEMO_ONLY`，不推广为全站安全速度。**
 
 **主视觉优先级：**
 1. 同一P3.4运行的关节command/feedback时间曲线（若原回执可真实重算）＋控制器到位；
 2. 次优：五档阶梯配置和P3.4两个leg回执；
-3. V6左侧已有\`case1_tracking_error_6joints.png\`是独立保护中止案例，只能作为**旁侧独立故障诊断**并明确独立run标签，不可冒充这次速度commission结果。
+3. V6左侧已有`case1_tracking_error_6joints.png`是独立保护中止案例，只能作为**旁侧独立故障诊断**并明确独立run标签，不可冒充这次速度commission结果。
 - 实际现场照片/视频关键帧作为主视觉的一部分，图大于表。
 
 **工程动作：** 关节映射、轨迹重定时、native package、tracking gate、ServoJ命令/读回、stop/fault处理。
 
-**来源：** P3.4报告、\`config/ab_demo_deployment_profile.json\`、真实native readback、9/24/大PPT现场媒体。
+**来源：** P3.4报告、`config/ab_demo_deployment_profile.json`、真实native readback、9/24/大PPT现场媒体。
 
 ---
 
@@ -428,7 +428,7 @@
 
 **讲者备注：** 此为单次实机工况，不能宣称普遍成功率；8.09mm是模型gap，非现场物理距离认证；独立world validator并未单独完成self-collision认证。
 
-**来源：** \`docs/reports/2026-09-23_P3_6_SCENE_AWARE_MOTION_REPORT.md\`及\`worklog/evidence/scene-aware-motion/D1_arbitrary_obstacle_execution_20260923T0753Z/\`。
+**来源：** `docs/reports/2026-09-23_P3_6_SCENE_AWARE_MOTION_REPORT.md`及`worklog/evidence/scene-aware-motion/D1_arbitrary_obstacle_execution_20260923T0753Z/`。
 
 ---
 
@@ -457,7 +457,7 @@
 
 **讲者备注：** P3.7五段均为自由空间/绕箱受监督真实运动，并不证明完整抓取、接触或放置；每段场景不同，不能把5/5作为独立随机成功率的外推。
 
-**来源：** \`docs/reports/2026-09-24_P3_7_ARBITRARY_TARGET_SCENE_AWARE_MOTION_REPORT.md\`、9/24周报及其原嵌媒体。
+**来源：** `docs/reports/2026-09-24_P3_7_ARBITRARY_TARGET_SCENE_AWARE_MOTION_REPORT.md`、9/24周报及其原嵌媒体。
 
 # 第三部分｜实际取放任务中的载荷错误修复与系统性能（17–19）
 
@@ -477,11 +477,11 @@
 - 新模型主体160×100mm，原厚度沿用；另保留20mm夹持后段；不补填未知的第三轴新尺寸；
 - 本次修复是Demo限定的明确载荷override，不是通用自动载荷推断。
 
-**主图：** 旧\`payload_wrong_footprint.png\`＋新\`payload_corrected.png\`同尺度并排，旁边实物料盘/夹爪照片；用少量红色标出“旧多占据”区域，绿色标“仍然保留的真实环境”。
+**主图：** 旧`payload_wrong_footprint.png`＋新`payload_corrected.png`同尺度并排，旁边实物料盘/夹爪照片；用少量红色标出“旧多占据”区域，绿色标“仍然保留的真实环境”。
 
 **研发过程：** PLACE失败日志→几何归属审计→原盒/实际料盘尺寸比对→附着物独立修订→旧SceneSnapshot/轨迹失效→新场景与规划预览。
 
-**来源：** \`docs/golden/2026-10-19/README.md\`、\`evidence/v17-place-recovery-completed/REPORT.json\`、V6图件、大PPTslide37/42。
+**来源：** `docs/golden/2026-10-19/README.md`、`evidence/v17-place-recovery-completed/REPORT.json`、V6图件、大PPTslide37/42。
 
 ---
 
@@ -506,9 +506,9 @@
 - 下半：故障后检查点恢复事件序列，优先用报告生成原生时间轴；
 - 每一帧若不是同一run的精确时刻，注明“该阶段现场画面”，不要制造假时间戳。
 
-**强制边界：** Golden为\`GOLDEN_TASK_COMPLETED_WITH_RECOVERY\`，不是原脚本不中断无人干预全流程；不声称arm stow、视觉精确落座认证、力控插入或通用持物估计。
+**强制边界：** Golden为`GOLDEN_TASK_COMPLETED_WITH_RECOVERY`，不是原脚本不中断无人干预全流程；不声称arm stow、视觉精确落座认证、力控插入或通用持物估计。
 
-**来源：** \`docs/golden/2026-10-19/README.md\`、\`evidence/v17-place-recovery-completed/COMPLETED.md\`、\`REPORT.json\`、大PPTslide42。
+**来源：** `docs/golden/2026-10-19/README.md`、`evidence/v17-place-recovery-completed/COMPLETED.md`、`REPORT.json`、大PPTslide42。
 
 ---
 
@@ -537,12 +537,12 @@ B. 10/21 CPU独立模块benchmark：
 **主视觉：**
 - 左半用可编辑堆叠条显示147.74/252.52构成及事件段，图注指向P3.8E；
 - 右半三组“大号”old/new横向条形图；
-- 底部交付工件：\`persistent planner\`、\`SceneSnapshot\`、\`independent validator\`、\`native package\`、\`TaskRuntime\`回归；
+- 底部交付工件：`persistent planner`、`SceneSnapshot`、`independent validator`、`native package`、`TaskRuntime`回归；
 - P3.9 18节点Scheme测试/故障注入只用页脚一行“软件回归”，不得暗示物理全链已执行。
 
 **讲者备注：** 这两组不是同一次总任务的前后数据；三项CPU倍数不能相乘或作为整机端到端提速；P3.9的395s为模型估计、不是实测。
 
-**来源：** \`docs/reports/2026-09-28_P3_8E_FULL_CYCLE_THROUGHPUT_AUDIT_REPORT.md\`、\`docs/presentations/assets/20261028_rasc_curobo/grasp_v3/runlogs/historical_performance.json\`、P3.9报告。
+**来源：** `docs/reports/2026-09-28_P3_8E_FULL_CYCLE_THROUGHPUT_AUDIT_REPORT.md`、`docs/presentations/assets/20261028_rasc_curobo/grasp_v3/runlogs/historical_performance.json`、P3.9报告。
 
 # 可选技术备查（最多2页，不计19页正文）
 
