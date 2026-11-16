@@ -1,17 +1,17 @@
 # V7 Codex正式执行任务令（可直接复制）
 
 在本地ARES-R项目继续甲方研发工作量验收PPT。本轮的任务不是写论文、做技术路线科普，也不是从零重新设计PPT，而是以当前用户提供的16页
-\`ARES-R_甲方研发工作量汇报_V6_丰富过程版.pptx\`
+`ARES-R_甲方研发工作量汇报_V6_丰富过程版.pptx`
 为**不可覆盖母件**，增加实测参数/代码/回归/实机调试证据，形成**19页正式陈述式研发工作量报告**。
 
 ## 必须先读的任务书（优先级顺序）
 
-1. \`docs/presentations/20261114_pointcloud_planning_handoff/29_V7_WORKLOAD_EVIDENCE_MASTER.md\`
-2. \`docs/presentations/20261114_pointcloud_planning_handoff/30_V7_SLIDE_BY_SLIDE_CONTRACT.md\`
-3. \`docs/presentations/20261114_pointcloud_planning_handoff/31_V7_OFFLINE_EXPERIMENT_AND_EVIDENCE_PROTOCOL.md\`
-4. \`docs/presentations/20261114_pointcloud_planning_handoff/32_V7_ASSET_CROSSWALK_AND_V6_REUSE.md\`
+1. `docs/presentations/20261114_pointcloud_planning_handoff/29_V7_WORKLOAD_EVIDENCE_MASTER.md`
+2. `docs/presentations/20261114_pointcloud_planning_handoff/30_V7_SLIDE_BY_SLIDE_CONTRACT.md`
+3. `docs/presentations/20261114_pointcloud_planning_handoff/31_V7_OFFLINE_EXPERIMENT_AND_EVIDENCE_PROTOCOL.md`
+4. `docs/presentations/20261114_pointcloud_planning_handoff/32_V7_ASSET_CROSSWALK_AND_V6_REUSE.md`
 
-旧V5/V6任务书是历史参考：事实边界继续有效，但正文页序以本次V7为准。已上传的\`Recording 154(2).txt\`要求参照29号文件00:48/02:34/05:59/10:32/12:43等甲方要求；不可将原音频/转写推送到公开仓库。
+旧V5/V6任务书是历史参考：事实边界继续有效，但正文页序以本次V7为准。已上传的`Recording 154(2).txt`要求参照29号文件00:48/02:34/05:59/10:32/12:43等甲方要求；不可将原音频/转写推送到公开仓库。
 
 ## 不得再犯的错误
 
@@ -31,12 +31,12 @@
 1. 查找本机V6源PPTX，记录SHA和16页原notes、原shape/媒体映射；
 2. 找不到先要求用户只补此文件，**不要直接用repo的V5文字重建PPT**；
 3. 复制一份V7工作副本，永不覆盖V6；
-4. 生成\`v6_to_v7_slide_map.csv\`，遵从30号文件reuse/split/insert映射；
+4. 生成`v6_to_v7_slide_map.csv`，遵从30号文件reuse/split/insert映射；
 5. 审阅原60页大PPT和V6全部图片，优先原图/照片、同源局部。
 
 ### B. 补最有价值的过程证据
-1. **DBSCAN**：优先审计V6已有九格真实结果\`output/acceptance_v5/dbscan/results.json\`、环境与原图。若只有PPT截图，不能宣布原始实验已核验；
-2. **支撑层分解**：利用repo\`support_decomposition.py\`与10/21公开原始BODY点云，离线尝试支撑带宽5/10/15mm、凸起阈值15/25/35mm固定输入敏感性实验；记录输入/代码SHA、运行日志、指标，不能提前填预期数。补证运行不了，按30号文件真实回退文稿制作；
+1. **DBSCAN**：优先审计V6已有九格真实结果`output/acceptance_v5/dbscan/results.json`、环境与原图。若只有PPT截图，不能宣布原始实验已核验；
+2. **支撑层分解**：利用repo`support_decomposition.py`与10/21公开原始BODY点云，离线尝试支撑带宽5/10/15mm、凸起阈值15/25/35mm固定输入敏感性实验；记录输入/代码SHA、运行日志、指标，不能提前填预期数。补证运行不了，按30号文件真实回退文稿制作；
 3. **几何归因**：S10-CAMERA 32→235同源对照＋独立S21-ATTR 212点问题，两个数据组不得伪造连续前后；
 4. **cuRobo**：P3.3 4×3失败扫值和限制对象；P3.4 4个候选配置、CUDA Graph、常驻worker重用与request/solve分开计量，找源码与报告；
 5. **控制**：尽可能匹配同一次P3.4 ServoJ速度档位的控制器命令/读回曲线；无原日志则不编时序图；
@@ -63,7 +63,7 @@
 ## 预期交付
 
 在本机忽略目录：
-\`\`\`
+```
 output/acceptance_v7/
   ARES-R_甲方研发工作量汇报_V7_调试试验证据版.pptx
   ARES-R_甲方研发工作量汇报_V7_调试试验证据版.pdf
@@ -82,7 +82,7 @@ output/acceptance_v7/
     customer_requirements_coverage.md
     unverified_claims_and_fallbacks.md
     build_log.md
-\`\`\`
+```
 
 完成后需报告：
 - 使用的V6母件真实文件与SHA；
