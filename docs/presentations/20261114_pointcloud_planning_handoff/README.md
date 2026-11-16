@@ -1,3 +1,15 @@
+# V6 甲方汇报：在V5成稿上丰富实物素材和研发过程（2026-11-16）
+
+**当前V6增量升级入口：**
+- [25_V6_INCREMENTAL_REDESIGN_AND_V5_AUDIT.md](25_V6_INCREMENTAL_REDESIGN_AND_V5_AUDIT.md) —— 用户上传V5成稿的逐页问题与增量目标
+- [26_V6_STORYBOARD_16_SLIDES.md](26_V6_STORYBOARD_16_SLIDES.md) —— 16页逐页文稿、具体图片、讲述脚本、V5→V6页级复用关系
+- [27_V6_MEDIA_ENRICHMENT_AND_CODEX_EXECUTION.md](27_V6_MEDIA_ENRICHMENT_AND_CODEX_EXECUTION.md) —— 原PPT与repo素材定位、裁切、证据隔离和QA
+- [28_V6_CODEX_ENRICHMENT_PROMPT.md](28_V6_CODEX_ENRICHMENT_PROMPT.md) —— 可直接交给Codex的操作令
+
+**执行原则：** V6不替代V5已核实的技术事实；以用户本轮提供的10页V5实际PPTX为母件，扩成16页正文，增加点云误占据、DBSCAN参数九格、无箱/有箱/BLOCK对照、ServoJ轨迹、实机路径和10/19 PLACE恢复。不得从零重建模板，不混用数据组，不伪造实验。V5内容来源和事实边界继续有效，但页序以V6为准。
+
+---
+
 # V5 甲方验收研发工作量汇报重设计（2026-11-16）
 
 **当前唯一有效的Codex执行入口：**
