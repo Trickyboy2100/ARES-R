@@ -1,3 +1,19 @@
+# V7｜甲方结题考核研发工作量证据版：任务书已完成（2026-11-16）
+
+本轮只完成**设计、逐页文稿、真实补证实验合同及Codex任务书**，不以已经生成新PPTX自居。基于用户上传的16页`ARES-R_甲方研发工作量汇报_V6_丰富过程版.pptx`和2026-11-13甲方录音重新审查，V7建议19页正文，保留V6的原模板/实物照片/真实实验，全部改为正式陈述式技术标题，重点补“支撑层分解参数试验”“cuRobo模块与真实修改”“时间与控制诊断”。
+
+**V7正式执行文件（请按顺序阅读）：**
+
+1. [29_V7_WORKLOAD_EVIDENCE_MASTER.md](29_V7_WORKLOAD_EVIDENCE_MASTER.md) —— 甲方录音逐项映射、设计思想、证据级别、交付规则
+2. [30_V7_SLIDE_BY_SLIDE_CONTRACT.md](30_V7_SLIDE_BY_SLIDE_CONTRACT.md) —— 19页逐页标题、真实数据、文稿、图片和讲述备注
+3. [31_V7_OFFLINE_EXPERIMENT_AND_EVIDENCE_PROTOCOL.md](31_V7_OFFLINE_EXPERIMENT_AND_EVIDENCE_PROTOCOL.md) —— DBSCAN原始结果核验、支撑高度/凸起参数补证、cuRobo/控制/Golden证据合同
+4. [32_V7_ASSET_CROSSWALK_AND_V6_REUSE.md](32_V7_ASSET_CROSSWALK_AND_V6_REUSE.md) —— V6逐页审计与repo真实素材索引、原PPT媒体提取
+5. [33_V7_CODEX_BUILD_ORDER.md](33_V7_CODEX_BUILD_ORDER.md) —— 可直接发送给本地Codex的执行提示与最终QA
+
+**重点纪律**：新增实验必须真实离线运行并标注新日期/输入SHA/版本，未完成就用已有真实工件回退；不能虚构历史结果，不能把P3.3全部拒绝的规划或Golden检查点恢复描述成无人干预成功。原始PPT/录音/私有现场素材不得直接提交到public repo。
+
+---
+
 # V6 甲方汇报：在V5成稿上丰富实物素材和研发过程（2026-11-16）
 
 **当前V6增量升级入口：**
