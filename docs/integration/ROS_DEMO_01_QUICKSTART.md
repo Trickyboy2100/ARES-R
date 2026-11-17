@@ -6,23 +6,12 @@
 
 ## 1. 连接SSH
 
-在自己的电脑终端执行：
-
-```bash
-ssh yikun@172.28.172.210
-```
-
-同一机器人局域网也可使用：
-
 ```bash
 ssh yikun@192.168.99.32
 ```
 
-出现`yikun@...`提示符后，以下命令均在机器人服务器上执行。自己的电脑无需安装ROS，也不需要TCP接口的token。
 
 ## 2. 启动ROS环境
-
-在SSH终端完整粘贴：
 
 ```bash
 source /opt/ros/noetic/setup.bash
@@ -39,11 +28,11 @@ export ROS_IP=127.0.0.1
 rosnode list
 ```
 
-应看到`/ares_r_center_restore`。若提示无法连接master或缺少该节点，先恢复现场ROS服务，不要直接运行运动命令。以上命令只加载环境/查询节点，不会运动。
+应看到`/ares_r_center_restore`。若提示无法连接master或缺少该节点，先恢复现场ROS服务，不要直接运行运动命令。
 
 ## 3. 测试第一个ROS Demo
 
-先做不运动检查：
+不运动检查：
 
 ```bash
 rosrun ares_r_center_restore center_restore_client.py
@@ -65,6 +54,4 @@ rosrun ares_r_center_restore center_restore_client.py --execute
 {"success": true, "state": "CENTER_RESTORE_COMPLETED", "restored": true, "run_id": "本次任务ID", "error": ""}
 ```
 
-只有`success=true`且`restored=true`才表示整个Demo完成。若失败，保留终端错误及`run_id`，不要连续重复启动。运行中按 **Ctrl+C** 请求软件停止，并等待停止结果；未确认停止时应现场核查，软件停止不能代替物理急停。
-
-本Demo使用ROS接口`/ares_r/center_restore`，类型为`ares_r_center_restore/CenterRestoreAction`，目标为已保存的`right/front_right_high_axes_aligned`。每次调用都会重新扫描规划，不复用旧轨迹。
+只有`success=true`且`restored=true`才表示整个Demo完成。本Demo使用ROS接口`/ares_r/center_restore`，类型为`ares_r_center_restore/CenterRestoreAction`，目标为已保存的`right/front_right_high_axes_aligned`。每次调用都会重新扫描规划，不复用旧轨迹。
