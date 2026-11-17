@@ -1,0 +1,11 @@
+[Unit]
+Description=Forward ZeroTier Epic Pro web connections to the camera
+Requires=ares-epic-web.socket
+After=ares-epic-web.socket
+
+[Service]
+ExecStart=/lib/systemd/systemd-socket-proxyd 192.168.99.199:5050
+NoNewPrivileges=true
+PrivateTmp=true
+Restart=on-failure
+RestartSec=2

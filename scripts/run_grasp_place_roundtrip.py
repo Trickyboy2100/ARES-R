@@ -16,6 +16,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'src'))
+from ares_r.motion.slam_policy import yaw_tolerance_deg,translation_tolerance_m
 from ares_r.manipulation.roundtrip_demo import (CycleRunner, recipe, digest,
     PlanningAttemptFailure, plan_with_retries)
 
@@ -495,7 +496,7 @@ class Live:
             if info['mapId']!=before['info']['mapId']:raise RuntimeError('base map changed')
             new=(log.get('id'),log.get('queueId'))!=(old.get('id'),old.get('queueId'))
             complete='已完成' in str(log.get('runtimeInfo','')) or 'completed' in str(log.get('runtimeInfo','')).lower()
-            quiet=previous is not None and math.hypot(float(info['x'])-float(previous['x']),float(info['y'])-float(previous['y']))<=.04 and abs((float(info['yawNumber'])-float(previous['yawNumber'])+180)%360-180)<=1.5
+            quiet=previous is not None and math.hypot(float(info['x'])-float(previous['x']),float(info['y'])-float(previous['y']))<=translation_tolerance_m(ROOT) and abs((float(info['yawNumber'])-float(previous['yawNumber'])+180)%360-180)<=yaw_tolerance_deg(ROOT)
             stable=stable+1 if new and complete and quiet and time.monotonic()-started>=minimum else 0
             previous=info
             if stable>=5:return {'completion':result,'station_sample':value,'samples':rows}

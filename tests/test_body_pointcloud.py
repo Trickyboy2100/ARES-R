@@ -1,11 +1,13 @@
 import json
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 import numpy as np
 
 from ares_r.perception.body_pointcloud import (build_body_cloud, fit_support_table,
+                                                capture_body_cloud,
                                                 load_artifact, save_artifact,
                                                 transform_camera_mm_to_body)
 from ares_r.visualization.body_cloud_viewer import scene_spec
@@ -20,6 +22,29 @@ def config():
 
 
 class BodyPointCloudTest(unittest.TestCase):
+    def test_live_capture_preserves_cloud_without_reference_table(self):
+        cfg = config()
+        transform = np.asarray(cfg["epic_pointcloud"]["T_body_camera"])
+        body = np.array([[0.6, -0.2, 1.1], [0.7, -0.3, 1.2], [0.8, 0.1, 1.3]])
+        camera_mm = ((body - transform[:3, 3]) @ transform[:3, :3]) * 1000
+        cloud = transform_camera_mm_to_body(camera_mm, np.zeros((3, 3), dtype=np.uint8), cfg)
+        with tempfile.TemporaryDirectory() as directory:
+            cfg["logging"]["directory"] = directory
+            capture = Path(directory) / "capture.json"
+            capture.write_text(json.dumps({"kind": "epic_fast_pointcloud_capture",
+                "artifact": "unused.npy", "sha256": "fixture"}))
+            with patch("ares_r.perception.body_pointcloud.capture_epic", return_value=capture), \
+                 patch("ares_r.perception.body_pointcloud.build_body_cloud_npy", return_value=cloud):
+                with self.assertRaisesRegex(ValueError, "too few points"):
+                    capture_body_cloud(cfg, require_reference_table=True)
+                with patch("ares_r.perception.body_pointcloud.fit_support_table") as fit:
+                    manifest = capture_body_cloud(cfg)
+                    fit.assert_not_called()
+            loaded, metadata = load_artifact(manifest)
+            self.assertEqual(metadata["table_validation"]["status"], "NOT_REQUESTED")
+            np.testing.assert_array_equal(loaded.points_body_m, cloud.points_body_m)
+            self.assertEqual(metadata["transform_revision"], cloud.transform_revision)
+
     def test_live_scan_scheduler_keeps_scan_and_render_independent(self):
         schedule = ScanSchedule(interval_s=2.0, auto=True)
         self.assertTrue(schedule.due(10.0))

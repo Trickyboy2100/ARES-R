@@ -133,7 +133,8 @@ class ConsoleMonitor:
         if not scene:
             status=self.console.backend.dispatcher.scene_status();scene=Path(status['scene_dir']) if status.get('scene_dir') else None
         if not scene:return {'pointcloud':[],'obstacles':[],'source':'NO_SCENE'}
-        cloud=scene/'scene/clean_residual.npz';report_file=scene/'scene/scene_report.json'
+        from ..perception.body_pointcloud import scene_display_cloud
+        cloud,cloud_kind=scene_display_cloud(scene);report_file=scene/'scene/scene_report.json'
         key=(str(scene),*[p.stat().st_mtime_ns if p.exists() else None for p in (cloud,report_file)])
         if key!=self.scene_key:
             report=read(report_file,{})
@@ -141,7 +142,7 @@ class ConsoleMonitor:
             if cloud.exists():
                 with np.load(cloud) as data:p=data['points_body_m']
                 p=p[np.isfinite(p).all(axis=1)];points=p[::max(1,len(p)//6000)].round(4).tolist()
-            self.scene=dict(pointcloud=points,obstacles=report.get('objects',[]),source=str(scene),
+            self.scene=dict(pointcloud=points,pointcloud_kind=cloud_kind,obstacles=report.get('objects',[]),source=str(scene),
                 scene_snapshot=report.get('snapshot_id') or read(scene/'scene/snapshot.json',{}).get('snapshot_id'),role='DISPLAY_ONLY')
             self.scene_key=key
         return self.scene

@@ -37,9 +37,12 @@ def parse_actual_status(body):
 
 
 class JakaActualReader:
-    def __init__(self, ip):
-        if ip != "192.168.99.101":
+    def __init__(self, ip, *, allowed_ips=("192.168.99.101",), normal_read_budget_s=.04):
+        if ip not in allowed_ips or ip not in ("192.168.99.100", "192.168.99.101"):
             raise RuntimeError("actual telemetry demo is restricted to right controller .101")
+        if not 0 < normal_read_budget_s <= 1:
+            raise ValueError('read budget must be within (0, 1] seconds')
+        self.normal_read_budget_s = float(normal_read_budget_s)
         self.socket = socket.create_connection((ip, 10004), timeout=1.0)
         self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
         self.first_request = True
@@ -51,8 +54,9 @@ class JakaActualReader:
     def read(self):
         # Connection warm-up is allowed only before arming; subsequent frames
         # must meet the strict servo monitoring deadline.
-        budget = 1.0 if self.first_request else 0.04
-        self.socket.settimeout(budget if self.first_request else 0.03)
+        budget = 1.0 if self.first_request else self.normal_read_budget_s
+        read_timeout = .03 if not self.first_request and budget == .04 else budget
+        self.socket.settimeout(read_timeout)
         started = time.monotonic()
         self.socket.sendall(b'{"cmdName":"data_request"}\n')
         decoder = zlib.decompressobj()

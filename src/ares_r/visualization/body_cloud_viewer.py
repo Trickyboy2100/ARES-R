@@ -58,6 +58,8 @@ def _open3d_geometry(spec):
         axes = o3d.geometry.TriangleMesh.create_coordinate_frame(size=sizes[name])
         axes.transform(np.asarray(transform))
         geometries.append((name, axes))
+    if 'xy_bounds_m' not in spec['table']:
+        return geometries
     bounds = spec["table"]["xy_bounds_m"]
     extent_x = max(0.05, min(2.0, bounds[1][0] - bounds[0][0]))
     extent_y = max(0.05, min(2.0, bounds[1][1] - bounds[0][1]))

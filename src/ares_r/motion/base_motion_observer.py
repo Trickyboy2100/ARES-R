@@ -8,6 +8,7 @@ controller label by itself.
 
 from __future__ import annotations
 
+from ares_r.motion.slam_policy import yaw_tolerance_deg,translation_tolerance_m
 from dataclasses import dataclass
 import math
 import time
@@ -78,8 +79,8 @@ class BaseMotionObserver:
         poll = float(self.config.get("poll_interval_s", 0.5))
         timeout = float(timeout_s or self.config.get("timeout_s", 120.0))
         stable_required = int(self.config.get("stable_samples", 5))
-        settle_translation = float(self.config.get("settle_translation_m", 0.04))
-        settle_yaw = float(self.config.get("settle_yaw_deg", 1.5))
+        settle_translation = translation_tolerance_m()
+        settle_yaw = yaw_tolerance_deg()
         min_elapsed = float(self.config.get("minimum_observed_motion_s", 1.5))
         configured_translation = float(self.config.get("motion_translation_m", 0.02))
         configured_yaw = float(self.config.get("motion_yaw_deg", 1.0))

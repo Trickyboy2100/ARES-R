@@ -9,7 +9,16 @@ ALIAS='block-01-center-restore-right'
 
 class CenterRestoreConsole(DemoConsole):
     def catalog(self):
-        value=super().catalog();value['demos'].append(dict(alias=ALIAS,demo_id='right_arm_center_restore_v1',strategy='center_restore',demo_type='CANDIDATE'))
+        value=super().catalog()
+        manifest=read(Path(__file__).resolve().parents[1]/'MANIFEST.json')
+        value['demos'].insert(0,dict(alias=ALIAS,demo_id='right_arm_center_restore_v1',
+            strategy='center_restore',demo_type='UTILITY',
+            tags=['ROS','Delivered','Utility'],
+            title='ROS Demo01 · 扫描 → center → 已保存右前高位',
+            preparation='机器人空手、底盘与左臂静止，右臂两段路径净空，现场监督与物理急停可用。',
+            verification_note='沿用已交付 CenterRestore ROS Action 的同一后端执行器，两段独立新扫描、cuRobo规划和实际到位回读。',
+            start_parameters=dict(target_mode='SAVED_POSE_REF',saved_pose_id=manifest['target_id'],
+                expected_saved_pose_sha=manifest['target_source_sha'],empty_hand_confirmed=True)))
         return value
 
     def start(self,body):
@@ -68,7 +77,7 @@ class CenterRestoreConsole(DemoConsole):
                 while time.monotonic()<end:
                     physical=self.backend.physical_status()
                     telemetry=self.backend.robot_telemetry()
-                    arm=telemetry.get('arms',{}).get('right',{});c=arm.get('controller_status',{})
+                    arm=(telemetry.get('arms') or {}).get('right') or {};c=arm.get('controller_status') or {}
                     q=arm.get('joints_rad',[]);proof=physical.get('execution_result') or {}
                     servo_off=(not dispatched or proof.get('servo_disabled_confirmed') is True)
                     stationary=(len(q)==6 and previous is not None and max(abs(a-b) for a,b in zip(q,previous))<.0009)

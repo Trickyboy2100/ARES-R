@@ -1,6 +1,7 @@
 """Shared command dispatcher for ART and the scene-aware Web UI."""
 
 from __future__ import annotations
+from ares_r.motion.slam_policy import yaw_tolerance_deg,translation_tolerance_m
 
 import json
 import shlex
@@ -69,7 +70,7 @@ def _motion_request(payload, default_central_exclusion=True):
         arm=payload["arm"], goal_joints_rad=payload.get("goal_joints_rad"), goal=goal,
         goal_pose_body_m_rad=payload.get("goal_pose_body_m_rad"),
         constraints=constraints,
-        speed_profile=payload.get("speed_profile", "slow"),
+        speed_profile=payload.get("speed_profile", "global_free_space_0_20"),
         scene_policy=ScenePolicy(payload.get("scene_policy", "AUTO_FRESH")),
         request_label=payload.get("request_label", "free_space_motion"),
         planning_mode=payload.get('planning_mode','QUALITY'))
@@ -164,8 +165,8 @@ class SceneAwareDispatcher:
         before = artifact['robot_state_before']['base']['info']
         after = artifact['robot_state_after']['base']['info']
         if (before['mapId'] != after['mapId'] or np.hypot(float(before['x'])-float(after['x']),
-                float(before['y'])-float(after['y'])) > .005 or
-                abs((float(before['yawNumber'])-float(after['yawNumber'])+180)%360-180) > .1):
+                float(before['y'])-float(after['y'])) > translation_tolerance_m(self.operations.root) or
+                abs((float(before['yawNumber'])-float(after['yawNumber'])+180)%360-180) > yaw_tolerance_deg(self.operations.root)):
             self.scene_invalidate('BASE_MOVED_DURING_CORNER_OBSERVATION')
             raise ValueError('base moved; corner not bound')
         scene = artifact['provenance']['5000']['scene']
@@ -317,14 +318,19 @@ class SceneAwareDispatcher:
 
     def motion_plan_right_center(self):
         """Plan the commissioned right-arm center pose through the shared stack."""
+        from .perception.robot_collision import transform_xyz_rpy
+        pose = json.loads((self.operations.root/'config/named_poses.json').read_text())[
+            'poses']['center']['arms']['right']
+        target = pose['body_tcp_target_m_rad']
         return self.motion_plan({
             "arm": "right",
-            "position_m": list(RIGHT_CENTER_BODY_M),
-            "orientation": "LEVEL_YAW_TARGET",
-            "yaw_target_rad": RIGHT_CENTER_YAW_RAD,
+            "position_m": list(target[:3]),
+            "orientation": "TERMINAL_EXPLICIT",
+            "explicit_rotation": transform_xyz_rpy([0, 0, 0], target[3:])[:3, :3].tolist(),
+            "ik_seed_joints_rad": [pose['ik_joint_rad']] if pose.get('ik_joint_rad') else None,
             "speed_profile": "right_scene_aware_0_20",
             "scene_policy": "FORCE_RESCAN",
-            "source": "NAMED_POSE_CENTER_BODY_V1",
+            "source": "config/named_poses.json:poses.center.arms.right",
             "request_label": "WEBUI_COMMON_RIGHT_CENTER_CUROBO",
         })
 

@@ -94,7 +94,7 @@ class MotionRequest:
     goal: Optional[MotionGoal] = None
     goal_pose_body_m_rad: Optional[Sequence[float]] = None
     constraints: MotionConstraints = field(default_factory=MotionConstraints)
-    speed_profile: str = "slow"
+    speed_profile: str = "global_free_space_0_20"
     scene_policy: ScenePolicy = ScenePolicy.AUTO_FRESH
     request_label: str = "free_space_motion"
     start_joints_rad: Optional[Sequence[float]] = None

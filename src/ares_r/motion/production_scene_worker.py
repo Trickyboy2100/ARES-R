@@ -136,6 +136,11 @@ def main(progress=None):
     ignore_ids=[str(value) for value in
         ((request.get("motion_constraints") or {}).get("ignore_cuboid_ids") or [])]
     cuboids=dict(scene["cuboids"])
+    from ..perception.chassis_policy import chassis_enabled, is_chassis_geometry
+    if not chassis_enabled():
+        cuboids={key:value for key,value in cuboids.items()
+                 if not is_chassis_geometry({'id':key})}
+        ignore_ids=[key for key in ignore_ids if not is_chassis_geometry({'id':key})]
     ignored=[key for key in ignore_ids if cuboids.pop(key,None) is not None]
     if len(ignored)!=len(ignore_ids):
         raise RuntimeError("ignore_cuboid_ids names objects the scene does not "

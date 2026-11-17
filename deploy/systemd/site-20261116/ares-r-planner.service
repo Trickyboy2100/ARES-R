@@ -1,0 +1,14 @@
+[Unit]
+Description=ARES-R RC1 persistent cuRobo planner
+
+[Service]
+WorkingDirectory=%h/ARES-R-RC1-20261019
+Environment=PYTHONPATH=%h/ARES-R-RC1-20261019/src
+Environment=ARES_R_PLANNER_SOCKET=/home/yikun/ARES-R-RC1-20261019/worklog/runtime/rc1-webui/planner.sock
+ExecStartPre=%h/ARES-R-RC1-20261019/.venv/bin/python %h/ARES-R-RC1-20261019/scripts/prepare_owned_planner_socket.py /home/yikun/ARES-R-RC1-20261019/worklog/runtime/rc1-webui/planner.sock
+ExecStart=%h/ARES-R-RC1-20261019/.venv/bin/python -m ares_r.motion.persistent_planner_service --socket /home/yikun/ARES-R-RC1-20261019/worklog/runtime/rc1-webui/planner.sock
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=default.target

@@ -242,7 +242,20 @@ def latest_manifest(config: dict) -> Path:
     return target
 
 
-def capture_body_cloud(config: dict) -> Path:
+def scene_display_cloud(scene_directory: Path) -> tuple[Path, str]:
+    """Resolve the full captured BODY cloud for both web scene viewers."""
+    root = Path(scene_directory)
+    pointer = root / "capture_pointer.json"
+    if pointer.exists():
+        manifest = Path(json.loads(pointer.read_text())["manifest"])
+        if manifest.exists():
+            raw_cloud = Path(json.loads(manifest.read_text())["artifact_npz"])
+            if raw_cloud.exists():
+                return raw_cloud, "RAW_BODY"
+    return root / "scene/clean_residual.npz", "CLEAN_RESIDUAL"
+
+
+def capture_body_cloud(config: dict, *, require_reference_table: bool = False) -> Path:
     """One camera scan followed by the canonical transform; no other device I/O."""
     root = artifact_root(config)
     capture_manifest = capture_epic(config, root / "captures", fast=True)
@@ -251,7 +264,8 @@ def capture_body_cloud(config: dict) -> Path:
         cloud = build_body_cloud_npy(capture_data["artifact"], capture_data["sha256"], config)
     else:
         cloud = build_body_cloud(capture_manifest.parent / "pointcloud.ply", config)
-    table = fit_support_table(cloud)
+    table = (fit_support_table(cloud) if require_reference_table else
+             {"status": "NOT_REQUESTED", "required_for_capture": False})
     run_id = time.strftime("%Y%m%d_%H%M%S_") + uuid.uuid4().hex[:8]
     manifest = save_artifact(cloud, table, root / "artifacts" / run_id)
     pointer = root / "latest.json"

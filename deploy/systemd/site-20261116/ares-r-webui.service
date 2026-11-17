@@ -1,0 +1,17 @@
+[Unit]
+Description=ARES-R unified WebUI and Demo Console
+Wants=network-online.target ares-r-backend.service
+After=network-online.target ares-r-backend.service
+
+[Service]
+Type=simple
+WorkingDirectory=%h/ARES-R-RC1-20261019
+Environment=PYTHONPATH=%h/ARES-R-RC1-20261019/src
+Environment=ARES_R_BACKEND_URL=http://127.0.0.1:8766
+ExecStartPre=/usr/bin/curl --fail --retry-connrefused --retry 20 --retry-delay 1 --max-time 3 http://127.0.0.1:8766/health
+ExecStart=%h/ARES-R-RC1-20261019/.venv/bin/python -m ares_r.webui.server --host 0.0.0.0 --port 8765
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=default.target

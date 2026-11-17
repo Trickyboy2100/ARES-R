@@ -179,7 +179,11 @@ def build_geometry_snapshot(model: dict, world: dict, audits: dict) -> RobotGeom
                                   (0.012, 0.012, 0.012), True,
                                   "live JAKA tool %s; marker enclosed by gripper envelope" % tool["tool_id"]))
     fk_s = time.perf_counter() - fk_started
+    from .chassis_policy import chassis_enabled, is_chassis_geometry
+    include_chassis = chassis_enabled()
     for item in model["fixed_body_boxes"]:
+        if not include_chassis and is_chassis_geometry(item):
+            continue
         boxes.append(CollisionBox(item["geometry_id"], item["owner"], item["kind"],
                                   tuple(item["center_body_m"]),
                                   ((1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 1.0)),

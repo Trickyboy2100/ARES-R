@@ -1,0 +1,11 @@
+[Unit]
+Description=Forward previous Demo Console address to the unified WebUI
+Requires=ares-r-console-compat.socket ares-r-webui.service
+After=ares-r-console-compat.socket ares-r-webui.service
+
+[Service]
+ExecStart=/lib/systemd/systemd-socket-proxyd 127.0.0.1:8765
+NoNewPrivileges=true
+PrivateTmp=true
+Restart=on-failure
+RestartSec=2

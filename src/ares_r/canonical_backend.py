@@ -37,7 +37,7 @@ class CanonicalBackend:
         self._demo_console=DemoConsole(self)
         # Recover completed evidence, never resume a physical operation on restart.
         evidence = Path(root) / 'worklog/evidence/operations-execution'
-        completed = sorted(evidence.glob('*/live/execution_result.json'))
+        completed = sorted(evidence.glob('*/live/execution_result.json'), key=lambda path:path.stat().st_mtime_ns)
         if completed:
             from .motion.execution_feedback import execution_feedback
             output = completed[-1].parent.parent
@@ -77,24 +77,97 @@ class CanonicalBackend:
                     study=json.loads(status.read_text());self._physical_state.update(current_stage=study.get('stage'),study_state=study.get('state'),study_elapsed_s=study.get('elapsed_s'),study_error=study.get('error'))
                 if self._physical_state.get('state')=='SUCCEEDED' and (not status.is_file() or study.get('state')!='COMPLETED'):
                     self._physical_state.update(state='FAULT',failure_reason='pick/reset completion missing')
+            if self._physical_state.get('mode') == 'JOINT_MIRROR':
+                path = Path(self._physical_state['output']) / 'mirror-status.json'
+                if path.exists():
+                    self._physical_state['mirror'] = json.loads(path.read_text())
+                from .demos.failure_summary import failure_summary
+                self._physical_state['failure_summary'] = failure_summary(self._physical_state)
+                self._physical_state['elapsed_s'] = max(0, self._physical_state.get(
+                    'completed_at_unix', time.time()) - self._physical_state['started_at_unix'])
+            return dict(self._physical_state)
+
+    def joint_mirror(self, body):
+        return self._dispatch_once('joint_mirror', body, self._joint_mirror_once)
+
+    def _joint_mirror_once(self, body):
+        source, destination = body.get('source_arm'), body.get('destination_arm')
+        match_tcp = body.get('match_tcp', True)
+        if not isinstance(match_tcp, bool):
+            raise ValueError('match_tcp must be boolean')
+        if {source, destination} != {'left', 'right'}:
+            raise ValueError('mirror requires different left/right arms')
+        if body.get('authorization') != 'MIRROR %s FROM %s' % (destination.upper(), source.upper()):
+            raise PermissionError('explicit mirror authorization required')
+        self.roundtrip.check_physical_access(body)
+        self.physical_status()
+        if self._console().active():
+            raise RuntimeError('Demo控制台正在执行任务')
+        root = Path(self.root).resolve()
+        if not (root / 'native/jaka_joint_mirror').is_file():
+            raise RuntimeError('MIRROR_NATIVE_NOT_INSTALLED')
+        with self._physical_guard:
+            if self._base_running or self._physical_process is not None:
+                raise RuntimeError('another physical operation is active')
+        scene = self.dispatcher.scene_status()
+        if scene.get('attachment_revision'):
+            raise ValueError('镜像任务尚未接入当前持物模型')
+        if scene['state'] != 'READY':
+            scene = self.scene_scan(force=True, active_arm=destination)
+        # The owned mirror worker reads both controllers via isolated native
+        # snapshots before solving. Do not precede it with the legacy SDK batch.
+        telemetry = {'arms': {}}
+        with self._physical_guard:
+            self.roundtrip.check_physical_access(body)
+            if self._base_running or self._physical_process is not None or self._console().active():
+                raise RuntimeError('another physical operation is active')
+            output = root / 'worklog/evidence/operations-execution' / ('mirror-' + str(time.time_ns()))
+            output.mkdir(parents=True)
+            request = dict(root=str(root), source_arm=source, destination_arm=destination,
+                           match_tcp=match_tcp,
+                           telemetry=telemetry, scene_dir=scene['scene_dir'],
+                           scene_snapshot_id=scene['scene_snapshot_id'],
+                           central_exclusion_enabled=self.dispatcher.operations.read()['policy']['central_exclusion'])
+            request_path = output / 'request.json'
+            request_path.write_text(json.dumps(request, indent=2))
+            log = output / 'runner.log'
+            stream = log.open('x')
+            try:
+                process = subprocess.Popen([sys.executable, str(root / 'scripts/run_joint_mirror.py'),
+                    '--request', str(request_path), '--output', str(output)], cwd=root,
+                    env=dict(os.environ, PYTHONPATH=str(root / 'src')),
+                    stdout=stream, stderr=subprocess.STDOUT)
+            except BaseException:
+                stream.close()
+                raise
+            self._physical_process, self._physical_stream = process, stream
+            self._physical_abort_path = output / 'stop.request'
+            self._physical_state = dict(state='RUNNING', mode='JOINT_MIRROR',
+                source_arm=source, destination_arm=destination, pid=process.pid,
+                output=str(output), log=str(log), started_at_unix=time.time())
+            self.dispatcher.scene_invalidate('JOINT_MIRROR_OPERATION_STARTED')
             return dict(self._physical_state)
 
     def start_pick_reset_timing(self,body):
         self.roundtrip.check_physical_access(body)
         return_only=body.get('return_only') is True
+        hold_only=body.get('hold_after_lift') is True
         task_id=body.get('task_demo_id')
+        if hold_only and (task_id!='right_arm_shaiwang_pick_reset_v1' or return_only):
+            raise ValueError('hold230 is restricted to the sift task')
         if task_id is not None:
             from .manipulation.task_contract import TASK_ID,verify_task,task_sender
             if task_id!=TASK_ID or return_only:raise ValueError('unsupported task or recovery request')
         expected_auth=('RIGHT SHAIWANG STAGE1 PICK RESET' if task_id else ('RIGHT PICK RESET RETURN' if return_only else 'RIGHT PICK RESET TIMING'))
+        if hold_only:expected_auth='RIGHT SIFT PICK LIFT230 HOLD'
         if body.get('authorization')!=expected_auth or body.get('onsite_observer_confirmed') is not True:
             raise PermissionError('explicit supervised stationary pick/reset authorization required')
         root=Path(self.root).resolve();prepared=Path(body['prepared']).resolve()
         if root/'worklog/evidence' not in prepared.parents or not (prepared/'native-manifest.json').is_file():
             raise ValueError('prepared native evidence under canonical root required')
         if task_id:verify_task(prepared,root);task_sender(root)
-        output=prepared/('return-execution' if return_only else 'execution')
-        stop=prepared/('timing-return-stop.request' if return_only else 'timing-stop.request')
+        output=prepared/('hold-execution' if hold_only else 'return-execution' if return_only else 'execution')
+        stop=prepared/('timing-hold-stop.request' if hold_only else 'timing-return-stop.request' if return_only else 'timing-stop.request')
         if output.exists() or stop.exists():raise ValueError('candidate already used or stopped')
         if return_only:
             prior=json.loads((prepared/'execution/status.json').read_text())
@@ -106,12 +179,13 @@ class CanonicalBackend:
             log=prepared/('timing-return-runner.log' if return_only else 'timing-runner.log');stream=log.open('x')
             runner='run_task_pick_reset_timing.py' if task_id else 'run_pick_reset_timing.py'
             runner_auth='RIGHT PICK RESET TIMING' if task_id else body['authorization']
+            if hold_only:runner='run_sift_lift_hold.py';runner_auth=expected_auth
             argv=[sys.executable,str(root/'scripts'/runner),'--prepared',str(prepared),'--output',str(output),'--authorization',runner_auth,'--onsite-observer-confirmed']
             if return_only:argv.append('--return-only')
             try:self._physical_process=subprocess.Popen(argv,cwd=root,stdout=stream,stderr=subprocess.STDOUT,env=dict(os.environ,PYTHONPATH=str(root/'src')))
             except BaseException:stream.close();raise
             self._physical_stream=stream;self._physical_abort_path=stop
-            self._physical_state=dict(state='RUNNING',mode='PICK_RESET_TIMING',task_demo_id=task_id,pid=self._physical_process.pid,log=str(log),study_output=str(output),started_at_unix=time.time())
+            self._physical_state=dict(state='RUNNING',mode='PICK_RESET_TIMING',task_demo_id=task_id,hold_after_lift=hold_only,pid=self._physical_process.pid,log=str(log),study_output=str(output),started_at_unix=time.time())
             return dict(self._physical_state)
 
     def _command_ledger(self):
@@ -195,6 +269,8 @@ class CanonicalBackend:
         if base_running:
             from .adapters.amr_http import AmrHttpBase
             AmrHttpBase(self.dispatcher.config['base']).stop()
+        if self._physical_state.get('mode') == 'JOINT_MIRROR' and self._physical_process is not None:
+            return dict(state='STOP_REQUESTED', software_abort_requested=True)
         result = self.dispatcher.motion_stop()
         return dict(result, software_abort_requested=True,
                     physical_estop_independent=True)
@@ -304,20 +380,45 @@ class CanonicalBackend:
             self._demo_console=DemoConsole(self)
         return self._demo_console
     def demo_console_catalog(self):return self._console().catalog()
-    def demo_console_status(self):return self._console().status()
+    def demo_console_status(self):
+        from .demos.failure_summary import failure_summary
+        value=self._console().status()
+        value['failure_summary']=failure_summary(value)
+        return value
     def demo_console_start(self,body):return self._console().start(body)
     def demo_console_stop(self):
         self.operations_stop();return self._console().status()
+    def demo_console_recover(self,body):return self._console().recover(body)
+    def slam_settings(self,body=None):
+        from .motion.slam_policy import read_policy,write_policy
+        if body is None:return read_policy(self.root)
+        if self._console().active():raise RuntimeError('TASK_ACTIVE_STOP_BEFORE_CHANGING_SCENE_SETTINGS')
+        value=write_policy(self.root,body)
+        self.dispatcher.scene_invalidate('SLAM_POLICY_CHANGED')
+        return value
     def demo_console_scene(self):
         console=self._console();console.status()
         return console.monitor.scene_payload()
     def call(self,method,args=(),kwargs=None):
+        if method == 'dispatch' and args and isinstance(args[0], str):
+            import shlex
+            command = shlex.split(args[0])
+            if len(command) == 5 and command[:2] == ['arm', 'mirror'] and command[3] == 'from':
+                destination, source = command[2], command[4]
+                return self.joint_mirror(dict(source_arm=source, destination_arm=destination,
+                    authorization='MIRROR %s FROM %s' % (destination.upper(), source.upper())))
+            if command == ['arm', 'mirror', 'status']:
+                return self.physical_status()
+            if command == ['arm', 'mirror', 'stop']:
+                return self.operations_stop()
+        if method == 'joint_mirror':
+            return self.joint_mirror(*list(args), **dict(kwargs or {}))
         if method=='dispatch' and args:
             if args[0] in ('demo console status','demo console list','demo console stop'):
                 return {'demo console status':self.demo_console_status,'demo console list':self.demo_console_catalog,
                         'demo console stop':self.demo_console_stop}[args[0]]()
             if args[0] in ('demo stop','motion stop') and getattr(self,'_demo_console',None) and self._demo_console.active():return self.demo_console_stop()
-        if method in ('demo_console_catalog','demo_console_status','demo_console_start','demo_console_stop','demo_console_scene'):
+        if method in ('demo_console_catalog','demo_console_status','demo_console_start','demo_console_stop','demo_console_scene','demo_console_recover','slam_settings'):
             return getattr(self,method)(*list(args),**dict(kwargs or {}))
         console=getattr(self,'_demo_console',None)
         if console and console.active():

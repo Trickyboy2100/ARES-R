@@ -266,10 +266,12 @@ def main():
     obs=wm.begin_observation("OBS_P3_%s_%d"%(a.mode,time.time_ns()),noww,nowm)
     cloud_ref=PointCloudRef(Path(a.manifest).parent.name,cloud.source_sha256,"body")
     wm.register_pointcloud(obs,cloud_ref);objects=[];provenance=[]
-    table=meta["table_validation"];lo,hi=table["xy_bounds_m"]
-    provenance.append(add(objects,obs,"known_support_table",SceneObjectRole.FIXED,
-        [(lo[0]+hi[0])/2,(lo[1]+hi[1])/2,table["median_z_m"]-.020],
-        [hi[0]-lo[0],hi[1]-lo[1],.040],0.0,"P1 table validation"))
+    table=meta["table_validation"]
+    if table.get("status") not in ("NOT_OBSERVED", "NOT_REQUESTED"):
+        lo,hi=table["xy_bounds_m"]
+        provenance.append(add(objects,obs,"known_support_table",SceneObjectRole.FIXED,
+            [(lo[0]+hi[0])/2,(lo[1]+hi[1])/2,table["median_z_m"]-.020],
+            [hi[0]-lo[0],hi[1]-lo[1],.040],0.0,"P1 table validation"))
     oriented_proofs=[]
     refiner=None
     if a.observed_obb:

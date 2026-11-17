@@ -210,6 +210,31 @@ class DemoConsole:
             # A lost owner is not proof that its native sender has stopped.
             self.update(error='旧任务归属不确定；已请求软件停止，须现场核实后处理，不能自动重启')
 
+    def recover(self,body):
+        """Release a failed task only after exclusive sender locks and healthy SDK reads."""
+        import fcntl
+        from contextlib import ExitStack
+        from ..motion.mirror_native import snapshot
+        if body.get('confirmation')!='RESET_FAILED_DEMO':raise ValueError('RESET_CONFIRMATION_REQUIRED')
+        with self.lock,ExitStack() as stack:
+            if self.job.get('state') not in ('FAULT','STOPPED','RECOVERY_REQUIRED'):
+                raise RuntimeError('NO_FAILED_TASK_TO_RESET')
+            if self.thread and self.thread.is_alive() or self.child and self.child.poll() is None:
+                raise RuntimeError('EXECUTOR_STILL_ACTIVE_USE_STOP_FIRST')
+            for arm in ('left','right'):
+                f=stack.enter_context(open('/tmp/ares-r-'+arm+'-servo.lock','a'))
+                try:fcntl.flock(f,fcntl.LOCK_EX|fcntl.LOCK_NB)
+                except BlockingIOError:raise RuntimeError('NATIVE_OWNER_ACTIVE_'+arm.upper())
+            states={arm:snapshot(self.root/'native/jaka_joint_mirror',arm) for arm in ('left','right')}
+            proof=dict(at_unix=time.time(),previous_state=self.job.get('state'),run_id=self.job.get('run_id'),
+                       controller_health_verified=True,states=states,auto_resume=False,controller_error_clear_sent=False)
+            path=self.root/'worklog/evidence/demo-recovery'/(uuid.uuid4().hex+'.json')
+            _atomic_json(path,proof)
+            self.update(state='STOPPED',stage='RESET_READY',error=None,recovery_evidence=str(path),
+                        recovery_verified_at_unix=proof['at_unix'])
+            self.cancel.clear();self.token=None
+            return dict(ok=True,state='RESET_READY',message='任务故障已复位；控制器健康，未发送运动。请重新启动任务。',evidence=str(path),auto_resume=False)
+
     def status(self):
         with self.lock:value=copy.deepcopy(self.job)
         if value.get('strategy')=='sift_pick_reset' and value.get('state')=='RUNNING':

@@ -39,10 +39,13 @@ def scene_payload(dispatcher):
               "target_pose": None, "trajectory": [], "trajectory_metrics": None}
     directory = scene.get("scene_dir")
     if directory and Path(directory).exists():
-        root = Path(directory);cloud = root / "scene/clean_residual.npz"
+        from ares_r.perception.body_pointcloud import scene_display_cloud
+        root = Path(directory)
+        cloud, result["pointcloud_kind"] = scene_display_cloud(root)
         if cloud.exists():
-            points = np.load(cloud)["points_body_m"]
-            stride = max(1, len(points)//12000)
+            with np.load(cloud) as values:
+                points = values["points_body_m"]
+            stride = max(1, (len(points)+11999)//12000)
             result["pointcloud"] = points[::stride].round(4).tolist()
         report = root / "scene/scene_report.json"
         if report.exists():
@@ -123,11 +126,16 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         path=urlparse(self.path).path
-        if path=="/demo-console":
+        if path=="/demo-handbook":
+            data=INDEX.with_name('demo_handbook.html').read_bytes()
+            self.send_response(200);self.send_header('Content-Type','text/html; charset=utf-8')
+            self.send_header('Content-Length',str(len(data)));self.end_headers();self.wfile.write(data)
+        elif path=="/demo-console":
             data=INDEX.with_name('demo_console.html').read_bytes()
             self.send_response(200);self.send_header('Content-Type','text/html; charset=utf-8')
             self.send_header('Content-Length',str(len(data)));self.end_headers();self.wfile.write(data)
         elif path=="/api/demo-console/catalog":self._json(self.dispatcher.demo_console_catalog())
+        elif path=="/api/scene/slam-settings":self._json(self.dispatcher.slam_settings())
         elif path=="/api/demo-console/status":self._json(self.dispatcher.demo_console_status())
         elif path=="/api/demo-console/scene":self._json(self.dispatcher.demo_console_scene())
         elif path=="/api/workbench":
@@ -136,6 +144,10 @@ class Handler(BaseHTTPRequestHandler):
         elif path=="/workbench":
             data=INDEX.with_name('workbench.html').read_bytes()
             self.send_response(200);self.send_header('Content-Type','text/html; charset=utf-8')
+            self.send_header('Content-Length',str(len(data)));self.end_headers();self.wfile.write(data)
+        elif path=="/static/mirror-panel.js":
+            data=INDEX.with_name('mirror_panel.js').read_bytes()
+            self.send_response(200);self.send_header('Content-Type','application/javascript; charset=utf-8')
             self.send_header('Content-Length',str(len(data)));self.end_headers();self.wfile.write(data)
         elif path=="/static/roundtrip-panel.js":
             data=INDEX.with_name('roundtrip_panel.js').read_bytes()
@@ -181,8 +193,11 @@ class Handler(BaseHTTPRequestHandler):
         path=urlparse(self.path).path
         try:
             body=self._body()
-            if path=="/api/demo-console/start":value=self.dispatcher.demo_console_start(body)
+            if path=="/api/operations/mirror":value=self.dispatcher.joint_mirror(body)
+            elif path=="/api/demo-console/start":value=self.dispatcher.demo_console_start(body)
             elif path=="/api/demo-console/stop":value=self.dispatcher.demo_console_stop()
+            elif path=="/api/scene/slam-settings":value=self.dispatcher.slam_settings(body)
+            elif path=="/api/demo-console/recover":value=self.dispatcher.demo_console_recover(body)
             elif path=="/api/workbench/draft":
                 from ares_r.demo_workbench import task_draft
                 value=task_draft(body["direction"],body["slots"],{},ROOT)

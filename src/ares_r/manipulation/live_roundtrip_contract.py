@@ -1,4 +1,5 @@
 """Read-only contracts shared by the site adapter; no device creation or I/O."""
+from ares_r.motion.slam_policy import yaw_tolerance_deg,translation_tolerance_m
 import hashlib,json,math,time
 from ares_r.motion.arrival_contract import check_start
 
@@ -22,7 +23,7 @@ def validate_resume_telemetry(actual,expected):
     values=[float(row[k]) for row in (old,new) for k in ('x','y','yawNumber')]
     if not all(math.isfinite(v) for v in values):raise RuntimeError('RESUME_BASE_POSE_NONFINITE')
     yaw=abs((float(new['yawNumber'])-float(old['yawNumber'])+180)%360-180)
-    if not old['mapId'] or new['mapId']!=old['mapId'] or math.hypot(float(new['x'])-float(old['x']),float(new['y'])-float(old['y']))>.02 or yaw>.5:
+    if not old['mapId'] or new['mapId']!=old['mapId'] or math.hypot(float(new['x'])-float(old['x']),float(new['y'])-float(old['y']))>translation_tolerance_m() or yaw>yaw_tolerance_deg():
         raise RuntimeError('RESUME_BASE_STATE_CHANGED: site reconciliation required')
 
 def perception_profile_contract(parameters,config):

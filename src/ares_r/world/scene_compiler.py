@@ -77,7 +77,12 @@ def compile_snapshot(snapshot, arm: str, T_body_model, planning_scope="DEMO_OFFL
     provenance = []
     attachments=[value for value in (snapshot.left_attached_object,snapshot.right_attached_object) if value is not None]
     attached_ids={value.object_id for value in attachments}
+    from ..perception.chassis_policy import chassis_enabled, is_chassis_geometry
+    include_chassis = chassis_enabled()
     for item in objects:
+        if not include_chassis and is_chassis_geometry(item):
+            provenance.append({'object_id': item.object_id, 'used_as': 'CHASSIS_GLOBALLY_DISABLED'})
+            continue
         if item.pose.frame_id != "body" or item.geometry_type != "cuboid":
             raise ValueError("SceneCompiler accepts BODY cuboids only")
         if item.object_id in attached_ids:

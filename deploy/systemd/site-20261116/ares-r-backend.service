@@ -1,0 +1,19 @@
+[Unit]
+Description=ARES-R canonical backend with current Demo Console
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/ARES-R-RC1-20261019
+Environment=PYTHONPATH=%h/ARES-R-RC1-20261019/src
+Environment=ARES_R_SITE_ROOT=/home/yikun/ARES-R-RC1-20261019
+Environment=ARES_R_BOOT_NO_MOTION=YES
+Environment=ARES_R_PLANNER_SOCKET=/home/yikun/ARES-R-RC1-20261019/worklog/runtime/rc1-webui/planner.sock
+Environment=ARES_R_ROUNDTRIP_API_URL=http://127.0.0.1:8765
+ExecStart=%h/ARES-R-RC1-20261019/.venv/bin/python %h/ARES-R-ROS-BLOCK01-20261112/ros1-blocks-center-restore/run_backend_overlay.py --host 127.0.0.1 --port 8766
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=default.target
