@@ -28,7 +28,7 @@
 4. 核对ID2料盘当前V7与11月9日成功运行参数；确认ID9称/程工位身份。
 5. 提取独立HOLD出口，定义低层烘干箱entry profile。
 6. 将剩余槽位偏置和动作方向写成配置，逐槽验收。
-7. 后续给Console卡片显示新编号、文档链接与四个独立状态字段；新编号启动解析通过显式映射实现。
+7. Console功能墙已显示新编号、文档链接、原生与ROS独立状态；待接入项保留卡片。维护显式launch_alias映射，独立Fetch出口接通后再更新入口。
 
 ## 维护命令
 
@@ -42,3 +42,5 @@ python3 scripts/build_demo_handbook.py --check
 ## 变更记录
 
 2026-11-17 v0.1 建立五位编号、A/R对应表、20项业务取放目录、Utility/测试分支映射、原生实机证据索引、交接高度设计和ROS交付流程。尚未将编号注册为运行alias，尚未据此更改任何物理任务参数。
+
+2026-11-17 v0.2 Console默认使用功能墙，30项卡片按取/放/Utility/完整流程/测试分支分组；运行监控保留。目录构建增加 `python3 scripts/build_demo_wall.py`，详情见 `docs/integration/DEMO_CONSOLE_CAPABILITY_WALL.md`。

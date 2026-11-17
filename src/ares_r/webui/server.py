@@ -145,6 +145,15 @@ class Handler(BaseHTTPRequestHandler):
             data=INDEX.with_name('workbench.html').read_bytes()
             self.send_response(200);self.send_header('Content-Type','text/html; charset=utf-8')
             self.send_header('Content-Length',str(len(data)));self.end_headers();self.wfile.write(data)
+        elif path in ("/static/demo-wall.js", "/static/demo-wall.css", "/api/demo-console/capabilities"):
+            filename, content_type = {
+                "/static/demo-wall.js": ('demo_wall.js', 'application/javascript; charset=utf-8'),
+                "/static/demo-wall.css": ('demo_wall.css', 'text/css; charset=utf-8'),
+                "/api/demo-console/capabilities": ('demo_wall_catalog.json', 'application/json; charset=utf-8'),
+            }[path]
+            data=INDEX.with_name(filename).read_bytes()
+            self.send_response(200);self.send_header('Content-Type',content_type)
+            self.send_header('Content-Length',str(len(data)));self.end_headers();self.wfile.write(data)
         elif path=="/static/mirror-panel.js":
             data=INDEX.with_name('mirror_panel.js').read_bytes()
             self.send_response(200);self.send_header('Content-Type','application/javascript; charset=utf-8')
