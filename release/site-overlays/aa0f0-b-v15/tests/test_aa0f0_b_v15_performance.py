@@ -1,11 +1,12 @@
 """V1.5 changes preparation latency, not the commissioned grasp motion."""
 import hashlib
 import json
+import os
 from pathlib import Path
 import unittest
 
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(os.environ.get('ARES_R_SITE_ROOT', Path(__file__).resolve().parents[1])).resolve()
 BASE = ROOT / 'demos/right_arm_tray_fetch_hold_biased_v1/versions'
 
 
